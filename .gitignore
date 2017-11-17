@@ -1,0 +1,5 @@
+# not tracking *.stl files
+
+*.stl
+*.gcode
+*.png
