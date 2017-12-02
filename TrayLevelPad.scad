@@ -2,7 +2,7 @@ RodDiameter = 4.0;
 RodSpacing =16.5;
 
 PadLength = 23.75;
-PadHeight = 20;
+PadHeight = 35;
 
 
 module trayLevelPad()
@@ -12,14 +12,20 @@ module trayLevelPad()
         difference()
         {
         cube([PadLength,PadLength,PadHeight]);
-        translate([(RodDiameter/2),-1,PadHeight-(RodDiameter/4)])
+        translate([radius(),yMove(),zMove(0.5)])
         rotate(a=[-90,0,0])
-        cylinder($fn=100,PadLength +2, RodDiameter/2, RodDiameter/2, false);
+        cylinder($fn=100,barLength(), radius(), radius(), false);
         }
-        translate([PadLength-(RodDiameter/2),-1,PadHeight-(RodDiameter/4)])
+        translate([PadLength-radius(),yMove(),zMove(0.5)])
         rotate(a=[-90,0,0])
-        cylinder($fn=100,PadLength +2, RodDiameter/2, RodDiameter/2, false);
+        cylinder($fn=100,barLength(), radius(), radius(), false);
     }
 }
+
+function zMove(x=0)=PadHeight-(RodDiameter/4)-x;
+function yMove(x=0)=(x==0)? -1:x;
+function radius(x=RodDiameter/2)= x;
+function barLength(x=PadLength +2) = x;
+
 
 trayLevelPad();

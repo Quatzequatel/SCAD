@@ -1,17 +1,15 @@
 
-meshX=26;
-meshY=18;
-meshZ=40;
-CylinderWidth=40;
-Seedrows=3;
-Seedcolumns=3;
+cubeRows=3;
+cubeColumns=3;
 Thickness=2;
-CylinderHeight=2;
-CellSpacing=2;
-CellPad=20;
+CubeSpacing=5;
+
 
 cubeWidth = 15;
-cubeHeight = 64;
+cubeHeight = 57;
+drillHole = 12;
+drillRadius = 1.5;
+drillHoleLength = 14;
 
 
 
@@ -23,17 +21,23 @@ wallWidth=2;
 
 Manafold();
 
+function moveCubeX(x) = (cubeWidth+CubeSpacing)*(x-1);
+function moveCubeY(y) = (cubeWidth+CubeSpacing)*(y-1);
+function drillHoleX(x) = moveCubeX(x) + (cubeWidth/2);
+function drillHoleY(y) = moveCubeY(y) + (cubeWidth/2);
+function drillHoleZ() = cubeHeight - drillHole;
+
 module Manafold()
 {
 
-        for(x = [1:Seedcolumns], Y =[1:Seedrows])
+        for(x = [1:cubeColumns], Y =[1:cubeRows])
         {
             difference()
             {
-            translate([(CylinderWidth*(x-1))+CellPad, (CylinderWidth*(Y-1))+CellPad,0])
+            translate([moveCubeX(x), moveCubeY(Y) ,0])
             cube([cubeWidth,cubeWidth,cubeHeight], false);
-            translate([(CylinderWidth*(x-1))+CellPad+ (cubeWidth/2), (CylinderWidth*(Y-1))+CellPad + (cubeWidth/2),cubeHeight - 12])
-             color("Green")cylinder($fn=100,14,1.5,1.5,center=false);
+            translate([drillHoleX(x), drillHoleY(Y),drillHoleZ()])
+             color("Green")cylinder($fn=100,drillHoleLength,drillRadius,drillRadius,center=false);
             }
         }
         

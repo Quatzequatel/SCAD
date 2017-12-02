@@ -12,7 +12,7 @@ module elbow(radius, length, angle)
     
     translate([radius,0])
     rotate([90,0,0]) 
-    cylinder(r=radius, h = length, $fn=100);
+    cylinder(r=radius, h = length*2, $fn=100);
 }
 
 
@@ -27,5 +27,5 @@ module elbowPipe(radius,length, angle, wallThickness)
     }
 }
 
-elbowPipe(12.5/2,12.6,90,2);
+elbowPipe(12.5/2,12.5,90,2);
 //elbowPipe(10,10,90,2);
