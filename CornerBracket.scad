@@ -33,6 +33,7 @@ module main()
             squareTube(Width,Length,Height,WallThickness);
             squareTube(Width,Length,2*Height+AddWall(0),WallThickness);
         }
+//this is a hack, but need to get it done quickly.        
 //remove the top of the bracket so wood can be placed in after otherside is attached.
     translate([OuterWidth(Width),WallThickness,OuterHeight(Height)-0.5])
         {
