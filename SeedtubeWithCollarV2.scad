@@ -10,12 +10,12 @@ ModelSpacing = LipRadiusOuter -20;
 
 
 CylinderWidth=40;
-Seedrows=1;
-Seedcolumns=1;
+Seedrows=3;
+Seedcolumns=3;
 Thickness=2;
 CylinderHeight=50;
 CellSpacing=2;
-CellPad=20;
+CellPad=25;
 
 
 spokeCount=24;
@@ -33,9 +33,11 @@ Notes: this is a V2 design.
 union()
 {
 Tube();
-Lip();
+//Lip();
 }
 doughnut();
+
+//function
 
 module Tube()
 {
@@ -43,23 +45,27 @@ module Tube()
     {
         for(x = [1:Seedcolumns], Y =[1:Seedrows])
         {
+            echo(x,Y);
                //translate([(40*x), (40*Y),-1]) color("Blue") cube($fn=100,[35,35,5],center=true)
             translate([(CylinderWidth*(x-1))+CellPad, (CylinderWidth*(Y-1))+CellPad,0])  
             difference()
             {
+                union()
                 color("Green")cylinder($fn=100,CylinderHeight,(CylinderWidth/2)-2,(CylinderWidth/2)-2,center=false);
                 translate(0,0,10) cylinder($fn=100,CylinderHeight+2,((CylinderWidth/2)) - (wallWidth+CellSpacing),((CylinderWidth/2))-(wallWidth+CellSpacing),center=false);
+                
             }
+            Lip(x,Y);
         }
     }
 }
 
-module Lip()
+module Lip(x,Y)
 {
     difference()
     color("Green")
     //translate([LipRadiusOuter/2,LipRadiusOuter/2,0])
-    translate([(CylinderWidth*(1-1))+CellPad, (CylinderWidth*(1-1))+CellPad,0])  
+    translate([(CylinderWidth*(x-1))+CellPad, (CylinderWidth*(Y-1))+CellPad,0])  
     difference()
     {
     cylinder($fn=100, LipHeight, LipRadiusOuter, LipRadiusOuter, false);
@@ -69,21 +75,6 @@ module Lip()
     //linear_extrude(height = LipHeight+.5){translate([8,-10.5,LipHeight])text("18.1", 2);}
 }    
 
-module matrix()
-{
-    for(x=[1:columns], y=[1:rows])
-    {
-        //echo(x=x);echo(x=(ModelSpacing*(x) + (LipDiameter*(x-1)))); echo(y=0); echo();
-        translate([
-            ModelSpacing*(x) + (LipDiameter*(x-1)),
-            ModelSpacing*(y) + (LipDiameter*(y-1)),
-            0
-        ])
-        {
-            Lip();
-        }
-    }
-}
 
 module doughnut()
 {
