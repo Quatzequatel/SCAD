@@ -7,7 +7,7 @@ function OuterWidth(w) = AddWall(w);
 function OuterLength(l) = AddWall(l);
 function OuterHeight(h) = AddWall(h);
 function AddWall(length) = length + (2*WallThickness);
-
+function Middle(length) = length/2;
 
 module squareTube(innerWidth, innerDepth, innerHeight, wallThickness)
 {
@@ -42,4 +42,23 @@ module main()
     }
 }
 
-main();
+screwDiameter=3.5;
+spacerWidth= AddWall(screwDiameter);
+spacerHeight=6.0;
+
+module attachmentSpacer()
+{
+    difference()
+    {
+        minkowski()
+        {
+            cube([spacerWidth, Length,spacerHeight]);
+        }
+        translate([Middle(spacerWidth), Middle(Length)],0)
+            cylinder($fn=100,h=spacerHeight,d1=screwDiameter,d2=screwDiameter,center=false);
+    }
+}
+
+//Build what?
+attachmentSpacer();
+//main();
