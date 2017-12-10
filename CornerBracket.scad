@@ -1,3 +1,5 @@
+
+
 Width = 18.50;
 Length = Width;
 Height = Width;
@@ -9,6 +11,7 @@ function OuterHeight(h) = AddWall(h);
 function AddWall(length) = length + (2*WallThickness);
 function Middle(length) = length/2;
 
+
 module squareTube(innerWidth, innerDepth, innerHeight, wallThickness)
 {
     difference()
@@ -19,9 +22,9 @@ module squareTube(innerWidth, innerDepth, innerHeight, wallThickness)
     }
 }
 
-module main()
+module angleBracket()
 {
-    //do the final placement so it does not have to be adjusted everytime in Cura.
+        //do the final placement so it does not have to be adjusted everytime in Cura.
     translate([0,0,2*OuterHeight(Height)])
     rotate([0,180,0])
     difference()
@@ -42,23 +45,61 @@ module main()
     }
 }
 
-screwDiameter=3.5;
-spacerWidth= AddWall(screwDiameter);
-spacerHeight=6.0;
+module BracketWithGrove()
+{
+        difference()
+    {
+    angleBracket();
+        
+        translate([-Middle(SpacerHeight),Middle(AddWall(Width))-Middle(SpacerWidth),-1])
+        rotate([0,0,90])
+        rotate([90,0,0])
+        spacer(SpacerWidth, Grovelength+2,SpacerHeight);
+    
+        translate([-AddWall(0)+1,-1.8,-5])
+        rotate([0,45,90])
+        rotate([90,0,0])
+        cube([Width,Length,AddWall(0)]);
+        
+                echo(sqrt(Width*Width*2)-AddWall(Width));
+        translate([-AddWall(0)+1,-1.8,Grovelength+5])
+        rotate([0,45,90])
+        rotate([90,0,0])
+        cube([Width,Length,AddWall(0)]);
+    }
+
+}
+
+module main()
+{
+    BracketWithGrove();
+    //translate([5,5,0])attachmentSpacer();
+}
+
+ScrewDiameter=3.5;
+SpacerWidth= AddWall(ScrewDiameter);
+SpacerLength=Length;
+SpacerHeight=6.0;
+Grovelength=2*AddWall(Length);
 
 module attachmentSpacer()
 {
     difference()
     {
-        minkowski()
-        {
-            cube([spacerWidth, Length,spacerHeight]);
-        }
-        translate([Middle(spacerWidth), Middle(Length)],0)
-            cylinder($fn=100,h=spacerHeight,d1=screwDiameter,d2=screwDiameter,center=false);
+
+         spacer(SpacerWidth, SpacerLength,SpacerHeight);
+        
+        translate([Middle(SpacerWidth), Middle(Length)],0)
+            cylinder($fn=100,h=SpacerHeight,d1=ScrewDiameter,d2=ScrewDiameter,center=false);
     }
+    
 }
 
-//Build what?
-attachmentSpacer();
-//main();
+module spacer(spacerWidth, spacerLength,spacerHeight)
+{
+         cube([spacerWidth, spacerLength,spacerHeight]);
+}
+
+
+
+main();
