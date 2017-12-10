@@ -1,10 +1,10 @@
 
 
-outerDiameter1 = 57.5;
-outerDiameter2 = 58.04;
+outerDiameter1 = 56.0;
+outerDiameter2 = 57.5;
 
-innerDiameter1 = 31.0;
-innerDiameter2 = 32.0;
+innerDiameter1 = 30.0;
+innerDiameter2 = 31.0;
 
 height = 30;
 
