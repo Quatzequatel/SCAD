@@ -3,7 +3,7 @@
 Width = 18.50;
 Length = Width;
 Height = Width;
-WallThickness = 8.0; //Changed for SpacerJig()
+WallThickness = 2.0; //Changed for SpacerJig()
 
 function OuterWidth(w) = AddWall(w);
 function OuterLength(l) = AddWall(l);
@@ -58,15 +58,15 @@ module BracketWithGrove()
         spacer(SpacerWidth+2.0, Grovelength+2,SpacerHeight);
 //        cube([SpacerWidth+2.0, Grovelength+2,SpacerHeight]);
     echo(SpacerWidth+2.0, Grovelength+2,SpacerHeight);
-//        translate([-AddWall(0)+1,-1.8,-5])
-//        rotate([0,45,90])
-//        rotate([90,0,0])
-//        cube([Width,Length,AddWall(0)]);
-//        
-//        translate([-AddWall(0)+1,-1.8,Grovelength+5])
-//        rotate([0,45,90])
-//        rotate([90,0,0])
-//        cube([Width,Length,AddWall(0)]);
+        translate([-AddWall(0)+1,-1.8,-5])
+        rotate([0,45,90])
+        rotate([90,0,0])
+        cube([Width,Length,AddWall(0)]);
+        
+        translate([-AddWall(0)+1,-1.8,Grovelength+5])
+        rotate([0,45,90])
+        rotate([90,0,0])
+        cube([Width,Length,AddWall(0)]);
     }
 
     //add a spacer for each bracket.
@@ -75,7 +75,7 @@ module BracketWithGrove()
 
 
 ScrewDiameter=3.5;
-SpacerWidth= 7.5; //AddWall(ScrewDiameter); //Changed for SpacerJig()
+SpacerWidth= AddWall(ScrewDiameter); //Changed for SpacerJig()
 SpacerLength=Length;
 SpacerHeight=WallThickness+2;
 Grovelength=2*AddWall(Length);
@@ -173,15 +173,15 @@ module SpacerJig()
 }
 
 Rows = 1;
-Columns = 1;
+Columns = 4;
 
 module main()
 {
     for(x=[1:Rows], y=[1:Columns])
     {
-        SpacerJig();
+//        SpacerJig();
 //        translate([(Grovelength+5)*x,(SpacerLength+7)*y,0]) angleBracket();
-//    translate([(Grovelength+5)*x,(SpacerLength+7)*y,0])BracketWithGrove();
+    translate([(Grovelength+5)*x,(SpacerLength+7)*y,0])BracketWithGrove();
 //    translate([(SpacerWidth+5)*x,(SpacerLength+5)*y,0])attachmentSpacer();
 //        translate([(AddWall(Width)*3+1)*x,(SpacerLength+6)*y,0]) CeilingBracket();
     }
