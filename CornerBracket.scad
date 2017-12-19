@@ -5,7 +5,8 @@ Build_BracketWithGrove = 3;
 Build_AttachemtnSpacer =4;
 Build_CeilingBracket=5;
 Build_hookBracket=6;
-Build = Build_hookBracket;
+Build_PowerStripHolder=7;
+Build = Build_PowerStripHolder;
 
 
 Width = 18.50;
@@ -37,7 +38,7 @@ module squareTube(innerWidth, innerDepth, innerHeight, wallThickness)
 {
     difference()
     {
-    echo("squareTube()",OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight));
+    echo("squareTube()",OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight),wallThickness);
     cube([OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight)], false);
     translate([Build != Build_SpacerJig ? wallThickness : wallThickness+SpacerHeight, wallThickness,-1])
         cube([innerWidth, innerDepth, OuterHeight(innerHeight)+2], false);
@@ -287,9 +288,63 @@ module SpacerJig()
 module PowerStripHolder()
 {
     baseWidth = 74.0;
+    baseHeight=23.0;
     basePlugDepth = 35.0;
     basePlugLipDepth=29.5;
-    baseTop
+    baseTopDepth=41;
+    baseSeamDepth=19.0;
+    seamToBevelDepth=16.0;
+    powerCordDiameter=9.5;
+    
+    //PowerStripHolderBottom(baseWidth,baseHeight,basePlugDepth,WallThickness, Width,Length);
+    PowerStripHolderTop(baseWidth,baseHeight,baseTopDepth,WallThickness, Width,Length,powerCordDiameter);
+}
+module PowerStripHolderBottom(width, height, depth, wallThickness, widthBracket, depthBracket)
+{
+    union()
+    {
+        squareTube(width, depth, height, wallThickness);
+        translate([wallThickness,wallThickness,0])
+        cube([width,depth,2]);
+        
+        difference()
+        {
+            //Right Bracket
+            translate([OuterWidth(width),Middle(depth)/2,0])
+            squareTube(widthBracket,depthBracket,height,wallThickness);    
+            //Groove for Right Bracket
+            translate([OuterWidth(width)+OuterWidth(widthBracket),Middle(depth)/2,1])
+            Groove(AddExtra(height,2), SpacerWidth, WallThickness, Width);  
+        }
+        
+        difference()
+        {
+            //Left Bracket
+            translate([-OuterWidth(widthBracket),Middle(depth)/2,0])
+            squareTube(widthBracket,depthBracket,height,wallThickness);    
+            //Groove for Left Bracket
+            translate([-OuterWidth(widthBracket)+2,Middle(depth)/2,1])
+            Groove(AddExtra(height,2), SpacerWidth, WallThickness, Width); 
+        }            
+    }
+}
+module PowerStripHolderTop(width, height, depth, wallThickness, widthBracket, depthBracket, powerCordDiameter)
+{
+    difference()
+    {
+        PowerStripHolderBottom(width, height, depth, wallThickness, widthBracket, depthBracket);
+        translate([Middle(width), Middle(depth),0])
+        cylinder($fn = 100,h=20, d=powerCordDiameter,center=true);
+        
+        translate([Middle(width), depth-5,0])
+        rotate([90,0,0])
+        cylinder($fn = 100,h=Middle(depth)+7, d=powerCordDiameter,center=true);
+        
+        translate([Middle(width), depth+3,Middle(depth)])
+        rotate([0,0,90])
+        cylinder($fn = 100,h=depth, d=powerCordDiameter,center=true);
+    }
+    
 }
 
 Rows = 1;
@@ -331,8 +386,10 @@ module main()
             Groove(Grovelength, SpacerWidth, WallThickness, Width);
             }
         }
-    
-        
+        if(Build==Build_PowerStripHolder)
+        {
+            PowerStripHolder();
+        }
     }
 }
 
