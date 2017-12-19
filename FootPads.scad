@@ -37,7 +37,7 @@ spokeDia=15;
 spokeY=2;
 wallWidth=2;
 
-FootPad1394();
+FootPad245();
 
 module Manafold()
 {
@@ -61,7 +61,7 @@ module FootPad245()
     {
 //        translate([-Middle(DoubleLength),Middle(AddWall(Width)),12]) 
         rotate([0,180,0])
-        linear_extrude(height = 24.5, center = true, convexity = 10, scale=[2,2.2559], $fn=100)
+        linear_extrude(height = 24.5, center = true, convexity = 10, scale=[1,2.2559], $fn=100)
         circle(r = Diameter1,center=true);      
         
         #translate([0,0,8.5])
@@ -76,7 +76,7 @@ module FootPad1394()
     {
 //        translate([-Middle(DoubleLength),Middle(AddWall(Width)),12]) 
         rotate([0,180,0])
-        linear_extrude(height = 13.94, center = true, convexity = 10, scale=[2,2.2559], $fn=100)
+        linear_extrude(height = 13.94, center = true, convexity = 10, scale=[1,2.2559], $fn=100)
         circle(r = Diameter1,center=true);      
         
         #translate([0,0,3.15])
