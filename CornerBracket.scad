@@ -8,7 +8,8 @@ Build_hookBracket=6;
 Build_PowerStripHolder=7;
 SubBuild_PowerStripBottom= 1;
 SubBuild_PowerStripTop= 2;
-Build = Build_PowerStripHolder;
+
+Build = Build_AttachemtnSpacer;
 SubBuild=SubBuild_PowerStripTop;
 
 
@@ -48,18 +49,6 @@ module squareTube(innerWidth, innerDepth, innerHeight, wallThickness)
     }
 }
 
-module squareTube2(innerWidth, innerDepth, innerHeight, wallThickness)
-{
-    difference()
-    {
-    echo("squareTube()",OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight));
-    cube([OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight)], false);
-    translate([Build != Build_SpacerJig ? wallThickness : wallThickness+SpacerHeight, wallThickness,-1])
-        cube([innerWidth, innerDepth, OuterHeight(innerHeight)+2], false);
-    }
-}
-
-
 //Changed to be immutable method.
 module angleBracket(width,length,height,wallThickness)
 {
@@ -96,47 +85,49 @@ module hookBracket()
             //             22.5               
             translate([0,0,AddWall(Height)])
             rotate([0,-90,0])
-            squareTube2(Width,Length,AddWall2(2*Height),WallThickness);
+            squareTube(Width,Length,AddWall2(2*Height),WallThickness);
             
             translate([-Middle(DoubleLength),Middle(AddWall(Width)),11.5]) 
             rotate([0,0,90])
             linear_extrude(height = AddWall(Height), center = true, convexity = 10, scale=[4.3,8.6], $fn=100)
             circle(r = 2.6);            
         }
-        #translate([ -Middle(DoubleLength), Middle(OuterWidth(Width)),0])
+        translate([ -Middle(DoubleLength), Middle(OuterWidth(Width)),0])
         cylinder($fn=100,h=20,d1=ScrewDiameter,d2=ScrewDiameter,center=false);
     }
 }
 
 module Groove(grooveLength,grooveWidth, thickness, headLength)
 {
+    cubeSize=[headLength,headLength,AddWall(0)];
+    grooveSize=[AddExtra(grooveWidth,2), AddExtra(grooveLength,2),thickness*2];
+    rotateBevel=[90,45,90];
+    bevelxMove= -AddWall(0)+1;
+    bevelyMove= -1.8;
+    
         //Insert Grove
         translate([-thickness-1,Middle(AddWall(headLength))-Middle(AddExtra(grooveWidth,2.0)),-1])
-        rotate([0,0,90])
-        rotate([90,0,0])
-        spacer(AddExtra(grooveWidth,2.0), AddExtra(grooveLength,2),thickness*2);
+        rotate([90,0,90])
+        cube(grooveSize);
 
         //Add bottom bevel
-        translate([-AddWall(0)+1,-1.8,-5])
-        rotate([0,45,90])
-        rotate([90,0,0])
-        cube([headLength,headLength,AddWall(0)]);
+        translate([bevelxMove,bevelyMove,-5])
+        rotate(rotateBevel)
+        cube(cubeSize);
         
         //Add top bevel
-        translate([-AddWall(0)+1,-1.8,AddExtra(grooveLength,5)])
-        rotate([0,45,90])
-        rotate([90,0,0])
-        cube([headLength,headLength,AddWall(0)]);
+        translate([bevelxMove,bevelyMove,AddExtra(grooveLength,5)])
+        rotate(rotateBevel)
+        cube(cubeSize);
 }
 
 //Changed to be immutable method.
 module BracketWithGrove(width,length,height,wallThickness,grooveLength,grooveWidth, thickness)
 {
-        difference()
+    difference()
     {
-    angleBracket(width,length,height,wallThickness);
+        angleBracket(width,length,height,wallThickness);
         Groove(grooveLength,grooveWidth, wallThickness,length);
-
     }
 }
 
@@ -145,17 +136,11 @@ module attachmentSpacer()
     difference()
     {
 
-         spacer(SpacerWidth, SpacerLength,SpacerHeight);
+        cube([SpacerWidth, SpacerLength,SpacerHeight]);
         
         translate([Middle(SpacerWidth), Middle(Length)],0)
             cylinder($fn=100,h=SpacerHeight,d1=ScrewDiameter,d2=ScrewDiameter,center=false);
     }
-    
-}
-
-module spacer(spacerWidth, spacerLength,spacerHeight)
-{
-         cube([spacerWidth, spacerLength,spacerHeight]);
 }
 
 module CeilingBracket()
@@ -164,55 +149,65 @@ module CeilingBracket()
     {
         union()
             {
-            squareTube(Width,Length,Height+AddWall(0),WallThickness);
-                translate([-AddWall(Width),0,0]) cube([3*AddWall(Width),AddWall(Length),DoubleLength(WallThickness)]);
+                wallSize    = [AddWall(Width),AddWall(Length),WallThickness];
+                wallRotation= [90,0,0];
+                toleftWall  = -AddWall(Width);
+                torightWall = AddWall(Width);
+                tofrontWall = WallThickness;
+                tobackWall  = AddWall(Width);
+                toBottom    = DoubleLength(WallThickness);
                 
-                translate([-AddWall(Width),WallThickness,DoubleLength(WallThickness)])
-                rotate([90,0,0])
-                cube([AddWall(Width),AddWall(Length),WallThickness]);
+                //center bracket
+                squareTube(Width,Length,Height+AddWall(0),WallThickness);
+                translate([-AddWall(Width),0,0]) cube([3*AddWall(Width)
+                    ,AddWall(Length),DoubleLength(WallThickness)]);
                 
-                translate([-AddWall(Width),AddWall(Width),DoubleLength(WallThickness)])
-                rotate([90,0,0])
-                cube([AddWall(Width),AddWall(Length),WallThickness]);
-
-                translate([AddWall(Width),WallThickness,DoubleLength(WallThickness)])
-                rotate([90,0,0])
-                cube([AddWall(Width),AddWall(Length),WallThickness]);
-                
-                translate([AddWall(Width),AddWall(Width),DoubleLength(WallThickness)])
-                rotate([90,0,0])
-                cube([AddWall(Width),AddWall(Length),WallThickness]);
+                supportWall(wallSize, wallRotation, toleftWall,  tofrontWall, toBottom);
+                supportWall(wallSize, wallRotation, toleftWall,  tobackWall,  toBottom);
+                supportWall(wallSize, wallRotation, torightWall, tofrontWall, toBottom);
+                supportWall(wallSize, wallRotation, torightWall, tobackWall,  toBottom);
             }
-        translate([-Middle(AddWall(Width)),Middle(AddWall(Length)),-1]) 
-        cylinder($fn=100,h=SpacerHeight(2),d1=ScrewDiameter,d2=ScrewDiameter,center=false);
         
-        translate([Middle(AddWall(Width)),Middle(AddWall(Length)),-1]) 
-        cylinder($fn=100,h=SpacerHeight(2),d1=ScrewDiameter,d2=ScrewDiameter,center=false);
+            leftHole=-Middle(AddWall(Width));
+            centerHole=Middle(AddWall(Width));
+            rightHole=Middle(3*AddWall(Width));
+            toTheMiddle=Middle(AddWall(Length));
+
+            screwHole(SpacerHeight(2),ScrewDiameter,leftHole,toTheMiddle,-1);
+            screwHole(SpacerHeight(2),ScrewDiameter,centerHole,toTheMiddle,-1);
+            screwHole(SpacerHeight(2),ScrewDiameter,rightHole,toTheMiddle,-1);
         
-        translate([Middle(3*AddWall(Width)),Middle(AddWall(Length)),-1]) 
-        cylinder($fn=100,h=SpacerHeight(2),d1=ScrewDiameter,d2=ScrewDiameter,center=false);
-        
-        translate([-AddWall(Width),WallThickness+1,4]) 
-        rotate([0,-45,0])
-        rotate([90,0,0])
-        cube([2*AddWall(Width),2*AddWall(Length),DoubleLength(WallThickness)]);
-        
-        translate([-AddWall(Width),AddWall(Length)+1,4]) 
-        rotate([0,-45,0])
-        rotate([90,0,0])
-        cube([2*AddWall(Width),2*AddWall(Length),DoubleLength(WallThickness)]);
-        
-        translate([2*AddWall(Width),WallThickness+1,4]) 
-        rotate([0,-45,0])
-        rotate([90,0,0])
-        cube([2*AddWall(Width),2*AddWall(Length),DoubleLength(WallThickness)]);
-        
-        translate([2*AddWall(Width),AddWall(Length)+1,4]) 
-        rotate([0,-45,0])
-        rotate([90,0,0])
-        cube([2*AddWall(Width),2*AddWall(Length),DoubleLength(WallThickness)]);
+            //cut-a-ways to make brackets have an angle
+            cubeSize = [2*AddWall(Width),2*AddWall(Length),DoubleLength(WallThickness)];
+            rotate45 = [90,-45,0];
+            toTheLeft=-AddWall(Width);
+            toTheRight=2*AddWall(Width);
+            toFront=WallThickness+1;
+            toBack=AddWall(Length)+1;
+            
+            angleSupport(cubeSize,rotate45,toTheLeft,toFront,4);
+            angleSupport(cubeSize,rotate45,toTheLeft,toBack,4);
+            angleSupport(cubeSize,rotate45,toTheRight,toFront,4);
+            angleSupport(cubeSize,rotate45,toTheRight,toBack,4);
     }
-    
+}
+
+module supportWall(cubeSize,rotation,xMove,yMove,zMove)
+{
+    angleSupport(cubeSize,rotation,xMove,yMove,zMove);
+}
+
+module screwHole(height,diameter,xMove,yMove,zMove)
+{
+    translate([xMove,yMove,zMove]) 
+    cylinder($fn=100,h=height,d=diameter,center=false);
+}
+
+module angleSupport(cubeSize,rotation,xMove,yMove,zMove)
+{
+    translate([xMove,yMove,zMove]) 
+    rotate(rotation)
+    cube(cubeSize);
 }
 
 module SpacerJig()
@@ -231,7 +226,7 @@ module SpacerJig()
                     -1])
         rotate([0,0,90])
         rotate([90,0,0])
-        spacer(SpacerWidth+1.0, AddWall(DoubleLength)+2,SpacerHeight +1);
+        cube([SpacerWidth+1.0, AddWall(DoubleLength)+2,SpacerHeight +1]);
         
         //insert screw head channel.
         echo("screw head channel",AddWall(ScrewDiameter)-WallThickness+SpacerHeight-0.5,
@@ -242,7 +237,7 @@ module SpacerJig()
                     -1])
         rotate([0,0,90])
         rotate([90,0,0])
-        spacer(12, AddWall(DoubleLength)+2,SpacerHeight +1);
+        cube([12, AddWall(DoubleLength)+2,SpacerHeight +1]);
         
         //Drill hole
         translate([-1,Middle(AddWall(Length)),Middle(AddWall(DoubleLength))]) 
@@ -265,12 +260,10 @@ module SpacerJig()
         rotate([90,0,0])
         difference()
         {
-            spacer(AddWall2(ScrewDiameter2), SpacerLength,SpacerHeight);
+            cube([AddWall2(ScrewDiameter2), SpacerLength,SpacerHeight]);
             translate([Middle(SpacerWidth), Middle(Length)],0)
             cylinder($fn=100,h=SpacerHeight,d1=ScrewDiameter2,d2=ScrewDiameter2,center=false);
         }
-        
-
     }
     //holder
     translate([0,-0.5,Middle(DoubleLength)-SpacerLength])
@@ -281,12 +274,11 @@ module SpacerJig()
     rotate([90,0,0])
     difference()
     {
-    spacer(AddWall2(ScrewDiameter2)+2, SpacerLength,SpacerHeight);
+    cube([AddWall2(ScrewDiameter2)+2, SpacerLength,SpacerHeight]);
     translate([Middle(AddWall2(ScrewDiameter2)+2), Middle(Length)],0)
     cylinder($fn=100,h=Length,d1=ScrewDiameter2,d2=ScrewDiameter2,center=false);
     }
 }
-
 
 module PowerStripHolder(which)
 {
