@@ -1,14 +1,14 @@
 /*
-Version=3.0
+Version=2.0
 */
-outerDiameter1 = 45;
-outerDiameter2 = 50.0;
+outerDiameter1 = 46;
+outerDiameter2 = 51.0;
 
 innerDiameter1 = 31.0;
-innerDiameter2 = 32.0;
+innerDiameter2 = 31.0;
 
 outerDiameter3 = outerDiameter1;
-outerDiameter4 = 40;
+outerDiameter4 = 42;
 
 innerDiameter3 = 31.0;
 innerDiameter4 = outerDiameter4;
@@ -27,5 +27,7 @@ module tube(h, od1, od2, id1, id2)
 union()
 {
     tube(height, outerDiameter2, outerDiameter1, innerDiameter2,innerDiameter1);
-    translate([0,0,height])tube(height, outerDiameter3, outerDiameter4, innerDiameter3,innerDiameter4);
+    
+    translate([0,0,height])
+    tube(height, outerDiameter3, outerDiameter4, innerDiameter3,innerDiameter4);
 }
