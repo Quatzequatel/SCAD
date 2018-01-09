@@ -40,7 +40,7 @@ module tubeMatrix(rows,columns, spacing, matThickness,outerDiameter,tubeThicknes
         cornerPillers(rows,columns, spacing, matThickness,outerDiameter,tubeThickness,tubelength);
     }
     
-    echo("Dimension is :",(rows*spacing),(columns*spacing));
+    echo("Dimension is :",matWidth(rows,spacing),matDepth(columns,spacing));
 }
 
 function matWidth(rows,spacing)= rows*spacing + spacing/2;
@@ -131,9 +131,9 @@ module createNib(rows,columns, spacing, matThickness,rotation)
 
 module main()
 {
-    rows = 20;
-    coluumns=20;
-    spacing=19.5;
+    rows = 15;
+    coluumns=10;
+    spacing=19.05;
     matThickness=2;
     tubediameter=19.05;
     tubeThickness=1;
