@@ -2,6 +2,7 @@
 Build_SpacerJig = 1;
 Build_AngleBracket = 2;
 Build_BracketWithGrove = 3;
+Build_VerticalBracketWithGrove=8;
 Build_AttachemtnSpacer =4;
 Build_CeilingBracket=5;
 Build_hookBracket=6;
@@ -9,7 +10,7 @@ Build_PowerStripHolder=7;
 SubBuild_PowerStripBottom= 1;
 SubBuild_PowerStripTop= 2;
 
-Build = Build_PowerStripHolder;
+Build = Build_VerticalBracketWithGrove;
 SubBuild=SubBuild_PowerStripTop;
 
 
@@ -128,6 +129,19 @@ module BracketWithGrove(width,length,height,wallThickness,grooveLength,grooveWid
     {
         angleBracket(width,length,height,wallThickness);
         Groove(grooveLength,grooveWidth, wallThickness,length);
+    }
+}
+
+module VerticalBracketWithGrove(width,length,height,wallThickness,grooveLength,grooveWidth, thickness)
+{
+    echo("VerticalBracketWithGrove",width,length,height,wallThickness,grooveLength,grooveWidth, thickness);
+    difference()
+    {
+        rotate([0,0,180])
+            angleBracket(width,length,height,wallThickness);
+        translate([22.5,0,0])
+            rotate([0,0,90])
+            Groove(grooveLength,grooveWidth, wallThickness,length);
     }
 }
 
@@ -401,6 +415,11 @@ module main()
         {
             translate([(Grovelength+5)*x,(SpacerLength(7))*y,0])
                 BracketWithGrove(Width,Length,Height,WallThickness, DoubleLength(), SpacerHeight());
+        }    
+        if(Build == Build_VerticalBracketWithGrove) 
+        {
+            translate([(Grovelength+5)*x,(SpacerLength(7))*y,0])
+                VerticalBracketWithGrove(Width,Length,Height,WallThickness, DoubleLength(), SpacerHeight());
         }    
         if(Build == Build_AttachemtnSpacer) 
             {
