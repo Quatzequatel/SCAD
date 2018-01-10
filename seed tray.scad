@@ -1,27 +1,33 @@
 /*
 seed tray 1/2/2018
 */
+$fn=100;
 
-
-module squareTube(innerWidth, innerDepth, innerHeight, wallThickness)
+module squareTube(width,depth,height,wall)
 {
-    difference()
-    {
-    echo("squareTube()",OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight),wallThickness);
-    cube([OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight)], false);
-    translate([Build != Build_SpacerJig ? wallThickness : wallThickness+SpacerHeight, wallThickness,-1])
-        cube([innerWidth, innerDepth, OuterHeight(innerHeight)+2], false);
-    }
+        w = width;
+        d = depth;
+        q = wall;  
+    
+    a=[[0,0],[w,0],[w,d],[0,d]];
+    aa=[[q,q],[w-q,q],[w-q,d-q],[q,d-q]];
+    p=[[0,1,2,3],[4,5,6,7]];
+    aaa=concat(a,aa);
+    
+    echo("",aaa);
+    
+    linear_extrude(height,true)
+    polygon(aaa,p,10);
 }
 
 module tube(outerDiameter,wallThickness,length)
 {
+
+    linear_extrude(length,true)
     difference()
     {
-//        echo("tube()",outerDiameter,length,wallThickness);
-        cylinder($fn=100,length,d=outerDiameter,center=true);
-        translate([0,0,0])
-        cylinder($fn=100,length+1,d=(outerDiameter-wallThickness),center=true);
+        circle(d=outerDiameter,true);
+        circle(d=outerDiameter-wallThickness,true);
     }
 }
 
@@ -33,7 +39,7 @@ module tubeMatrix(rows,columns, spacing, matThickness,outerDiameter,tubeThicknes
 
         for(x = [1:rows], y =[1:columns])
         {
-            translate([matXmove(x,spacing),matYmove(y,spacing),tubelength/2])
+            translate([matXmove(x,spacing),matYmove(y,spacing),0])
             tube(outerDiameter,tubeThickness,tubelength);
         }
         
@@ -60,7 +66,7 @@ module mat(rows,columns, spacing, matThickness,outerDiameter,tubelength)
             {
                 //note: the /3 below is insurance that -tube is below the cube plane.
                 translate([matXmove(x,spacing),matYmove(y,spacing),tubelength/3])
-                cylinder($fn=100,tubelength,d=outerDiameter,center=true);
+                cylinder(tubelength,d=outerDiameter,center=true);
             }
             
             if(includeNibs() == true)
@@ -74,21 +80,11 @@ module mat(rows,columns, spacing, matThickness,outerDiameter,tubelength)
         }    
 }
 
-module squareTube(innerWidth, innerDepth, innerHeight, wallThickness)
-{
-    difference()
-    {
-    echo("squareTube()",OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight),wallThickness);
-    cube([OuterWidth(innerWidth), OuterLength(innerDepth), OuterHeight(innerHeight)], false);
-    translate([Build != Build_SpacerJig ? wallThickness : wallThickness+SpacerHeight, wallThickness,-1])
-        cube([innerWidth, innerDepth, OuterHeight(innerHeight)+2], false);
-    }
-}
 
 module cornerPillers(rows,columns, spacing, matThickness,outerDiameter,tubeThickness,tubelength)
 {
     collarSpace = 12;
-    pillarWidth = outerDiameter/4;
+    pillarWidth = 6.1;//outerDiameter/4;
     pillarDepth = pillarWidth;
     pillarHeight = tubelength+collarSpace;
     zMove = pillarHeight/2;
@@ -96,7 +92,7 @@ module cornerPillers(rows,columns, spacing, matThickness,outerDiameter,tubeThick
     yMove = -pillarDepth/2;
     
 //    echo("cornerPillers(passed param)",rows,columns, spacing, matThickness,outerDiameter,tubeThickness,tubelength);
-//    echo("cornerPillers()",pillarWidth,pillarDepth,pillarHeight,collarSpace,zMove,xMove,yMove);
+    echo("cornerPillers()",pillarWidth,pillarDepth,pillarHeight,collarSpace,zMove,xMove,yMove);
     //1
     translate([-xMove,-yMove,zMove])
     cube([pillarWidth,pillarDepth,pillarHeight],true);
@@ -133,10 +129,10 @@ module main()
 {
     rows = 15;
     coluumns=10;
-    spacing=19.05;
-    matThickness=2;
+    spacing=19.0;
+    matThickness=3;
     tubediameter=19.05;
-    tubeThickness=1;
+    tubeThickness=2;
     tubeLength=25.4;
     tubeMatrix(rows,coluumns,spacing,matThickness,tubediameter,tubeThickness,tubeLength);
 

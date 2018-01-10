@@ -48,4 +48,4 @@ module microgreenSupport(rows, width,depth,height,wall)
         }
     
 }
-microgreenSupport(4,50,200,30,4);
+microgreenSupport(6,50,200,25,2);
