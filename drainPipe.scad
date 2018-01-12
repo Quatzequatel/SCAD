@@ -1,4 +1,4 @@
-diameter=11.5;
+diameter=12.7;//11.5; changed to 1/2 inch
 length=12.5;
 angle=90;
 
