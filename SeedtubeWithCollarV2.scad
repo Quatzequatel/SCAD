@@ -10,8 +10,8 @@ ModelSpacing = LipRadiusOuter -20;
 
 
 CylinderWidth=40;
-Seedrows=3;
-Seedcolumns=3;
+Seedrows=1;
+Seedcolumns=1;
 Thickness=2;
 CylinderHeight=50;
 CellSpacing=2;
@@ -57,6 +57,16 @@ module Tube()
             }
             Lip(x,Y);
         }
+    }
+}
+
+module tube2(outerDiameter, wallThickness, height)
+{
+    linear_extrude(height,true)
+    difference()
+    {
+        circle($fn = 150,outerDiameter,true);
+        circle($fn = 150,outerDiameter-wallThickness,true);
     }
 }
 
