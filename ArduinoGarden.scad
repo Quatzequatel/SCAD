@@ -1,4 +1,5 @@
 include <arduino.scad>
 
 
-bumper(RELAY2);
+bumper(UNO);
+

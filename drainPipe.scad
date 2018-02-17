@@ -33,6 +33,6 @@ module elbowPipe(r,l, a, wallThickness)
 
 elbowPipe(radius(diameter),length,angle,2);
 //elbowPipe(10,10,90,2);
-translate([radius(diameter),-25,radius(diameter)])
-rotate([180,90,0])
+translate([diameter,-25,0])
+rotate([180,180,0])
 elbowPipe(radius(diameter),length,angle,2);
