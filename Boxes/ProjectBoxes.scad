@@ -17,21 +17,25 @@ Project Box
 These are sold at Costco.
 */
 ProjectBoxWidth=315;
-ProjectBoxHeight = 70;
+ProjectBoxHeight = 55;
 
 /*
 Project Types
 */
 
 TreadSpoilDia = 19.2;
-TreadShoilHeight = 58;
+TreadSpoilHeight = 58;
+
+ShortTreadSpoilDia = 35;
+ShortTreadShoilHeight = 46; 
 
 LgMedTray = false;
 Md1MedTray = false;
 Md2MedTray = false;
 SmMedTray = false;
 //PB = ProjectBox;
-PB_SpoilHorizontalShallow = true;
+PB_SpoilHorizontalShallow = false;
+PB_ShortSpoilHorizontalShallow = true;
 
 //When true completes for the width of the drawer.
 Complement = true;
@@ -70,21 +74,26 @@ module BoxWalls(x,y,wall, height)
     }
 }
 
-module drawTray()
+module drawTray(trayType)
 {
-    if(LgMedTray){if (!Complement) Box(76,225,2,35); else Box(76,DrawerWidth-225,2,35);}
-    if(Md1MedTray){if (!Complement) Box(65,200,2,35); else Box(65,DrawerWidth-200,2,35);}
-    if(Md2MedTray){if (!Complement) Box(47,196,2,35); else Box(47,DrawerWidth-196,2,35);}
-    if(SmMedTray){if (!Complement) Box(35,225,2,35); else Box(35,DrawerWidth-225,2,35);}
-    if(PB_SpoilHorizontalShallow)
+    if(trayType=="LgMedTray"){if (!Complement) Box(76,225,2,35); else Box(76,DrawerWidth-225,2,35);}
+    if(trayType=="Md1MedTray"){if (!Complement) Box(65,200,2,35); else Box(65,DrawerWidth-200,2,35);}
+    if(trayType=="Md2MedTray"){if (!Complement) Box(47,196,2,35); else Box(47,DrawerWidth-196,2,35);}
+    if(trayType=="SmMedTray"){if (!Complement) Box(35,225,2,35); else Box(35,DrawerWidth-225,2,35);}
+    if(trayType=="PB_SpoilHorizontalShallow")
         if (Shell)
-        
-            ShellBox(ProjectBoxWidth/3,(TreadShoilHeight+(TreadSpoilDia/6)),(TreadSpoilDia*.8));
+            ShellBox(ProjectBoxWidth/3,(TreadSpoilHeight+(TreadSpoilDia/6)),(TreadSpoilDia*.8));
             else
-            Box(ProjectBoxWidth/3,(TreadShoilHeight+(TreadSpoilDia/6)),1.2,(TreadSpoilDia*.8));
+            Box(ProjectBoxWidth/3,(TreadSpoilHeight+(TreadSpoilDia/6)),1.2,(TreadSpoilDia*.8));
+            
+    if(trayType=="PB_ShortSpoilHorizontalShallow")
+        if (Shell)
+            ShellBox(ProjectBoxWidth/3,(ShortTreadShoilHeight+(ShortTreadSpoilDia/6)),(ShortTreadSpoilDia*.8));
+            else
+            Box(ProjectBoxWidth/3,(ShortTreadShoilHeight+(ShortTreadSpoilDia/6)),1.2,(ShortTreadSpoilDia*.8));
         
 }
 
 drawTray();
 
-translate([0,(TreadShoilHeight+(TreadSpoilDia/6))+4,0]) drawTray();
+//translate([0,(TreadShoilHeight+(TreadSpoilDia/6))+4,0]) drawTray();
