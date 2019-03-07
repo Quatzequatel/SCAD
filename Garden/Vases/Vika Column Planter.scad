@@ -1,4 +1,4 @@
-VaseSeed=87147589586781;//	
+//VaseSeed=87147589586781;//	
 OrnamentSeed=458456630271;//	
 //swirls or doodles
 Swoodle=0;//[1,0]
