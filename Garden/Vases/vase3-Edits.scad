@@ -2,7 +2,7 @@ VaseSeed=87147589586781;//
 OrnamentSeed=458456630271;//	
 //swirls or doodles
 Swoodle=0;//[1,0]
-GlobalScale=[1,1,1];//
+GlobalScale=[2,2,1];//
 BrushScale=[2,1,0.5];//
 BrushRotation=15;//
 OrnamentAdjust=0.05;//
@@ -52,24 +52,25 @@ difference()
 {
     union()
     {
-        color("Moccasin")rotate_extrude($fn=100,convexity = 20)
+        color("Moccasin")rotate_extrude($fn=200,convexity = 20)
         {
             intersection()
             {
                 square([50,100]);
                 union()
                 {
-                    offset(r=0.75) difference()
-                    {
-                        polygon(convexity =20, concat(bzplot(v,100),[[0,60]]));
-                        offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
-                        translate([0,1,0])offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
-                    }
-                    hull()
-                    {
-                        translate([7.5,1,0]) scale([2,1,1])circle(1);
-                        scale([2,1,1])circle(1);
-                    }
+                    echo(concat(bzplot(v,100),[[0,59.2977]]));
+                    offset(r=0.75) //difference()
+                    //{
+                        polygon(convexity =20, concat(bzplot(v,100),[[0,59.2977]]));
+//                        offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+//                        translate([0,1,0])offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+                    //}
+//                    hull()
+//                    {
+//                        translate([7.5,1,0]) scale([2,1,1])circle(1);
+//                        scale([2,1,1])circle(1);
+//                    }
                 }
             }
         }
