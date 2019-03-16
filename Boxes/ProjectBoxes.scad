@@ -16,7 +16,7 @@ DrawerWidth = 403;
 Project Box
 These are sold at Costco.
 */
-ProjectBoxWidth=315;
+ProjectBoxWidth=312;
 ProjectBoxHeight = 55;
 StackCount = 2;
 
@@ -43,7 +43,7 @@ Complement = true;
 Shell = true;
 
 //options are; SingleBox, DoubleBox, TripleBox, SingleProjectBox, DoubleProjectBox
-drawTray("SingleBox");
+drawTray("DoubleProjectBox");
 
 function actualLip(value) = value * 2;
 function stackBoxHeight(height, count, lip) = height/count + (count-1) * lip;

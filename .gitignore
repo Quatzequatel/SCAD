@@ -1,7 +1,5 @@
-# not tracking *.stl files
-
-*.stl
-*.gcode
-*.png
-*.jpg
-*.zip
+# only track .scad and 3mf files.
+*
+!*.scad
+!*.3mf
+!*.gcode
