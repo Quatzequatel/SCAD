@@ -54,7 +54,7 @@ difference()
     {
         color("Moccasin")rotate_extrude($fn=200,convexity = 20)
         {
-            !intersection()
+            intersection()
             {
                 square([50,100]);
                 union()
@@ -62,7 +62,7 @@ difference()
                     echo(concat(bzplot(v,100),[[0,59.2977]]));
                     offset(r=0.75) //difference()
                     //{
-                        polygon(convexity =20, concat(bzplot(v,100),[[0,60]]));
+                        polygon(convexity =20, concat(bzplot(v,100),[[0,58]]));
 //                        offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
 //                        translate([0,1,0])offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
                     //}
