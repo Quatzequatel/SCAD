@@ -43,28 +43,6 @@ difference()
     
 }
 
-module squareTube(outerwidth, outerheight, wallThickness, height)
-{
-        //linear_extrude(height,true)
-    difference()
-    {
-        linear_extrude(height,true)
-        minkowski()
-        {
-        square([outerwidth-minkowski_circle, outerheight-minkowski_circle],true);
-            circle(minkowski_circle);
-        }
-        
-        #translate([0,0,-2],true)
-        linear_extrude(height+4,true)
-        minkowski()
-        {
-        square([outerwidth-wallThickness-minkowski_circle,outerheight-wallThickness-minkowski_circle],true);
-                        circle(minkowski_circle);
-        }
-    }
-}
-
 module solidTube(outerwidth, outerheight, wallThickness, height)
 {
     linear_extrude(height,true)
