@@ -425,7 +425,7 @@ difference()
         color("OrangeRed")
         translate([0,0,-2])
         rotate([0,180,0])
-        shoulders([30,120,210,300]);
+        shoulders([26,123,206,304]);
     }
     //cut pipe hole thru plate
     color("Aqua") draw([1,1,8],[0,0,0],pipe,2,0);
@@ -513,7 +513,7 @@ module shoulders(a)
         // translate([5,5,0])
         rotate([0,0,a[i]])
         // translate([15.5,0,0])
-        rotate_extrude(angle = 30, $fn=200)
+        rotate_extrude(angle = 31, $fn=200)
         translate([30,0,0])
         scale([6.7,8,5])
         polygon(triangle);
