@@ -355,7 +355,7 @@ pipe = [
 [30, -5.5],
 [30.5, 0],];
 
-triangle = [[0,0],[1,0],[0,1]];
+triangle = [[0,0],[1,1],[1,0]];
 
 
 $fn=100;
@@ -412,15 +412,23 @@ union()
     draw([0.988607594936709,1.00258620689655,1],[0,0,-38],rect,2,1);
     draw([0.994303797468354,1.00129310344828,1],[0,0,-39],rect,2,1);
     //Z=20 for coupling
-    color("Turquoise") draw([1,1,20],[0,0,-49],rect,2,1);
+    color("Turquoise") draw([1,1.02,20],[0,0,-49],rect,2,1);
 }
 
 // a thick plate where tapper ends and pipe starts.
 difference()
 {
-    color("Teal") draw([0.777848101265823,1.05043103448276,4],[0,0,0],rect,2,0);
+    union()
+    {
+        color("Teal") draw([0.777848101265823,1.05043103448276,4],[0,0,0],rect,2,0);
+        //add support to collar for additional adheasion.
+        color("OrangeRed")
+        translate([0,0,-2])
+        rotate([0,180,0])
+        shoulders([30,120,210,300]);
+    }
     //cut pipe hole thru plate
-    color("Aqua") draw([1,1,5],[0,0,0],pipe,2,0);
+    color("Aqua") draw([1,1,8],[0,0,0],pipe,2,0);
 }
 color("DeepSkyBlue") draw([.94,.94,15],[0,0,8],pipe,2,1);
 
@@ -436,11 +444,7 @@ translate([30.5,0,0])
 scale([1.8,9,5])
 polygon(triangle);
 
-//add shoulders to collar for additional adheasion.
-color("OrangeRed")
-//translate([20,20,20])
-rotate([0,0,0])
-shoulders([31.5,118.5,211.5,298.5]);
+
 
 /*
 simple method for drawing a scaled polygon.
@@ -506,9 +510,11 @@ module shoulders(a)
 {
     for(i = [0:3])
     {
+        // translate([5,5,0])
         rotate([0,0,a[i]])
+        // translate([15.5,0,0])
         rotate_extrude(angle = 30, $fn=200)
-        translate([30.5,0,0])
+        translate([30,0,0])
         scale([6.7,8,5])
         polygon(triangle);
     }
