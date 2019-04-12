@@ -5,6 +5,8 @@ minkowski_circle = 16;
 wallThickness = 4;
 height = 155;
 
+SingleTTube = 0;
+
 //outerwidth1 = 78;
 //outerheight1 = 58;
 //height1 = 110;
@@ -14,7 +16,18 @@ outerwidth2 = 79 - minkowski_circle;
 outerheight2 = 58 - minkowski_circle;
 wallThickness2 = wallThickness;
 
-difference()
+T_Tube();
+if(!SingleTTube)
+{
+    translate([height,0,0])
+    rotate([0,0,180])
+    T_Tube();
+}
+
+
+module T_Tube()
+{
+    difference()
 {
     union()
     {
@@ -41,6 +54,7 @@ difference()
     translate([0,0,height/2+28])
     cube(height + 4, center = true);
     
+}
 }
 
 module solidTube(outerwidth, outerheight, wallThickness, height)
