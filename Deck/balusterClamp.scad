@@ -7,8 +7,8 @@ BalusterWidth = 39;
 BalusterSpacing = 83.5;
 WallThickness = 4;
 ClampHeight = BalusterWidth * 1;
-PlanterDiameter = 150;
-PlanterRingDiameter = 8;
+PlanterDiameter = 155; //diameter of pot to place in holder. Original value was 150 3/1/19. changed to 155 4/21/19
+PlanterRingDiameter = 8; //diameter of ring around pot.
 PlanterRingOffset = 25;
 Triangle = [[0,0],[0,5],[3,0]];
 
