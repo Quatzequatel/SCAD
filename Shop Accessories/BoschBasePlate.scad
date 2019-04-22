@@ -1,10 +1,7 @@
-
+/*****************************************************************************/
 // CONSTANTS - BEGIN
+/*****************************************************************************/
 HOLE_DISTANCE = 58;
-//List of mounting holes x coordinates.
-// HOLES_X = [60,-30,-30];
-//List of mounting holes y coordinates.
-// HOLES_Y = [0,51.962,-51.962];
 //angles for mounting holes
 ANGLES = [0,120,240];
 
@@ -29,24 +26,40 @@ INNER_DIAMETER = 52.5;
 
 PI = 4 * atan2(1,1); 
 
-
+/*****************************************************************************/
 // CONSTANTS - END
+/*****************************************************************************/
+// FUNCTIONS:
+// the following set of functions work together to return the x,y coordinate
+// from an existing point and angle. see https://en.wikipedia.org/wiki/Atan2 for
+// more information.
+/*****************************************************************************/
 function translatePointsForAngle(x,y,angle)= [pointForX(x,y,angle),pointForY(x,y,angle),0];
-
 function radius(x,y) = sqrt(x*x + y*y);
 function theta(x,y,angle) = atan2(y,x)-angle * PI / 180;
 function pointForX(x,y,angle) = radius(x,y) * sin(theta(x,y,angle));
 function pointForY(x,y,angle) = radius(x,y) * cos(theta(x,y,angle));
+//simplify for readability
 function half(x) = x/2;
 
+/*****************************************************************************/
 //Directives - start
+/*****************************************************************************/
 INCLUDE_HEX_HOLE = 0;
 INCLUDE_COUNTER_SINK = 1;
+INCLUDE_2X4_GUIDE = 1;
+/*****************************************************************************/
 //Directives - end
+/*****************************************************************************/
  
+/*****************************************************************************/
+// MAIN SUB
+/*****************************************************************************/
 base_plate();
-// two_by_four_template();
 
+/*****************************************************************************/
+// modules
+/*****************************************************************************/
 module hole()
 {
   cylinder(h= BASE_THICKNESS + 2, d = HOLE_DIAMETER);
@@ -69,26 +82,21 @@ module countersunk() {
 
 module hexHole()
 {
-    echo(translatePointsForAngle(0,HEX_HOLE_DISTANCE,180));
-    translate(translatePointsForAngle(0,HEX_HOLE_DISTANCE,180)) circle(d=HEX_HOLE_DIAMETER);
+    translate(translatePointsForAngle(0,HEX_HOLE_DISTANCE,180)) cylinder(h = BASE_THICKNESS, d = HEX_HOLE_DIAMETER);
 }
 
 module two_by_four_template()
 {
-    // translate([0,10*BASE_THICKNESS,0])
     difference()
     {
         twobyfour_guide();
         translate([0,0,-1])
         cylinder(h = TWOBYFOUR_WIDTH +BASE_THICKNESS, d = INNER_DIAMETER);
     }
-    
-
 }
 
 module twobyfour_guide()
 {
-    // translate([-8,OUTER_DIAMETER/2,3])
     translate([TWOBYFOUR_WIDTH/2,OUTER_DIAMETER/2,0])
     rotate([90,-90,0])
     linear_extrude(height=OUTER_DIAMETER) 
@@ -98,7 +106,6 @@ module twobyfour_guide()
         translate([half(BASE_THICKNESS),half(BASE_THICKNESS),0])
         square([TWOBYFOUR_HEIGHT + BASE_THICKNESS,TWOBYFOUR_WIDTH]);
     }
-    
 }
 
 module base_plate()
@@ -108,17 +115,15 @@ module base_plate()
             union()
             {
                 cylinder(h = BASE_THICKNESS, d = OUTER_DIAMETER);
-                two_by_four_template();
+                if(INCLUDE_2X4_GUIDE) two_by_four_template();
             }           
             
             union()
             {
                 mounting_holes();
                 cylinder(h = BASE_THICKNESS, d = INNER_DIAMETER);
-                // circle(d = INNER_DIAMETER);
                 if(INCLUDE_HEX_HOLE) hexHole();
                 if(INCLUDE_COUNTER_SINK) countersunk();  
             }
         }     
-        
 }
