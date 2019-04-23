@@ -34,7 +34,9 @@ PI = 4 * atan2(1,1);
 // from an existing point and angle. see https://en.wikipedia.org/wiki/Atan2 for
 // more information.
 /*****************************************************************************/
+//returns [x,y,z] array for consumption directly into translate(). z is arbitrarily set to 0.
 function translatePointsForAngle(x,y,angle)= [pointForX(x,y,angle),pointForY(x,y,angle),0];
+//returns distance from [0,0].
 function radius(x,y) = sqrt(x*x + y*y);
 function theta(x,y,angle) = atan2(y,x)-angle * PI / 180;
 function pointForX(x,y,angle) = radius(x,y) * sin(theta(x,y,angle));
@@ -65,6 +67,7 @@ module hole()
   cylinder(h= BASE_THICKNESS + 2, d = HOLE_DIAMETER);
 }
 
+// 3 holes at intervals of 120 degree angles.
 module mounting_holes()
 {
     for(i=[0:2])
