@@ -113,7 +113,7 @@ module externalHalfCoupler(top = 1)
 //d2= top of cone
 module TappeeredTube(xd1,xd2,id1,id2,h,center = true)
 {
-    echo(xd1,xd2,id1,id2,h,center);
+    // echo(xd1,xd2,id1,id2,h,center);
     difference()
     {
         cylinder(d1 = xd1, d2 = xd2, h=h, center=true);
