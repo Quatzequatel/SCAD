@@ -36,20 +36,7 @@ module build()
 {
     // #square([DS_HEIGHT,DS_WIDTH],center = true);
     // linear_extrude(height = TUBE_HEIGHT, center = true, convexity = 10)
-    difference()
-    {
-        minkowski()
-        {
-            square([minkowskiAdj(DS_HEIGHT,DS_RADIUS)+DS_WALL,minkowskiAdj(DS_WIDTH,DS_RADIUS)+DS_WALL],center = true);
-            circle(DS_RADIUS);
-        }
-
-        minkowski()
-        {
-            square([minkowskiAdj(DS_HEIGHT,DS_RADIUS),minkowskiAdj(DS_WIDTH,DS_RADIUS)],center = true);
-            circle(DS_RADIUS);
-        }
-    }
+    downSpout(DS_HEIGHT,DS_WIDTH,DS_RADIUS,DS_WALL);
 }
 
 module downSpout(height, width, radius, wall)
@@ -58,13 +45,13 @@ module downSpout(height, width, radius, wall)
     {
         minkowski()
         {
-            square([minkowskiAdj(DS_HEIGHT)+DS_WALL,minkowskiAdj(DS_WIDTH)+DS_WALL],center = true);
+            square([minkowskiAdj(height,radius)+wall,minkowskiAdj(width,radius)+wall],center = true);
             circle(DS_RADIUS);
         }
 
         minkowski()
         {
-            square([minkowskiAdj(DS_HEIGHT),minkowskiAdj(DS_WIDTH)],center = true);
+            square([minkowskiAdj(height,radius),minkowskiAdj(width,radius)],center = true);
             circle(DS_RADIUS);
         }
     }
