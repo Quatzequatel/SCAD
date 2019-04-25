@@ -36,6 +36,14 @@ module build()
 {
     // #square([DS_HEIGHT,DS_WIDTH],center = true);
     // linear_extrude(height = TUBE_HEIGHT, center = true, convexity = 10)
+    // downSpout(DS_HEIGHT,DS_WIDTH,DS_RADIUS,DS_WALL);
+    elbow();
+}
+
+module  elbow()
+{
+    rotate_extrude(angle=90, convexity=10) 
+    rotate([0,90,0])
     downSpout(DS_HEIGHT,DS_WIDTH,DS_RADIUS,DS_WALL);
 }
 
