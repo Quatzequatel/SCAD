@@ -1,5 +1,6 @@
 /*
-Description : <what does this do?>
+Description : 90 degree elbow joint for a flat downspout.
+still in progress need to validate dimensions are corrrect.
 */
 
 /*****************************************************************************
@@ -12,10 +13,12 @@ DS_WIDTH = 80;
 DS_RADIUS = 15.5;
 DS_WALL = 4;
 TUBE_HEIGHT = 10;
+DS_DEMS = [DS_WIDTH,DS_HEIGHT];
 
 /*****************************************************************************
 FUNCTIONS - code to make reading modules easier to understand.
 ******************************************************************************/
+function half(x) = x/2;
 function minkowskiAdj(x, r) = x - 2*r;
 
 /*****************************************************************************
@@ -34,34 +37,42 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    // #square([DS_HEIGHT,DS_WIDTH],center = true);
-    // linear_extrude(height = TUBE_HEIGHT, center = true, convexity = 10)
-    // downSpout(DS_HEIGHT,DS_WIDTH,DS_RADIUS,DS_WALL);
+    // elbowConnector();
+    downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 10);
+}
+
+module elbowConnector()
+{
+    translate([60,0,0])
+    rotate([90,0,0])
+    downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 50);
+
     elbow();
+
+    translate([-50,60,0])
+    rotate([90,0,90])
+    downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 50);
+
 }
 
 module  elbow()
 {
-    rotate_extrude(angle=90, convexity=10) 
-    rotate([0,90,0])
-    downSpout(DS_HEIGHT,DS_WIDTH,DS_RADIUS,DS_WALL);
-}
-
-module downSpout(height, width, radius, wall)
-{
+    rotate_extrude(angle=90,convexity = 10)
+    translate([60, 0, 0])
     difference()
     {
-        minkowski()
-        {
-            square([minkowskiAdj(height,radius)+wall,minkowskiAdj(width,radius)+wall],center = true);
-            circle(DS_RADIUS);
-        }
+        offset(r = DS_RADIUS) square(DS_DEMS,center = true);
+        offset(r = DS_RADIUS-DS_WALL) square(DS_DEMS,center = true);
+    }
+}
 
-        minkowski()
-        {
-            square([minkowskiAdj(height,radius),minkowskiAdj(width,radius)],center = true);
-            circle(DS_RADIUS);
-        }
+module downSpout(dimensions, radius, wall, length)
+{
+    linear_extrude(height = length)
+    difference()
+    {
+        offset(r = radius) square(dimensions,center = true);
+        offset(r = radius-wall) square(dimensions,center = true);
     }
 }
 
