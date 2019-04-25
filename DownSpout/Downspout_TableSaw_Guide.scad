@@ -5,8 +5,11 @@ Description : create a table-saw guide for ripping downspout on table saw.
 /*****************************************************************************
 CONSTANTS
 *****************************************************************************/
-fn=100;
+$fn=100;
 PI = 4 * atan2(1,1);
+GUIDE_SCALE = [1.02,1.04,100]; //best setting for guide, has enough play to all sliding but not sloppy.
+FEMALE_ATTACHMENT_SCALE = [1,1.02,20]; //a very tight attachment.
+GUIDE_WALL = 3;
 
 /*****************************************************************************
 FUNCTIONS - code to make reading modules easier to understand.
@@ -29,7 +32,7 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    draw([1,1.02,20],[0,0,0],downspout,2,1);
+    draw(GUIDE_SCALE,[0,0,0],downspout,GUIDE_WALL,1);
 }
 
 /*
