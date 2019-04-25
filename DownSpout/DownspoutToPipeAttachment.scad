@@ -1,3 +1,11 @@
+/*
+Description- this creates a elbowed connector between down spout and circle pipe.
+caveat - downspout is defined as array of points (rect) to get the correct corners.
+*/
+
+/*****************************************************************************/
+// CONSTANTS (globals)
+/*****************************************************************************/
 
 
 rect = [
