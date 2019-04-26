@@ -8,23 +8,29 @@ CONSTANTS
 *****************************************************************************/
 $fn=100;
 PI = 4 * atan2(1,1);
-DS_RADIUS = 21;
-DS_HEIGHT = 57-DS_RADIUS-6.8-5;
-DS_WIDTH = 80-DS_RADIUS-10.8-5;
-DS_WALL = 2;
-TUBE_HEIGHT = 10;
-DS_DEMS = [DS_WIDTH,DS_HEIGHT];
+ELBOW_90_OFFSET = 60;
+ELBOW_ANGLE = 90;
+FEMALE_RADIUS = 21;
+FEMALE_HEIGHT = 42.2-FEMALE_RADIUS;
+FEMALE_WIDTH = 64.2-FEMALE_RADIUS;
+DS_WALL = 3;
+TUBE_LENGTH = 50;
+CONNECTOR_LENGTH = 50;
+FEMALE_DEMS = [FEMALE_WIDTH,FEMALE_HEIGHT];
+MALE_RADIUS = 18;
+MALE_HEIGHT = FEMALE_HEIGHT-7;
+MALE_WIDTH = FEMALE_WIDTH-8;
+MALE_DEMS = [MALE_WIDTH,MALE_HEIGHT];
 
 /*****************************************************************************
 FUNCTIONS - code to make reading modules easier to understand.
 ******************************************************************************/
 function half(x) = x/2;
-// function minkowskiAdj(x, r) = x - 2*r;
 
 /*****************************************************************************
 Directives - defines what to build with optional features.
 *****************************************************************************/
-INCLUDE_THING = 0;
+INCLUDE_CHANNEL = 0;
 BUILD_THING = 1;
 
 /*****************************************************************************
@@ -37,34 +43,95 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    // elbowConnector();
-    #downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 15);
+    elbowConnector();
+    // downSpout(DS_DEMS,FEMALE_RADIUS,DS_WALL, 15);
     // draw([1,1.02,5],[0,0,0],downSpoutPoints,DS_WALL,1);
+// maleConnector();
 
+    // elbowChannel();
+    // channel();
 }
 
 module elbowConnector()
 {
-    translate([60,0,0])
-    rotate([90,0,0])
-    downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 50);
+    difference()
+    {
+        union()
+        {
+            translate([ELBOW_90_OFFSET,0,0])
+            rotate([90,0,0])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
 
-    elbow();
+            elbow();
 
-    translate([-50,60,0])
-    rotate([90,0,90])
-    downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 50);
+            translate([-50,ELBOW_90_OFFSET,0])
+            rotate([90,0,90])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+        }
+        if(INCLUDE_CHANNEL) union()
+        {
+            elbowChannel();
+            channel();
+        }
+    
+    }
 
+}
+
+module channel()
+{
+    color("Aqua")
+    translate([60,-TUBE_LENGTH,30])
+    rotate([0,90,90])
+    linear_extrude(height=CONNECTOR_LENGTH)
+    offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+
+    color("Aqua")
+    translate([-TUBE_LENGTH,ELBOW_90_OFFSET,30])
+    rotate([0,90,0])
+    linear_extrude(height=CONNECTOR_LENGTH)
+    offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+}
+
+module elbowChannel()
+{
+    translate([0,0,30])
+    rotate_extrude(angle=ELBOW_ANGLE,convexity = 10)
+    translate([ELBOW_90_OFFSET, 0, 0])
+    offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+}
+
+module maleConnector(length)
+{
+    // downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, TUBE_LENGTH)
+
+    difference()
+    {
+        union()
+        {
+            linear_extrude(height = DS_WALL) offset(r = FEMALE_RADIUS) square(FEMALE_DEMS,center = true);
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, TUBE_LENGTH
+        );
+
+            translate([0, 0, -TUBE_LENGTH
+        ])
+            downSpout(MALE_DEMS,FEMALE_RADIUS,DS_WALL, TUBE_LENGTH
+        );
+        }
+
+        translate([0, 0, -1])
+        linear_extrude(height = 2*DS_WALL) offset(r = FEMALE_RADIUS-DS_WALL) square(MALE_DEMS,center = true);
+    }
 }
 
 module  elbow()
 {
-    rotate_extrude(angle=90,convexity = 10)
-    translate([60, 0, 0])
+    rotate_extrude(angle=ELBOW_ANGLE,convexity = 10)
+    translate([ELBOW_90_OFFSET, 0, 0])
     difference()
     {
-        offset(r = DS_RADIUS) square(DS_DEMS,center = true);
-        offset(r = DS_RADIUS-DS_WALL) square(DS_DEMS,center = true);
+        offset(r = FEMALE_RADIUS) square(FEMALE_DEMS,center = true);
+        offset(r = FEMALE_RADIUS-DS_WALL) square(FEMALE_DEMS,center = true);
     }
 }
 
