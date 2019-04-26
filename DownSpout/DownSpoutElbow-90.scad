@@ -8,10 +8,10 @@ CONSTANTS
 *****************************************************************************/
 $fn=100;
 PI = 4 * atan2(1,1);
-DS_HEIGHT = 57;
-DS_WIDTH = 80;
-DS_RADIUS = 15.5;
-DS_WALL = 4;
+DS_RADIUS = 21;
+DS_HEIGHT = 57-DS_RADIUS-6.8-5;
+DS_WIDTH = 80-DS_RADIUS-10.8-5;
+DS_WALL = 2;
 TUBE_HEIGHT = 10;
 DS_DEMS = [DS_WIDTH,DS_HEIGHT];
 
@@ -19,7 +19,7 @@ DS_DEMS = [DS_WIDTH,DS_HEIGHT];
 FUNCTIONS - code to make reading modules easier to understand.
 ******************************************************************************/
 function half(x) = x/2;
-function minkowskiAdj(x, r) = x - 2*r;
+// function minkowskiAdj(x, r) = x - 2*r;
 
 /*****************************************************************************
 Directives - defines what to build with optional features.
@@ -38,7 +38,9 @@ MODULES: - the meat of the project.
 module build()
 {
     // elbowConnector();
-    downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 10);
+    #downSpout(DS_DEMS,DS_RADIUS,DS_WALL, 15);
+    // draw([1,1.02,5],[0,0,0],downSpoutPoints,DS_WALL,1);
+
 }
 
 module elbowConnector()
