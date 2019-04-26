@@ -1,5 +1,6 @@
 /*
-Description : create a table-saw guide for ripping downspout on table saw.
+Description : table-saw guide for ripping downspout.
+discovery; GUIDE_SCALE = [1.02,1.04,100]; is a final setting.
 */
 
 /*****************************************************************************
