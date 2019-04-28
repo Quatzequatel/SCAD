@@ -14,7 +14,7 @@ HEX_HOLE_DISTANCE = 65.25;
 
 TWOBYFOUR = [38,89]; //Finished 2x4 is 38mm x 89mm
 TWOBYFOUR_HEIGHT = 38;
-TWOBYFOUR_WIDTH = 89;
+TWOBYFOUR_WIDTH = 90;
 
 // Router Base Thickness (for complex_circle, ensure this is more than thickness of inlay)
 BASE_THICKNESS = 8; 
@@ -50,6 +50,7 @@ function half(x) = x/2;
 INCLUDE_HEX_HOLE = 0;
 INCLUDE_COUNTER_SINK = 1;
 INCLUDE_2X4_GUIDE = 1;
+INCLUDE_2X4_GUIDE_BRACES = 1;
 /*****************************************************************************/
 //Directives - end
 /*****************************************************************************/
@@ -57,11 +58,31 @@ INCLUDE_2X4_GUIDE = 1;
 /*****************************************************************************/
 // MAIN SUB
 /*****************************************************************************/
-base_plate();
+build();
 
 /*****************************************************************************/
 // modules
 /*****************************************************************************/
+module build()
+{
+        difference()
+        {
+            union()
+            {
+                cylinder(h = BASE_THICKNESS, d = OUTER_DIAMETER);
+                if(INCLUDE_2X4_GUIDE) two_by_four_template();
+            }           
+            
+            union()
+            {
+                mounting_holes();
+                cylinder(h = BASE_THICKNESS, d = INNER_DIAMETER);
+                if(INCLUDE_HEX_HOLE) hexHole();
+                if(INCLUDE_COUNTER_SINK) countersunk();  
+            }
+        }     
+}
+
 module hole()
 {
   cylinder(h= BASE_THICKNESS + 2, d = HOLE_DIAMETER);
@@ -92,7 +113,7 @@ module two_by_four_template()
 {
     difference()
     {
-        twobyfour_guide();
+        rotate([0,0,-8]) twobyfour_guide();
         translate([0,0,-1])
         cylinder(h = TWOBYFOUR_WIDTH +BASE_THICKNESS, d = INNER_DIAMETER);
     }
@@ -109,24 +130,37 @@ module twobyfour_guide()
         translate([half(BASE_THICKNESS),half(BASE_THICKNESS),0])
         square([TWOBYFOUR_HEIGHT + BASE_THICKNESS,TWOBYFOUR_WIDTH]);
     }
+
+    if(INCLUDE_2X4_GUIDE_BRACES)
+    {
+        translate([half(TWOBYFOUR_WIDTH)-2,-20,BASE_THICKNESS])
+        twobyfour_guide_braces(-1);
+
+        translate([half(TWOBYFOUR_WIDTH)-2,15,BASE_THICKNESS])
+        twobyfour_guide_braces(-1);
+
+        translate([-half(TWOBYFOUR_WIDTH)-BASE_THICKNESS+1,30,BASE_THICKNESS])
+        twobyfour_guide_braces();
+
+        translate([-half(TWOBYFOUR_WIDTH)-BASE_THICKNESS+1,-20,BASE_THICKNESS])
+        twobyfour_guide_braces();
+    }
 }
 
-module base_plate()
+module twobyfour_guide_braces(left = 1)
 {
-        difference()
-        {
-            union()
-            {
-                cylinder(h = BASE_THICKNESS, d = OUTER_DIAMETER);
-                if(INCLUDE_2X4_GUIDE) two_by_four_template();
-            }           
-            
-            union()
-            {
-                mounting_holes();
-                cylinder(h = BASE_THICKNESS, d = INNER_DIAMETER);
-                if(INCLUDE_HEX_HOLE) hexHole();
-                if(INCLUDE_COUNTER_SINK) countersunk();  
-            }
-        }     
+    triangle = [[0,0],[0,1],[1,0]];
+    rotate([90*left,-90,0])
+    if (left == 1) 
+    {
+        scale([38,18,BASE_THICKNESS]) 
+        linear_extrude(height =1) 
+        polygon(triangle);
+    }
+    else 
+    {
+        scale([38,30,BASE_THICKNESS]) 
+        linear_extrude(height =1) 
+        polygon(triangle);
+    }
 }
