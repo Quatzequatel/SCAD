@@ -1,6 +1,6 @@
 /*
 Description : 90 degree elbow joint for a flat downspout.
-still in progress need to validate dimensions are corrrect.
+still in progress need to validate dimensions are corrrect. 
 */
 
 /*****************************************************************************
@@ -31,8 +31,10 @@ function half(x) = x/2;
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_CHANNEL = 1;
-BUILD_MALE_CONNECTOR = 1;
+BUILD_MALE_CONNECTOR = 0;
 BUILD_ELBOW_CONNECTOR = 0;
+BUILD_STRAIGHT_CONNECTOR = 0;
+BUILD_T_TUBE = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -46,6 +48,8 @@ module build()
 {
     if(BUILD_ELBOW_CONNECTOR) elbowConnector();
     if(BUILD_MALE_CONNECTOR) maleConnector();
+    if(BUILD_STRAIGHT_CONNECTOR) straightConnector();
+    if(BUILD_T_TUBE) ttubeConnector();
 }
 
 module elbowConnector()
@@ -69,14 +73,77 @@ module elbowConnector()
             elbowChannel();
             channel();
         }
-    
     }
-
 }
 
-module channel()
+module ttubeConnector()
 {
-    color("Aqua")
+    difference()
+    {
+        union()
+        {
+            elbow();
+            translate([0,FEMALE_WIDTH+FEMALE_RADIUS+ELBOW_90_OFFSET-DS_WALL-2,0])
+            elbow(-1);
+        }
+
+        union()
+        {
+            elbowChannel();
+            rotate_extrude(angle=ELBOW_ANGLE,convexity = 10)
+            translate([ELBOW_90_OFFSET, 0, 0])
+            offset(r = FEMALE_RADIUS-DS_WALL) square(FEMALE_DEMS,center = true);
+            translate([0,FEMALE_WIDTH+FEMALE_RADIUS+ELBOW_90_OFFSET-DS_WALL,0])
+            elbowChannel(-1);         
+
+            translate([0,FEMALE_WIDTH+FEMALE_RADIUS+ELBOW_90_OFFSET-DS_WALL,0])
+            rotate_extrude(angle=-1 * ELBOW_ANGLE,convexity = 10)
+            translate([ELBOW_90_OFFSET, 0, 0])
+            offset(r = FEMALE_RADIUS-DS_WALL) square(FEMALE_DEMS,center = true);
+   
+        }
+    }
+
+    
+    difference()
+    {
+        union()
+        {
+            translate([ELBOW_90_OFFSET,0,0])
+            rotate([90,0,0])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+
+            translate([ELBOW_90_OFFSET,168,0])
+            rotate([90,0,0])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+
+            translate([-50,ELBOW_90_OFFSET-0.1,0])
+            rotate([90,0,90])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+        }
+
+        channel(1);
+    }
+}
+
+module straightConnector()
+{
+    rotate([90,0,0])
+    difference()
+    {
+        downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, 2*CONNECTOR_LENGTH);
+
+        translate([0,30,-1])
+        linear_extrude(height=3*CONNECTOR_LENGTH)
+        offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+
+    }
+    
+}
+
+module channel(forT = 0)
+{
+    color("LightCyan")
     translate([60,-TUBE_LENGTH,30])
     rotate([0,90,90])
     linear_extrude(height=CONNECTOR_LENGTH)
@@ -87,12 +154,21 @@ module channel()
     rotate([0,90,0])
     linear_extrude(height=CONNECTOR_LENGTH)
     offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+
+    if(forT)
+    {
+        color("PaleTurquoise")
+        translate([60,118,30])
+        rotate([0,90,90])
+        linear_extrude(height=CONNECTOR_LENGTH)
+        offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+    }
 }
 
-module elbowChannel()
+module elbowChannel(right = 1)
 {
     translate([0,0,30])
-    rotate_extrude(angle=ELBOW_ANGLE,convexity = 10)
+    rotate_extrude(angle=right * ELBOW_ANGLE,convexity = 10)
     translate([ELBOW_90_OFFSET, 0, 0])
     offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
 }
@@ -120,9 +196,9 @@ module maleConnector(length)
     }
 }
 
-module  elbow()
+module  elbow(right = 1)
 {
-    rotate_extrude(angle=ELBOW_ANGLE,convexity = 10)
+    rotate_extrude(angle=right * ELBOW_ANGLE,convexity = 10)
     translate([ELBOW_90_OFFSET, 0, 0])
     difference()
     {
