@@ -1,11 +1,22 @@
-/*****************************************************************************/
-// CONSTANTS - BEGIN
+/*
+Description : Creates one of the following for a Bosch router (MRC23EVSK):
+    Workbench base plate.
+    Workbench fence.
+    base plate 2x4 guide template.
+    with options to include:
+    Counter sinks for screw holes.
+    Support Braces for 2x4 guide.
+
+****************************************************************************/
+// CONSTANTS 
 /*****************************************************************************/
 HOLE_DISTANCE = 58;
 //angles for mounting holes
 ANGLES = [0,120,240];
 
 $fn=100;
+// Router Base Thickness 
+BASE_THICKNESS = 8; 
 
 // Diameter of Mounting Holes in Router Base
 HOLE_DIAMETER = 5.6;
@@ -17,9 +28,8 @@ TWOBYFOUR_HEIGHT = 38;
 TWOBYFOUR_WIDTH = 90;
 
 WORKBENCH_PLATE_LENGTH = 200;
+WORKBENCH_FENCE_HEIGHT = 53 + BASE_THICKNESS;
 
-// Router Base Thickness (for complex_circle, ensure this is more than thickness of inlay)
-BASE_THICKNESS = 8; 
 
 // Outer Diameter of Router Base
 OUTER_DIAMETER = 153.5;
@@ -29,12 +39,10 @@ INNER_DIAMETER = 52.5;
 PI = 4 * atan2(1,1); 
 
 /*****************************************************************************/
-// CONSTANTS - END
-/*****************************************************************************/
 // FUNCTIONS:
 // the following set of functions work together to return the x,y coordinate
-// from an existing point and angle. see https://en.wikipedia.org/wiki/Atan2 for
-// more information.
+// from an existing point and angle (used in mounting_holes() and countersunk()). 
+// see https://en.wikipedia.org/wiki/Atan2 for more information.
 /*****************************************************************************/
 //returns [x,y,z] array for consumption directly into translate(). z is arbitrarily set to 0.
 function translatePointsForAngle(x,y,angle)= [pointForX(x,y,angle),pointForY(x,y,angle),0];
@@ -47,7 +55,7 @@ function pointForY(x,y,angle) = radius(x,y) * cos(theta(x,y,angle));
 function half(x) = x/2;
 
 /*****************************************************************************/
-//Directives - start
+//Directives
 /*****************************************************************************/
 INCLUDE_HEX_HOLE = 0;
 INCLUDE_COUNTER_SINK = 1;
@@ -55,9 +63,7 @@ INCLUDE_2X4_GUIDE = 0;
 INCLUDE_2X4_GUIDE_BRACES = 0;
 INCLUDE_WORKBENCH_PLATE = 1;
 BUILD_WORKBENCH_FENCE = 1;
-/*****************************************************************************/
-//Directives - end
-/*****************************************************************************/
+
  
 /*****************************************************************************/
 // MAIN SUB
@@ -127,12 +133,12 @@ module workbench_fence_rail()
     {
         union()
         {
-            translate([0, 0, WORKBENCH_PLATE_LENGTH/8]) 
+            translate([0, 0, WORKBENCH_FENCE_HEIGHT/2]) 
             {
                 rotate([0, 90, 0]) 
                 {    
                     linear_extrude(height=BASE_THICKNESS)
-                    square(size=[50, WORKBENCH_PLATE_LENGTH], center=true);
+                    square(size=[WORKBENCH_FENCE_HEIGHT, WORKBENCH_PLATE_LENGTH], center=true);
                 }
             }
 
@@ -141,14 +147,26 @@ module workbench_fence_rail()
             square(size=[50, WORKBENCH_PLATE_LENGTH], center=true);
 
             //braces
-            translate([0,-35,BASE_THICKNESS])
-            twobyfour_guide_braces(1);
+            scaleY=40;
+            translate([0,-92,BASE_THICKNESS])
+            twobyfour_guide_braces(1, scaleY);
 
-            translate([0,40,BASE_THICKNESS])
-            twobyfour_guide_braces(1);
+            translate([0,-28,BASE_THICKNESS])
+            twobyfour_guide_braces(1,scaleY);
+
+            translate([0,35,BASE_THICKNESS])
+            twobyfour_guide_braces(1,scaleY);
+
+            translate([0,100,BASE_THICKNESS])
+            twobyfour_guide_braces(1,scaleY);
         }
-        translate([0, 0, -13]) 
-        cylinder(h = 50, d = INNER_DIAMETER);
+        translate([-BASE_THICKNESS, 0, -13]) 
+        linear_extrude(height = 50)
+        hull() 
+        {
+            circle(d=INNER_DIAMETER);
+            translate([30, 0, 0]) circle(d=INNER_DIAMETER);
+        }
 
         mounting_holes(1,2);
         countersunk(1,2);
@@ -234,13 +252,13 @@ module twobyfour_guide()
     }
 }
 
-module twobyfour_guide_braces(left = 1)
+module twobyfour_guide_braces(left = 1, scaleY = 18)
 {
     triangle = [[0,0],[0,1],[1,0]];
     rotate([90*left,-90,0])
     if (left == 1) 
     {
-        scale([38,18,BASE_THICKNESS]) 
+        scale([38,scaleY,BASE_THICKNESS]) 
         linear_extrude(height =1) 
         polygon(triangle);
     }
