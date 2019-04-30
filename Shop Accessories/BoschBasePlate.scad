@@ -16,6 +16,8 @@ TWOBYFOUR = [38,89]; //Finished 2x4 is 38mm x 89mm
 TWOBYFOUR_HEIGHT = 38;
 TWOBYFOUR_WIDTH = 90;
 
+WORKBENCH_PLATE_LENGTH = 200;
+
 // Router Base Thickness (for complex_circle, ensure this is more than thickness of inlay)
 BASE_THICKNESS = 8; 
 
@@ -49,8 +51,10 @@ function half(x) = x/2;
 /*****************************************************************************/
 INCLUDE_HEX_HOLE = 0;
 INCLUDE_COUNTER_SINK = 1;
-INCLUDE_2X4_GUIDE = 1;
-INCLUDE_2X4_GUIDE_BRACES = 1;
+INCLUDE_2X4_GUIDE = 0;
+INCLUDE_2X4_GUIDE_BRACES = 0;
+INCLUDE_WORKBENCH_PLATE = 1;
+BUILD_WORKBENCH_FENCE = 1;
 /*****************************************************************************/
 //Directives - end
 /*****************************************************************************/
@@ -58,6 +62,11 @@ INCLUDE_2X4_GUIDE_BRACES = 1;
 /*****************************************************************************/
 // MAIN SUB
 /*****************************************************************************/
+// if (BUILD_WORKBENCH_FENCE) 
+// {
+//     workbench_fence_rail();    
+// }
+// else
 build();
 
 /*****************************************************************************/
@@ -71,6 +80,11 @@ module build()
             {
                 cylinder(h = BASE_THICKNESS, d = OUTER_DIAMETER);
                 if(INCLUDE_2X4_GUIDE) two_by_four_template();
+                if(INCLUDE_WORKBENCH_PLATE) 
+                {
+                    workbench_plate();
+                    workbench_fence_rail();
+                }
             }           
             
             union()
@@ -79,8 +93,81 @@ module build()
                 cylinder(h = BASE_THICKNESS, d = INNER_DIAMETER);
                 if(INCLUDE_HEX_HOLE) hexHole();
                 if(INCLUDE_COUNTER_SINK) countersunk();  
+                if(INCLUDE_WORKBENCH_PLATE)
+                {
+                    workbench_groove(1);
+                    workbench_groove(-1);
+                } 
             }
         }     
+}
+
+module workbench_plate()
+{
+    difference()
+    {
+        linear_extrude(height=BASE_THICKNESS) 
+        square(size=[WORKBENCH_PLATE_LENGTH, WORKBENCH_PLATE_LENGTH], center=true);
+
+        linear_extrude(height=BASE_THICKNESS/2)
+        difference()
+        {
+            square(size=[WORKBENCH_PLATE_LENGTH, WORKBENCH_PLATE_LENGTH], center=true);
+            square(size=[WORKBENCH_PLATE_LENGTH-10, WORKBENCH_PLATE_LENGTH-10], center=true);
+        }
+
+    }
+}
+
+module workbench_fence_rail() 
+{
+    translate([165, 0, 0]) 
+
+    difference()
+    {
+        union()
+        {
+            translate([0, 0, WORKBENCH_PLATE_LENGTH/8]) 
+            {
+                rotate([0, 90, 0]) 
+                {    
+                    linear_extrude(height=BASE_THICKNESS)
+                    square(size=[50, WORKBENCH_PLATE_LENGTH], center=true);
+                }
+            }
+
+            translate([-(WORKBENCH_PLATE_LENGTH/8), 0, 0]) 
+            linear_extrude(height=BASE_THICKNESS)
+            square(size=[50, WORKBENCH_PLATE_LENGTH], center=true);
+
+            //braces
+            translate([0,-35,BASE_THICKNESS])
+            twobyfour_guide_braces(1);
+
+            translate([0,40,BASE_THICKNESS])
+            twobyfour_guide_braces(1);
+        }
+        translate([0, 0, -13]) 
+        cylinder(h = 50, d = INNER_DIAMETER);
+
+        mounting_holes(1,2);
+        countersunk(1,2);
+
+    }
+}
+
+module workbench_groove(top = 1)
+{
+    translate([-10, top * 50, 0]) 
+    linear_extrude(height=2*BASE_THICKNESS) 
+    hull() 
+    {
+        translate([100, 0, 0]) 
+        {
+            circle(d=HOLE_DIAMETER);        
+        }
+        circle(d=HOLE_DIAMETER);
+    }
 }
 
 module hole()
@@ -89,16 +176,16 @@ module hole()
 }
 
 // 3 holes at intervals of 120 degree angles.
-module mounting_holes()
+module mounting_holes(min = 0, max = 2)
 {
-    for(i=[0:2])
+    for(i=[min:max])
     {
         translate(translatePointsForAngle(0,HOLE_DISTANCE,ANGLES[i])) hole();
     }
 }
 
-module countersunk() {
-  for(i=[0:2])
+module countersunk(min = 0, max = 2) {
+  for(i=[min:max])
   {
       translate(translatePointsForAngle(0,HOLE_DISTANCE,ANGLES[i]))   cylinder(r2=(HOLE_DIAMETER/2) + BASE_THICKNESS/2, r1=(HOLE_DIAMETER/2), h=BASE_THICKNESS + 1);
   }
