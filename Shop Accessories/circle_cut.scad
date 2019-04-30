@@ -74,7 +74,7 @@ echo("EXT_W:", EXTENSION_WIDTH_EFFECTIVE);
 
 module hole()
 {
-  circle(d=HOLES_DIA, center=true);
+  circle(d=HOLES_DIA);
 }
 
 module all_holes() {
