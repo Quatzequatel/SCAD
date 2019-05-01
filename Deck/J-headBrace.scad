@@ -10,7 +10,7 @@ CONSTANTS
 $fn=100;
 PI = 4 * atan2(1,1);
 
-WALL_HEIGHT = 390;
+WALL_HEIGHT = 216;
 FLOOR_WIDTH = 110;
 TRUSS_HEIGHT = 80;
 BRACE_WIDTH = 30;
@@ -41,8 +41,14 @@ module build()
     {
         J_Brace();
 
+        //screw hole for spacer.
         translate([half(FLOOR_WIDTH), 0, half(BRACE_WIDTH)]) 
         rotate([90, 0, 0]) 
+        cylinder(h = 100,d = 5, $fn=100, center = true);
+
+        //screw hole for truss
+        translate([FLOOR_WIDTH, half(TRUSS_HEIGHT), half(BRACE_WIDTH)]) 
+        rotate([0, 90, 0]) 
         cylinder(h = 100,d = 5, $fn=100, center = true);
     }
 }
@@ -55,7 +61,7 @@ module J_Brace() {
         {
             rotate([0, 0, 5])
             translate([0.55,1.8* BRACE_THICKNESS, 0]) 
-            square(size=[BRACE_THICKNESS,(WALL_HEIGHT-BRACE_THICKNESS)]);
+            square(size=[BRACE_THICKNESS,(WALL_HEIGHT-3*BRACE_THICKNESS)]);
 
             translate([1.8*BRACE_THICKNESS, 0, 0]) 
             square(size=[(FLOOR_WIDTH-BRACE_THICKNESS),BRACE_THICKNESS]);
