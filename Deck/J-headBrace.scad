@@ -11,10 +11,11 @@ $fn=100;
 PI = 4 * atan2(1,1);
 
 WALL_HEIGHT = 216;
-FLOOR_WIDTH = 110;
+FLOOR_WIDTH = 85;
 TRUSS_HEIGHT = 80;
 BRACE_WIDTH = 30;
-BRACE_THICKNESS = 8;
+BRACE_THICKNESS = 6;
+TRIANGLE = [[0,0],[0,1],[1,0]];
 
 /*****************************************************************************
 FUNCTIONS - code to make reading modules easier to understand.
@@ -55,33 +56,49 @@ module build()
 
 
 module J_Brace() {
-    linear_extrude(BRACE_WIDTH)
+    
+    difference()
     {
-        // translate([150, 0, 0]) 
+        union()
         {
-            rotate([0, 0, 5])
-            translate([0.55,1.8* BRACE_THICKNESS, 0]) 
-            square(size=[BRACE_THICKNESS,(WALL_HEIGHT-3*BRACE_THICKNESS)]);
+           linear_extrude(BRACE_WIDTH)
+            {
+                // translate([150, 0, 0]) 
+                {
+                    color("Aqua") 
+                    rotate([0, 0, 5])
+                    translate([0.3,1.8* BRACE_THICKNESS, 0]) 
+                    square(size=[BRACE_THICKNESS,(WALL_HEIGHT-3*BRACE_THICKNESS)]);
 
-            translate([1.8*BRACE_THICKNESS, 0, 0]) 
-            square(size=[(FLOOR_WIDTH-BRACE_THICKNESS),BRACE_THICKNESS]);
+                    color("LightCyan")
+                    translate([1.8*BRACE_THICKNESS, 0, 0]) 
+                    // rotate([0, 0, 5]) 
+                    square(size=[(FLOOR_WIDTH-BRACE_THICKNESS),BRACE_THICKNESS]);
 
-            translate([FLOOR_WIDTH-2, 0, 0])     rotate([0, 0, -5]) {
-                square(size=[BRACE_THICKNESS,TRUSS_HEIGHT]);
+                    color("PaleTurquoise") 
+                    translate([FLOOR_WIDTH-2, 0, 0])     
+                    rotate([0, 0, -5]) 
+                    {
+                        square(size=[BRACE_THICKNESS,TRUSS_HEIGHT]);
+                    }
+                }
+            }
+
+            color("Turquoise") 
+            translate([2*BRACE_THICKNESS-0.7, 2*BRACE_THICKNESS, 0]) 
+            rotate([0, 0, 180]) 
+            rotate_extrude(angle = 90)
+            translate([BRACE_THICKNESS, 0, 0]) 
+            {
+                square(size=[BRACE_THICKNESS, BRACE_WIDTH]);
             }
         }
+
+        #rotate([0, 0, 2])
+        translate([-2, WALL_HEIGHT-BRACE_THICKNESS, 0]) 
+        rotate([0, 0, 182])
+        scale([8,half(WALL_HEIGHT),BRACE_WIDTH]) 
+        linear_extrude(height =1) 
+        polygon(TRIANGLE);
     }
-
-        translate([2*BRACE_THICKNESS-0.7, 2*BRACE_THICKNESS, 0]) 
-        rotate([0, 0, 180]) 
-        rotate_extrude(angle = 90)
-        translate([BRACE_THICKNESS, 0, 0]) 
-        {
-            square(size=[BRACE_THICKNESS, BRACE_WIDTH]);
-        }
-        
-
-
-    
-
 }
