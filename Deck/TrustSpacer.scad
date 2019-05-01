@@ -9,8 +9,6 @@ CONSTANTS
 $fn=100;
 PI = 4 * atan2(1,1);
 SCREW_RADIUS = 1.6;
-SPACER_HEIGHTS=[38,32,25,19,13,6];
-SPACER_HEIGHTS_OFFSETS=[0,-2,-8,-20,-38,-60];
 
 //TreakDeck = TD
 TD_WIDTH = 141;
@@ -25,6 +23,10 @@ TO4W_HEIGHT = 38.1;
 TO4W_DIMENSIONS = [TO4W_HEIGHT,TO4W_WIDTH];
 
 BASE_OFFSET = TD_HEIGHT + WALL + TO4W_HEIGHT + WALL;
+
+SPACER_HEIGHTS=[38,32,25,19,13,6];
+SPACER_HEIGHTS_OFFSETS=[0,-2,-8,-20,-38,-60];
+
 SMALL_METRIC_HEIGHTS = [0,10,15,20,25,30];
 SMALL_METRIC_OFFSETS = [0,-35,-60,-85,-100,-110];
 
@@ -43,7 +45,7 @@ function adjustedSpacerHeight(height, wall) = (height > 2*wall) ? height - (2*wa
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
-BUILD_SUIT = 0; //current set in use.
+BUILD_SUIT = 1; //current set in use.
 BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
 BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 
@@ -57,7 +59,7 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    if(BUILD_SUIT) create_suit(SPACER_HEIGHTS, SPACER_HEIGHTS_OFFSETS,5,1);
+    if(BUILD_SUIT) create_suit(SPACER_HEIGHTS, SPACER_HEIGHTS_OFFSETS,5,2);
     if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
     //modify max (4) to fit in printer.
     if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
