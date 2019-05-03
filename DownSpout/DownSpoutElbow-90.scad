@@ -9,6 +9,7 @@ CONSTANTS
 $fn=100;
 PI = 4 * atan2(1,1);
 ELBOW_90_OFFSET = 60;
+TIGHT_ELBOW_90_OFFSET = 40;
 ELBOW_ANGLE = 90;
 FEMALE_RADIUS = 21;
 FEMALE_HEIGHT = 42.2-FEMALE_RADIUS;
@@ -26,6 +27,8 @@ MALE_DEMS = [MALE_WIDTH,MALE_HEIGHT];
 FUNCTIONS - code to make reading modules easier to understand.
 ******************************************************************************/
 function half(x) = x/2;
+function swap(arr) = [arr[1],arr[0]];
+function actualWidth(length, radius, wall) = TIGHT_ELBOW_90_OFFSET;
 
 /*****************************************************************************
 Directives - defines what to build with optional features.
@@ -34,7 +37,8 @@ INCLUDE_CHANNEL = 1;
 BUILD_MALE_CONNECTOR = 0;
 BUILD_ELBOW_CONNECTOR = 0;
 BUILD_STRAIGHT_CONNECTOR = 0;
-BUILD_T_TUBE = 1;
+BUILD_T_TUBE = 0;
+BUILD_ENDSTOP_ELBOW = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -50,6 +54,22 @@ module build()
     if(BUILD_MALE_CONNECTOR) maleConnector();
     if(BUILD_STRAIGHT_CONNECTOR) straightConnector();
     if(BUILD_T_TUBE) ttubeConnector();
+    if(BUILD_ENDSTOP_ELBOW) endstop_elbow();
+}
+
+module endstop_elbow() 
+{
+    difference()
+    {
+        normal_downspout_elbow
+    ();
+    
+        color("PaleTurquoise")
+        translate([0,0,-half(TIGHT_ELBOW_90_OFFSET)])
+        rotate([0,0,90])
+        linear_extrude(height=CONNECTOR_LENGTH+TIGHT_ELBOW_90_OFFSET)
+        offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+    }
 }
 
 module elbowConnector()
@@ -198,7 +218,7 @@ module maleConnector(length)
 
 module  elbow(right = 1)
 {
-    rotate_extrude(angle=right * ELBOW_ANGLE,convexity = 10)
+    color("Aqua")rotate_extrude(angle=right * ELBOW_ANGLE,convexity = 10)
     translate([ELBOW_90_OFFSET, 0, 0])
     difference()
     {
@@ -207,12 +227,37 @@ module  elbow(right = 1)
     }
 }
 
+module  normal_downspout_elbow()
+{
+    union()
+    {
+        rotate([90,90,0])
+        {
+            color("Aqua")
+            rotate_extrude(angle=ELBOW_ANGLE,convexity = 10)
+            translate([TIGHT_ELBOW_90_OFFSET, 0, 0])
+            difference()
+            {
+                offset(r = FEMALE_RADIUS) square(swap(FEMALE_DEMS),center = true);
+                offset(r = FEMALE_RADIUS-DS_WALL) square(swap(FEMALE_DEMS),center = true);
+            }
+        }
+
+        translate([actualWidth(FEMALE_HEIGHT,FEMALE_RADIUS,DS_WALL), 0, 0]) 
+        rotate([0,0,90])
+        downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+    }
+}
+
+
 module downSpout(dimensions, radius, wall, length)
 {
     linear_extrude(height = length)
-    difference()
     {
-        offset(r = radius) square(dimensions,center = true);
-        offset(r = radius-wall) square(dimensions,center = true);
+        difference()
+        {
+            offset(r = radius) square(dimensions,center = true);
+            offset(r = radius-wall) square(dimensions,center = true);
+        }
     }
 }
