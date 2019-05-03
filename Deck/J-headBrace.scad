@@ -72,7 +72,7 @@ module J_Brace() {
 
                     color("LightCyan")
                     translate([1.8*BRACE_THICKNESS, 0, 0]) 
-                    // rotate([0, 0, 5]) 
+                    rotate([0, 0, 5]) 
                     square(size=[(FLOOR_WIDTH-BRACE_THICKNESS),BRACE_THICKNESS]);
 
                     color("PaleTurquoise") 
