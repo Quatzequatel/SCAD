@@ -38,7 +38,8 @@ BUILD_MALE_CONNECTOR = 0;
 BUILD_ELBOW_CONNECTOR = 0;
 BUILD_STRAIGHT_CONNECTOR = 0;
 BUILD_T_TUBE = 0;
-BUILD_ENDSTOP_ELBOW = 1;
+BUILD_ENDSTOP_ELBOW = 0;
+BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -55,7 +56,54 @@ module build()
     if(BUILD_STRAIGHT_CONNECTOR) straightConnector();
     if(BUILD_T_TUBE) ttubeConnector();
     if(BUILD_ENDSTOP_ELBOW) endstop_elbow();
+    if(BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR)
+    {
+        connector_straight_roundpipe(65,62,20,3);
+    }
 }
+
+module connector_straight_roundpipe(outerDiameter, innerDiameter, length,wall) {
+    
+    //connector
+    translate([0,0,-length/2])
+    difference()
+    {
+        linear_extrude(height=length, center=true, convexity=10, twist=0) 
+        {
+            difference()
+            {
+                circle(d=outerDiameter);
+                circle(d=innerDiameter);
+            }
+        }
+
+        translate([0, half(outerDiameter)-8, -half(outerDiameter)]) 
+        rotate([0,90,90])
+        cylinder(d=outerDiameter,h=20,center=true);
+    }
+
+
+    //bevel
+    color("Turquoise")
+    translate([0,0, half(length/3)])
+    difference()
+    {
+        cylinder(d1=outerDiameter, d2=innerDiameter, h=length/3, center=true);
+        cylinder(d1=outerDiameter-wall, d2=innerDiameter-2*wall, h=length/3, center=true);
+    }
+
+    translate([0,0,11])
+    color("PaleTurquoise")
+    linear_extrude(height=length/2, center=true, convexity=10, twist=0) 
+    {
+        difference()
+        {
+            circle(d=outerDiameter-wall);
+            circle(d=innerDiameter-2*wall);
+        }
+    }
+}
+
 
 module endstop_elbow() 
 {
