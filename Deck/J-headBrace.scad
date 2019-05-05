@@ -21,6 +21,7 @@ TRIANGLE = [[0,0],[0,1],[1,0]];
 FUNCTIONS - code to make reading modules easier to understand.
 ******************************************************************************/
 function half(x) = x/2;
+function wedgeIncrement(height,i) = i * half(height)/(BRACE_THICKNESS)+half(height);
 
 /*****************************************************************************
 Directives - defines what to build with optional features.
@@ -38,6 +39,7 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
+    //staggaredWall(WALL_HEIGHT-3*BRACE_THICKNESS);
     difference()
     {
         J_Brace();
@@ -54,6 +56,20 @@ module build()
     }
 }
 
+module staggaredWall(height=WALL_HEIGHT)
+{
+    echo(str("height = ", height));
+    translate([BRACE_THICKNESS+0.3, 1.8* BRACE_THICKNESS, BRACE_WIDTH]) 
+    rotate([0, 180, 5]) 
+    linear_extrude(BRACE_WIDTH)
+    {
+        for (i=[1:(BRACE_THICKNESS)]) {
+            echo(str("wedgeIncrement(i)=", wedgeIncrement(height,i)));
+            translate([i, 0, 0]) 
+            square(size=[1,wedgeIncrement(height,i)], center = false);
+        }        
+    }    
+}
 
 module J_Brace() {
     
@@ -61,22 +77,19 @@ module J_Brace() {
     {
         union()
         {
-           linear_extrude(BRACE_WIDTH)
+            staggaredWall(height=WALL_HEIGHT-3*BRACE_THICKNESS);
+            linear_extrude(BRACE_WIDTH)
             {
-                // translate([150, 0, 0]) 
                 {
-                    color("Aqua") 
-                    rotate([0, 0, 5])
-                    translate([0.3,1.8* BRACE_THICKNESS, 0]) 
-                    square(size=[BRACE_THICKNESS,(WALL_HEIGHT-3*BRACE_THICKNESS)]);
-
+                    //floor
                     color("LightCyan")
                     translate([1.8*BRACE_THICKNESS, 0, 0]) 
-                    rotate([0, 0, 5]) 
+                    // rotate([0, 0, 5]) 
                     square(size=[(FLOOR_WIDTH-BRACE_THICKNESS),BRACE_THICKNESS]);
 
+                    //truss side
                     color("PaleTurquoise") 
-                    translate([FLOOR_WIDTH-2, 0, 0])     
+                    translate([FLOOR_WIDTH, 0, 0])     
                     rotate([0, 0, -5]) 
                     {
                         square(size=[BRACE_THICKNESS,TRUSS_HEIGHT]);
@@ -94,11 +107,5 @@ module J_Brace() {
             }
         }
 
-        #rotate([0, 0, 2])
-        translate([-2, WALL_HEIGHT-BRACE_THICKNESS, 0]) 
-        rotate([0, 0, 182])
-        scale([8,half(WALL_HEIGHT),BRACE_WIDTH]) 
-        linear_extrude(height =1) 
-        polygon(TRIANGLE);
     }
 }
