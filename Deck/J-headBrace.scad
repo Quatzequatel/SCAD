@@ -2,6 +2,9 @@
 Description : the J-brace purpose; 
     a) to hold rubber in place.
     b) anchor for trough-spacer.
+
+NOTE: slicer is not slicing wall 1mm thick. removing -3*BRACE_THICKNESS from height,
+since first increment will not appear in g-code.
 */
 
 /*****************************************************************************
@@ -77,7 +80,7 @@ module J_Brace() {
     {
         union()
         {
-            staggaredWall(height=WALL_HEIGHT-3*BRACE_THICKNESS);
+            staggaredWall();
             linear_extrude(BRACE_WIDTH)
             {
                 {
