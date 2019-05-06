@@ -5,6 +5,7 @@ Description : the J-brace purpose;
 
 NOTE: slicer is not slicing wall 1mm thick. removing -3*BRACE_THICKNESS from height,
 since first increment will not appear in g-code.
+UPDATE: While above is true the shorter thicker model came out better.
 */
 
 /*****************************************************************************
@@ -80,7 +81,7 @@ module J_Brace() {
     {
         union()
         {
-            staggaredWall();
+            staggaredWall(height = WALL_HEIGHT-3*BRACE_THICKNESS);
             linear_extrude(BRACE_WIDTH)
             {
                 {
