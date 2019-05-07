@@ -47,32 +47,7 @@ module build()
     difference()
     {
         J_Brace();
-
-        //screw hole for spacer.
-        translate([half(FLOOR_WIDTH), 0, half(BRACE_WIDTH)]) 
-        rotate([90, 0, 0]) 
-        cylinder(h = 100,d = 5, $fn=100, center = true);
-
-        //screw hole for truss
-        translate([FLOOR_WIDTH, half(TRUSS_HEIGHT), half(BRACE_WIDTH)]) 
-        rotate([0, 90, 0]) 
-        cylinder(h = 100,d = 5, $fn=100, center = true);
     }
-}
-
-module staggaredWall(height=WALL_HEIGHT)
-{
-    echo(str("height = ", height));
-    translate([BRACE_THICKNESS+0.3, 1.8* BRACE_THICKNESS, BRACE_WIDTH]) 
-    rotate([0, 180, 5]) 
-    linear_extrude(BRACE_WIDTH)
-    {
-        for (i=[1:(BRACE_THICKNESS)]) {
-            echo(str("wedgeIncrement(i)=", wedgeIncrement(height,i)));
-            translate([i, 0, 0]) 
-            square(size=[1,wedgeIncrement(height,i)], center = false);
-        }        
-    }    
 }
 
 module J_Brace() {
@@ -108,8 +83,33 @@ module J_Brace() {
             translate([BRACE_THICKNESS, 0, 0]) 
             {
                 square(size=[BRACE_THICKNESS, BRACE_WIDTH]);
-            }
+            }            
         }
+        
+        //screw hole for spacer.
+        translate([half(FLOOR_WIDTH), 0, half(BRACE_WIDTH)]) 
+        rotate([90, 0, 0]) 
+        cylinder(h = 100,d = 5, $fn=100, center = true);
 
+        //screw hole for truss
+        translate([FLOOR_WIDTH, half(TRUSS_HEIGHT), half(BRACE_WIDTH)]) 
+        rotate([0, 90, 0]) 
+        cylinder(h = 100,d = 5, $fn=100, center = true);
     }
 }
+
+module staggaredWall(height=WALL_HEIGHT)
+{
+    echo(str("height = ", height));
+    translate([BRACE_THICKNESS+0.3, 1.8* BRACE_THICKNESS, BRACE_WIDTH]) 
+    rotate([0, 180, 5]) 
+    linear_extrude(BRACE_WIDTH)
+    {
+        for (i=[1:(BRACE_THICKNESS)]) {
+            echo(str("wedgeIncrement(i)=", wedgeIncrement(height,i)));
+            translate([i, 0, 0]) 
+            square(size=[1,wedgeIncrement(height,i)], center = false);
+        }        
+    }    
+}
+
