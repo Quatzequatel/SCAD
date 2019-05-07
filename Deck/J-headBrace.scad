@@ -31,7 +31,8 @@ function wedgeIncrement(height,i) = i * half(height)/(BRACE_THICKNESS)+half(heig
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
-BUILD_JBRACE = 1;
+BUILD_JBRACE = 0;
+BUILD_LONG_RULER_STAND = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -44,6 +45,25 @@ MODULES: - the meat of the project.
 module build()
 {
     if(BUILD_JBRACE) J_Brace();
+    if(BUILD_LONG_RULER_STAND) longRulerStand(20,10,3.5,6);
+}
+
+module longRulerStand(braceHeight,braceWidth,rulerWidth,standThickness)
+{
+    translate([(braceHeight + rulerWidth), 0, 0]) 
+    {
+        triangle90(braceHeight,braceHeight,braceWidth);    
+    }
+    
+    translate([braceHeight, 0, 0]) 
+    {
+        rotate([0,0,90])
+        triangle90(braceHeight,braceHeight,braceWidth);    
+    }
+
+    // translate([0,0,-half(braceWidth)])
+    rotate([90, 0, 0]) 
+    cube(size=[(2*braceHeight)+rulerWidth, braceWidth, standThickness]);
 }
 
 module J_Brace() {
@@ -109,3 +129,11 @@ module staggaredWall(height=WALL_HEIGHT)
     }    
 }
 
+module triangle90(width,height,depth) 
+{
+    linear_extrude(depth)
+    scale([width, height, 0]) 
+    {
+        polygon(points=[[0,0],[1,0],[0,1]]);
+    }
+}
