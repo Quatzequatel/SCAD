@@ -31,7 +31,7 @@ function wedgeIncrement(height,i) = i * half(height)/(BRACE_THICKNESS)+half(heig
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
-BUILD_THING = 1;
+BUILD_JBRACE = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -43,11 +43,7 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    //staggaredWall(WALL_HEIGHT-3*BRACE_THICKNESS);
-    difference()
-    {
-        J_Brace();
-    }
+    if(BUILD_JBRACE) J_Brace();
 }
 
 module J_Brace() {
