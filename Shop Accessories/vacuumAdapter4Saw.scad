@@ -31,7 +31,8 @@ Directives - defines what to build with optional features.
 INCLUDE_THING = 0;
 BUILD_SHOP_VAC_ATTACHMENT = 0;
 BUILD_BUILT_IN_VAC_ATTACHMENT = 1; //THIS IS FOR USE WITH ROUTER VACCUM ATTACHMENT.
-BUILD_BUILT_IN_VAC_ADDITIONAL_ATTACHMENT=1;
+BUILD_BUILT_IN_VAC_ADDITIONAL_ATTACHMENT=1; //The above attachment is too short.
+//this lengthens the attachment; hopefully to give a more stable hold.
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
