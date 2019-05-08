@@ -16,7 +16,7 @@ TD_HEIGHT = 31;
 TD_RADIUS = 16;
 TD_DIMENSIONS = [TD_HEIGHT,TD_WIDTH];
 WALL = 4;
-BRACKET_LENGTH = 26;
+BRACKET_LENGTH = 19;
 //2x4 wood = TO4W
 TO4W_WIDTH = 88.9;
 TO4W_HEIGHT = 38.1;
@@ -49,6 +49,10 @@ BUILD_SUIT = 0; //current set in use.
 BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
 BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 BUILD_SINGLE_SMALL = 0;
+BUILD_SET_SIZE1 = 0;
+BUILD_SET_SIZE2 = 0;
+BUILD_SET_SIZE3 = 0;
+BUILD_SET_SIZE4 = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -64,7 +68,22 @@ module build()
     if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
     //modify max (4) to fit in printer.
     if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
-    if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(0);
+    if(BUILD_SET_SIZE1) build_single_set(8,6,30);
+    if(BUILD_SET_SIZE2) build_single_set(13,5,20);
+    if(BUILD_SET_SIZE3) build_single_set(19,5,19);
+    if(BUILD_SET_SIZE4) build_single_set(25,4,13);
+    // if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(0);
+    }
+
+module build_single_set(height, count, spacerOffset) 
+{
+    echo(height=height, count=count);
+    for (i=[0:count]) 
+    {
+        translate([(i * (BASE_OFFSET-spacerOffset)) , 0, 0]) 
+        H_Bracket(height);
+    }
+    
 }
 
 module create_suit(heights, customOffsets, max = 5, min = 0) {
@@ -82,7 +101,7 @@ module H_Bracket(spacerHeight)
     translate([0.5*TD_HEIGHT, 0, 0]) 
     u_bracket(TD_DIMENSIONS, WALL, BRACKET_LENGTH );
 
-    if (spacerHeight > 2 * WALL) 
+    if (spacerHeight > WALL) 
     {
         translate([-(WALL + adjustedSpacerHeight(spacerHeight,WALL)/2), 0, 0]) 
         color("Aqua") spacer(TO4W_DIMENSIONS, BRACKET_LENGTH, adjustedSpacerHeight(spacerHeight,WALL));
