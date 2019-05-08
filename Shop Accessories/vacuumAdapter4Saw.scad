@@ -1,19 +1,64 @@
 /*
+Description : makes shop Vac attachment for Dewalt Table saw
+*/
+
+/*****************************************************************************
+CONSTANTS
+*****************************************************************************/
+fn=100;
+PI = 4 * atan2(1,1);
+OUTER_DIAMETER1 = 57.5;
+OUTER_DIAMETER2 = 58.0;
+
+INNER_DIAMETER1 = 31.0;
+INNER_DIAMETER2 = 32.0;
+
+OUTER_DIAMETER3 = OUTER_DIAMETER1;
+OUTER_DIAMETER4 = 56.0;
+
+INNER_DIAMETER3 = 31.0;
+INNER_DIAMETER4 = OUTER_DIAMETER4;
+ADAPTER_HEIGHT = 30;
+
+/*****************************************************************************
+FUNCTIONS - code to make reading modules easier to understand.
+******************************************************************************/
+function half(x) = x/2;
+
+/*****************************************************************************
+Directives - defines what to build with optional features.
+*****************************************************************************/
+INCLUDE_THING = 0;
+BUILD_THING = 1;
+
+/*****************************************************************************
+MAIN SUB - where the instructions start.
+*****************************************************************************/
+build();
+
+/*****************************************************************************
+MODULES: - the meat of the project.
+*****************************************************************************/
+module build()
+{
+    if (BUILD_THING) 
+    {
+        shopVacAttachment();
+    }
+}
+/*
 Version=3.0
 */
-outerDiameter1 = 57.5;
-outerDiameter2 = 58.0;
 
-innerDiameter1 = 31.0;
-innerDiameter2 = 32.0;
+module shopVacAttachment() 
+{
+    union()
+    {
+        tube(ADAPTER_HEIGHT, OUTER_DIAMETER2, OUTER_DIAMETER1, INNER_DIAMETER1);
+        translate([0,0,ADAPTER_HEIGHT])tube(ADAPTER_HEIGHT, OUTER_DIAMETER3, OUTER_DIAMETER4, INNER_DIAMETER3,INNER_DIAMETER4);
+    }    
+}
 
-outerDiameter3 = outerDiameter1;
-outerDiameter4 = 56.0;
-
-innerDiameter3 = 31.0;
-innerDiameter4 = outerDiameter4;
-
-height = 30;
 
 module tube(h, od1, od2, id1, id2)
 {
@@ -24,8 +69,3 @@ module tube(h, od1, od2, id1, id2)
     }
 }
 
-union()
-{
-    tube(height, outerDiameter2, outerDiameter1, innerDiameter2,innerDiameter1);
-    translate([0,0,height])tube(height, outerDiameter3, outerDiameter4, innerDiameter3,innerDiameter4);
-}
