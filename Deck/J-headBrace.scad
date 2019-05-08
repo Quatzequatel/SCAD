@@ -59,21 +59,21 @@ difference()
     {
         union()
         {
-            cube(size=[spacerWidth, spacerWidth, spacerHeight]);
+            cube(size=[spacerWidth, spacerWidth, spacerThickness]);
 
             translate([spacerWidth + J_BraceWidth, 0, 0]) 
             {
-                cube(size=[spacerWidth, spacerWidth, spacerHeight]);    
+                cube(size=[spacerWidth, spacerWidth, spacerThickness]);    
             }
 
             translate([0,0,-spacerThickness])
-            cube(size=[2*spacerWidth + J_BraceWidth, spacerWidth, spacerThickness]);  
+            cube(size=[2*spacerWidth + J_BraceWidth, spacerWidth, spacerHeight]);  
         }      
 
         //screw hole for spacer.
         translate([half(2*spacerWidth + J_BraceWidth), half(spacerWidth), 0]) 
         rotate([0, 0, 0]) 
-        cylinder(h = 100,d = 5, $fn=100, center = true);
+        cylinder(h = 100,d = 4, $fn=100, center = true);
     }
 }
 
