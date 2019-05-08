@@ -45,9 +45,10 @@ function adjustedSpacerHeight(height, wall) = (height > 2*wall) ? height - (2*wa
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
-BUILD_SUIT = 1; //current set in use.
+BUILD_SUIT = 0; //current set in use.
 BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
 BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
+BUILD_SINGLE_SMALL = 0;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -63,7 +64,7 @@ module build()
     if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
     //modify max (4) to fit in printer.
     if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
-    if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(10);
+    if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(0);
 }
 
 module create_suit(heights, customOffsets, max = 5, min = 0) {
@@ -92,7 +93,7 @@ module H_Bracket(spacerHeight)
     }
     else
     {
-        translate([-(0.5 * TO4W_HEIGHT + 2*WALL), 0, 0]) 
+        translate([-(0.5 * TO4W_HEIGHT + WALL), 0, 0]) 
         rotate([0, 0, 180])         
         color("LightCyan") u_bracket(TO4W_DIMENSIONS, WALL, BRACKET_LENGTH );
     }
