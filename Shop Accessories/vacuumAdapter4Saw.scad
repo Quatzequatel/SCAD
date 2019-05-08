@@ -31,6 +31,7 @@ Directives - defines what to build with optional features.
 INCLUDE_THING = 0;
 BUILD_SHOP_VAC_ATTACHMENT = 0;
 BUILD_BUILT_IN_VAC_ATTACHMENT = 1; //THIS IS FOR USE WITH ROUTER VACCUM ATTACHMENT.
+BUILD_BUILT_IN_VAC_ADDITIONAL_ATTACHMENT=1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -49,6 +50,10 @@ module build()
         if (BUILD_BUILT_IN_VAC_ATTACHMENT) 
     {
         builtInVaccumAdapter();
+    }
+    if(BUILD_BUILT_IN_VAC_ADDITIONAL_ATTACHMENT)
+    {
+        additionalTubeForBuiltInAdapter();
     }
 }
 /*
@@ -78,6 +83,16 @@ module builtInVaccumAdapter()
     vacuumHoseEndDia = 31.5;
 
     tube(attachmentHeight, receptorDiameter-1, receptorDiameter, vacuumHoseStartDia,vacuumHoseEndDia);
+}
+
+module additionalTubeForBuiltInAdapter() 
+{
+    attachmentHeight = 40;
+    receptorDiameter = 35;
+    vacuumHoseStartDia = 31;
+    vacuumHoseEndDia = 32;
+
+    tube(attachmentHeight, receptorDiameter, receptorDiameter, vacuumHoseStartDia,vacuumHoseEndDia);
 }
 
 module tube(h, od1, od2, id1, id2)
