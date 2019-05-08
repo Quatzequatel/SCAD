@@ -88,10 +88,10 @@ module builtInVaccumAdapter()
 
 module additionalTubeForBuiltInAdapter() 
 {
-    attachmentHeight = 40;
+    attachmentHeight = 42;
     receptorDiameter = 35;
-    vacuumHoseStartDia = 31;
-    vacuumHoseEndDia = 32;
+    vacuumHoseStartDia = 32;
+    vacuumHoseEndDia = 33;
 
     tube(attachmentHeight, receptorDiameter, receptorDiameter, vacuumHoseStartDia,vacuumHoseEndDia);
 }
