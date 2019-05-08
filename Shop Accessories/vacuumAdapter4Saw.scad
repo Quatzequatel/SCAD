@@ -29,7 +29,8 @@ function half(x) = x/2;
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
-BUILD_THING = 1;
+BUILD_SHOP_VAC_ATTACHMENT = 0;
+BUILD_BUILT_IN_VAC_ATTACHMENT = 1; //THIS IS FOR USE WITH ROUTER VACCUM ATTACHMENT.
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -41,9 +42,13 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    if (BUILD_THING) 
+    if (BUILD_SHOP_VAC_ATTACHMENT) 
     {
         shopVacAttachment();
+    }
+        if (BUILD_BUILT_IN_VAC_ATTACHMENT) 
+    {
+        builtInVaccumAdapter();
     }
 }
 /*
@@ -60,6 +65,20 @@ module shopVacAttachment()
     }    
 }
 
+module builtInVaccumAdapter() 
+{
+    //35 mm diameter of attachment
+    //30 mm initial dia of vacuum hose
+    //31.5 mm final dia of vacuum hose
+    //30 mm lenght of attachment
+
+    attachmentHeight = 30;
+    receptorDiameter = 35;
+    vacuumHoseStartDia = 30;
+    vacuumHoseEndDia = 31.5;
+
+    tube(attachmentHeight, receptorDiameter-1, receptorDiameter, vacuumHoseStartDia,vacuumHoseEndDia);
+}
 
 module tube(h, od1, od2, id1, id2)
 {
