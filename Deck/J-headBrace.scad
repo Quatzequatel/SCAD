@@ -32,7 +32,8 @@ Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
 BUILD_JBRACE = 0;
-BUILD_LONG_RULER_STAND = 1;
+BUILD_LONG_RULER_STAND = 0;
+BUILD_JBRACE_FLOOR_SPACER = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -46,6 +47,34 @@ module build()
 {
     if(BUILD_JBRACE) J_Brace();
     if(BUILD_LONG_RULER_STAND) longRulerStand(20,10,3.5,6);
+    if(BUILD_JBRACE_FLOOR_SPACER)
+        J_BraceFloorSpacer(10, half(FLOOR_WIDTH-BRACE_WIDTH), BRACE_WIDTH, BRACE_THICKNESS);
+    
+}
+module J_BraceFloorSpacer(spacerHeight, spacerWidth, J_BraceWidth, spacerThickness) 
+{
+    echo(spacerHeight=spacerHeight, spacerWidth=spacerWidth, J_BraceWidth=J_BraceWidth, spacerThickness=spacerThickness);
+
+difference()
+    {
+        union()
+        {
+            cube(size=[spacerWidth, spacerWidth, spacerHeight]);
+
+            translate([spacerWidth + J_BraceWidth, 0, 0]) 
+            {
+                cube(size=[spacerWidth, spacerWidth, spacerHeight]);    
+            }
+
+            translate([0,0,-spacerThickness])
+            cube(size=[2*spacerWidth + J_BraceWidth, spacerWidth, spacerThickness]);  
+        }      
+
+        //screw hole for spacer.
+        translate([half(2*spacerWidth + J_BraceWidth), half(spacerWidth), 0]) 
+        rotate([0, 0, 0]) 
+        cylinder(h = 100,d = 5, $fn=100, center = true);
+    }
 }
 
 module longRulerStand(braceHeight,braceWidth,rulerWidth,standThickness)
