@@ -49,11 +49,13 @@ BUILD_SUIT = 0; //current set in use.
 BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
 BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 BUILD_SINGLE_SMALL = 0;
-BUILD_SET_SIZE0 = 1;
+BUILD_SET_SIZE0 = 0;
 BUILD_SET_SIZE1 = 0;
 BUILD_SET_SIZE2 = 0;
 BUILD_SET_SIZE3 = 0;
 BUILD_SET_SIZE4 = 0;
+BUILD_SET_SIZE5 = 0;
+BUILD_SET_SIZE6 = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -74,6 +76,8 @@ module build()
     if(BUILD_SET_SIZE2) build_single_set(13,5,20);
     if(BUILD_SET_SIZE3) build_single_set(19,5,19);
     if(BUILD_SET_SIZE4) build_single_set(25,4,13);
+    if(BUILD_SET_SIZE5) build_single_set(32,4,7);
+    if(BUILD_SET_SIZE6) build_single_set(36,4,4);
     // if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(0);
     }
 
