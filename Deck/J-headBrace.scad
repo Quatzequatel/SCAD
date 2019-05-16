@@ -33,7 +33,8 @@ Directives - defines what to build with optional features.
 INCLUDE_THING = 0;
 BUILD_JBRACE = 0;
 BUILD_LONG_RULER_STAND = 0;
-BUILD_JBRACE_FLOOR_SPACER = 1;
+BUILD_LONG_RULER_VISUAL_MARKER = 1;
+BUILD_JBRACE_FLOOR_SPACER = 0;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -46,7 +47,8 @@ MODULES: - the meat of the project.
 module build()
 {
     if(BUILD_JBRACE) J_Brace();
-    if(BUILD_LONG_RULER_STAND) longRulerStand(20,10,3.5,6);
+    if(BUILD_LONG_RULER_STAND) longRulerStand(20,10,3.5,BRACE_THICKNESS);
+    if(BUILD_LONG_RULER_VISUAL_MARKER) longRulerStandVisualMarker(20,10,3.5,BRACE_THICKNESS);
     if(BUILD_JBRACE_FLOOR_SPACER)
         J_BraceFloorSpacer(10, half(FLOOR_WIDTH-BRACE_WIDTH), BRACE_WIDTH, BRACE_THICKNESS);
     
@@ -75,6 +77,21 @@ difference()
         rotate([0, 0, 0]) 
         cylinder(h = 100,d = 4, $fn=100, center = true);
     }
+}
+
+module longRulerStandVisualMarker(braceHeight,braceWidth,rulerWidth,standThickness) {
+    difference()
+    {
+        longRulerStand(braceHeight,braceWidth,rulerWidth,standThickness);
+
+        translate([braceHeight/2 - 6.5,0,0])
+        {
+            cube([2*braceHeight-rulerWidth,braceHeight+1,11], center=false);
+        }
+    }
+
+    // rotate([90, 0, 0]) 
+    // #cube(size=[(2*braceHeight)+rulerWidth, braceWidth, standThickness]);
 }
 
 module longRulerStand(braceHeight,braceWidth,rulerWidth,standThickness)
