@@ -27,7 +27,7 @@ TWOBYFOUR = [38,89]; //Finished 2x4 is 38mm x 89mm
 TWOBYFOUR_HEIGHT = 38;
 TWOBYFOUR_WIDTH = 90;
 
-WORKBENCH_PLATE_LENGTH = 200;
+WORKBENCH_PLATE_LENGTH = 300;
 WORKBENCH_FENCE_HEIGHT = 53 + BASE_THICKNESS;
 
 
@@ -89,7 +89,7 @@ module build()
                 if(INCLUDE_WORKBENCH_PLATE) 
                 {
                     workbench_plate();
-                    workbench_fence_rail();
+                    // workbench_fence_rail();
                 }
             }           
             
@@ -142,7 +142,7 @@ module workbench_fence_rail()
                 }
             }
 
-            translate([-(WORKBENCH_PLATE_LENGTH/8), 0, 0]) 
+            #translate([(WORKBENCH_PLATE_LENGTH), 0, 0]) 
             linear_extrude(height=BASE_THICKNESS)
             square(size=[50, WORKBENCH_PLATE_LENGTH], center=true);
 
