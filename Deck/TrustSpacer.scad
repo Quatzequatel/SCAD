@@ -8,7 +8,7 @@ CONSTANTS
 *****************************************************************************/
 $fn=100;
 PI = 4 * atan2(1,1);
-SCREW_RADIUS = 1.6;
+SCREW_RADIUS = 3;
 
 //TreakDeck = TD
 TD_WIDTH = 141;
@@ -26,12 +26,16 @@ BASE_OFFSET = TD_HEIGHT + WALL + TO4W_HEIGHT + WALL;
 
 SPACER_HEIGHTS=[38,32,25,19,13,6];
 SPACER_HEIGHTS_OFFSETS=[0,-2,-8,-20,-38,-60];
+SPACER_SIZE_VALUES=[4,8,13,19,25,32,38];
 
 SMALL_METRIC_HEIGHTS = [0,10,15,20,25,30];
 SMALL_METRIC_OFFSETS = [0,-35,-60,-85,-100,-110];
 
 LARGE_METRIC_HEIGHTS = [30,35,40,45,50,55];
 LARGE_METRIC_OFFSETS = [10,0,0,0,10,20];
+
+MAX_COUNTS = [7,6,5,5,4,4,4];
+OFFSET_MAX_BUILD = [35,30,20,19,13,7,4];
 
 
 /*****************************************************************************
@@ -40,6 +44,12 @@ FUNCTIONS - code to make reading modules easier to understand.
 function half(x) = x/2;
 function adjust_dimensions_wall(dimensions, wall) = [dimensions[0]+(2*wall),dimensions[1]+(2*wall)];
 function adjustedSpacerHeight(height, wall) = (height > 2*wall) ? height - (2*wall): 0;
+function maxCountforSize(size) = MAX_COUNTS[size];
+function maxOffsetForSize(size) = OFFSET_MAX_BUILD[size];
+//get the acctual build length
+function buildLength(size, count) = ((count + 1) * spacerLength(size)) + TO4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL;
+//length for spacer for tight layout.
+function spacerLength(size) = TO4W_HEIGHT + SPACER_SIZE_VALUES[size];
 
 /*****************************************************************************
 Directives - defines what to build with optional features.
@@ -49,13 +59,11 @@ BUILD_SUIT = 0; //current set in use.
 BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
 BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 BUILD_SINGLE_SMALL = 0;
-BUILD_SET_SIZE0 = 0;
-BUILD_SET_SIZE1 = 0;
-BUILD_SET_SIZE2 = 0;
-BUILD_SET_SIZE3 = 0;
-BUILD_SET_SIZE4 = 0;
-BUILD_SET_SIZE5 = 0;
-BUILD_SET_SIZE6 = 1;
+BUILD_SET = 1;
+BUILD_SIZE = 4;
+BUILD_COUNT = 4;
+
+BUILD_WAVE_SPACER = 0;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -67,26 +75,31 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
+    if(BUILD_SINGLE_SMALL) H_Bracket(8);
     if(BUILD_SUIT) create_suit(SPACER_HEIGHTS, SPACER_HEIGHTS_OFFSETS,5,2);
     if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
     //modify max (4) to fit in printer.
     if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
-    if(BUILD_SET_SIZE0) build_single_set(4,7,35);
-    if(BUILD_SET_SIZE1) build_single_set(8,6,30);
-    if(BUILD_SET_SIZE2) build_single_set(13,5,20);
-    if(BUILD_SET_SIZE3) build_single_set(19,5,19);
-    if(BUILD_SET_SIZE4) build_single_set(25,4,13);
-    if(BUILD_SET_SIZE5) build_single_set(32,4,7);
-    if(BUILD_SET_SIZE6) build_single_set(36,4,4);
+    if(BUILD_SET) 
+    {
+        translate([TO4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL, 0, 0]) 
+        build_single_set(SPACER_SIZE_VALUES[BUILD_SIZE], BUILD_COUNT);
+    }
+
+    if(BUILD_WAVE_SPACER) buildWaveSpacer();
     // if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(0);
     }
 
-module build_single_set(height, count, spacerOffset) 
+module buildWaveSpacer() 
 {
-    echo(height=height, count=count);
+    
+}
+module build_single_set(height, count) 
+{
+    echo(height=height, count=count, spacerLength=spacerLength(BUILD_SIZE), buildLength=buildLength(BUILD_SIZE,BUILD_COUNT));
     for (i=[0:count]) 
     {
-        translate([(i * (BASE_OFFSET-spacerOffset)) , 0, 0]) 
+        translate([(i * spacerLength(BUILD_SIZE)) , 0, 0]) 
         H_Bracket(height);
     }
     
