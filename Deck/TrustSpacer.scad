@@ -18,7 +18,7 @@ TD_DIMENSIONS = [TD_HEIGHT,TD_WIDTH];
 WALL = 4;
 BRACKET_LENGTH = 19;
 //2x4 wood = TO4W
-TO4W_WIDTH = 88.9;
+TO4W_WIDTH = 91; //adding 2mm having issues with brakets snapping.
 TO4W_HEIGHT = 38.1;
 TO4W_DIMENSIONS = [TO4W_HEIGHT,TO4W_WIDTH];
 
@@ -34,7 +34,7 @@ SMALL_METRIC_OFFSETS = [0,-35,-60,-85,-100,-110];
 LARGE_METRIC_HEIGHTS = [30,35,40,45,50,55];
 LARGE_METRIC_OFFSETS = [10,0,0,0,10,20];
 
-MAX_COUNTS = [7,6,5,5,4,4,4];
+MAX_COUNTS = [7,6,5,5,4,4,3];
 OFFSET_MAX_BUILD = [35,30,20,19,13,7,4];
 
 
@@ -47,7 +47,7 @@ function adjustedSpacerHeight(height, wall) = (height > 2*wall) ? height - (2*wa
 function maxCountforSize(size) = MAX_COUNTS[size];
 function maxOffsetForSize(size) = OFFSET_MAX_BUILD[size];
 //get the acctual build length
-function buildLength(size, count) = ((count + 1) * spacerLength(size)) + TO4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL;
+function buildLength(size, count) = ((count + 1) * spacerLength(size)) + TO4W_HEIGHT + SPACER_SIZE_VALUES[size] - WALL;
 //length for spacer for tight layout.
 function spacerLength(size) = TO4W_HEIGHT + SPACER_SIZE_VALUES[size];
 
@@ -59,9 +59,10 @@ BUILD_SUIT = 0; //current set in use.
 BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
 BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 BUILD_SINGLE_SMALL = 0;
-BUILD_SET = 1;
-BUILD_SIZE = 4;
-BUILD_COUNT = 4;
+BUILD_SET = 2;
+BUILD_SIZE = 5;
+BUILD_COUNT = 3;//MAX_COUNTS[BUILD_SIZE];
+SET_DEFINED = [[2,1],[3,1],[4,1]];
 
 BUILD_WAVE_SPACER = 0;
 
@@ -75,33 +76,48 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    if(BUILD_SINGLE_SMALL) H_Bracket(8);
+    if(BUILD_SINGLE_SMALL) H_Bracket(SPACER_SIZE_VALUES[BUILD_SIZE]);
     if(BUILD_SUIT) create_suit(SPACER_HEIGHTS, SPACER_HEIGHTS_OFFSETS,5,2);
     if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
     //modify max (4) to fit in printer.
     if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
-    if(BUILD_SET) 
+    if(BUILD_SET ==1) 
     {
         translate([TO4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL, 0, 0]) 
-        build_single_set(SPACER_SIZE_VALUES[BUILD_SIZE], BUILD_COUNT);
+        build_single_set(BUILD_SIZE, BUILD_COUNT);
+    }
+    if(BUILD_SET > 1)
+    {
+        build_single_set(SET_DEFINED[0][0], SET_DEFINED[0][1]);
+        echo(length = buildLength(SET_DEFINED[0][0], SET_DEFINED[0][1]), one = SET_DEFINED[0][0], two = SET_DEFINED[0][1]);
+        translate([110 , 0, 0])
+        build_single_set(SET_DEFINED[1][0], SET_DEFINED[1][1]);
+
+        translate([230 , 0, 0])
+        build_single_set(SET_DEFINED[2][0], SET_DEFINED[2][1]);
     }
 
     if(BUILD_WAVE_SPACER) buildWaveSpacer();
     // if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(0);
-    }
+}
 
 module buildWaveSpacer() 
 {
     
 }
-module build_single_set(height, count) 
+
+module build_single_set(size, count) 
 {
-    echo(height=height, count=count, spacerLength=spacerLength(BUILD_SIZE), buildLength=buildLength(BUILD_SIZE,BUILD_COUNT));
+    echo(size=size, count=count, spacerLength=spacerLength(size), buildLength=buildLength(size,count));
     for (i=[0:count]) 
     {
-        translate([(i * spacerLength(BUILD_SIZE)) , 0, 0]) 
-        H_Bracket(height);
+        translate([(i * spacerLength(size)) , 0, 0]) 
+        H_Bracket(SPACER_SIZE_VALUES[size]);
     }
+}
+
+module build_set(set) 
+{
     
 }
 
