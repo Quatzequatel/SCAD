@@ -50,6 +50,8 @@ function maxOffsetForSize(size) = OFFSET_MAX_BUILD[size];
 function buildLength(size, count) = ((count + 1) * spacerLength(size)) + TO4W_HEIGHT + SPACER_SIZE_VALUES[size] - WALL;
 //length for spacer for tight layout.
 function spacerLength(size) = TO4W_HEIGHT + SPACER_SIZE_VALUES[size];
+function getSizeOfSet(index) = SET_DEFINED[index][0];
+function getCountOfSet(index) = SET_DEFINED[index][1];
 
 /*****************************************************************************
 Directives - defines what to build with optional features.
@@ -61,9 +63,8 @@ BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 BUILD_SINGLE_SMALL = 0;
 BUILD_SET = 2;
 BUILD_SIZE = 5;
-BUILD_COUNT = 3;//MAX_COUNTS[BUILD_SIZE];
-SET_DEFINED = [[2,1],[3,1],[4,1]];
-
+BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
+SET_DEFINED = [[3,2],[4,2]];
 BUILD_WAVE_SPACER = 0;
 
 /*****************************************************************************
@@ -88,13 +89,13 @@ module build()
     }
     if(BUILD_SET > 1)
     {
-        build_single_set(SET_DEFINED[0][0], SET_DEFINED[0][1]);
-        echo(length = buildLength(SET_DEFINED[0][0], SET_DEFINED[0][1]), one = SET_DEFINED[0][0], two = SET_DEFINED[0][1]);
-        translate([110 , 0, 0])
-        build_single_set(SET_DEFINED[1][0], SET_DEFINED[1][1]);
+        build_single_set(getSizeOfSet(0), getCountOfSet(0));
+        // echo(length = buildLength(getSizeOfSet(0), getCountOfSet(0), one = SET_DEFINED[0][0], two = SET_DEFINED[0][1]);
+        translate([((SET_DEFINED[0][1] + 1) * spacerLength(SET_DEFINED[0][0]) + 5), 0, 0])
+        build_single_set(getSizeOfSet(1), getCountOfSet(1));
 
-        translate([230 , 0, 0])
-        build_single_set(SET_DEFINED[2][0], SET_DEFINED[2][1]);
+        // translate([230 , 0, 0])
+        // build_single_set(SET_DEFINED[2][0], SET_DEFINED[2][1]);
     }
 
     if(BUILD_WAVE_SPACER) buildWaveSpacer();
