@@ -14,9 +14,9 @@ CONSTANTS
 $fn=100;
 PI = 4 * atan2(1,1);
 
-WALL_HEIGHT = 216;
+WALL_HEIGHT = 180;
 FLOOR_WIDTH = 85;
-TRUSS_HEIGHT = 80;
+TRUSS_HEIGHT = 40;
 BRACE_WIDTH = 30;
 BRACE_THICKNESS = 6;
 TRIANGLE = [[0,0],[0,1],[1,0]];
@@ -31,9 +31,9 @@ function wedgeIncrement(height,i) = i * half(height)/(BRACE_THICKNESS)+half(heig
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
-BUILD_JBRACE = 0;
+BUILD_JBRACE = 1;
 BUILD_LONG_RULER_STAND = 0;
-BUILD_LONG_RULER_VISUAL_MARKER = 1;
+BUILD_LONG_RULER_VISUAL_MARKER = 0;
 BUILD_JBRACE_FLOOR_SPACER = 0;
 
 /*****************************************************************************
