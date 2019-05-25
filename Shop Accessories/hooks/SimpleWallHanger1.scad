@@ -16,7 +16,7 @@ thickness=6;
 // Length of straigth part in mm
 length=40;
 // Diameter of circle producing hanger arc in mm
-turn_diameter=40;
+turn_diameter=30;
 // Angle of arc
 turn_angle=180; //[1:360]
 
