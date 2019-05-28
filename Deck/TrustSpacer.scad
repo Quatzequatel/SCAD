@@ -35,7 +35,6 @@ LARGE_METRIC_HEIGHTS = [30,35,40,45,50,55];
 LARGE_METRIC_OFFSETS = [10,0,0,0,10,20];
 
 MAX_COUNTS = [7,6,5,5,4,4,3];
-// OFFSET_MAX_BUILD = [35,30,20,19,13,7,4];
 
 
 /*****************************************************************************
@@ -45,7 +44,6 @@ function half(x) = x/2;
 function adjust_dimensions_wall(dimensions, wall) = [dimensions[0]+(2*wall),dimensions[1]+(2*wall)];
 function adjustedSpacerHeight(height, wall) = (height > 2*wall) ? height - (2*wall): 0;
 function maxCountforSize(size) = MAX_COUNTS[size];
-// function maxOffsetForSize(size) = OFFSET_MAX_BUILD[size];
 //get the acctual build length
 function buildLength(size, count) = ((count + 1) * spacerLength(size)) + TWOx4W_HEIGHT + SPACER_SIZE_VALUES[size] - WALL;
 //length for spacer for tight layout.
@@ -53,6 +51,7 @@ function spacerLength(size) = TWOx4W_HEIGHT + SPACER_SIZE_VALUES[size];
 
 function getSizeOfSet(index) = SET_DEFINED[index][0];
 function getCountOfSet(index) = SET_DEFINED[index][1];
+//get spacer length for groups.
 function groupSpacerLength(index) = index == 0 ? ((getCountOfSet(0) + 1) * spacerLength(getSizeOfSet(0))) + 5 :
             (
                 (getSizeOfSet(index) + 1) * spacerLength(getSizeOfSet(index)) + 
@@ -64,8 +63,6 @@ Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
 BUILD_SUIT = 0; //current set in use.
-// BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
-// BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 BUILD_SINGLE_SMALL = 0;
 BUILD_SET = 2; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
 BUILD_SIZE = 5;
@@ -86,9 +83,7 @@ module build()
 {
     if(BUILD_SINGLE_SMALL) H_Bracket(SPACER_SIZE_VALUES[BUILD_SIZE]);
     if(BUILD_SUIT) create_suit(SPACER_HEIGHTS, SPACER_HEIGHTS_OFFSETS,5,2);
-    // if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
-    //modify max (4) to fit in printer.
-    // if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
+
     if(BUILD_SET ==1) 
     {
         translate([TWOx4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL, 0, 0]) 
@@ -100,7 +95,6 @@ module build()
         
         if(getCountOfSet(1)> 0)
         {
-            // translate([((getCountOfSet(0) + 1) * spacerLength(getSizeOfSet(0)) + 5), 0, 0])
             translate([groupSpacerLength(0), 0, 0])
             build_single_set(getSizeOfSet(1), getCountOfSet(1));
         }
