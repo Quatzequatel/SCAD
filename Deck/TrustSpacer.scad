@@ -58,10 +58,10 @@ Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
 BUILD_SUIT = 0; //current set in use.
-BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
-BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
+// BUILD_SMALL_METRIC_SUIT = 0; //may want to try a set of these
+// BUILD_LARGE_METRIC_SUIT = 0; //set of these.s
 BUILD_SINGLE_SMALL = 0;
-BUILD_SET = 2;
+BUILD_SET = 2; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
 BUILD_SIZE = 5;
 BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
 SET_DEFINED = [[1,3],[0,3]];
@@ -79,9 +79,9 @@ module build()
 {
     if(BUILD_SINGLE_SMALL) H_Bracket(SPACER_SIZE_VALUES[BUILD_SIZE]);
     if(BUILD_SUIT) create_suit(SPACER_HEIGHTS, SPACER_HEIGHTS_OFFSETS,5,2);
-    if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
+    // if(BUILD_SMALL_METRIC_SUIT) create_suit(SMALL_METRIC_HEIGHTS, SMALL_METRIC_OFFSETS);
     //modify max (4) to fit in printer.
-    if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
+    // if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
     if(BUILD_SET ==1) 
     {
         translate([TO4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL, 0, 0]) 
