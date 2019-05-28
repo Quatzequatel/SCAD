@@ -64,7 +64,7 @@ BUILD_SINGLE_SMALL = 0;
 BUILD_SET = 2;
 BUILD_SIZE = 5;
 BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
-SET_DEFINED = [[3,2],[4,2]];
+SET_DEFINED = [[1,3],[0,3]];
 BUILD_WAVE_SPACER = 0;
 
 /*****************************************************************************
@@ -90,16 +90,22 @@ module build()
     if(BUILD_SET > 1)
     {
         build_single_set(getSizeOfSet(0), getCountOfSet(0));
-        // echo(length = buildLength(getSizeOfSet(0), getCountOfSet(0), one = SET_DEFINED[0][0], two = SET_DEFINED[0][1]);
-        translate([((SET_DEFINED[0][1] + 1) * spacerLength(SET_DEFINED[0][0]) + 5), 0, 0])
-        build_single_set(getSizeOfSet(1), getCountOfSet(1));
+        
+        if(getCountOfSet(1)> 0)
+        {
+            translate([((getCountOfSet(0) + 1) * spacerLength(getSizeOfSet(0)) + 5), 0, 0])
+            build_single_set(getSizeOfSet(1), getCountOfSet(1));
+        }
 
-        // translate([230 , 0, 0])
-        // build_single_set(SET_DEFINED[2][0], SET_DEFINED[2][1]);
+        if(getCountOfSet(2)> 0)
+        {
+            translate([((getCountOfSet(1) + 1) * spacerLength(getSizeOfSet(1)) + 5), 0, 0])
+            build_single_set(SET_DEFINED[2][0], SET_DEFINED[2][1]);            
+        }
     }
 
     if(BUILD_WAVE_SPACER) buildWaveSpacer();
-    // if(!BUILD_SUIT && !BUILD_SMALL_METRIC_SUIT && !BUILD_LARGE_METRIC_SUIT) H_Bracket(0);
+    
 }
 
 module buildWaveSpacer() 
