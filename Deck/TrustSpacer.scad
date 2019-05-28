@@ -17,12 +17,12 @@ TD_RADIUS = 16;
 TD_DIMENSIONS = [TD_HEIGHT,TD_WIDTH];
 WALL = 4;
 BRACKET_LENGTH = 19;
-//2x4 wood = TO4W
-TO4W_WIDTH = 91; //adding 2mm having issues with brakets snapping.
-TO4W_HEIGHT = 38.1;
-TO4W_DIMENSIONS = [TO4W_HEIGHT,TO4W_WIDTH];
+//2x4 wood = TWOx4W
+TWOx4W_WIDTH = 91; //adding 2mm having issues with brakets snapping.
+TWOx4W_HEIGHT = 38.1;
+TWOx4W_DIMENSIONS = [TWOx4W_HEIGHT,TWOx4W_WIDTH];
 
-BASE_OFFSET = TD_HEIGHT + WALL + TO4W_HEIGHT + WALL;
+BASE_OFFSET = TD_HEIGHT + WALL + TWOx4W_HEIGHT + WALL;
 
 SPACER_HEIGHTS=[38,32,25,19,13,6];
 SPACER_HEIGHTS_OFFSETS=[0,-2,-8,-20,-38,-60];
@@ -35,7 +35,7 @@ LARGE_METRIC_HEIGHTS = [30,35,40,45,50,55];
 LARGE_METRIC_OFFSETS = [10,0,0,0,10,20];
 
 MAX_COUNTS = [7,6,5,5,4,4,3];
-OFFSET_MAX_BUILD = [35,30,20,19,13,7,4];
+// OFFSET_MAX_BUILD = [35,30,20,19,13,7,4];
 
 
 /*****************************************************************************
@@ -45,13 +45,19 @@ function half(x) = x/2;
 function adjust_dimensions_wall(dimensions, wall) = [dimensions[0]+(2*wall),dimensions[1]+(2*wall)];
 function adjustedSpacerHeight(height, wall) = (height > 2*wall) ? height - (2*wall): 0;
 function maxCountforSize(size) = MAX_COUNTS[size];
-function maxOffsetForSize(size) = OFFSET_MAX_BUILD[size];
+// function maxOffsetForSize(size) = OFFSET_MAX_BUILD[size];
 //get the acctual build length
-function buildLength(size, count) = ((count + 1) * spacerLength(size)) + TO4W_HEIGHT + SPACER_SIZE_VALUES[size] - WALL;
+function buildLength(size, count) = ((count + 1) * spacerLength(size)) + TWOx4W_HEIGHT + SPACER_SIZE_VALUES[size] - WALL;
 //length for spacer for tight layout.
-function spacerLength(size) = TO4W_HEIGHT + SPACER_SIZE_VALUES[size];
+function spacerLength(size) = TWOx4W_HEIGHT + SPACER_SIZE_VALUES[size];
+
 function getSizeOfSet(index) = SET_DEFINED[index][0];
 function getCountOfSet(index) = SET_DEFINED[index][1];
+function groupSpacerLength(index) = index == 0 ? ((getCountOfSet(0) + 1) * spacerLength(getSizeOfSet(0))) + 5 :
+            (
+                (getSizeOfSet(index) + 1) * spacerLength(getSizeOfSet(index)) + 
+                groupSpacerLength(index-1)
+            ) + 5 ;
 
 /*****************************************************************************
 Directives - defines what to build with optional features.
@@ -64,7 +70,8 @@ BUILD_SINGLE_SMALL = 0;
 BUILD_SET = 2; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
 BUILD_SIZE = 5;
 BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
-SET_DEFINED = [[1,3],[0,3]];
+SET_DEFINED = [[0,1],[1,1],[2,1]];
+BUILD_SIDE_SET = 1;
 BUILD_WAVE_SPACER = 0;
 
 /*****************************************************************************
@@ -84,7 +91,7 @@ module build()
     // if(BUILD_LARGE_METRIC_SUIT) create_suit(LARGE_METRIC_HEIGHTS, LARGE_METRIC_OFFSETS, 4);
     if(BUILD_SET ==1) 
     {
-        translate([TO4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL, 0, 0]) 
+        translate([TWOx4W_HEIGHT + SPACER_SIZE_VALUES[BUILD_SIZE] - WALL, 0, 0]) 
         build_single_set(BUILD_SIZE, BUILD_COUNT);
     }
     if(BUILD_SET > 1)
@@ -93,14 +100,21 @@ module build()
         
         if(getCountOfSet(1)> 0)
         {
-            translate([((getCountOfSet(0) + 1) * spacerLength(getSizeOfSet(0)) + 5), 0, 0])
+            // translate([((getCountOfSet(0) + 1) * spacerLength(getSizeOfSet(0)) + 5), 0, 0])
+            translate([groupSpacerLength(0), 0, 0])
             build_single_set(getSizeOfSet(1), getCountOfSet(1));
         }
 
         if(getCountOfSet(2)> 0)
         {
-            translate([((getCountOfSet(1) + 1) * spacerLength(getSizeOfSet(1)) + 5), 0, 0])
-            build_single_set(SET_DEFINED[2][0], SET_DEFINED[2][1]);            
+            translate([groupSpacerLength(1), 0, 0])
+            build_single_set(getSizeOfSet(2), getCountOfSet(2));        
+        }
+
+        if(getCountOfSet(3)> 0)
+        {
+            translate([groupSpacerLength(2), 0, 0])
+            build_single_set(getSizeOfSet(3), getCountOfSet(3));        
         }
     }
 
@@ -110,7 +124,7 @@ module build()
 
 module buildWaveSpacer() 
 {
-    
+    Side_Stacked_Bracket(13);
 }
 
 module build_single_set(size, count) 
@@ -118,8 +132,17 @@ module build_single_set(size, count)
     echo(size=size, count=count, spacerLength=spacerLength(size), buildLength=buildLength(size,count));
     for (i=[0:count]) 
     {
-        translate([(i * spacerLength(size)) , 0, 0]) 
-        H_Bracket(SPACER_SIZE_VALUES[size]);
+        if(BUILD_SIDE_SET)
+        {
+            translate([(i * spacerLength(size)) , i%2 != 0 ? WALL*2 : 0, 0]) 
+            Side_Stacked_Bracket(SPACER_SIZE_VALUES[size]);
+        }
+        else
+        {
+            translate([(i * spacerLength(size)) , 0, 0]) 
+            H_Bracket(SPACER_SIZE_VALUES[size]);            
+        }
+
     }
 }
 
@@ -146,17 +169,41 @@ module H_Bracket(spacerHeight)
     if (spacerHeight > WALL) 
     {
         translate([-(WALL + adjustedSpacerHeight(spacerHeight,WALL)/2), 0, 0]) 
-        color("Aqua") spacer(TO4W_DIMENSIONS, BRACKET_LENGTH, adjustedSpacerHeight(spacerHeight,WALL));
+        color("Aqua") spacer(TWOx4W_DIMENSIONS, BRACKET_LENGTH, adjustedSpacerHeight(spacerHeight,WALL));
 
-        translate([-(0.5 * TO4W_HEIGHT + 2*WALL + adjustedSpacerHeight(spacerHeight,WALL)), 0, 0]) 
+        translate([-(0.5 * TWOx4W_HEIGHT + 2*WALL + adjustedSpacerHeight(spacerHeight,WALL)), 0, 0]) 
         rotate([0, 0, 180])         
-        u_bracket(TO4W_DIMENSIONS, WALL, BRACKET_LENGTH );
+        u_bracket(TWOx4W_DIMENSIONS, WALL, BRACKET_LENGTH );
     }
     else
     {
-        translate([-(0.5 * TO4W_HEIGHT + WALL), 0, 0]) 
+        translate([-(0.5 * TWOx4W_HEIGHT + WALL), 0, 0]) 
         rotate([0, 0, 180])         
-        color("LightCyan") u_bracket(TO4W_DIMENSIONS, WALL, BRACKET_LENGTH );
+        color("LightCyan") u_bracket(TWOx4W_DIMENSIONS, WALL, BRACKET_LENGTH );
+    }
+}
+
+module Side_Stacked_Bracket(spacerHeight)
+{
+    //TD bracket.
+    translate([0.5*TD_HEIGHT, 0, 0]) 
+    u_bracket(TD_DIMENSIONS, WALL, BRACKET_LENGTH );
+
+    if (spacerHeight > WALL) 
+    {
+        translate([-(WALL + adjustedSpacerHeight(spacerHeight,WALL)/2), half(TD_WIDTH-TWOx4W_WIDTH), 0]) 
+        color("Aqua") spacer(TWOx4W_DIMENSIONS, BRACKET_LENGTH, adjustedSpacerHeight(spacerHeight,WALL));
+
+        //TWOx4W
+        translate([-(0.5 * TWOx4W_HEIGHT + 2*WALL + adjustedSpacerHeight(spacerHeight,WALL)), half(TD_WIDTH-TWOx4W_WIDTH), 0]) 
+        rotate([0, 0, 180])         
+        u_bracket(TWOx4W_DIMENSIONS, WALL, BRACKET_LENGTH );
+    }
+    else
+    {
+        translate([-(0.5 * TWOx4W_HEIGHT + WALL), half(TD_WIDTH-TWOx4W_WIDTH), 0]) 
+        rotate([0, 0, 180])         
+        color("LightCyan") u_bracket(TWOx4W_DIMENSIONS, WALL, BRACKET_LENGTH );
     }
 }
 
