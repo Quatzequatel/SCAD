@@ -13,8 +13,8 @@ ELBOW_90_OFFSET = 60;
 TIGHT_ELBOW_90_OFFSET = 40;
 ELBOW_ANGLE = 90;
 FEMALE_RADIUS = 21;
-FEMALE_HEIGHT = 42.2-FEMALE_RADIUS;
-FEMALE_WIDTH = 64.2-FEMALE_RADIUS;
+FEMALE_HEIGHT = 64.2-FEMALE_RADIUS;
+FEMALE_WIDTH = 42.2-FEMALE_RADIUS;
 DS_WALL = 3;
 TUBE_LENGTH = 50;
 CONNECTOR_LENGTH = 50;
@@ -23,6 +23,7 @@ MALE_RADIUS = 18;
 MALE_HEIGHT = FEMALE_HEIGHT-7;
 MALE_WIDTH = FEMALE_WIDTH-8;
 MALE_DEMS = [MALE_WIDTH,MALE_HEIGHT];
+WOOD_NOMINAL_SIZE_4IN = 89;
 
 /*****************************************************************************
 FUNCTIONS - code to make reading modules easier to understand.
@@ -64,6 +65,9 @@ module postConnector()
 
     translate([0, TIGHT_ELBOW_90_OFFSET, 0]) 
     S_horizontal_downspout_connector();
+
+    translate([-20,20,0])
+    cube(size=[WOOD_NOMINAL_SIZE_4IN, WOOD_NOMINAL_SIZE_4IN, WOOD_NOMINAL_SIZE_4IN], center=true);
 
 }
 
