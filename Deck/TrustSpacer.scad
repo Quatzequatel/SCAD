@@ -67,7 +67,7 @@ BUILD_SINGLE_SMALL = 0;
 BUILD_SET = 2; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
 BUILD_SIZE = 5;
 BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
-SET_DEFINED = [[0,1],[1,1],[2,1]];
+SET_DEFINED = [[3,1],[4,0]];
 BUILD_SIDE_SET = 1;
 BUILD_WAVE_SPACER = 0;
 
@@ -93,13 +93,13 @@ module build()
     {
         build_single_set(getSizeOfSet(0), getCountOfSet(0));
         
-        if(getCountOfSet(1)> 0)
+        if(getSizeOfSet(1)> 0)
         {
             translate([groupSpacerLength(0), 0, 0])
             build_single_set(getSizeOfSet(1), getCountOfSet(1));
         }
 
-        if(getCountOfSet(2)> 0)
+        if(getSizeOfSet(2)> 0)
         {
             translate([groupSpacerLength(1), 0, 0])
             build_single_set(getSizeOfSet(2), getCountOfSet(2));        
