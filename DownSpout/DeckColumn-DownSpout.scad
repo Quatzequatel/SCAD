@@ -66,8 +66,8 @@ module postConnector()
     translate([0, TIGHT_ELBOW_90_OFFSET, 0]) 
     S_horizontal_downspout_connector();
 
-    translate([-20,20,0])
-    cube(size=[WOOD_NOMINAL_SIZE_4IN, WOOD_NOMINAL_SIZE_4IN, WOOD_NOMINAL_SIZE_4IN], center=true);
+    translate([-20,20, 100-FEMALE_HEIGHT])
+    cube(size=[WOOD_NOMINAL_SIZE_4IN, WOOD_NOMINAL_SIZE_4IN, 200], center=true);
 
 }
 
