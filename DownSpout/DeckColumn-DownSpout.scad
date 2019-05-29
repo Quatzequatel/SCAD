@@ -54,9 +54,15 @@ module build()
 module postConnector() 
 {
     //four 90 degree  elbows to go around post. _|-|_
+    translate([0,-10,0])
     rotate([180,0,0])
     S_horizontal_downspout_connector();
+    
+    translate([TIGHT_ELBOW_90_OFFSET*1.5, TIGHT_ELBOW_90_OFFSET, 0]) 
+    rotate([90,0,0])
+    downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
 
+    translate([0, TIGHT_ELBOW_90_OFFSET, 0]) 
     S_horizontal_downspout_connector();
 
 }
@@ -68,9 +74,6 @@ module S_horizontal_downspout_connector()
     rotate([0, 0, 180]) 
     Horizontal_Downspout_Elbow();
 
-    // translate([TIGHT_ELBOW_90_OFFSET, 0, 0]) 
-    // rotate([90,0,0])
-    // downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
     Horizontal_Downspout_Elbow();
 }
 
