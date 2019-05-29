@@ -33,14 +33,14 @@ function actualWidth(length, radius, wall) = TIGHT_ELBOW_90_OFFSET;
 /*****************************************************************************
 Directives - defines what to build with optional features.
 *****************************************************************************/
-INCLUDE_CHANNEL = 0;
+INCLUDE_CHANNEL = 1;
 BUILD_MALE_CONNECTOR = 0;
-BUILD_ELBOW_CONNECTOR = 0;
+BUILD_ELBOW_CONNECTOR = 1;
 BUILD_STRAIGHT_CONNECTOR = 0;
 BUILD_T_TUBE = 0;
-BUILD_ENDSTOP_ELBOW = 1;
+BUILD_ENDSTOP_ELBOW = 0;
 BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 0;
-BUILD_NORMAL_DOWNSPOUT_ELBOW = 1;
+BUILD_NORMAL_DOWNSPOUT_ELBOW = 0;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
