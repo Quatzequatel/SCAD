@@ -33,13 +33,14 @@ function actualWidth(length, radius, wall) = TIGHT_ELBOW_90_OFFSET;
 /*****************************************************************************
 Directives - defines what to build with optional features.
 *****************************************************************************/
-INCLUDE_CHANNEL = 1;
+INCLUDE_CHANNEL = 0;
 BUILD_MALE_CONNECTOR = 0;
 BUILD_ELBOW_CONNECTOR = 0;
 BUILD_STRAIGHT_CONNECTOR = 0;
 BUILD_T_TUBE = 0;
-BUILD_ENDSTOP_ELBOW = 0;
-BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 1;
+BUILD_ENDSTOP_ELBOW = 1;
+BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 0;
+BUILD_NORMAL_DOWNSPOUT_ELBOW = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -60,6 +61,7 @@ module build()
     {
         connector_straight_roundpipe(65,62,20,3);
     }
+    if(BUILD_NORMAL_DOWNSPOUT_ELBOW)normal_downspout_elbow();
 }
 
 module connector_straight_roundpipe(outerDiameter, innerDiameter, length,wall) {
@@ -293,6 +295,10 @@ module  normal_downspout_elbow()
 
         translate([actualWidth(FEMALE_HEIGHT,FEMALE_RADIUS,DS_WALL), 0, 0]) 
         rotate([0,0,90])
+        downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+
+        translate([-ELBOW_90_OFFSET+10, 0,-40]) 
+        rotate([90,0,90])
         downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
     }
 }
