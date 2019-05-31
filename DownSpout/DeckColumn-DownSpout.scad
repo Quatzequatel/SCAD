@@ -65,22 +65,24 @@ module doubleChannelConnector()
     {
         union()
         {
-            translate([0,0,-2])
-            rotate([2,0,0])
+            translate([0,0,-2.75])
+            rotate([1.8,0,0])
             doubleChannel();
             // hollowCube( DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
-            resize([0,DECK_WOOD_POST_BASE_WIDTH + POST_WALL, 0],auto = [false, true, false])
+            // resize([0,DECK_WOOD_POST_BASE_WIDTH + POST_WALL, 0],auto = [false, true, false])
             trapazoid(
                 w1=DECK_WOOD_POST_TOP_WIDTH,
+                d1 = DECK_WOOD_POST_TOP_WIDTH + POST_WALL,
                 w2=DECK_WOOD_POST_BASE_WIDTH,
                 height=FEMALE_HEIGHT_ACTUAL,
                 center=true );
         }
         //cut-through for post.
         // hollowCubeCore(DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
-        resize([0,DECK_WOOD_POST_BASE_WIDTH + POST_WALL, 0],auto = [false, true, false])
+        //  resize([0,DECK_WOOD_POST_BASE_WIDTH + 2, 0],auto = [false, true, false])
         trapazoidCore(
             w1=DECK_WOOD_POST_TOP_WIDTH,
+            d1 = DECK_WOOD_POST_TOP_WIDTH + POST_WALL,
             w2=DECK_WOOD_POST_BASE_WIDTH,
             height=FEMALE_HEIGHT_ACTUAL,
             wall = POST_WALL,
@@ -124,31 +126,28 @@ module hollowCubeCore(width, depth, height, wall, center)
     square(size=[width-wall,depth-wall], center = center);
 }
 
-module hollowTrapazoid(w1, w2,  height,  wall, center)
+module hollowTrapazoid(w1, d1, w2,  height,  wall, center)
 {
     difference()
     {
-        trapazoid(w1, w2,  height,  center);
-        trapazoidCore(w1, w2,  height,  wall, center);
+        trapazoid(w1, d1, w2,  height,  center);
+        trapazoidCore(w1, d1, w2,  height,  wall, center);
     }
 }
 
-module trapazoid(w1, w2,  height,  center)
+module trapazoid(w1, d1, w2,  height,  center)
 {
     union()
     {
         echo(w1/w2);
         linear_extrude(height = height, scale = w1/w2)
-        square([w1,w2], center = center);
-        // rotate([0,0,90])
-        // linear_extrude(height = height, scale = [1, d1/d2], twist = 0)
-        // square([d1,d2], center = center);
+        square([w1,d1], center = center);
     }
 }
 
-module trapazoidCore(w1, w2,  height, wall, center)
+module trapazoidCore(w1, d1, w2,  height, wall, center)
 {
-    trapazoid(w1-wall, w2-wall,height, center);
+    trapazoid(w1-wall, d1-wall, w2-wall,height, center);
 }
 
 module  Vertical_Downspout_Elbow()
