@@ -12,8 +12,8 @@ ELBOW_90_OFFSET = 60;
 TIGHT_ELBOW_90_OFFSET = 40;
 ELBOW_ANGLE = 90;
 FEMALE_RADIUS = 21;
-FEMALE_HEIGHT = 42.2-FEMALE_RADIUS;
-FEMALE_WIDTH = 64.2-FEMALE_RADIUS;
+FEMALE_HEIGHT = 43-FEMALE_RADIUS; //orginal value = 42.2;
+FEMALE_WIDTH = 65-FEMALE_RADIUS; //orginal value = 64.2;
 DS_WALL = 3;
 TUBE_LENGTH = 50;
 CONNECTOR_LENGTH = 50;
@@ -33,14 +33,14 @@ function actualWidth(length, radius, wall) = TIGHT_ELBOW_90_OFFSET;
 /*****************************************************************************
 Directives - defines what to build with optional features.
 *****************************************************************************/
-INCLUDE_CHANNEL = 1;
+INCLUDE_CHANNEL = 0;
 BUILD_MALE_CONNECTOR = 0;
-BUILD_ELBOW_CONNECTOR = 1;
+BUILD_ELBOW_CONNECTOR = 0;
 BUILD_STRAIGHT_CONNECTOR = 0;
 BUILD_T_TUBE = 0;
 BUILD_ENDSTOP_ELBOW = 0;
 BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 0;
-BUILD_NORMAL_DOWNSPOUT_ELBOW = 0;
+BUILD_NORMAL_DOWNSPOUT_ELBOW = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
