@@ -27,8 +27,8 @@ MALE_HEIGHT = FEMALE_HEIGHT-7;
 MALE_WIDTH = FEMALE_WIDTH-8;
 MALE_DEMS = [MALE_WIDTH,MALE_HEIGHT];
 WOOD_NOMINAL_SIZE_4IN = 89;
-DECK_WOOD_POST_TOP_WIDTH = 110+POST_WALL;
-DECK_WOOD_POST_BASE_WIDTH = 121+POST_WALL;
+DECK_WOOD_POST_TOP_WIDTH = 110 + POST_WALL;
+DECK_WOOD_POST_BASE_WIDTH = 121 + POST_WALL;
 
 /*****************************************************************************
 FUNCTIONS - code to make reading modules easier to understand.
@@ -41,7 +41,6 @@ function actualWidth(length, radius, wall) = TIGHT_ELBOW_90_OFFSET;
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_CHANNEL = 1;
-BUILD_POST_CONNECTOR = 0;
 BUILD_DOUBLE_CHANNEL_CONNECTOR = 1;
 INCLUDE_SHOW_POST = 1;
 
@@ -55,7 +54,6 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
-    if(BUILD_POST_CONNECTOR) postConnector();
     if(BUILD_DOUBLE_CHANNEL_CONNECTOR) doubleChannelConnector();
     else doubleChannel();
 
@@ -67,16 +65,20 @@ module doubleChannelConnector()
     {
         union()
         {
-        doubleChannel();
-        // hollowCube( DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
-        trapazoid(
-            w1=DECK_WOOD_POST_TOP_WIDTH,
-            w2=DECK_WOOD_POST_BASE_WIDTH,
-            height=FEMALE_HEIGHT_ACTUAL,
-            center=true );
+            translate([0,0,-2])
+            rotate([2,0,0])
+            doubleChannel();
+            // hollowCube( DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
+            resize([0,DECK_WOOD_POST_BASE_WIDTH + POST_WALL, 0],auto = [false, true, false])
+            trapazoid(
+                w1=DECK_WOOD_POST_TOP_WIDTH,
+                w2=DECK_WOOD_POST_BASE_WIDTH,
+                height=FEMALE_HEIGHT_ACTUAL,
+                center=true );
         }
         //cut-through for post.
         // hollowCubeCore(DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
+        resize([0,DECK_WOOD_POST_BASE_WIDTH + POST_WALL, 0],auto = [false, true, false])
         trapazoidCore(
             w1=DECK_WOOD_POST_TOP_WIDTH,
             w2=DECK_WOOD_POST_BASE_WIDTH,
@@ -87,7 +89,7 @@ module doubleChannelConnector()
         //only half
         //translate([0, half(3*CONNECTOR_LENGTH)/2, 0])
         linear_extrude(height = FEMALE_HEIGHT_ACTUAL)
-        square(size=[2 * FEMALE_WIDTH_ACTUAL, 4], center=true);
+        square(size=[2 * FEMALE_WIDTH_ACTUAL, POST_WALL], center=true);
     }
 }
 
@@ -137,7 +139,7 @@ module trapazoid(w1, w2,  height,  center)
     {
         echo(w1/w2);
         linear_extrude(height = height, scale = w1/w2)
-        square([w1,w1], center = center);
+        square([w1,w2], center = center);
         // rotate([0,0,90])
         // linear_extrude(height = height, scale = [1, d1/d2], twist = 0)
         // square([d1,d2], center = center);
@@ -147,62 +149,6 @@ module trapazoid(w1, w2,  height,  center)
 module trapazoidCore(w1, w2,  height, wall, center)
 {
     trapazoid(w1-wall, w2-wall,height, center);
-}
-
-module postConnector() 
-{
-    //four 90 degree  elbows to go around post. _|-|_
-    color("Aqua") translate([0,-120,0])
-    // rotate([180,0,0])
-    mirror([1,0,0])
-    S_horizontal_downspout_connector();
-    
-    //along post
-    color("green") translate([TIGHT_ELBOW_90_OFFSET*1.5, CONNECTOR_LENGTH, 0]) 
-    difference()
-    {
-        rotate([90,0,0])
-        downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
-    }
-    color("blue") translate([0, CONNECTOR_LENGTH, 0]) 
-    S_horizontal_downspout_connector();
-
-    //post
-    if(INCLUDE_SHOW_POST)
-    {
-        translate([-40,30, 100-FEMALE_HEIGHT])
-        cube(size=[WOOD_NOMINAL_SIZE_4IN, WOOD_NOMINAL_SIZE_4IN, 200], center=true);
-    }
-}
-
-module S_horizontal_downspout_connector() 
-{
-    
-    translate([0, ELBOW_90_OFFSET + half(120), 0]) 
-    rotate([0, 0, 180]) 
-    difference()
-    {
-        Horizontal_Downspout_Elbow();
-        if(INCLUDE_CHANNEL) elbowChannel();
-    }
-
-    difference()
-    {
-        Horizontal_Downspout_Elbow();
-        if(INCLUDE_CHANNEL) elbowChannel();
-    }
-}
-
-module  Horizontal_Downspout_Elbow(right = 1)
-{
-    
-    rotate_extrude(angle=right * ELBOW_ANGLE,convexity = 10)
-    translate([ELBOW_90_OFFSET, 0, 0])
-    difference()
-    {
-        offset(r = FEMALE_RADIUS) square(FEMALE_DEMS,center = true);
-        offset(r = FEMALE_RADIUS-DS_WALL) square(FEMALE_DEMS,center = true);
-    }
 }
 
 module  Vertical_Downspout_Elbow()
@@ -233,7 +179,8 @@ module  Vertical_Downspout_Elbow()
 
 module downSpout(dimensions, radius, wall, length,rightside = -1, ratio = 0)
 {
-    linear_extrude(height = length)
+    echo(ratio = MALE_WIDTH/FEMALE_WIDTH);
+    linear_extrude(height = length, scale = MALE_WIDTH/FEMALE_WIDTH )
     {
         difference()
         {
@@ -250,12 +197,4 @@ module downSpout(dimensions, radius, wall, length,rightside = -1, ratio = 0)
             }
         }
     }
-}
-
-module elbowChannel(right = 1)
-{
-    translate([0,0,30])
-    rotate_extrude(angle=right * ELBOW_ANGLE,convexity = 10)
-    translate([ELBOW_90_OFFSET, 0, 0])
-    offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
 }
