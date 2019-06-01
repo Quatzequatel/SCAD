@@ -23,8 +23,8 @@ TUBE_LENGTH = 50;
 CONNECTOR_LENGTH = 60;
 FEMALE_DEMS = [FEMALE_WIDTH,FEMALE_HEIGHT];
 MALE_RADIUS = 18;
-MALE_HEIGHT = FEMALE_HEIGHT-7;
-MALE_WIDTH = FEMALE_WIDTH-8;
+MALE_HEIGHT = FEMALE_HEIGHT-(DS_WALL);
+MALE_WIDTH = FEMALE_WIDTH-(DS_WALL);
 MALE_DEMS = [MALE_WIDTH,MALE_HEIGHT];
 WOOD_NOMINAL_SIZE_4IN = 89;
 DECK_WOOD_POST_TOP_WIDTH = 115 + POST_WALL;
@@ -65,8 +65,8 @@ module doubleChannelConnector()
     {
         union()
         {
-            translate([0,0,-2.75])
-            rotate([1.8,0,0])
+            translate([0,0,-1])
+            rotate([0.7,0,0])
             doubleChannel();
             // hollowCube( DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
             // resize([0,DECK_WOOD_POST_BASE_WIDTH + POST_WALL, 0],auto = [false, true, false])
