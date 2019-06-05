@@ -7,6 +7,12 @@ CONSTANTS
 *****************************************************************************/
 fn=100;
 PI = 4 * atan2(1,1);
+HATACHI_OUTER_DIAMETER_1 = 52;
+HATACHI_OUTER_DIAMETER_2 = 47;
+HATACHI_INNER_DIAMETER_1 = 32;
+HATACHI_INNER_DIAMETER_2 = 31;
+HATACHI_ADAPTER_LENGTH = 70;
+
 OUTER_DIAMETER1 = 57.5;
 OUTER_DIAMETER2 = 58.0;
 
@@ -30,8 +36,9 @@ Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
 BUILD_SHOP_VAC_ATTACHMENT = 0;
-BUILD_BUILT_IN_VAC_ATTACHMENT = 1; //THIS IS FOR USE WITH ROUTER VACCUM ATTACHMENT.
-BUILD_BUILT_IN_VAC_ADDITIONAL_ATTACHMENT=1; //The above attachment is too short.
+BUILD_BUILT_IN_VAC_ATTACHMENT = 0; //THIS IS FOR USE WITH ROUTER VACCUM ATTACHMENT.
+BUILD_BUILT_IN_VAC_ADDITIONAL_ATTACHMENT=0; //The above attachment is too short.
+BUILD_HATACHI_VAC_ADAPTER = 1;
 //this lengthens the attachment; hopefully to give a more stable hold.
 
 /*****************************************************************************
@@ -48,7 +55,7 @@ module build()
     {
         shopVacAttachment();
     }
-        if (BUILD_BUILT_IN_VAC_ATTACHMENT) 
+    if (BUILD_BUILT_IN_VAC_ATTACHMENT) 
     {
         builtInVaccumAdapter();
     }
@@ -56,10 +63,27 @@ module build()
     {
         additionalTubeForBuiltInAdapter();
     }
+    if(BUILD_HATACHI_VAC_ADAPTER)
+    {
+        hatachi_Vac_Adapter();        
+    }
 }
 /*
 Version=3.0
 */
+
+module hatachi_Vac_Adapter() {
+    //this is for connecting the builtin shop vaccum 
+    //to the hatachi chop saw.
+    
+    // tube(ADAPTER_HEIGHT, OUTER_DIAMETER2, OUTER_DIAMETER1, INNER_DIAMETER1);
+    difference()
+    {
+        tube(HATACHI_ADAPTER_LENGTH, HATACHI_OUTER_DIAMETER_1, HATACHI_OUTER_DIAMETER_2, HATACHI_INNER_DIAMETER_1, HATACHI_INNER_DIAMETER_2, true);
+        #cylinder(h=HATACHI_ADAPTER_LENGTH, d1=20, d2=HATACHI_OUTER_DIAMETER_2-1, center=true, $fn=100);
+    }
+
+}
 
 module shopVacAttachment() 
 {
@@ -96,12 +120,12 @@ module additionalTubeForBuiltInAdapter()
     tube(attachmentHeight, receptorDiameter, receptorDiameter, vacuumHoseStartDia,vacuumHoseEndDia);
 }
 
-module tube(h, od1, od2, id1, id2)
+module tube(h, od1, od2, id1, id2, center=false)
 {
     difference()
     {
-        cylinder(h=h, d1=od1, d2=od2, center=false, $fn=100);
-        cylinder(h=h, d1=id1, d2=id2, center=false, $fn=100);
+        cylinder(h=h, d1=od1, d2=od2, center=center, $fn=100);
+        cylinder(h=h, d1=id1, d2=id2, center=center, $fn=100);
     }
 }
 
