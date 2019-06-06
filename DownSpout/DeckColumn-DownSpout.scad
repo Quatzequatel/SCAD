@@ -71,9 +71,9 @@ module doubleChannelConnector()
             // hollowCube( DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
             // resize([0,DECK_WOOD_POST_BASE_WIDTH + POST_WALL, 0],auto = [false, true, false])
             trapazoid(
-                w1=DECK_WOOD_POST_TOP_WIDTH,
-                d1 = DECK_WOOD_POST_TOP_WIDTH + POST_WALL,
-                w2=DECK_WOOD_POST_BASE_WIDTH,
+                w1=DECK_WOOD_POST_TOP_WIDTH + 2*POST_WALL,
+                d1 = DECK_WOOD_POST_TOP_WIDTH + 2*POST_WALL,
+                w2=DECK_WOOD_POST_BASE_WIDTH + 2*POST_WALL,
                 height=FEMALE_HEIGHT_ACTUAL,
                 center=true );
         }
@@ -81,15 +81,16 @@ module doubleChannelConnector()
         // hollowCubeCore(DECK_WOOD_POST_BASE_WIDTH,  DECK_WOOD_POST_BASE_WIDTH, FEMALE_HEIGHT_ACTUAL, POST_WALL, true);
         //  resize([0,DECK_WOOD_POST_BASE_WIDTH + 2, 0],auto = [false, true, false])
         trapazoidCore(
-            w1=DECK_WOOD_POST_TOP_WIDTH,
-            d1 = DECK_WOOD_POST_TOP_WIDTH + POST_WALL,
-            w2=DECK_WOOD_POST_BASE_WIDTH,
+            w1=DECK_WOOD_POST_TOP_WIDTH + 2*POST_WALL,
+            d1 = DECK_WOOD_POST_TOP_WIDTH + 2*POST_WALL,
+            w2=DECK_WOOD_POST_BASE_WIDTH + 2*POST_WALL,
             height=FEMALE_HEIGHT_ACTUAL,
             wall = POST_WALL,
             center=true );
 
         //only half
         //translate([0, half(3*CONNECTOR_LENGTH)/2, 0])
+        rotate([0,0,90])
         linear_extrude(height = FEMALE_HEIGHT_ACTUAL)
         square(size=[2 * FEMALE_WIDTH_ACTUAL, POST_WALL], center=true);
     }
@@ -103,9 +104,11 @@ module doubleChannel()
     {
         union()
         {
-            translate([FEMALE_WIDTH_ACTUAL,0,0])
-            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, 3*CONNECTOR_LENGTH,1);
-            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, 3*CONNECTOR_LENGTH);
+            translate([FEMALE_WIDTH_ACTUAL+DS_WALL,0,0])
+            //downSpout(dimensions, radius, wall,           length,     rightside = -1, ratio = 0)
+            downSpout(FEMALE_DEMS, FEMALE_RADIUS, DS_WALL, 3*CONNECTOR_LENGTH,1);
+            translate([-DS_WALL,0,0])
+            downSpout(FEMALE_DEMS, FEMALE_RADIUS, DS_WALL, 3*CONNECTOR_LENGTH);
         }
     }
 }
@@ -176,7 +179,7 @@ module  Vertical_Downspout_Elbow()
     }
 }
 
-module downSpout(dimensions, radius, wall, length,rightside = -1, ratio = 0)
+module downSpout(dimensions, radius, wall, length,rightside = -1)
 {
     echo(ratio = MALE_WIDTH/FEMALE_WIDTH);
     linear_extrude(height = length, scale = MALE_WIDTH/FEMALE_WIDTH )
