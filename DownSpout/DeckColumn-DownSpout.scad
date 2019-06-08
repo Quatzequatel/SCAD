@@ -20,7 +20,7 @@ FEMALE_HEIGHT_ACTUAL = FEMALE_HEIGHT + 2*FEMALE_RADIUS;
 DS_WALL = 3;
 POST_WALL = 5;
 TUBE_LENGTH = 50;
-CONNECTOR_LENGTH = 60;
+CONNECTOR_LENGTH = 180;
 FEMALE_DEMS = [FEMALE_WIDTH,FEMALE_HEIGHT];
 MALE_RADIUS = 18;
 MALE_HEIGHT = FEMALE_HEIGHT-(DS_WALL);
@@ -43,6 +43,11 @@ Directives - defines what to build with optional features.
 INCLUDE_CHANNEL = 1;
 BUILD_DOUBLE_CHANNEL_CONNECTOR = 1;
 INCLUDE_SHOW_POST = 1;
+
+SPLIT_MODEL = 1;
+RIGHT_MODEL = 2;
+LEFT_MODEL = 4;
+BUILD_PART = RIGHT_MODEL; //1 for both sides split, 2 for left side, 4 for righ
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -89,10 +94,31 @@ module doubleChannelConnector()
             center=true );
 
         //only half
-        //translate([0, half(3*CONNECTOR_LENGTH)/2, 0])
-        rotate([0,0,90])
-        linear_extrude(height = FEMALE_HEIGHT_ACTUAL)
-        square(size=[2 * FEMALE_WIDTH_ACTUAL, POST_WALL], center=true);
+        if(BUILD_PART==SPLIT_MODEL) //split down the middle
+        {
+            // translate([0, half(CONNECTOR_LENGTH)/2, 0])
+            rotate([0,0,90])
+            #linear_extrude(height = FEMALE_HEIGHT_ACTUAL)
+            square(size=[2 * FEMALE_WIDTH_ACTUAL, POST_WALL], center=true);
+            // square(size=[2 * FEMALE_WIDTH_ACTUAL, CONNECTOR_LENGTH], center=true);
+        }
+        else if(BUILD_PART==RIGHT_MODEL)
+        {
+            translate([-half(CONNECTOR_LENGTH)/2, -2 * DS_WALL, 0])
+            // rotate([0,0,90])
+            linear_extrude(height = FEMALE_HEIGHT_ACTUAL + 8 * DS_WALL)
+            // square(size=[2 * FEMALE_WIDTH_ACTUAL, POST_WALL], center=true);
+            square(size=[FEMALE_WIDTH_ACTUAL + 2 * DS_WALL, 2 * DS_WALL +CONNECTOR_LENGTH], center=true);
+        }
+        else if(BUILD_PART==LEFT_MODEL)
+        {
+            translate([half(CONNECTOR_LENGTH)/2, -2 * DS_WALL, 0])
+            // rotate([0,0,90])
+            linear_extrude(height = FEMALE_HEIGHT_ACTUAL + 8 * DS_WALL)
+            // square(size=[2 * FEMALE_WIDTH_ACTUAL, POST_WALL], center=true);
+            square(size=[FEMALE_WIDTH_ACTUAL + 2 * DS_WALL, 2 * DS_WALL +CONNECTOR_LENGTH], center=true);            
+        }
+
     }
 }
 
@@ -106,9 +132,9 @@ module doubleChannel()
         {
             translate([FEMALE_WIDTH_ACTUAL+DS_WALL,0,0])
             //downSpout(dimensions, radius, wall,           length,     rightside = -1, ratio = 0)
-            downSpout(FEMALE_DEMS, FEMALE_RADIUS, DS_WALL, 3*CONNECTOR_LENGTH,1);
+            downSpout(FEMALE_DEMS, FEMALE_RADIUS, DS_WALL, CONNECTOR_LENGTH,1);
             translate([-DS_WALL,0,0])
-            downSpout(FEMALE_DEMS, FEMALE_RADIUS, DS_WALL, 3*CONNECTOR_LENGTH);
+            downSpout(FEMALE_DEMS, FEMALE_RADIUS, DS_WALL, CONNECTOR_LENGTH);
         }
     }
 }
