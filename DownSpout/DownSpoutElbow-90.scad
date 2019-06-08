@@ -33,14 +33,15 @@ function actualWidth(length, radius, wall) = TIGHT_ELBOW_90_OFFSET;
 /*****************************************************************************
 Directives - defines what to build with optional features.
 *****************************************************************************/
-INCLUDE_CHANNEL = 0;
+INCLUDE_CHANNEL = 1;
 BUILD_MALE_CONNECTOR = 0;
 BUILD_ELBOW_CONNECTOR = 0;
 BUILD_STRAIGHT_CONNECTOR = 0;
 BUILD_T_TUBE = 0;
 BUILD_ENDSTOP_ELBOW = 0;
 BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 0;
-BUILD_NORMAL_DOWNSPOUT_ELBOW = 1;
+BUILD_NORMAL_DOWNSPOUT_ELBOW = 0;
+BUILD_TRIPLE_ELBOW_CONNECTOR = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -53,6 +54,7 @@ MODULES: - the meat of the project.
 module build()
 {
     if(BUILD_ELBOW_CONNECTOR) elbowConnector();
+    if(BUILD_TRIPLE_ELBOW_CONNECTOR) triple_elbow_connector();
     if(BUILD_MALE_CONNECTOR) maleConnector();
     if(BUILD_STRAIGHT_CONNECTOR) straightConnector();
     if(BUILD_T_TUBE) ttubeConnector();
@@ -63,6 +65,7 @@ module build()
     }
     if(BUILD_NORMAL_DOWNSPOUT_ELBOW)normal_downspout_elbow();
 }
+
 
 module connector_straight_roundpipe(outerDiameter, innerDiameter, length,wall) {
     
@@ -119,6 +122,38 @@ module endstop_elbow()
         rotate([0,0,90])
         linear_extrude(height=CONNECTOR_LENGTH+TIGHT_ELBOW_90_OFFSET)
         offset(r = FEMALE_RADIUS-DS_WALL) square(15,center = true);
+    }
+}
+
+module triple_elbow_connector() 
+{
+    difference()
+    {
+        union()
+        {
+            translate([-100,60,0])
+            rotate([90,0,90])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, 200);
+
+            translate([100,0,0])
+            elbowConnector();
+            elbowConnector();
+            translate([-100,0,0])
+            elbowConnector();
+        }
+            translate([50,0,0])
+            rotate([0,0,90])
+            #channel2(250);
+            
+            translate([-100,60,0])
+            rotate([90,0,90])
+            downSpout_Center(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, 200);
+            
+            translate([100,0,0])
+            elbow_center();
+            elbow_center();
+            translate([-100,0,0])
+            elbow_center();
     }
 }
 
@@ -235,6 +270,15 @@ module channel(forT = 0)
     }
 }
 
+module channel2(length, channelWidth = 15, offsetRadius = FEMALE_RADIUS-DS_WALL)
+{
+    color("LightCyan")
+    translate([60,-TUBE_LENGTH,30])
+    rotate([0,90,90])
+    linear_extrude(height=length)
+    offset(r = offsetRadius) square(channelWidth,center = true);
+}
+
 module elbowChannel(right = 1)
 {
     translate([0,0,30])
@@ -277,6 +321,13 @@ module  elbow(right = 1)
     }
 }
 
+module elbow_center(demension = FEMALE_DEMS, offsetRadius = FEMALE_RADIUS - DS_WALL, angle = 90 )
+{
+    rotate_extrude(angle=angle,convexity = 10)
+    translate([ELBOW_90_OFFSET, 0, 0])
+    offset(r = offsetRadius) square(demension,center = true);
+}
+
 module  normal_downspout_elbow()
 {
     union()
@@ -313,5 +364,13 @@ module downSpout(dimensions, radius, wall, length)
             offset(r = radius) square(dimensions,center = true);
             offset(r = radius-wall) square(dimensions,center = true);
         }
+    }
+}
+
+module downSpout_Center(dimensions,radius, wall, length)
+{
+    linear_extrude(height = length)
+    {
+        offset(r = radius-wall) square(dimensions,center = true);
     }
 }
