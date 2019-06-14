@@ -67,7 +67,9 @@ BUILD_SINGLE_SMALL = 0;
 BUILD_SET = 2; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
 BUILD_SIZE = 5;
 BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
-SET_DEFINED = [[3,1],[4,0]];
+// SET_DEFINED = [[3,1],[4,0]];
+// SET_DEFINED = [[0,2],[1,1]];
+SET_DEFINED = [[2,1],[3,2]];
 BUILD_SIDE_SET = 1;
 BUILD_WAVE_SPACER = 0;
 
@@ -123,7 +125,7 @@ module buildWaveSpacer()
 
 module build_single_set(size, count) 
 {
-    echo(size=size, count=count, spacerLength=spacerLength(size), buildLength=buildLength(size,count));
+    echo(size=size, count=count+1, spacerLength=spacerLength(size), buildLength=buildLength(size,count));
     for (i=[0:count]) 
     {
         if(BUILD_SIDE_SET)
