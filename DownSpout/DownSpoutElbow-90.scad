@@ -41,7 +41,9 @@ BUILD_T_TUBE = 0;
 BUILD_ENDSTOP_ELBOW = 0;
 BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 0;
 BUILD_NORMAL_DOWNSPOUT_ELBOW = 0;
-BUILD_TRIPLE_ELBOW_CONNECTOR = 1;
+BUILD_TRIPLE_ELBOW_CONNECTOR = 0;
+BUILD_OFFSET_ELBOW_CONNECTOR = 1;
+
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -64,8 +66,55 @@ module build()
         connector_straight_roundpipe(65,62,20,3);
     }
     if(BUILD_NORMAL_DOWNSPOUT_ELBOW)normal_downspout_elbow();
+    if(BUILD_OFFSET_ELBOW_CONNECTOR) OFFSET_ELBOW_CONNECTOR();
 }
 
+module OFFSET_ELBOW_CONNECTOR()
+{
+    BOX_WIDTH = 115; //FEMALE_WIDTH + 20 + 2*FEMALE_RADIUS;
+
+    difference()
+    {
+        union()
+        {
+            //MAIN CHAMBER
+            color("SteelBlue")translate([40,22 + FEMALE_RADIUS,0])
+            rotate([0,0,90])
+            downSpout(dimensions=[BOX_WIDTH, FEMALE_HEIGHT], radius=FEMALE_RADIUS, wall=DS_WALL, length=60);
+            //main Chamber floor
+            color("LightSteelBlue")translate([40,22 + FEMALE_RADIUS,0])
+            rotate([0,0,90])
+            downSpout_Center(dimensions=[BOX_WIDTH,FEMALE_HEIGHT], radius=FEMALE_RADIUS, wall=DS_WALL, length=3*DS_WALL);
+
+            //main Chamber ceiling
+            color("SkyBlue")translate([40,22 + FEMALE_RADIUS,60-DS_WALL])
+            rotate([0,0,90])
+            downSpout_Center(dimensions=[BOX_WIDTH ,FEMALE_HEIGHT], radius=FEMALE_RADIUS, wall=DS_WALL, length=DS_WALL);
+
+            //input Connector (female)
+            color("Aquamarine")
+            translate([40,15,60])
+            rotate([0,0,90])
+            downSpout(dimensions=FEMALE_DEMS, radius=FEMALE_RADIUS, wall=DS_WALL, length=30);
+
+            //exit Connector (male)
+            color("Aqua")
+            translate([-30,MALE_WIDTH*2+5,MALE_HEIGHT+MALE_RADIUS-DS_WALL])
+            rotate([90,0,90])
+            downSpout(dimensions=MALE_DEMS, radius=MALE_RADIUS, wall=DS_WALL, length=50);
+        }
+        //input hole
+        translate([40,15,55])
+        rotate([0,0,90])
+        downSpout_Center(dimensions=FEMALE_DEMS , radius=FEMALE_RADIUS, wall=DS_WALL, length=30);
+
+        //Exit hole
+        translate([-15,MALE_WIDTH*2+5,MALE_HEIGHT+MALE_RADIUS-DS_WALL])
+        rotate([90,0,90])
+        downSpout_Center(dimensions=MALE_DEMS, radius=MALE_RADIUS, wall=DS_WALL, length=50);
+    }
+
+}
 
 module connector_straight_roundpipe(outerDiameter, innerDiameter, length,wall) {
     
