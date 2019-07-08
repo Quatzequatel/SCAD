@@ -64,14 +64,16 @@ Directives - defines what to build with optional features.
 INCLUDE_THING = 0;
 BUILD_SUIT = 0; //current set in use.
 BUILD_SINGLE_SMALL = 0;
-BUILD_SET = 2; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
+BUILD_SET = 0; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
 BUILD_SIZE = 5;
 BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
 // SET_DEFINED = [[3,1],[4,0]];
-// SET_DEFINED = [[0,2],[1,1]];
-SET_DEFINED = [[2,1],[3,2]];
-BUILD_SIDE_SET = 1;
-BUILD_WAVE_SPACER = 0;
+// SET_DEFINED = [[2,1],[3,0]];
+SET_DEFINED = [[0,4]];
+// SET_DEFINED = [[2,1],[3,2]];
+BUILD_SIDE_SET = 0;
+BUILD_SIDE_BRACKET = 0;
+BUILD_WAVE_SPACER = 1;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -93,32 +95,105 @@ module build()
     }
     if(BUILD_SET > 1)
     {
+        echo("BUILD_SET");
         build_single_set(getSizeOfSet(0), getCountOfSet(0));
         
         if(getSizeOfSet(1)> 0)
         {
+            echo("FIRST SET");
             translate([groupSpacerLength(0), 0, 0])
             build_single_set(getSizeOfSet(1), getCountOfSet(1));
         }
 
         if(getSizeOfSet(2)> 0)
         {
+            echo("SECOUND SET");
             translate([groupSpacerLength(1), 0, 0])
             build_single_set(getSizeOfSet(2), getCountOfSet(2));        
         }
 
         if(getCountOfSet(3)> 0)
         {
+            echo("THRID SET");
             translate([groupSpacerLength(2), 0, 0])
             build_single_set(getSizeOfSet(3), getCountOfSet(3));        
         }
     }
 
-    if(BUILD_WAVE_SPACER) buildWaveSpacer();
-    
+    if(BUILD_SIDE_BRACKET) 
+    {
+        echo("BUILD_SIDE_BRACKET");
+        buildSideBracket();
+    }
+
+    if(BUILD_WAVE_SPACER) 
+    {
+        echo("BUILD_WAVE_SPACER");
+        buildWaveSpacer();
+    }    
 }
 
+/*
+    Wave spacer supports wave truss to sport corrigated roof from sagging.
+*/
 module buildWaveSpacer() 
+{
+    depth = 21;
+    spacer_height = spacerLength(3);
+    height = TD_HEIGHT + spacer_height;
+    width = 2*height;
+
+    echo(depth,spacer_height,height, width);
+
+    difference()
+    {
+        linear_extrude(depth)
+        polygon(points=[[-height,0],[height,0],[half(depth),height],[-half(depth),height]]);
+
+        translate([0, height/2, depth/2])
+        rotate([90, 0, 0]) 
+        {
+            cylinder(r=1.5, h=height, center=true);            
+        }
+    }
+
+}
+
+module longRulerStandVisualMarker(braceHeight,braceWidth,rulerWidth,standThickness) {
+    difference()
+    {
+        longRulerStand(braceHeight,braceWidth,rulerWidth,standThickness);
+
+        translate([braceHeight/2 - 6.5,0,0])
+        {
+            cube([2*braceHeight-rulerWidth,braceHeight+1,11], center=false);
+        }
+    }
+
+    // rotate([90, 0, 0]) 
+    // #cube(size=[(2*braceHeight)+rulerWidth, braceWidth, standThickness]);
+}
+
+module longRulerStand(braceHeight,braceWidth,rulerWidth,standThickness)
+{
+    translate([(braceHeight + rulerWidth), 0, 0]) 
+    {
+        triangle90(braceHeight,braceHeight,braceWidth);    
+    }
+    
+    translate([braceHeight, 0, 0]) 
+    {
+        rotate([0,0,90])
+        triangle90(braceHeight,braceHeight,braceWidth);    
+    }
+
+    // translate([0,0,-half(braceWidth)])
+    rotate([90, 0, 0]) 
+    cube(size=[(2*braceHeight)+rulerWidth, braceWidth, standThickness]);
+}
+
+
+module buildSideBracket() 
 {
     Side_Stacked_Bracket(13);
 }
@@ -233,4 +308,13 @@ module spacer(dimensions, length, value)
 {
     linear_extrude(height = length)
     square([value,adjust_dimensions_wall(dimensions,WALL)[1]],center = true);
+}
+
+module triangle90(height,width,depth) 
+{
+    linear_extrude(depth)
+    scale([width, height, 0]) 
+    {
+        polygon(points=[[0,0],[1,0],[0,1]]);
+    }
 }
