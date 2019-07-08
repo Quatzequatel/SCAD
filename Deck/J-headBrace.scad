@@ -31,8 +31,8 @@ function wedgeIncrement(height,i) = i * half(height)/(BRACE_THICKNESS)+half(heig
 Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
-BUILD_JBRACE = 1;
-BUILD_LONG_RULER_STAND = 0;
+BUILD_JBRACE = 0;
+BUILD_LONG_RULER_STAND = 1;
 BUILD_LONG_RULER_VISUAL_MARKER = 0;
 BUILD_JBRACE_FLOOR_SPACER = 0;
 
