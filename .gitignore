@@ -1,7 +1,9 @@
 # only track .scad and 3mf files.
+# need to setup new machine so moving stl files too.
 *.*
 !*.
 !*.scad
+!*.stl
 !*.3mf
 !*.gcode
 !*.txt
