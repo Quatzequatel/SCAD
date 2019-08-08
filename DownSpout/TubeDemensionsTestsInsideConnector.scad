@@ -1,3 +1,12 @@
+/*
+Description : 
+    Creates clamp-bands for inside open downspout.
+    These hold things like rubber or screens.
+*/
+
+/*****************************************************************************
+CONSTANTS
+*****************************************************************************/
 //$fs = 0.01;
 //$fa = 0.01;
 $fn = 100;
@@ -20,9 +29,9 @@ squareTube(outerwidth2,outerheight2,wallThickness2,10);
 
 module squareTube(outerwidth, outerheight, wallThickness, height)
 {
-        //linear_extrude(height,true)
     difference()
     {
+        echo(width = outerwidth-minkowski_circle, height = outerheight-minkowski_circle);
         linear_extrude(height,true)
         minkowski()
         {
@@ -30,7 +39,7 @@ module squareTube(outerwidth, outerheight, wallThickness, height)
             circle(minkowski_circle);
         }
         
-        #translate([0,0,-2],true)
+        translate([0,0,-2])
         linear_extrude(height+4,true)
         minkowski()
         {
