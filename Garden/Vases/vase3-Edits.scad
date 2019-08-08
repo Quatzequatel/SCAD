@@ -13,7 +13,7 @@ BrushScale = [1,0.5,0.5];
 Checkout VS = 95126 & 50664
 */
 // VaseSeed=round(rands(0,100000,2)[0]);
-VaseSeed = 38064; //80563;
+VaseSeed = 80563;
 
 OrnamentSeed=458456630271;//	
 //swirls or doodles
@@ -66,51 +66,55 @@ o3=concat([o2[5]],
 scale(GlobalScale)
 difference()
 {
+    lastIndex = 130; //number of points to use for curve.
+
     echo(VaseSeed=VaseSeed);
     union()
     {
         color("Moccasin")
         rotate_extrude($fn=500,convexity = 10)
         {
-            lastIndex = 90;
             intersection()
             {
                 square([50,100]);
                 union()
                 {
-                    echo(concat(bzplot(v,100),[[0,bzplot(v,100)[99][1]]]));
+                    echo(concat(bzplot(v,lastIndex),[[0,bzplot(v,lastIndex)[lastIndex][1]]]));
                     offset(r=0.001) 
                     difference()
                     {
                         //close the model flat across the top.
-                        polygon(convexity =20, concat(bzplot(v,100),[[0,bzplot(v,100)[99][1]]]));
+                        polygon(convexity =20, concat(bzplot(v,lastIndex),[[0,bzplot(v,lastIndex)[lastIndex][1]]]));
 
-                        //the following makes the model hollow like a vase.
-                        //used for when printing double layer walls.      
-//                        offset(r=-0.5)
-//                        polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
-//                        
-//                        translate([0,1,0])
-//                        offset(r=-2)
-//                        polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+                        // the following makes the model hollow like a vase.
+                        // used for when printing double layer walls.      
+                        // offset(r=-0.5)
+                        // polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+                        
+                        // translate([0,1,0])
+                        // offset(r=-2)
+                        // polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
                     }
 
                     //foot pad for vase.
+                    translate([0,0,1])
                     hull()
                     {
                         translate([7.5,1,0]) //siz of footpad.
                         scale([2,1,1])circle(1);
+                        translate([2.1,1,0])
                         scale([2,1,1])circle(1);
                     }
                     
                     //rim for vase.
-                    translate([-0.75,0.75,0])    //fine adjustment (manually change as needed)
-                    translate(bzplot(v,100)[99]) //move to point in vector graph
+                    // translate([-0.75,0.75,0])    //fine adjustment (manually change as needed)
+                    translate(pointSubtract(bzplot(v,lastIndex)[lastIndex-1],-3.25,14.25)) //move to point in vector graph
                     scale([1,2,1])               //define type of oval
                     circle(1);
                 }
             }
         }
+
         steps=Oreps;
         if(BrushScale[0]>0&&BrushScale[1]>0&&BrushScale[2]>0)
         {
@@ -139,6 +143,10 @@ difference()
             }
         }
     }
+
+    //trunctate top portion.
+    translate([0, 0, bzplot(v,lastIndex)[lastIndex][1]-3]) 
+    cube(size=[60, 60,20], center=true);
 }
 
 module spiral(op,dir,t, i=0)
@@ -206,6 +214,7 @@ function vsmooth(v) = [
   for(i = [0: 1 / len(v): 1]) bez2(i,v)
 ];
 
+function pointSubtract(v,x,y) = [v[0]-x,v[1]-y];
 function bzplot(v,res)=[for(i=[1:-1/res:0])bez2(i,v)];
 function lim31(l, v) = v / len3(v) * l;
 function len3(v) = sqrt(pow(v[0], 2) + pow(v[1], 2) + pow(v[2], 2));
