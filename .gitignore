@@ -3,7 +3,7 @@
 *.*
 !*.
 !*.scad
-!*.stl
+#!*.stl
 !*.3mf
 !*.gcode
 !*.txt

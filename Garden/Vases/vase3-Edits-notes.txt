@@ -1,0 +1,6 @@
+vaseseed = 87147589586781;
+OrnamentSeed=458456630271;//	
+
+[nice pot 1 ]
+vaseseed  = 87147581108;
+OrnamentSeed=92;

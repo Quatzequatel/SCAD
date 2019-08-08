@@ -1,9 +1,9 @@
 
 
-jaw_depth     = 15;
-jaw_thickness = 5;
+jaw_depth     = 20;
+jaw_thickness = 7;
 jaw_spacing   = 44;//16.16;
-tooth_height  = 7.75; //.75;
+// tooth_height  = 7.75; //.75;
 
 module planter_clip()
 {
@@ -11,16 +11,16 @@ module planter_clip()
   body_length = jaw_depth + (jaw_thickness * 2);
   body_width  = jaw_spacing + (jaw_thickness * 2);
 
-  mouth_width = jaw_spacing - (tooth_height * 2);
+  mouth_width = jaw_spacing /4;
   mouth_x_pos = jaw_depth + jaw_thickness;
-  mouth_y_pos = jaw_thickness + tooth_height;
+  mouth_y_pos = body_length/2;//jaw_thickness + tooth_height;
 
     box_main = [body_length, body_width, jaw_thickness];
     box_cutout = [jaw_depth-2, jaw_spacing, jaw_thickness + 2];
     box_slit = [jaw_thickness + 4, mouth_width, jaw_thickness + 2];
     
     move_cutout = [jaw_thickness, jaw_thickness, -1];
-    move_slit= [mouth_x_pos - 3, mouth_y_pos+4, -1];
+    move_slit= [mouth_x_pos - 3, mouth_y_pos+6, -1];
     
     difference()
     {
