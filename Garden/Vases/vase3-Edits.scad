@@ -1,5 +1,7 @@
 /*
-Hit F5 to get a new vase. Stop when a desired one shows up. copy the value from console for Echo: VaseSeed.
+Hit F5 to get a new vase. 
+Stop when a desired one shows up. 
+Copy the value from console for Echo: VaseSeed.
 
 8/5/2019 printing vase3-vs80563os92gs221(3).stl
 where 
@@ -10,8 +12,8 @@ BrushScale = [1,0.5,0.5];
 
 Checkout VS = 95126 & 50664
 */
-VaseSeed=round(rands(0,100000,2)[0]);
-//VaseSeed = 80563;
+// VaseSeed=round(rands(0,100000,2)[0]);
+VaseSeed = 38064; //80563;
 
 OrnamentSeed=458456630271;//	
 //swirls or doodles
@@ -30,36 +32,36 @@ dir2=un([0,rnd(OrnamentSeed+546,-1,1),rnd(OrnamentSeed+344,-0.01,0.05)])*Ornamen
 Calligraphic=2;//
 CalligraphicSlant=BrushRotation;//
 v=[[0,0],
-    [rnd(VaseSeed+1,25,60), 0],
-    [rnd(VaseSeed+2,5,60), rnd(VaseSeed+3,5,60)],
-    [rnd(VaseSeed+4,1,60), rnd(VaseSeed+5,5,60)],
-    [rnd(VaseSeed+6,1,60), rnd(VaseSeed+7,1,60)],
-    [rnd(VaseSeed+8,1,40), 60]];
+    [rnd(VaseSeed+1,25,60),0],
+    [rnd(VaseSeed+2,5,60),rnd(VaseSeed+3,5,60)],
+    [rnd(VaseSeed+4,1,60),rnd(VaseSeed+5,5,60)],
+    [rnd(VaseSeed+6,1,60),rnd(VaseSeed+7,1,60)],
+    [rnd(VaseSeed+8,1,40),60]];
 
-o1=vsmooth([[rnd(OrnamentSeed+9,180), 0.03],
-            [rnd(OrnamentSeed+10,180), rnd(OrnamentSeed+11,0.5)],
-            [rnd(OrnamentSeed+12,180), rnd(OrnamentSeed+13,0.5)],
-            [rnd(OrnamentSeed+14,180), rnd(OrnamentSeed+15,0.5)],
-            [rnd(OrnamentSeed+16,180), rnd(OrnamentSeed+17,0.5)],
-            [rnd(OrnamentSeed+18,180), rnd(OrnamentSeed+19,0.5)]]);
+o1=vsmooth([[rnd(OrnamentSeed+9,180),0.03],
+            [rnd(OrnamentSeed+10,180),rnd(OrnamentSeed+11,0.5)],
+            [rnd(OrnamentSeed+12,180),rnd(OrnamentSeed+13,0.5)],
+            [rnd(OrnamentSeed+14,180),rnd(OrnamentSeed+15,0.5)],
+            [rnd(OrnamentSeed+16,180),rnd(OrnamentSeed+17,0.5)],
+            [rnd(OrnamentSeed+18,180),rnd(OrnamentSeed+19,0.5)]]);
             
 o2=concat([o1[5]],
     vsmooth(
-        [[rnd(OrnamentSeed+20,180), rnd(OrnamentSeed+21,0.95,0.0)],
-         [rnd(OrnamentSeed+22,180), rnd(OrnamentSeed+23,0.95,0.0)],
-         [rnd(OrnamentSeed+24,180), rnd(OrnamentSeed+25,0.95,0.0)],
-         [rnd(OrnamentSeed+26,180), rnd(OrnamentSeed+27,0.95,0.0)],
-         [rnd(OrnamentSeed+28,180), rnd(OrnamentSeed+29,0.95,0.0)]]
+        [[rnd(OrnamentSeed+20,180),rnd(OrnamentSeed+21,0.95,0.0)],
+         [rnd(OrnamentSeed+22,180),rnd(OrnamentSeed+23,0.95,0.0)],
+         [rnd(OrnamentSeed+24,180),rnd(OrnamentSeed+25,0.95,0.0)],
+         [rnd(OrnamentSeed+26,180),rnd(OrnamentSeed+27,0.95,0.0)],
+         [rnd(OrnamentSeed+28,180),rnd(OrnamentSeed+29,0.95,0.0)]]
         )
     );
 
 o3=concat([o2[5]],
     vsmooth(
-        [[rnd(OrnamentSeed+30,180), rnd(OrnamentSeed+31,0.95,0.5)],
-         [rnd(OrnamentSeed+32,180), rnd(OrnamentSeed+33,0.95,0.5)],
-         [rnd(OrnamentSeed+34,180), rnd(OrnamentSeed+35,0.95,0.5)],
-         [rnd(OrnamentSeed+36,180), rnd(OrnamentSeed+37,0.95,0.5)],
-         [rnd(OrnamentSeed+38,180), 0.95]])
+        [[rnd(OrnamentSeed+30,180),rnd(OrnamentSeed+31,0.95,0.5)],
+         [rnd(OrnamentSeed+32,180),rnd(OrnamentSeed+33,0.95,0.5)],
+         [rnd(OrnamentSeed+34,180),rnd(OrnamentSeed+35,0.95,0.5)],
+         [rnd(OrnamentSeed+36,180),rnd(OrnamentSeed+37,0.95,0.5)],
+         [rnd(OrnamentSeed+38,180),0.95]])
     );
 scale(GlobalScale)
 difference()
@@ -68,27 +70,44 @@ difference()
     union()
     {
         color("Moccasin")
-        rotate_extrude($fn=200,convexity = 20)
+        rotate_extrude($fn=500,convexity = 10)
         {
+            lastIndex = 90;
             intersection()
             {
                 square([50,100]);
                 union()
                 {
-                    echo(concat(bzplot(v,100),[[0,59.2977]]));
-                    offset(r=0.01) 
+                    echo(concat(bzplot(v,100),[[0,bzplot(v,100)[99][1]]]));
+                    offset(r=0.001) 
                     difference()
                     {
-                        polygon(convexity =20, concat(bzplot(v,100),[[0,58]]));
-                        offset(r=-1)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
-                        translate([0,1,0])offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+                        //close the model flat across the top.
+                        polygon(convexity =20, concat(bzplot(v,100),[[0,bzplot(v,100)[99][1]]]));
+
+                        //the following makes the model hollow like a vase.
+                        //used for when printing double layer walls.      
+//                        offset(r=-0.5)
+//                        polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+//                        
+//                        translate([0,1,0])
+//                        offset(r=-2)
+//                        polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
                     }
 
+                    //foot pad for vase.
                     hull()
                     {
-                        translate([7.5,1,0]) scale([2,1,1])circle(1);
+                        translate([7.5,1,0]) //siz of footpad.
+                        scale([2,1,1])circle(1);
                         scale([2,1,1])circle(1);
                     }
+                    
+                    //rim for vase.
+                    translate([-0.75,0.75,0])    //fine adjustment (manually change as needed)
+                    translate(bzplot(v,100)[99]) //move to point in vector graph
+                    scale([1,2,1])               //define type of oval
+                    circle(1);
                 }
             }
         }
@@ -120,7 +139,6 @@ difference()
             }
         }
     }
-    rotate([180,0,0])translate([0,0,0.0001])cylinder(h=10,r=30);
 }
 
 module spiral(op,dir,t, i=0)
