@@ -15,14 +15,17 @@ Checkout VS = 95126 & 50664
 // VaseSeed=round(rands(0,100000,2)[0]);
 VaseSeed = 80563;
 
-OrnamentSeed=458456630271;//	
+// OrnamentSeed=458456630271;
+// OrnamentSeed = round(rands(0,100000,2)[0]);
+//Likes (57898,65406,44179,33482)
+OrnamentSeed=65406;
 //swirls or doodles
 Swoodle=0;//[1,0]
 GlobalScale=[2,2,1];//
 BrushScale=[1,0.5,0.5];//
-BrushRotation=15;//
-OrnamentAdjust=0.05;//
-OrnamentAdjustR=2;//
+BrushRotation=40;//
+OrnamentAdjust=0.02;//
+OrnamentAdjustR=3;//
 Oreps=4;//
 OHeight=0.55;//
 /* [Hidden] */
@@ -69,6 +72,7 @@ difference()
     lastIndex = 130; //number of points to use for curve.
 
     echo(VaseSeed=VaseSeed);
+    echo(OrnamentSeed=OrnamentSeed);
     union()
     {
         color("Moccasin")
@@ -145,7 +149,9 @@ difference()
     }
 
     //trunctate top portion.
-    translate([0, 0, bzplot(v,lastIndex)[lastIndex][1]-3]) 
+    echo(trunctate = bzplot(v,lastIndex)[lastIndex][1]);
+
+    translate([0, 0, bzplot(v,lastIndex)[lastIndex][1]-2.75]) 
     cube(size=[60, 60,20], center=true);
 }
 
