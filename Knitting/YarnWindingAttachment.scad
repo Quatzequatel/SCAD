@@ -41,7 +41,7 @@ Spindle_Base_Height=10;
 Spindle_GapHeight = 10 * Attachment_Tolerance;
 Spindle_Height=Attachment_Height +Spindle_Base_Height + Spindle_GapHeight;
 
-Build(YarnWindingAttachment);
+Build(YarnWindingAttachmentSpindle);
 
 module Build(item)
 {
@@ -133,14 +133,29 @@ module YarnSlit(height, diameter, slitsize, ratio)
 module Spindle(height, od, baseheight, base_od)
 {
     echo("Spindle ",height=height, od=od, baseheight=baseheight, base_od=base_od);
-    //base
-    cylinder(h=baseheight, d1=base_od, d2 = base_od);
-    //spindle
-    cylinder(h=height, d1= od, d2 = od);
-    
-    //spindle top
-    translate([0,0,height ])
-    sphere(d=od);
+    difference()
+    {
+        union()
+        {
+            //base
+            cylinder(h=baseheight, d1=base_od, d2 = base_od);
+
+            //spindle
+            cylinder(h=height, d1= od, d2 = od);
+            
+            //spindle top
+            translate([0,0,height ])
+            sphere(d=od);
+        }
+        //Screw holes
+        ScrewHoleX = (base_od - od)/2;
+        ScrewHoleZ = baseheight + 0.25;
+        translate([ScrewHoleX, 0, ScrewHoleZ])
+        ScrewHole(baseheight + 1, 4, 3.25, 8.25);
+
+        translate([-ScrewHoleX, 0, ScrewHoleZ])
+        ScrewHole(baseheight + 2, 4, 3.25, 8.25);
+    }
 }
  
 module LockingTab(width, depth, h1, h2)
@@ -151,6 +166,21 @@ module LockingTab(width, depth, h1, h2)
     linear_extrude(height=depth, center = true)
     translate([-width/2,0,0])
     polygon(points);
+}
+
+module ScrewHole(height, od, id, insetDiameter)
+{
+    echo("ScrewHole", height=height, od=od, id=id, insetDiameter=insetDiameter);
+    //translate([0, 0, height+1])
+    rotate([0, 180, 0]) 
+    {
+        wall = od - id;
+        cylinder(h=height + 1, d1=od, d2=od);;
+        if(insetDiameter > id)
+        {
+            cylinder(h=insetDiameter, d1 = insetDiameter, d2 = 1);
+        }
+    }
 }
 
 module Tube(height, diameter, wall)
