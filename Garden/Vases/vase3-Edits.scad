@@ -21,7 +21,7 @@ VaseSeed = 80563;
 OrnamentSeed=65406;
 //swirls or doodles
 Swoodle=0;//[1,0]
-GlobalScale=[2,2,1];//
+GlobalScale=[7,7,8];//
 BrushScale=[1,0.5,0.5];//
 BrushRotation=40;//
 OrnamentAdjust=0.02;//
@@ -76,7 +76,7 @@ difference()
     union()
     {
         color("Moccasin")
-        rotate_extrude($fn=500,convexity = 10)
+        rotate_extrude($fn=300,convexity = 10)
         {
             intersection()
             {
