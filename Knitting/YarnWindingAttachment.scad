@@ -148,13 +148,15 @@ module Spindle(height, od, baseheight, base_od)
             sphere(d=od);
         }
         //Screw holes
+        Screw_Head_OD = 9.25;
+        Screw_Neck_OD = 3.25;
         ScrewHoleX = (base_od - od)/2;
         ScrewHoleZ = baseheight + 0.25;
         translate([ScrewHoleX, 0, ScrewHoleZ])
-        ScrewHole(baseheight + 1, 4, 3.25, 8.25);
+        ScrewHole(baseheight + 1, 4, Screw_Neck_OD, Screw_Head_OD);
 
         translate([-ScrewHoleX, 0, ScrewHoleZ])
-        ScrewHole(baseheight + 2, 4, 3.25, 8.25);
+        ScrewHole(baseheight + 1, 4, Screw_Neck_OD, Screw_Head_OD);
     }
 }
  
