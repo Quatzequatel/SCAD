@@ -1,6 +1,13 @@
-
+/*
+Tool for getting coffee gounds out of Espresso filter basket.
+History:
+ 2020/02/25 : Created
+              Changed EspressoFilterBasket_Depth from 27 to 19
+                Idealy the point does not touch the basket bottom,
+                but portafilter does hit the outside brim.
+*/
 EspressoFilterBasket_Diameter = 63;
-EspressoFilterBasket_Depth = 27;
+EspressoFilterBasket_Depth = 18;  //Breville double size
 WideMouth_Diameter = 84;
 WideMouthLid_ID = 73;
 
@@ -8,6 +15,7 @@ Wall = WideMouthLid_ID - EspressoFilterBasket_Diameter;
 LidOD = WideMouth_Diameter;
 LidID = EspressoFilterBasket_Diameter;
 Height = 27;
+//Total height should add up to 50-51 mm
 PointerHeight = Height + EspressoFilterBasket_Depth + Wall/2;
 // TopDia = 31;
 // BottomDia = TopDia + 0;
@@ -19,9 +27,9 @@ build();
 module build(args) 
 {
     // ImportFile();
-    triangle(Wall/2, LidID + 1);
+    triangle(Wall * 0.75, LidID + 1);
     rotate([0,0,90])
-    triangle(Wall/2, LidID + 1);
+    triangle(Wall * 0.75, LidID + 1);
     rotate([0,0,45])
     pyramid(LidID/3, PointerHeight);
     
@@ -54,12 +62,12 @@ module triangle(width, length) {
 
 module pyramid(width, height) 
 {
-    scalefactor = width / 0.1;
+    scalefactor = width/3 ;
     translate([0,0,height])
     rotate([180, 0, 0]) 
     {
         linear_extrude(height = height, scale = scalefactor )
-        square(size=[0.1, 0.1], center=true);
+        square(size=[3, 3], center=true);
     }   
 }
 
