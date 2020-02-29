@@ -4,6 +4,7 @@ X-> width
 Y-> depth
 Z-> height
 */
+
 $fn=180;
 //SG => Sensor Gaurd
 GaurdDepth = 8;
@@ -22,10 +23,15 @@ SH_Width = 10;
 SH_depth = 5;
 SmSH_Height = 1;
 SmSH_Width =2;
-
-GA_height = 8.5;
-GA_width = 11.8;
-CavetyDepth = 6;
+//TI => Tab Inserts 
+TI_height = 8.5;
+TI_width = 11.8;
+TI_depth = 6;
+TI_spaceBetween = 89.5;
+//GB => Sensor Gaurd Bar
+GB_height = 0;
+GB_width = 0;
+GB_depth = 0;
 
 Build("button");
 // trangle(10,10);
@@ -39,7 +45,19 @@ module Build(args) {
     }
     else if(args == "button")
     {
-        InsertTab(GA_width, GA_height, CavetyDepth);
+        TabSpaceBetween = TI_width + TI_spaceBetween;
+        Inserts(TI_width, TI_height, TI_depth, TabSpaceBetween);
+
+        // Gaurd Bar
+        GauradBarWidth = TabSpaceBetween + (2 * Cavety1Width) + (2 * TI_width);
+        GauradBarZ = 2 * TI_depth;
+        echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
+        GauradBar( GauradBarWidth,
+                   TI_height+5,
+                   TI_depth,
+                   -Cavety1Width,
+                   0,
+                   GauradBarZ );
 
     }
     else
@@ -49,18 +67,88 @@ module Build(args) {
     
 }
 
-module InsertTab(width, height, depth, handle = true)
+module GauradBar(width, height, depth, x, y, z)
 {
+    union()
+    {
+        translate([x, 0, z])
+        cube([width, height, depth], center = false);
+
+        //Left
+        translate([x, 0, z + depth/2])
+        rotate([-90,0,0])
+        cylinder(r=depth/2, h = height, center = false);
+        
+        //Right
+        translate([x + width, 0, z + depth/2])
+        rotate([-90,0,0])
+        cylinder(r=depth/2, h = height, center = false);
+    }
+}
+
+
+module Inserts(width, height, depth, spaceBetweenTabs)
+{
+        //Near Zero axis
+        InsertTab(width, height, depth);
+
+        translate([width,0,0])
+        #cube([spaceBetweenTabs,1,1]);
+        
+        //Far insert
+        translate([spaceBetweenTabs + width, 0, 0])
+        InsertTab(width, height, depth);
+}
+
+
+module InsertTab(width, height, depth)
+{
+    echo("InsertTab", width=width, height = height, depth = depth);
         handleHeight = 1.5 * depth;
         union()
         {
-            cube(size=[width, height, depth], center=true);
-            if(handle == true)
-            {
-                translate([0,0,depth])
-                cylinder(r=2, h=handleHeight, center=true);                    
-            }      
+            gap = 3;
+
+            TabTop(width, height, depth, gap);
+            translate([0,0,depth])
+            TabTransition(width, height, depth, gap);
+            // TabSupport(width, height-gap, depth);
+            TabBottom(width, height, depth);
         }
+}
+module TabTransition(width, height, depth, gap)
+{
+    echo("TabTransition", width=width, height = height, depth = depth, gap=gap);
+    difference()
+    {
+        cube([width, height, depth/2], center=false);
+        translate([0, height, 0])
+        //Cylindar center is at x=0, y=gap, z=gap 
+        rotate([0,90,0])
+        cylinder(r=gap, h=width, center=false);
+    }
+}
+module TabSupport(width, height, depth, gap)
+{
+    translate([0, 0, depth])
+    cube([width, height, depth], center=false);
+}
+module TabTop(width, height, depth, gap)
+{
+    translate([0, 0, depth + gap])
+    cube([width, height, 8], center=false);
+}
+module TabBottom(width, height, depth)
+{
+    echo("TabBottom", width=width, height = height, depth = depth);
+        echo("TabBottom", width=width, height = height, depth = depth);
+    mr = 2;
+    translate([mr/2,mr/2,mr/2])
+    minkowski() 
+    {
+        cube([width-mr, height-mr, depth-mr], center=false);
+        cylinder(mr, center=true)        ;
+    }
 }
 
 module basic()
