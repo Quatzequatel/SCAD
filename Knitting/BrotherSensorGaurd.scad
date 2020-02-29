@@ -42,23 +42,26 @@ module Build(args) {
 
 module basic()
 {
+        rotate([-90,0,0])
         difference()
         {
             union()
             {    
                 CavetyOne();
 
-                translate([Cavety1Width,FullCavetyDepth-ShellDepth,0])
-                cube([Cavety3Width, GaurdDepth + ShellDepth, Cavety2Height], center=false);
+                //Main Gaurd
+                //translate([Cavety1Width,FullCavetyDepth-ShellDepth,0])
+                translate([0, FullCavetyDepth-ShellDepth, 0])
+                cube([Cavety3Width + 2 * Cavety1Width, GaurdDepth + ShellDepth, Cavety2Height], center=false);
 
                 translate([2 * Cavety1Width + Cavety3Width,0,0])
                 CavetyOne("left");
             }
-            translate([ Cavety3Width + Cavety1Width, GaurdDepth + ShellDepth + FullCavetyDepth, 0])
+            translate([ Cavety3Width + 2 * Cavety1Width, GaurdDepth + ShellDepth + FullCavetyDepth, 0])
             rotate([0,0,180])
             trangle(GaurdDepth, Cavety2Height);
 
-            translate([ Cavety1Width + GaurdDepth - GaurdDepth, 2 * FullCavetyDepth + 2 , Cavety2Height])
+            #translate([ 0, 2 * FullCavetyDepth + 2 , Cavety2Height])
             rotate([180,0,0])
             trangle(GaurdDepth, Cavety2Height);
             
