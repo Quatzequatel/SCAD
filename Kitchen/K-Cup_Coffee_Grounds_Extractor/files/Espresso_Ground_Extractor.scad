@@ -27,9 +27,9 @@ build();
 module build(args) 
 {
     // ImportFile();
-    triangle(Wall * 0.75, LidID + 1);
+    triangle(Wall / 2, LidID + 1);
     rotate([0,0,90])
-    triangle(Wall * 0.75, LidID + 1);
+    triangle(Wall / 2, LidID + 1);
     rotate([0,0,45])
     pyramid(LidID/3, PointerHeight);
     
