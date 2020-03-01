@@ -45,20 +45,25 @@ module Build(args) {
     }
     else if(args == "button")
     {
-        TabSpaceBetween = TI_width + TI_spaceBetween;
-        Inserts(TI_width, TI_height, TI_depth, TabSpaceBetween);
+        // rotate(0,0,0)
+        {
+            union()
+            {
+                TabSpaceBetween =  TI_spaceBetween;
+                Inserts(TI_width, TI_height, TI_depth, TabSpaceBetween);
 
-        // Gaurd Bar
-        GauradBarWidth = TabSpaceBetween + (2 * Cavety1Width) + (2 * TI_width);
-        GauradBarZ = 2 * TI_depth;
-        echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
-        GauradBar( GauradBarWidth,
-                   TI_height+5,
-                   TI_depth,
-                   -Cavety1Width,
-                   0,
-                   GauradBarZ );
-
+                // Gaurd Bar
+                GauradBarWidth = TabSpaceBetween + (2 * Cavety1Width) + (2 * TI_width);
+                GauradBarZ = 2 * TI_depth;
+                // echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
+                GauradBar( GauradBarWidth,
+                        TI_height+7,
+                        TI_depth,
+                        -Cavety1Width,
+                        -2,
+                        GauradBarZ );            
+            }
+        }
     }
     else
     {
@@ -69,18 +74,19 @@ module Build(args) {
 
 module GauradBar(width, height, depth, x, y, z)
 {
+    translate([x, y, z])
     union()
     {
-        translate([x, 0, z])
+        
         cube([width, height, depth], center = false);
 
         //Left
-        translate([x, 0, z + depth/2])
+        translate([0, 0, depth/2])
         rotate([-90,0,0])
         cylinder(r=depth/2, h = height, center = false);
         
         //Right
-        translate([x + width, 0, z + depth/2])
+        translate([width, 0, depth/2])
         rotate([-90,0,0])
         cylinder(r=depth/2, h = height, center = false);
     }
@@ -92,8 +98,8 @@ module Inserts(width, height, depth, spaceBetweenTabs)
         //Near Zero axis
         InsertTab(width, height, depth);
 
-        translate([width,0,0])
-        #cube([spaceBetweenTabs,1,1]);
+        // translate([width,0,0])
+        // cube([spaceBetweenTabs,1,1]);
         
         //Far insert
         translate([spaceBetweenTabs + width, 0, 0])
@@ -112,7 +118,6 @@ module InsertTab(width, height, depth)
             TabTop(width, height, depth, gap);
             translate([0,0,depth])
             TabTransition(width, height, depth, gap);
-            // TabSupport(width, height-gap, depth);
             TabBottom(width, height, depth);
         }
 }
@@ -121,7 +126,8 @@ module TabTransition(width, height, depth, gap)
     echo("TabTransition", width=width, height = height, depth = depth, gap=gap);
     difference()
     {
-        cube([width, height, depth/2], center=false);
+        // cube([width, height, depth/2], center=false);
+        thisCube(width, height, depth/2, 2);
         translate([0, height, 0])
         //Cylindar center is at x=0, y=gap, z=gap 
         rotate([0,90,0])
@@ -131,18 +137,22 @@ module TabTransition(width, height, depth, gap)
 module TabSupport(width, height, depth, gap)
 {
     translate([0, 0, depth])
-    cube([width, height, depth], center=false);
+    thisCube(width, height, depth, 2);
 }
 module TabTop(width, height, depth, gap)
 {
     translate([0, 0, depth + gap])
-    cube([width, height, 8], center=false);
+    thisCube(width, height, 8, 2);
 }
 module TabBottom(width, height, depth)
 {
     echo("TabBottom", width=width, height = height, depth = depth);
         echo("TabBottom", width=width, height = height, depth = depth);
-    mr = 2;
+    thisCube(width, height, depth, 2);
+}
+
+module thisCube(width, height, depth, mr)
+{
     translate([mr/2,mr/2,mr/2])
     minkowski() 
     {
@@ -161,7 +171,6 @@ module basic()
                 CavetyOne();
 
                 //Main Gaurd
-                //translate([Cavety1Width,FullCavetyDepth-ShellDepth,0])
                 translate([0, FullCavetyDepth-ShellDepth, 0])
                 cube([Cavety3Width + 2 * Cavety1Width, GaurdDepth + ShellDepth, Cavety2Height], center=false);
 
@@ -172,7 +181,7 @@ module basic()
             rotate([0,0,180])
             trangle(GaurdDepth, Cavety2Height);
 
-            #translate([ 0, 2 * FullCavetyDepth + 2 , Cavety2Height])
+            translate([ 0, 2 * FullCavetyDepth + 2 , Cavety2Height])
             rotate([180,0,0])
             trangle(GaurdDepth, Cavety2Height);
             
