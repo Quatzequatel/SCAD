@@ -128,10 +128,11 @@ module TabTransition(width, height, depth, gap)
     {
         // cube([width, height, depth/2], center=false);
         thisCube(width, height, depth/2, 2);
-        translate([0, height, 0])
+        translate([0, height, gap/2])
+        // translate([0, height, 0])
         //Cylindar center is at x=0, y=gap, z=gap 
         rotate([0,90,0])
-        cylinder(r=gap, h=width, center=false);
+        cylinder(r=gap/2, h=width, center=false);
     }
 }
 module TabSupport(width, height, depth, gap)
