@@ -5,6 +5,10 @@ Y-> depth
 Z-> height
 */
 
+BuildBar = 1;
+BuildTabs = 2;
+
+
 $fn=180;
 //SG => Sensor Gaurd
 GaurdDepth = 8;
@@ -33,43 +37,34 @@ GB_height = 0;
 GB_width = 0;
 GB_depth = 0;
 
-Build("button");
+Build(buildBar=true, buildTabs = true);
 // trangle(10,10);
-module Build(args) {
-    if(args == "tabs")
-    {
-        CavetyOne("right");
-        
-        translate([Cavety1Width + 40,0,0])
-        CavetyOne("left");
-    }
-    else if(args == "button")
-    {
-        // rotate(0,0,0)
-        {
-            union()
-            {
-                TabSpaceBetween =  TI_spaceBetween;
-                Inserts(TI_width, TI_height, TI_depth, TabSpaceBetween);
+module Build(buildBar=false, buildTabs = false) {
+    echo("");
+    echo("Build()", buildBar=buildBar, buildTabs=buildTabs);
+    echo("");
+    TabSpaceBetween =  TI_spaceBetween;
 
-                // Gaurd Bar
-                GauradBarWidth = TabSpaceBetween + (2 * Cavety1Width) + (2 * TI_width);
-                GauradBarZ = 2 * TI_depth;
-                // echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
-                GauradBar( GauradBarWidth,
-                        TI_height+7,
-                        TI_depth,
-                        -Cavety1Width,
-                        -2,
-                        GauradBarZ );            
-            }
+    union()
+    {
+        if(buildTabs)
+        {
+            Inserts(TI_width, TI_height, TI_depth, TabSpaceBetween);
+        }
+        if(buildBar)
+        {
+            // Gaurd Bar
+            GauradBarWidth = TabSpaceBetween + (2 * Cavety1Width) + (2 * TI_width);
+            GauradBarZ = 2 * TI_depth;
+            // echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
+            GauradBar( GauradBarWidth,
+                    TI_height+7,
+                    TI_depth,
+                    -Cavety1Width,
+                    -2,
+                    GauradBarZ ); 
         }
     }
-    else
-    {
-        basic();
-    }
-    
 }
 
 module GauradBar(width, height, depth, x, y, z)
