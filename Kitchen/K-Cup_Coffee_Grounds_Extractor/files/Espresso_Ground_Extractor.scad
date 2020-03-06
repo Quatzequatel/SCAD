@@ -27,14 +27,14 @@ build();
 module build(args) 
 {
     // ImportFile();
-    triangle(Wall / 2, LidID + 1);
-    rotate([0,0,90])
-    triangle(Wall / 2, LidID + 1);
-    rotate([0,0,45])
-    pyramid(LidID/3, PointerHeight);
+    // triangle(Wall / 2, LidID + 1);
+    // rotate([0,0,90])
+    // triangle(Wall / 2, LidID + 1);
+    // rotate([0,0,45])
+    // pyramid(LidID/3, PointerHeight);
     
-    rotate([0,0,90])
-    pyramid(LidID/3-2, PointerHeight);
+    // rotate([0,0,90])
+    // pyramid(LidID/3-2, PointerHeight);
 
     tube(LidID + Wall, LidID, Height , true);
     tube(LidOD, LidID, 4);
