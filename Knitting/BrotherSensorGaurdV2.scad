@@ -34,9 +34,9 @@ TI_depth = 6;
 TI_Gap = 3;
 TI_spaceBetween = 89.5;
 //GB => Sensor Gaurd Bar
-GB_height = 0;
-GB_width = 0;
-GB_depth = 0;
+GB_height = TI_height+4;
+GB_width = TI_spaceBetween + (2 * Cavety1Width) + (2 * TI_width);
+GB_depth = TI_depth - 1.4;
 
 function TabTransitionDepth(args) = args - TI_Gap;
 
@@ -48,6 +48,7 @@ module Build(buildBar=false, buildTabs = false) {
     echo("");
     TabSpaceBetween =  TI_spaceBetween;
 
+    rotate([180,0,0])
     union()
     {
         if(buildTabs)
@@ -57,15 +58,16 @@ module Build(buildBar=false, buildTabs = false) {
         if(buildBar)
         {
             // Gaurd Bar
-            GauradBarWidth = TabSpaceBetween + (2 * Cavety1Width) + (2 * TI_width);
+            GauradBarX =  -Cavety1Width;
+            GauradBarY = 0;
             GauradBarZ = 2 * TI_depth - TabTransitionDepth(TI_depth);
             // echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
-            GauradBar( GauradBarWidth,
-                    TI_height+4,
-                    TI_depth,
-                    -Cavety1Width,
-                    0,
-                    GauradBarZ ); 
+            GauradBar(  GB_width,
+                        GB_height,
+                        GB_depth,
+                        GauradBarX,
+                        GauradBarY,
+                        GauradBarZ ); 
         }
     }
 }
@@ -146,7 +148,6 @@ module TabTop(width, height, depth, gap)
 module TabBottom(width, height, depth)
 {
     echo("TabBottom", width=width, height = height, depth = depth);
-        echo("TabBottom", width=width, height = height, depth = depth);
     thisCube(width, height, depth, 2);
 }
 
