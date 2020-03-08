@@ -31,11 +31,14 @@ SmSH_Width =2;
 TI_height = 8.5;
 TI_width = 11.8;
 TI_depth = 6;
+TI_Gap = 3;
 TI_spaceBetween = 89.5;
 //GB => Sensor Gaurd Bar
 GB_height = 0;
 GB_width = 0;
 GB_depth = 0;
+
+function TabTransitionDepth(args) = args - TI_Gap;
 
 Build(buildBar=true, buildTabs = true);
 // trangle(10,10);
@@ -55,13 +58,13 @@ module Build(buildBar=false, buildTabs = false) {
         {
             // Gaurd Bar
             GauradBarWidth = TabSpaceBetween + (2 * Cavety1Width) + (2 * TI_width);
-            GauradBarZ = 2 * TI_depth;
+            GauradBarZ = 2 * TI_depth - TabTransitionDepth(TI_depth);
             // echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
             GauradBar( GauradBarWidth,
-                    TI_height+7,
+                    TI_height+4,
                     TI_depth,
                     -Cavety1Width,
-                    -2,
+                    0,
                     GauradBarZ ); 
         }
     }
@@ -108,11 +111,11 @@ module InsertTab(width, height, depth)
         handleHeight = 1.5 * depth;
         union()
         {
-            gap = 3;
+            gap = TI_Gap;
 
-            TabTop(width, height, depth, gap);
+            //TabTop(width, height, depth, gap);
             translate([0,0,depth])
-            TabTransition(width, height, depth, gap);
+            TabTransition(width, height, TabTransitionDepth(depth), gap);
             TabBottom(width, height, depth);
         }
 }
@@ -122,7 +125,7 @@ module TabTransition(width, height, depth, gap)
     difference()
     {
         // cube([width, height, depth/2], center=false);
-        thisCube(width, height, depth/2, 2);
+        thisCube(width, height, depth, 2);
         translate([0, height, gap/2])
         // translate([0, height, 0])
         //Cylindar center is at x=0, y=gap, z=gap 
