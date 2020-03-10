@@ -1,5 +1,11 @@
-//VaseSeed=87147589586781;//	
+VaseSeed=87147589586781;//	
 OrnamentSeed=458456630271;//	
+//2020.03.10 
+// changing global value, however it is used explicitly in a few calls
+// module brush() $fn=20 it was orginally 10 it massively affects rendering time
+// just going from 10 to 20 was an increase of 20 minutes to compute
+// it does smooth out the brush stroke but beaware of time cost. 
+$fn=360;
 //swirls or doodles
 Swoodle=0;//[1,0]
 GlobalScale=[2,2,1];//
@@ -25,23 +31,39 @@ difference()
 {
     union()
     {
-        color("Moccasin")rotate_extrude($fn=100,convexity = 20)
+        //2020.03.10 changed $fn from 100 to 360
+        color("Moccasin")rotate_extrude($fn=360,convexity = 20)
         {
         intersection()
             {
                 square([50,100]);
                 union()
                 {
-                    offset(r=0.75) difference()
+                    //2020.03.10 changes made to make wall thinner for faster printing.
+                    //2020.03.10 was r=0.75
+                    offset(r=0.25) 
+                    difference()
                     {
+                        //2020.03.10 refactor by adding LF
                         polygon(convexity =20, concat(bzplot(v,100),[[0,60]]));
-                        offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
-                        translate([0,1,0])offset(r=-2)polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+                            offset(r=-0.5) //2020.03.10 was r=-2
+                            polygon(convexity =20, concat(bzplot(v,30),[[-3,65],[-3,0]]));
+                        translate([0,1.6,0])
+                            offset(r=-2)
+                            //2020.03.10 was bzplot(v,30),[[-3,65],[-3,0]])
+                            polygon(convexity =20, concat(bzplot(v,30),[[0,60],[0,0]]));
                     }
+                    //2020.03.10 removed scaling, it distorted model
+                    //foot pad for vase.
                     hull()
                     {
-                        translate([7.5,1,0]) scale([2,1,1])circle(1);
-                     scale([2,1,1])circle(1);
+                        translate([15,0,0]) //2020.03.10 was [7.5,1,0]
+                            // scale([2,1,1])
+                            translate([1,2,0])
+                            circle(2);  //2020.03.10 was circle(1)
+                        // scale([2,1,1])
+                        translate([1,2,0])  //2020.03.10 added to zero on axis.
+                        circle(2);  //2020.03.10 was circle(1)
                     }
                 }
             }
@@ -85,8 +107,15 @@ module spiral(op,dir,t, i=0)
     np=op+ndir;
     hull()
     {
-        rotate([0,0,op[1]*90*OrnamentAdjustR])translate(concat(0,bez2(max(0.019,min(0.99,1-op[2])),v)))rotate([0,90,0])brush();
-        rotate([0,0,np[1]*90*OrnamentAdjustR])translate(concat(0,bez2(max(0.019,min(0.99,1-np[2])),v)))rotate([0,90,0])brush();
+        //2020.03.10 refactor, added LF
+        rotate([0,0,op[1]*90*OrnamentAdjustR])
+            translate(concat(0,bez2(max(0.019,min(0.99,1-op[2])),v)))
+                rotate([0,90,0])
+                    brush();
+        rotate([0,0,np[1]*90*OrnamentAdjustR])
+            translate(concat(0,bez2(max(0.019,min(0.99,1-np[2])),v)))
+                rotate([0,90,0])
+                    brush();
     }
     if(i<24 )
     {
@@ -100,6 +129,7 @@ module line(p1, p2) {
     translate(p2) rotate([0,0,-CalligraphicSlant])scale([1/Calligraphic,Calligraphic,1])sphere(1);
   }
 }
+
 module ornamet(v,o) {
 ostep=0.0075;
 for(i=[0:ostep:1])
@@ -108,8 +138,10 @@ hull(){
 rotate([0,0,bez2(i,o)[0]])translate(concat(0,bez2(bez2(i,o)[1],v)))rotate([0,90,0])brush();
 rotate([0,0,bez2(i+ostep,o)[0]])translate(concat(0,bez2(bez2(i+ostep,o)[1],v)))rotate([0,90,0])brush();
 }}}
+//2020.03.10 note $fn value here affects compute time dramatically
+//  reduce to under 10 when previewing model
 module brush(){
-rotate([0,BrushRotation,0])scale(BrushScale)sphere(1,$fn=10);
+    rotate([0,BrushRotation,0])scale(BrushScale)sphere(1,$fn=20);
 }
 //ShowControl( concat(bzplot(v,20),[[0,30]]));
 
