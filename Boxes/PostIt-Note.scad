@@ -3,6 +3,15 @@ Wall = 2;
 PostItInWidth = 78;
 PostItOutWidth = PostItInWidth + Wall;
 FaceX = PostItOutWidth/16;
+FloorHeight = 0.4 + 3 * 0.16;
+
+/*
+2020.03.13 Changes made were for the slicer.
+    FloorHeight was added to be the desired floorHeight
+    of initial layer + X * layer height.
+    adjustment to the poloygon was so the opening came
+    all the way to the bottom.
+*/
 
 Build();
 
@@ -28,8 +37,8 @@ module FrontOfBox()
         [PostItOutWidth, 0],
         [PostItOutWidth, PostItOutWidth],
         [15 * FaceX, PostItOutWidth],
-        [10 * FaceX, FaceX],
-        [6 * FaceX, FaceX],
+        [10 * FaceX, FloorHeight],
+        [6 * FaceX, FloorHeight],
         [FaceX, PostItOutWidth],
         [0, PostItOutWidth]
     ];
@@ -49,8 +58,8 @@ module OpenFaceBox(width, depth, height, wall)
     //Front - none
     //Top - none
     //Bottom
-    translate([0,0,-height/2])
-    linear_extrude(height=wall)
+    #translate([0,0,-height/2])
+    linear_extrude(height=FloorHeight)
     square(size=[width, depth], center=true);
     //Right
     translate([height/2-wall,0,0])
