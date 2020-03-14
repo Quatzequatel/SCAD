@@ -1,6 +1,6 @@
 
 Wall = 2;
-PostItInWidth = 78;
+PostItInWidth = 80;
 PostItOutWidth = PostItInWidth + Wall;
 FaceX = PostItOutWidth/16;
 FloorHeight = 0.4 + 3 * 0.16;
@@ -11,6 +11,8 @@ FloorHeight = 0.4 + 3 * 0.16;
     of initial layer + X * layer height.
     adjustment to the poloygon was so the opening came
     all the way to the bottom.
+2013.03.13 the print was a little too tight for post-it notes to fit.
+    increased width to 78 -> 80
 */
 
 Build();
@@ -58,7 +60,7 @@ module OpenFaceBox(width, depth, height, wall)
     //Front - none
     //Top - none
     //Bottom
-    #translate([0,0,-height/2])
+    translate([0,0,-height/2])
     linear_extrude(height=FloorHeight)
     square(size=[width, depth], center=true);
     //Right
