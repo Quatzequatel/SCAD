@@ -1,9 +1,9 @@
 
 PadDiameter = 30;
-PadHeight = 0.4;
+PadHeight = 0.8;
 PrintOffeset = 20;
-PrintBedX = 200 - PrintOffeset - PadDiameter;
-printBedY = 200 - PrintOffeset - PadDiameter;
+PrintBedX = 190 - PrintOffeset - PadDiameter;
+printBedY = 190 - PrintOffeset - PadDiameter;
 xFactor = [0,1,-1,1,-1];
 yFactor = [0,1,1,-1,-1];
 // function xFactor(i) = lookup(i, [0,1,-1,1,-1]);
