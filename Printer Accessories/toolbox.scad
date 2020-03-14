@@ -54,8 +54,15 @@ Build();
 
 module Build()
 {
-    MainBox();
-    knittingMachineHolder();
+    difference()
+    {
+        union()
+        {
+            MainBox();
+            knittingMachineHolder();
+        }        
+        VikaMessage("Awesome Pie Girl");
+    }
 }
 
 module MainBox()
@@ -120,6 +127,15 @@ module knittingMachineHolder(args) {
         cylinder(r=AttachmentRounding(), center=true);      
     }
 
+}
+
+module VikaMessage(value)
+{
+    translate([max_X - 0.5,7,20])
+    rotate([90,0,90])
+    linear_extrude(0.75)
+    offset(r=0.15)
+    text(text=str(value), size = 12);
 }
 
 module Box(x,y,z,wall) 
