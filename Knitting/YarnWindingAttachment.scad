@@ -16,15 +16,22 @@ YarnWindingAttachmentSpindle = 2;
 AttachmentANDSpindle = YarnWindingAttachment + YarnWindingAttachmentSpindle;
 Designing = 0;
 
-$fn=180;
-Tab_Width=10;
-Tab_Depth=3.25;
+//Slicer Values
+LineWidth = 0.8;
+WallCount = 3;
+
+function WallWidth(layers) = layers * (LineWidth * WallCount);
+
+$fn=360;
+Adjustment = -0.5;
+Tab_Width = (WallWidth(4) + Adjustment); //logically it is tab length...
+Tab_Depth=3.25 + Adjustment/2;
 Tab_Height1=3.2;
 Tab_Height2=1.6;
 Tab_Adjustment_Y = 1.6;
 
-Attachment_OD= 40.0;
-Attachment_Wall=10.0;
+Attachment_OD= 40.0 + Adjustment;
+Attachment_Wall=WallWidth(4);
 Attachment_Height=60;
 Attachment_Inside_Cone_Height = 14.8;
 Attachment_Tolerance = 2;
@@ -41,7 +48,7 @@ Spindle_Base_Height=10;
 Spindle_GapHeight = 10 * Attachment_Tolerance;
 Spindle_Height=Attachment_Height +Spindle_Base_Height + Spindle_GapHeight;
 
-Build(YarnWindingAttachmentSpindle);
+Build(YarnWindingAttachment);
 
 module Build(item)
 {
