@@ -8,10 +8,10 @@
 */
 
 // Use 'preview' for fast render
-part = "preview"; // [preview:Low poly (fast render), print: High detail (slow render, for print)]
+part = "print"; // [preview:Low poly (fast render), print: High detail (slow render, for print)]
 
 // Style / Shape
-shape = "vase1"; // [cylinder: Cylinder, vase1:Vase, vase2:Vase 2, glass: Glass, bowl:Bowl, cup: Cup, cup2: Cup 2, cone: Cone ]
+shape = "bowl"; // [cylinder: Cylinder, vase1:Vase, vase2:Vase 2, glass: Glass, bowl:Bowl, cup: Cup, cup2: Cup 2, cone: Cone ]
 
 // Offset
 offs="no"; // [no: All tiles aligned, offsetz: Alternate Rows, diagonal: Diagonal tiles]
@@ -20,7 +20,7 @@ offs="no"; // [no: All tiles aligned, offsetz: Alternate Rows, diagonal: Diagona
 radius= 60; // [30:100]
 
 // Number of ripples in every tile
-ripples  = 5; // [1:15]
+ripples  = 10; // [1:15]
 
 // Ripple Thickness
 ripple_size = 1.5; // [1:0.5:4]
@@ -32,6 +32,7 @@ znum = 3; // [1:10]
 xnum = 5;  // [1:20]
 
 /* [Hidden] */
+$fn = 100;
 
 altura = 180; // z-steps
 step = (part=="preview")?4:1; // resolution in Z (1 is the best and slower)

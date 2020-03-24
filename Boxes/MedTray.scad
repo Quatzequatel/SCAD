@@ -54,7 +54,7 @@ module drawTray()
     {
         if (!Complement) Box(35,225,2,35); else Box(35,DrawerWidth-225,2,35);
     }
-    if(Custom) {Box(97, 205, 2, 50); }
+    if(Custom) {Box(130, 300, 2, 50); }
 }
 
 drawTray();

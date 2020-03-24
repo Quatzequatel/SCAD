@@ -27,7 +27,7 @@ BrushRotation=40;//
 OrnamentAdjust=0.02;//
 OrnamentAdjustR=3;//
 Oreps=4;//
-OHeight=0.55;//
+OHeight=0.3;//
 /* [Hidden] */
 dir=un([0,rnd(OrnamentSeed+536,-0.2,0.2),rnd(OrnamentSeed+324,-0.01,1)])*OrnamentAdjust;
 dir2=un([0,rnd(OrnamentSeed+546,-1,1),rnd(OrnamentSeed+344,-0.01,0.05)])*OrnamentAdjust;
@@ -70,7 +70,7 @@ scale(GlobalScale)
 difference()
 {
     lastIndex = 130; //number of points to use for curve.
-
+    echo(v= v);
     echo(VaseSeed=VaseSeed);
     echo(OrnamentSeed=OrnamentSeed);
     union()
@@ -136,7 +136,7 @@ difference()
                     {
                          for(tp=[rnd(OrnamentSeed+556,-90,-30):rnd(OrnamentSeed+76,50,70):rnd(OrnamentSeed+546,90,30)])
                          {
-                            color ("Goldenrod") spiral([0,0,OHeight],dir,tp);
+                            !color ("Goldenrod") spiral([0,0,OHeight],dir,tp);
                          }
                          for(tp=[rnd(OrnamentSeed+516,-90,-30):rnd(OrnamentSeed+716,50,70):rnd(OrnamentSeed+514,90,30)])
                          {
@@ -187,8 +187,15 @@ module ornamet(v,o)
     {
         hull()
         {
-        rotate([0,0,bez2(i,o)[0]])translate(concat(0,bez2(bez2(i,o)[1],v)))rotate([0,90,0])brush();
-        rotate([0,0,bez2(i+ostep,o)[0]])translate(concat(0,bez2(bez2(i+ostep,o)[1],v)))rotate([0,90,0])brush();
+            rotate([0,0,bez2(i,o)[0]])
+            translate(concat(0,bez2(bez2(i,o)[1],v)))
+            rotate([0,90,0])
+            brush();
+
+            rotate([0,0,bez2(i+ostep,o)[0]])
+            translate(concat(0,bez2(bez2(i+ostep,o)[1],v)))
+            rotate([0,90,0])
+            brush();
         }
     }
 }
@@ -209,9 +216,10 @@ module ShowControl(v)
           }          }
 } 
 
-function bez2(t, v) = (len(v) > 2) ? bez2(t, [
-for(i = [0: len(v) - 2]) v[i] * t + v[i + 1] * (1 - t)
-]): v[0] * t + v[1] * (1 - t);
+function bez2(t, v) = 
+    (len(v) > 2) ? 
+        bez2(t, [for(i = [0: len(v) - 2]) v[i] * t + v[i + 1] * (1 - t)])
+        : v[0] * t + v[1] * (1 - t);
 
 
 function rnd(s=0, a=1,b=0)= (rands(min(a,b),max(a,b),1,s)[0]);

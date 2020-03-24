@@ -59,7 +59,7 @@ function RimRadius() = (HullBaseRadius()  * Scale) + 1;
 function RimBevelX() = 
     [
         RimX(),
-        RimX()/8,
+        RimX(),
         RimX() - (2 * Radius2)
     ];
 function RimBevelY() = 
@@ -84,23 +84,31 @@ module Build(args)
     echo(Angle1=Angle1, Angle2=Angle2);
     echo(Scale=Scale);
 
-    union()
+    difference()
     {
-        linear_extrude(height = Height, twist = Twists, scale=Scale)
+        union()
         {
-            CirclesAroundCircle(Radius1, Angle1, Radius2);
-            circle(Radius1);            
-        }
+            linear_extrude(height = Height, twist = Twists, scale=Scale)
+            {
+                CirclesAroundCircle(Radius1, Angle1, Radius2);
+                circle(Radius1);            
+            }
 
-        //base
-        translate([0,0,2])
-        Brim( HullBaseRadius(), BaseBevelX(), BaseBevelY());
+            //base
+            translate([0,0,2])
+            Brim( HullBaseRadius(), BaseBevelX(), BaseBevelY());
 
-        //Rim
-        translate([ 0, 0, (Height + abs(RimBevelY()[0]))])
-        Brim2( RimRadius(), RimBevelX(), RimBevelY());
+            //Rim
+            translate([ 0, 0, (Height + abs(RimBevelY()[0]))])
+            Brim2( RimRadius(), RimBevelX(), RimBevelY());
 
-    }       
+        }    
+
+            //Rim
+            translate([ 0, 0, (Height + abs(RimBevelY()[0]))])
+            Brim3( RimRadius(), RimBevelX(), RimBevelY());
+    }
+     
 }
 
 module Brim(radius = HullBaseRadius(), x = HullBaseBrimX(), y = HullBaseBrimY())
@@ -116,25 +124,26 @@ module Brim(radius = HullBaseRadius(), x = HullBaseBrimX(), y = HullBaseBrimY())
         //circle(HullRadius);
 
         translate([x[0], y[0], 0])
-        color("Blue") circle(HullRadius);
+        circle(HullRadius);
 
         translate([x[1], y[1], 0])
-        color("Red") circle(HullRadius);
+        circle(HullRadius);
 
         translate([x[2], y[2], 0])
-        color("Orange") circle(HullRadius);
+        circle(HullRadius);
     }
 }
 
 module Brim2(radius = RimRadius(), x = RimBevelX(), y = RimBevelY())
 {
-    echo(x = x);
+    echo(mod =  "Brim2", x = x);
     echo();
-    echo(y = y);
+    echo(mod =  "Brim2",y = y);
 
+    rotate_extrude()
     difference()
     {
-        rotate_extrude()
+        // rotate_extrude()
         translate([radius, 0, 0])
         hull()
         {
@@ -151,13 +160,16 @@ module Brim2(radius = RimRadius(), x = RimBevelX(), y = RimBevelY())
             circle(HullRadius);
         }
 
-        translate([0,0,-1])
-        rotate_extrude()
-        translate([radius-2, -2, 0])
+        translate([0,0,0])
+        // rotate_extrude()
+        translate([radius-4, -1, 0])
         hull()
         {
-            //translate([-x/9, -y/9, 0])
-            //circle(HullRadius);
+            translate([-radius+4, y[1], 0])
+            circle(HullRadius);
+
+            translate([-radius+4, y[2], 0])
+            circle(HullRadius);
 
             translate([x[0], y[0], 0])
             circle(HullRadius);
@@ -168,6 +180,33 @@ module Brim2(radius = RimRadius(), x = RimBevelX(), y = RimBevelY())
             translate([x[2], y[2], 0])
             circle(HullRadius);
         }
+    }
+}
+
+module Brim3(radius = RimRadius(), x = RimBevelX(), y = RimBevelY())
+{
+    echo(mod = "Brim3", x = x);
+    echo();
+    echo(mod = "Brim3", y = y);
+
+    rotate_extrude()
+    translate([radius-2, -1, 0])
+    hull()
+    {
+        translate([-radius+4, y[1], 0])
+        circle(HullRadius);
+
+        translate([-radius+4, y[2], 0])
+        circle(HullRadius);
+
+        translate([x[0], y[0], 0])
+        circle(HullRadius);
+
+        translate([x[1], y[1], 0])
+        circle(HullRadius);
+
+        translate([x[2], y[2], 0])
+        circle(HullRadius);
     }
 }
 
