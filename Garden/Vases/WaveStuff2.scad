@@ -9,13 +9,13 @@
             extrusion. positive value is clockwise, negative is opposite.
 */
 GOLDEN_RATIO = 1.61803398874989484;
-$fn=60;
+$fn=360;
 Radius1 = 100;
 Scale = 1 + PI/10;
 Angle1 = 360/24;
 Angle2 = 12;
 // Angle2 = Angle1 * 0.61803;
-Twists = 90;
+Twists = 120;
 Radius2 = PointY(Radius1, Angle2);
 Radius3 = Radius1 + Radius2;
 Radius4 = Radius2/2;
