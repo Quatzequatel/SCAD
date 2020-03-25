@@ -1,4 +1,13 @@
 /*
+    This structure is a circle (R1) surrounded by semi-circles (R2),
+        the circles are then extruded and 'rotated' (Twists).
+        Ideally only Radius1, Columns and Twists needs to be modified.
+            R3 = R1 + R2; R2 => sin(Angle1) * R1.
+            Function PointY() is the distance between Ray1 (twist0) and Ray2 (twist1); 
+        Adjusting Angle2 affects the size of the columns. 
+            including if they overlap or not.
+        Brims - having the columns emerge from a floor and into a top.
+        BrimBottom is slightly larger than R3
     how to use;
     Radius1 - bottom radius.
     Radius2 - currently calculated from R1.
@@ -8,24 +17,28 @@
     Twists - in degrees, angle of twist completed in vertical
             extrusion. positive value is clockwise, negative is opposite.
 */
+FirstLayerHeight = 0.4;
+LayerHeight = 0.32;
 GOLDEN_RATIO = 1.61803398874989484;
-$fn=360;
-Radius1 = 100;
-Scale = 1 + PI/10;
-Angle1 = 360/24;
-Angle2 = 12;
+$fn=60;
+Radius1 = 75;
+Scale = 1 + PI/10; //ratio of top over bottom.
+Columns = 24; // 
+Angle1 = 360/Columns;  //
+Angle2 = Angle1; //
 // Angle2 = Angle1 * 0.61803;
-Twists = 120;
+Twists = 120; // Value above 120 will cause slicer to add bottom layer
 Radius2 = PointY(Radius1, Angle2);
 Radius3 = Radius1 + Radius2;
 Radius4 = Radius2/2;
 HullRadius = 2;
 Height = Radius1 * 2 * GOLDEN_RATIO;
+FloorThickness = FirstLayerHeight +  2 * LayerHeight;
 
 
 
-function DegreeSteps(resolution) = 360/resolution;
-function StepCount(resolution) = 360/DegreeSteps(resolution);
+function DegreeSteps(angle) = 360/angle;
+function StepCount(angle) = 360/DegreeSteps(angle);
 
 function PointX(radius, degree) = cos(degree) * radius;
 function PointY(radius, degree) = sin(degree) * radius;
@@ -39,7 +52,7 @@ function MoveCircleToArcLocation(radius, resolution, index) =
 //BaseBrim 
 function HullBaseBrimX() = (Radius2 - (2 * HullRadius) + HullRadius);
 function HullBaseBrimY() = 4 * (Radius2 - (2 * HullRadius));
-function HullBaseRadius() = Radius3 - ( PointX(Radius2, Angle2));
+function HullBaseRadius() = Radius3 - (PointX(Radius2, Angle2));
 function BaseBevelX() = 
     [
         HullBaseBrimX()+1,
@@ -53,6 +66,7 @@ function BaseBevelY() =
         0
     ];
 
+//TopBrim
 function RimX() = HullBaseBrimX() * Scale;
 function RimY() = -HullBaseBrimY() * Scale;
 function RimRadius() = (HullBaseRadius()  * Scale) + 1;
@@ -78,7 +92,8 @@ module Build(args)
     echo(Radius2 = Radius2);
     echo(Radius3 = Radius3);
     echo(Radius4 = Radius4);
-    echo(BottomRadius = Radius3);
+    echo( value = PointX(Radius2, Angle2));
+    echo(BottomRadius = HullBaseRadius());
     echo(TopRadius = (Radius3) * Scale);
 
     echo(Angle1=Angle1, Angle2=Angle2);
@@ -89,6 +104,7 @@ module Build(args)
         union()
         {
             linear_extrude(height = Height, twist = Twists, scale=Scale)
+            union()
             {
                 CirclesAroundCircle(Radius1, Angle1, Radius2);
                 circle(Radius1);            
@@ -108,8 +124,8 @@ module Build(args)
             translate([ 0, 0, (Height + abs(RimBevelY()[0]))])
             Brim3( RimRadius(), RimBevelX(), RimBevelY());
 
-            #translate([0,0,176])
-            cylinder(r1=HullBaseRadius()+1.04, r2 =Radius1 * Scale , h=350, center=true);
+            translate([0,0,Height/2 + FloorThickness])
+            cylinder(r1=HullBaseRadius() + 1.24, r2 =Radius1 * Scale , h=Height, center=true);
     }
      
 }
@@ -213,12 +229,12 @@ module Brim3(radius = RimRadius(), x = RimBevelX(), y = RimBevelY())
     }
 }
 
-module CirclesAroundCircle(radius, resolution, r2)
+module CirclesAroundCircle(radius, angle, r2)
 {
-    echo(radius = radius, resolution = resolution, Steps = StepCount(resolution) );
-    for(i = [0: StepCount(resolution)])
+    echo(radius = radius, angle = angle, Steps = StepCount(angle) );
+    for(i = [0: StepCount(angle)])
     {
-        translate(MoveCircleToArcLocation(radius, resolution, i))
+        translate(MoveCircleToArcLocation(radius, angle, i))
         circle(r2);
     }
 }
