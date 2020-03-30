@@ -7,35 +7,34 @@
         Adjusting Angle2 affects the size of the columns. 
             including if they overlap or not.
         Brims - having the columns emerge from a floor and into a top.
-        BrimBottom is slightly larger than R3
+        Brims are hulled triangle rotate_extrude()
     how to use;
     Radius1 - bottom radius.
-    Radius2 - currently calculated from R1.
+    Radius2 - Radius1 plus distance of arc1 - arc2 which is Radius2.
     Scale - ratio from bottom to top.
     Angle1 - the angle of segments from center ([0,0]).
-    Angle2 - the angle of segments for circles.
+    Angle2 - the angle of segments for circles (columns).
     Twists - in degrees, angle of twist completed in vertical
             extrusion. positive value is clockwise, negative is opposite.
 */
 FirstLayerHeight = 0.4;
 LayerHeight = 0.32;
+LayerCount = 3;
 GOLDEN_RATIO = 1.61803398874989484;
 $fn=60;
 Radius1 = 75;
 Scale = 1 + PI/10; //ratio of top over bottom.
 Columns = 24; // 
 Angle1 = 360/Columns;  //
+//Radius2 is dependent on Angle2.
 Angle2 = Angle1; //
 // Angle2 = Angle1 * 0.61803;
 Twists = 120; // Value above 120 will cause slicer to add bottom layer
 Radius2 = PointY(Radius1, Angle2);
 Radius3 = Radius1 + Radius2;
-Radius4 = Radius2/2;
 HullRadius = 2;
 Height = Radius1 * 2 * GOLDEN_RATIO;
-FloorThickness = FirstLayerHeight +  2 * LayerHeight;
-
-
+FloorThickness = FirstLayerHeight +  (LayerCount-1 * LayerHeight);
 
 function DegreeSteps(angle) = 360/angle;
 function StepCount(angle) = 360/DegreeSteps(angle);
@@ -50,40 +49,41 @@ function MoveCircleToArcLocation(radius, resolution, index) =
     ];
 
 //BaseBrim 
-function HullBaseBrimX() = (Radius2 - (2 * HullRadius) + HullRadius);
-function HullBaseBrimY() = 4 * (Radius2 - (2 * HullRadius));
-function HullBaseRadius() = Radius3 - (PointX(Radius2, Angle2));
+function BaseBrimX() = PointX(30, Radius2);
+function BaseBrimY() = Height/2;
+function BaseRadius() = Radius3 - (BaseBrimX()) ;//- (PointX(Radius2, Angle2));
 function BaseBevelX() = 
     [
-        HullBaseBrimX()+1,
+        BaseBrimX(),
         0,
-        -HullBaseBrimX()
+        -BaseBrimX()
     ];
 function BaseBevelY() = 
     [
         0,
-        HullBaseBrimY(),
+        BaseBrimY(),
         0
     ];
 
 //TopBrim
-function RimX() = HullBaseBrimX() * Scale;
-function RimY() = -HullBaseBrimY() * Scale;
-function RimRadius() = (HullBaseRadius()  * Scale) + 1;
+function RimX() = BaseBrimX() * Scale;
+function RimY() = -BaseBrimY() * Scale;
+// function RimRadius1() = (BaseRadius() + 1.24);
+function RimRadius2() = (BaseRadius()  * Scale);
+function TopRadius() = Radius3 * Scale;
 function RimBevelX() = 
     [
         RimX(),
         RimX(),
-        RimX() - (2 * Radius2)
+        RimX() - PointX(60, Radius2)
     ];
 function RimBevelY() = 
     [
         -Radius2,
-        RimY()/8,
-        RimY()
+        -Radius2*2,   //This is a magic value.
+        -Height
     ];
 
-// Brim2();
 Build();
 module Build(args) 
 {
@@ -91,9 +91,8 @@ module Build(args)
     echo(Radius1 = Radius1);
     echo(Radius2 = Radius2);
     echo(Radius3 = Radius3);
-    echo(Radius4 = Radius4);
     echo( value = PointX(Radius2, Angle2));
-    echo(BottomRadius = HullBaseRadius());
+    echo(BottomRadius = BaseRadius());
     echo(TopRadius = (Radius3) * Scale);
 
     echo(Angle1=Angle1, Angle2=Angle2);
@@ -112,119 +111,115 @@ module Build(args)
 
             //base
             translate([0,0,2])
-            Brim( HullBaseRadius(), BaseBevelX(), BaseBevelY());
+            BaseBrim( BaseRadius(), BaseBevelX(), BaseBevelY());
 
             //Rim
             translate([ 0, 0, (Height + abs(RimBevelY()[0]))])
-            Brim2( RimRadius(), RimBevelX(), RimBevelY());
+            Brim2( RimRadius2(), RimBevelX(), RimBevelY());
 
         }    
 
             //Rim
             translate([ 0, 0, (Height + abs(RimBevelY()[0]))])
-            Brim3( RimRadius(), RimBevelX(), RimBevelY());
+            Brim3( RimRadius2(), RimBevelX(), RimBevelY());
 
             translate([0,0,Height/2 + FloorThickness])
-            cylinder(r1=HullBaseRadius() + 1.24, r2 =Radius1 * Scale , h=Height, center=true);
+            cylinder(r1=BaseRadius() + 1.24, r2 = TopRadius() , h=Height, center=true);
     }
      
 }
 
-module Brim(radius = HullBaseRadius(), x = HullBaseBrimX(), y = HullBaseBrimY())
+module BaseBrim(radius = BaseRadius(), vX = BaseBrimX(), vY = BaseBrimY())
 {
-    echo(x = x);
-    echo();
-    echo(y = y);
+    // echo(mod =  "Brim", vX = vX);
+    // echo();
+    // echo(mod =  "Brim",vY = vY);
+    // echo();
+
     rotate_extrude()
     translate([radius, 0, 0])
     hull()
     {
-        //translate([-x/9, -y/9, 0])
-        //circle(HullRadius);
-
-        translate([x[0], y[0], 0])
+        translate([vX[0], vY[0], 0])
         circle(HullRadius);
 
-        translate([x[1], y[1], 0])
+        translate([vX[1], vY[1], 0])
         circle(HullRadius);
 
-        translate([x[2], y[2], 0])
+        translate([vX[2], vY[2], 0])
         circle(HullRadius);
     }
 }
 
-module Brim2(radius = RimRadius(), x = RimBevelX(), y = RimBevelY())
+module Brim2(radius = RimRadius2(), vX = RimBevelX(), vY = RimBevelY())
 {
-    echo(mod =  "Brim2", x = x);
+    echo(mod =  "Brim2", radius = radius);
+    echo(mod =  "Brim2", vX = vX);
     echo();
-    echo(mod =  "Brim2",y = y);
+    echo(mod =  "Brim2",vY = vY);
+    echo();
 
     rotate_extrude()
     difference()
     {
-        // rotate_extrude()
         translate([radius, 0, 0])
         hull()
         {
-            //translate([-x/9, -y/9, 0])
-            //circle(HullRadius);
-
-            translate([x[0], y[0], 0])
+            translate([vX[0], vY[0], 0])
             circle(HullRadius);
 
-            translate([x[1], y[1], 0])
-            circle(HullRadius);
+            translate([vX[1], vY[1], 0])
+            #circle(HullRadius);
 
-            translate([x[2], y[2], 0])
-            circle(HullRadius);
+            translate([vX[2], vY[2], 0])
+            #circle(HullRadius);
         }
 
         translate([0,0,0])
-        // rotate_extrude()
-        translate([radius-4, -1, 0])
+        translate([radius-4, 0, 0])
         hull()
         {
-            translate([-radius+4, y[1], 0])
+            translate([-radius+4, vY[1], 0])
             circle(HullRadius);
 
-            translate([-radius+4, y[2], 0])
+            translate([-radius+4, vY[2], 0])
             circle(HullRadius);
 
-            translate([x[0], y[0], 0])
+            translate([vX[0], vY[0], 0])
             circle(HullRadius);
 
-            translate([x[1], y[1], 0])
+            translate([vX[1], vY[1], 0])
             circle(HullRadius);
 
-            translate([x[2], y[2], 0])
+            translate([vX[2], vY[2], 0])
             circle(HullRadius);
         }
     }
 }
 
-module Brim3(radius = RimRadius(), x = RimBevelX(), y = RimBevelY())
+module Brim3(radius = RimRadius2(), vX = RimBevelX(), vY = RimBevelY())
 {
-    echo(mod = "Brim3", x = x);
+    echo(mod = "Brim3", vX = vX);
     echo();
-    echo(mod = "Brim3", y = y);
+    echo(mod = "Brim3", vY = vY);
 
     rotate_extrude()
     translate([radius-2, -1, 0])
     hull()
     {
-        translate([-radius+4, y[1], 0])
+        translate([-radius+4, vY[1], 0])
         circle(HullRadius);
 
-        translate([-radius+4, y[2], 0])
+        translate([-radius+4, vY[2], 0])
         circle(HullRadius);
 
-        translate([x[0], y[0], 0])
+        translate([vX[0], vY[0], 0])
         circle(HullRadius);
 
-        translate([x[1], y[1], 0])
+        translate([vX[1], vY[1], 0])
         circle(HullRadius);
 
-        translate([x[2], y[2], 0])
+        translate([vX[2], vY[2], 0])
         circle(HullRadius);
     }
 }
