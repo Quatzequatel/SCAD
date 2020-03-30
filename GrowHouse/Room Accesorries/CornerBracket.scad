@@ -10,7 +10,7 @@ Build_PowerStripHolder=7;
 SubBuild_PowerStripBottom= 1;
 SubBuild_PowerStripTop= 2;
 
-Build = Build_SpacerJig;
+Build = Build_AngleBracket;
 SubBuild=SubBuild_PowerStripTop;
 
 
