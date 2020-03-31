@@ -26,23 +26,6 @@ Rail_Margin = 0.3;
 
 //Movement Offset
 Move_offset = 0.0;
-
-#translate([Bolt_Length/2,0,0])
-	rotate([0,90,0])import_stl("levelKnobs_m5.stl", convexity = 5);
-
-// Center Bolt
-%translate([Bolt_Length/2,0,0])rotate([0,270,0]){
-	cylinder(r=Bolt_Diameter/2,h=Bolt_Length,$fn=16);
-	translate([0,0,-Head_Thickness])cylinder(r=Head_Diameter/2,h=Head_Thickness,$fn=6);
-}
-
-// Display of dimensions
-echo("Base_Hight => ",Base_Hight,"mm");
-echo("Base_Width => ",Base_Width,"mm");
-echo("Base_Depth => ",Base_Depth+Move_offset,"mm");
-echo("Base_Radius => ",Base_Radius,"mm");
-echo("Range of movement => ",Move_offset," - ",Bolt_Length-Base_Thickness*3+Corner_r*2+Move_offset,"mm");
-
 /* ********* Reassigned ********* */
 
 bd = Bolt_Diameter;
@@ -66,58 +49,119 @@ rbs = Base_Space;
 rm = Rail_Margin;
 
 /* ****************************** */
+CenterBolt = true;
+Knob = true;
+ViseBase= false;
+ViseSlider=false;
 
-// Vise Base
-difference(){
+Build();
+
+module Build(arg)
+{
+	DisplayDimension();
+
+	if(CenterBolt)
+	{
+		CenterBolt();
+	}
+	if(Knob)
+	{
+		Knob();
+	}
+	if(ViseBase)
+	{
+		ViseBase();
+	}
+	if(ViseSlider)
+	{
+		ViseSlider();
+	}
+}
+
+module CenterBolt()
+{
+	// Center Bolt
+	#translate([Bolt_Length/2,0,0])rotate([0,270,0]){
+		cylinder(r=Bolt_Diameter/2,h=Bolt_Length,$fn=16);
+		translate([0,0,-Head_Thickness])cylinder(r=Head_Diameter/2,h=Head_Thickness,$fn=6);
+	}
+
+}
+
+module Knob()
+{
+	translate([Bolt_Length/2,0,0])
+		rotate([0,90,0])import("levelKnobs_m5.stl", convexity = 5);	
+}
+
+module DisplayDimension()
+{
+	// Display of dimensions
+	echo("Base_Hight => ",Base_Hight,"mm");
+	echo("Base_Width => ",Base_Width,"mm");
+	echo("Base_Depth => ",Base_Depth+Move_offset,"mm");
+	echo("Base_Radius => ",Base_Radius,"mm");
+	echo("Range of movement => ",Move_offset," - ",Bolt_Length-Base_Thickness*3+Corner_r*2+Move_offset,"mm");
+}
+
+module ViseBase()
+{
+	// Vise Base
+	difference(){
+		minkowski(){
+			sphere(mcr);
+			union(){
+				difference(){
+					translate([bl/2,0,-mbr])rotate([0,270,0])
+						roundedRect([mbh-mbr, mbw-mbr, mbd], mbr, $fn=32);
+					translate([0,0,-mbr-mbh/2])
+						cube([mbd*1.5, mbw*1.5, mbh/2-mbr+0.1],center=true);
+					translate([bl/2-mbt,-mbw*1.5/2,-mbh/2+mbt])
+						rotate([0,270,0])cube([mbh, mbw*1.5, mbd-mbt*2]);
+					intersection(){
+						translate([bl/2-mbd+mbt+mcr/2,0,0])
+							gloove();
+						translate([bl/2-mbt,-mbw*1.5/2,-mbh/2+mbt])
+							rotate([0,270,0])cube([mbh, mbw*1.5, mbd-mbt]);
+					}
+				}
+			translate([bl/2-mbt,0,0])rotate([0,270,0])cylinder(r=bd*1.35,h=mbt+mcr*2,$fn=32);
+			}
+		}
+		translate([bl/2+mbt+0.1,0,0])rotate([0,270,0])cylinder(r=bd/2,h=bl,$fn=32);
+		translate([bl/2-(mbt+mcr)*2+nt-mcr,0,0])rotate([0,270,0])cylinder(r=bhd/2/cos(30),h=nt+0.1,$fn=6,center=false);
+		for(ay = [-1 : 2 : 1]) {
+			translate([bl/2-mbt-mcr,rbs*ay-rw/2,-mbh/2+mbt*1.5])
+				rotate([0,180,0])cube([mbd-mbt*2-mcr*2,rw,mbt]);
+		}
+	}	
+}
+
+
+module ViseSlider()
+{
+	// Vise Slider
 	minkowski(){
 		sphere(mcr);
 		union(){
 			difference(){
-				translate([bl/2,0,-mbr])rotate([0,270,0])
-					roundedRect([mbh-mbr, mbw-mbr, mbd], mbr, $fn=32);
-				translate([0,0,-mbr-mbh/2])
-					cube([mbd*1.5, mbw*1.5, mbh/2-mbr+0.1],center=true);
-				translate([bl/2-mbt,-mbw*1.5/2,-mbh/2+mbt])
-					rotate([0,270,0])cube([mbh, mbw*1.5, mbd-mbt*2]);
-				intersection(){
-					translate([bl/2-mbd+mbt+mcr/2,0,0])gloove();
-					translate([bl/2-mbt,-mbw*1.5/2,-mbh/2+mbt])
-						rotate([0,270,0])cube([mbh, mbw*1.5, mbd-mbt]);
-				}
+				translate([-bl/2,0,-mbr])rotate([0,270,0])
+					roundedRect([mbh-mbr, mbw-mbr, mbt], mbr);
+				translate([-bl/2+mbt/2,-mbw*1.5/2,-mbh/2+mbt+.15+mcr])
+					rotate([0,180,0])cube([mbt*2,mbw*1.5,mbh]);
+				translate([-bl/2-mbt,0,0])gloove();
 			}
-		translate([bl/2-mbt,0,0])rotate([0,270,0])cylinder(r=bd*1.35,h=mbt+mcr*2,$fn=32);
+			difference(){
+				translate([-bl/2+mbt-mcr,0,0])rotate([0,270,0])cylinder(r=bd*1.25,h=mbt,$fn=32);
+				translate([-bl/2+mbt+0.1,0,0])rotate([0,270,0])cylinder(r=(bd+mcr)/2*1.1,h=mbt,$fn=32);
+			}
+			for(ay = [-1 : 2 : 1]) {
+				translate([-bl/2+mbt,rbs*ay-rw/2+rm/2+mcr,-mbh/2+mbt*1.45])
+					rotate([0,180,0])cube([mbt*2,rw-rm-mcr*2,mbt-rm-mcr]);
+			}
 		}
-	}
-	translate([bl/2+mbt+0.1,0,0])rotate([0,270,0])cylinder(r=bd/2,h=bl,$fn=32);
-	translate([bl/2-(mbt+mcr)*2+nt-mcr,0,0])rotate([0,270,0])cylinder(r=bhd/2/cos(30),h=nt+0.1,$fn=6,center=false);
-	for(ay = [-1 : 2 : 1]) {
-		translate([bl/2-mbt-mcr,rbs*ay-rw/2,-mbh/2+mbt*1.5])
-			rotate([0,180,0])cube([mbd-mbt*2-mcr*2,rw,mbt]);
-	}
+	}	
 }
-
-// Vise Slider
-minkowski(){
-	sphere(mcr);
-	union(){
-		difference(){
-			translate([-bl/2,0,-mbr])rotate([0,270,0])
-				roundedRect([mbh-mbr, mbw-mbr, mbt], mbr);
-			translate([-bl/2+mbt/2,-mbw*1.5/2,-mbh/2+mbt+.15+mcr])
-				rotate([0,180,0])cube([mbt*2,mbw*1.5,mbh]);
-			translate([-bl/2-mbt,0,0])gloove();
-		}
-		difference(){
-			translate([-bl/2+mbt-mcr,0,0])rotate([0,270,0])cylinder(r=bd*1.25,h=mbt,$fn=32);
-			translate([-bl/2+mbt+0.1,0,0])rotate([0,270,0])cylinder(r=(bd+mcr)/2*1.1,h=mbt,$fn=32);
-		}
-		for(ay = [-1 : 2 : 1]) {
-			translate([-bl/2+mbt,rbs*ay-rw/2+rm/2+mcr,-mbh/2+mbt*1.45])
-				rotate([0,180,0])cube([mbt*2,rw-rm-mcr*2,mbt-rm-mcr]);
-		}
-	}
-}
-
 
 // size - [x,y,z]
 // radius - radius of corners

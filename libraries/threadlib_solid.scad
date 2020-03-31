@@ -3,6 +3,9 @@
 * for suggestions please contact me via jcernato@gmail.com
 * Version 30.01.2017_Experimental
 */
+ 
+$fn=360;
+s_thread(10,1.5,12);
 
 module s_thread(diameter, slope, height) {
     if($fn) {mypolygon(diameter, slope, $fn, height);}
@@ -77,8 +80,3 @@ faces = [
 polyhedron(points, faces, convexity=2);
   
 }
- 
-$fn=50;
-s_thread(10,1.5,12);
-
-

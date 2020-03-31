@@ -1,8 +1,8 @@
 /* [Superformula] */
 phi_step = 0.025;
-m = 16;
-n = 5;
-n3 = 8;
+m = 12; //Star rays
+n = 6;
+n3 = 3; //sharpness of ray
 
 /* [Offset] */
 d = 0.025;
@@ -45,8 +45,13 @@ module superformula_vase(phi_step, m, n, n3, d, r1, r2, h1, h2, t_step, twist) {
             [for(p = sections[i]) rotate_p(p, twist_step * i)]
     ];
 
+    echo(shape_pts=shape_pts);
     polysections(twisted_sections, "HOLLOW");
-    rotate(-twist_step) linear_extrude(d) offset(d) polygon(shape_pts);
+
+    rotate(-twist_step) 
+    linear_extrude(d) 
+    offset(d) 
+    !polygon(shape_pts);
 }
 
 superformula_vase(phi_step, m, n, n3, d, r1, r2, h1, h2, t_step, twist);
