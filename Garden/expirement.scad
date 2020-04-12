@@ -52,11 +52,12 @@ module build(args)
     {
         union()
         {
-            ArchimedeanSpiral(height=10, width=4, range = 1000, scale = 0.1, a = -10, b = -1);
+            // ArchimedeanSpiralDebug(height=10, width=4, range = 1000, scale = 0.1, a = -10, b = -1);
             // translate([-1.06,-0.01,0])
             // ArchimedeanSpiral(height=5, width=2, range = 1000, scale = 0.1, a = -10, b = 1);           
             // translate([0, 0, 5])  
             // cylinder(r=3, h=10, center=true, $fn=360);
+            // ArchimedeanDoubleSpiral(height=5, width=4, range = 1000, scale = 0.1, a = -10, b = 1); 
         }
     }
 
@@ -66,6 +67,7 @@ module ArchimedeanSpiral(height, width, range = 900, scale = 0.25, a = 5, b = 1)
 {
     points1 = ArchimedeanSpiral(a = a, b = b, width = 0, range = range, ascending = true);
     points2 = ArchimedeanSpiral(a = a, b = b, width = width/scale, range = range, ascending = false);
+    echo(points1=points1);
 
     difference()
     {
@@ -81,6 +83,39 @@ module ArchimedeanSpiral(height, width, range = 900, scale = 0.25, a = 5, b = 1)
     }
 }
 
+module ArchimedeanSpiralDebug(height, width, range = 900, scale = 0.25, a = 5, b = 1)
+{
+    points1 = ArchimedeanSpiral(a = a, b = b, width = 0, range = range, ascending = true);
+    points2 = ArchimedeanSpiral(a = a, b = b, width = width/scale, range = range, ascending = false);
+    echo(points1=points2);
+    plot(points1);
+    #plot(points2);
+
+
+}
+
+module ArchimedeanDoubleSpiral(height, width, range = 900, scale = 0.25, a = 5, b = 1)
+{
+    points1 = ArchimedeanSpiral(a = a, b = b, width = 0, range = range, ascending = true);
+    points2 = ArchimedeanSpiral(a = a, b = b, width = width/scale, range = range, ascending = false);
+    spiral1 = Add2Xvector(concat(points1, points2), -width);
+    echo(points1=points1);
+
+    points3 = ArchimedeanSpiral(a = a, b = -b, width = 0, range = range, ascending = true);
+    points4 = ArchimedeanSpiral(a = a, b = -b, width = width/scale, range = range, ascending = false);
+    spiral2 = Add2Xvector(concat(points3, points4), width);
+
+    difference()
+    {
+        linear_extrude(height = height)
+        {
+            scale([scale,scale,0])
+            polygon(points = concat(spiral1, spiral2));
+        }
+        
+    }
+}
+
 module plot(points)
 {
     // hull()
@@ -91,7 +126,7 @@ module plot(points)
         //hull()
         translate([i[0], i[1], 0]) 
         {
-            circle(r=5);
+            circle(r=1);
         }
     }
 }
@@ -110,15 +145,17 @@ function Add2Yvector(v, y) =
         [v[i][0], v[i][1] + y]
 ];
 
+function Add2Xvector(v, x) = 
+[
+    for(i = [0 : len(v)-1]) 
+        [v[i][0] + x, v[i][1]]
+];
+
 function Add2XYvector(v, value) = 
 [
     for(i = [0 : len(v)-1]) 
         [foobarX(v[i][0], v[i][1], value), foobarY(v[i][0], v[i][1], value)]
 ];
-
-function foobarX(x,y, value) = cos(tan(y/x > 100000 ? 90 : y/x)) * value;
-function foobarY(x,y, value) = sin(tan(y/x > 100000 ? 90 : y/x)) * value;
-
 
 function ParabolaPoints(f, wide, steps=1) =
     [
