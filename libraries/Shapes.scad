@@ -55,3 +55,15 @@ module ConeHollow(od1, od2, wall, height)
         }
     }
 }
+
+//this is generally used to visualize points.
+module plot(points)
+{
+    for(i = points)
+    {
+        translate([i[0], i[1], 0]) 
+        {
+            circle(r=1, $fn=6);
+        }
+    }
+}
