@@ -1,8 +1,10 @@
 /*
 *
 */
-$fn=100;
-build("plotParabola");
+use <..\\libraries\\dotSCAD\\src\\hull_polyline2d.scad>;
+// use <..\\libraries\\SpiralShapes.scad>;
+$fn=20;
+build("");
 
 // function
 
@@ -24,6 +26,15 @@ module build(args)
     if(args == "vectorSample")
     {
         vectorSample();
+    }
+
+    if(args == "")
+    {
+        scale([0.25,0.25,0.25,])
+        hull_polyline2d(
+            points = ArchimedeanSpiral(a = 0, b = -0.25, range = 1800, width = 0, ascending = true), 
+            width = 20
+        );
     }
 
 }
@@ -73,4 +84,11 @@ function SinWavePoints(range, stepSize, amplitude=100, width = 0) =
             [x,  width + sin(x)*amplitude ]
     ];
 
-
+function ArchimedeanSpiral(a = 1, b = -2, range = 900, width = 0, ascending = true) = 
+[
+    for(rad = ascending ? [0 : PI/2 : range] : [range : -PI/2 : 0])
+    [
+        (cos(rad) * (a + b * rad) + (width != 0 ? cos(rad) * width : 0) * (b > 0 ? 1 : -1)) ,
+        (sin(rad) * (a + b * rad) + (width !=0  ? sin(rad) * width : 0) * (b > 0 ? 1 : -1))
+    ]
+];
