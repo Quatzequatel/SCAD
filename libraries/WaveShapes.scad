@@ -1,5 +1,5 @@
 include <SpiralShapes.scad>;
-$fn=40;
+$fn=360;
 Build();
 
 module Build(args) 
