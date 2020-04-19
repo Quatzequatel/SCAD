@@ -1,94 +1,123 @@
 include <SpiralShapes.scad>;
-$fn=360;
+$fn=100;
+NozzleWidth = 0.8;
+LayerHeight = 0.32;
+InitialLayerHeight = 0.4;
+IdealHeight = InitialLayerHeight + (LayerHeight * 8);
+LineCount = 8;
+LineWidth = NozzleWidth * LineCount;
+function LayersToHeight(layers) = InitialLayerHeight + (LayerHeight * layers);
+
 Build();
 
 module Build(args) 
 {
     Saucer();
+    // SaucerSpacer();
+    // Wave();
+
 }
 
 module Saucer()
 {
-        ripple = 90;
-        rippleCount = 9;
-        range = ripple * rippleCount;
-        amplitude = 100;
+        ripples = 9;
+
+        // amplitude = 100;
         plateThickness = 2;
         length = 100;
-        a_scale = (1/range * (length/2));
-        scalePlateThickness = plateThickness * 1/a_scale;
+        width = (length/(ripples - 1) / 2);
 
         lipThickness = 2;
-        lipHeight = 30;
-        points1 = SinWavePoints(range = range, stepSize = 1, amplitude=amplitude);
-        // echo(a_scale = a_scale, scalePlateThickness=scalePlateThickness);
-        plateTop = a_scale * (2 * amplitude + scalePlateThickness);
+        lipHeight = 25;
 
         union()
         {
             rotate_extrude(angle = 360, convexity = 10)
             union()
             {
-                translate([-length,(lipThickness / 2),0]) 
+                //Sauce Edge
+                translate([-(length - 1.04),0,0]) 
                 hull()
                 {
-                    translate([-2.3, lipHeight, 0]) circle(r = lipThickness / 2); 
+                    translate([-sin(10) * lipHeight, lipHeight, 0]) 
+                        circle(r = lipThickness / 2); 
                     circle(r = lipThickness / 2);                
                 }
 
-                scale([a_scale, a_scale, 0])
-                translate([valueOfX(points1,0), (cos(PI/2)*amplitude), 0])
+                //platefloor
+                hull()
+                {
+                    translate([-length, 0, 0]) 
+                        square(size=[plateThickness, plateThickness], center=false);
+                    translate([-plateThickness, 0, 0]) 
+                        square(size=[plateThickness, plateThickness], center=false);
+                }
 
-                polygon(points = concat(points1, [[range, amplitude + scalePlateThickness],[-range, amplitude + scalePlateThickness]]));
+                //Saucer under side
+                translate([-length,0,0])
+                rotate([180,0,0])
+                for(i = [0 : ripples-2])
+                {
+                    translate([i * (width * 2) + (width),0,0])
+                    polygon(points = polyCosWave(width = width, height = LayersToHeight(32)));
+                }
             }
 
-            translate([ 0, 0, plateTop])
-            WaveStar(spokes = 16, spokeWidth = 2, spokeLength = 101, spokeAmplitude = 100);
+            translate([ 0, 0, plateThickness])
+            WaveStar(spokes = 16, spokeWidth = 2, centerRadius = 0, spokeLength = 99, height = IdealHeight);
         }
 }
 
-module WaveStar(spokes = 7, spokeWidth = 2, spokeLength = 100, spokeAmplitude = 200)
+module SaucerSpacer()
+{
+
+    radius1 = 25;
+    radius2 = 268/2;
+
+    union()
+    {
+        WaveCircle(radius = radius1, width = LineWidth , height = 10);
+        WaveCircle(radius = radius2, width = LineWidth , height = 10);
+        WaveStar(spokes = 10, spokeWidth = LineWidth , centerRadius = radius1, spokeLength = radius2-radius1, height = 10);
+    } 
+}
+
+module WaveStar(spokes = 7, spokeWidth = 2, centerRadius = 10,  spokeLength = 100, height = 10)
 {
     angle = 360/spokes;
     for(n = [1 : spokes])
     {
         rotate([0, 0, n * angle])
         {
-            Wave(width = spokeWidth, length = spokeLength, amplitude = spokeAmplitude);
+            translate([ 0, -centerRadius, 0 ])
+            Wave(width = spokeWidth, length = spokeLength, height = height);
         }
     }
 }
 
-module Wave(width = 10, length = 100, amplitude = 200)
+module WaveCircle(radius = 100, width = 4, height = 200)
 {
-    ripple = 90;
-    rippleCount = 1;
-    range = ripple * rippleCount;
-    waveWidth = width;
-    amplitude = amplitude;
-    waveScale = waveWidth * (1/range);
-    waveLength = length;
-
-    points1 = CosWavePoints(range = range, stepSize = 1, amplitude = amplitude);
-
-    rotate([90,0,0])
-    linear_extrude(height = waveLength )
-    scale([waveScale, waveScale, 0])
-    polygon(points = points1);
-
+    rotate_extrude(angle=360)
+    translate([radius,0,0])
+    polygon(points = polyCosWave(width, height));
 }
 
-function SinWavePoints(range, stepSize, amplitude=100, width = 0) = 
-    [
-        for (x=stepSize > 0 ? [-range:stepSize:range] : [range:stepSize:-range]) 
-            [x,  width + sin(x)*amplitude ]
-    ];
 
-function CosWavePoints(range, stepSize, amplitude=100, width = 0) = 
-    [
-        for (x=stepSize > 0 ? [-range:stepSize:range] : [range:stepSize:-range]) 
-            [x,  width + cos(x)*amplitude ]
-    ];
-    
-function valueOfX(points, index) = points[index][0];
-function valueOfY(points, index) = points[index][1];
+module Wave(width = 10, length = 100, height = 200)
+{
+    rotate([90,0,0])
+    linear_extrude(height = length )
+    polygon(points = polyCosWave(width, height));
+}
+
+function polyCosWave(width, height) =
+[
+    for(x =[-90 : StepSize(1) : 90]) [ x * width/90,  cos(x) * height]
+];
+
+function polySinWave(width, height) =
+[
+    for(x =[-90 : StepSize(1) : 90]) [ x * width/90,  sin(x) * height]
+];
+
+function StepSize(stepsize) = stepsize * 180/$fn;

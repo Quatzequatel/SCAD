@@ -77,7 +77,14 @@ function ArchimedeanSpiral(a = 1, b = -2, range = 900, width = 0, ascending = tr
 [
     for(rad = ascending ? [0 : PI/8 : range] : [range : -PI/8 : 0])
     [
-        (cos(rad) * (a + b * rad) + (width != 0 ? cos(rad) * width : 0) * (b > 0 ? 1 : -1)) ,
-        (sin(rad) * (a + b * rad) + (width !=0  ? sin(rad) * width : 0) * (b > 0 ? 1 : -1))
+        fArchimedeanSpiralX(rad, a, b, width) ,
+        fArchimedeanSpiralY(rad, a, b, width)
     ]
 ];
+
+function fArchimedeanSpiralX(rad, a, b, width) = (cos(rad) * (a + b * rad) + 
+                                                    (width != 0 ? 
+                                                        cos(rad) * width : 0) * (b > 0 ? 1 : -1));
+function fArchimedeanSpiralY(rad, a, b, width) = (sin(rad) * (a + b * rad) + 
+                                                    (width !=0  ? 
+                                                        sin(rad) * width : 0) * (b > 0 ? 1 : -1));

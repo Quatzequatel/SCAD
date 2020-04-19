@@ -1,7 +1,7 @@
 /*
 *
 */
-use <..\\libraries\\dotSCAD\\src\\hull_polyline2d.scad>;
+use <..\\libraries\\dotSCAD\\src\\hull_polyline3d.scad>;
 // use <..\\libraries\\SpiralShapes.scad>;
 $fn=20;
 build("");
@@ -30,11 +30,22 @@ module build(args)
 
     if(args == "")
     {
-        scale([0.25,0.25,0.25,])
-        hull_polyline2d(
-            points = ArchimedeanSpiral(a = 0, b = -0.25, range = 1800, width = 0, ascending = true), 
-            width = 20
-        );
+        // scale([0.25,0.25,0.25,])
+        // hull_polyline3d(
+        //     points = ArchimedeanSpiral(a = 0, b = -0.25, range = 1800, width = 0, ascending = true), 
+        //     thickness = 20
+        // );
+
+        hull()
+        {
+            translate([5,0,0])
+            rotate([0, 90, 0]) 
+                circle(r=5);
+            
+            rotate([0, 90, 0]) 
+            circle(r=5);                
+
+        }
     }
 
 }
@@ -86,7 +97,7 @@ function SinWavePoints(range, stepSize, amplitude=100, width = 0) =
 
 function ArchimedeanSpiral(a = 1, b = -2, range = 900, width = 0, ascending = true) = 
 [
-    for(rad = ascending ? [0 : PI/2 : range] : [range : -PI/2 : 0])
+    for(rad = ascending ? [0 : PI : range] : [range : -PI : 0])
     [
         (cos(rad) * (a + b * rad) + (width != 0 ? cos(rad) * width : 0) * (b > 0 ? 1 : -1)) ,
         (sin(rad) * (a + b * rad) + (width !=0  ? sin(rad) * width : 0) * (b > 0 ? 1 : -1))
