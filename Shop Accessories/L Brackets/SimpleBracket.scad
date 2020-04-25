@@ -1,72 +1,161 @@
 /*
 
 */
-$fn=24;
+$fn=100;
 NozzleWidth = 1.0;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
 mmPerInch = 25.4;
-wallCount = 2;
 
 function InchTomm(inches = 1) = inches * mmPerInch;
 function height2layers(mm = 1) = mm/LayerHeight;
 function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeight);
 function BaseHeight() = layers2Height(6);
 function WallThickness(count) = count * NozzleWidth;
-Height = InchTomm(2);
-BracketThickness = 6;
-BracketWidth = mmPerInch + BracketThickness;
+
+Height = InchTomm(0.75);
+BracketThickness = 4 * NozzleWidth;
+BracketWidth = InchTomm(1) + BracketThickness;
 ScrewHoleRadius = 2;
-ScrewHoleCount = 3;
-ScrewHoleOffsetZ = Height / ScrewHoleCount;
-ScrewHoleOffsetX = BracketWidth / 2;
-ScrewHoleOffsetY = BracketWidth / 2;
+ScrewHoleCount = 2;
 
-LbracketPoints = 
-[
-    [0,0], 
-    [BracketWidth,0], 
-    [BracketWidth, BracketThickness], 
-    [BracketThickness,BracketThickness], 
-    [BracketThickness, BracketWidth], 
-    [0, BracketWidth]];
 
-Build();
+Build("CornerBracket");
 
 
 
 module Build(args) 
 {
+    if(args == "CornerBracket")
+    {
+        CornerBracket(
+                    bracketHeight = Height, 
+                    bracketDepth = BracketWidth, 
+                    bracketThickness = BracketThickness,
+                    screwHoleCount = ScrewHoleCount,
+                    screwHoleRadius = ScrewHoleRadius, 
+                    screwHoleDepth = 2 * BracketThickness        
+                );        
+    }
+    else if(args == "Bracket")
+    {
+        Bracket(
+                    bracketHeight = Height, 
+                    bracketDepth = BracketWidth, 
+                    bracketThickness = BracketThickness,
+                    screwHoleCount = ScrewHoleCount,
+                    screwHoleRadius = ScrewHoleRadius, 
+                    screwHoleDepth = 2 * BracketThickness        
+                );            
+    }
+
+}
+
+module CornerBracket( 
+                bracketHeight = Height, 
+                bracketDepth = BracketWidth, 
+                bracketThickness = BracketThickness,
+                screwHoleCount = ScrewHoleCount,
+                screwHoleRadius = ScrewHoleRadius, 
+                screwHoleDepth = 2 * BracketThickness
+                )
+{
     difference()
     {
-        linear_extrude(height=Height, center=false, convexity=10, twist=0) 
+        union()
         {
-            polygon(points=LbracketPoints);        
+            Bracket();
+            translate([0,0, -bracketThickness])
+            cube(size=[bracketDepth, bracketDepth, bracketThickness], center=false);
+        }       
+
+        moveX = screwHoleCount > 1 ? bracketDepth / 2 : bracketDepth - 3 * screwHoleRadius;
+        moveY = screwHoleCount > 1 ? bracketDepth - 3 * screwHoleRadius : bracketDepth - 3 * screwHoleRadius;
+
+        translate([moveX, moveY, -bracketThickness/2])
+        cylinder(r=screwHoleRadius, h= screwHoleDepth, center=true);   
+        
+        translate([moveY, moveX, -bracketThickness/2])
+        cylinder(r=screwHoleRadius, h= screwHoleDepth, center=true); 
+    }
+}
+
+module Bracket( 
+                bracketHeight = Height, 
+                bracketDepth = BracketWidth, 
+                bracketThickness = BracketThickness,
+                screwHoleCount = ScrewHoleCount,
+                screwHoleRadius = ScrewHoleRadius, 
+                screwHoleDepth = 2 * BracketThickness
+                )
+{
+    bracketPoints = 
+    [
+        [0,0], 
+        [bracketDepth,0], 
+        [bracketDepth, bracketThickness], 
+        [bracketThickness,bracketThickness], 
+        [bracketThickness, bracketDepth], 
+        [0, bracketDepth]
+    ];
+    moveX = bracketDepth / 2 + bracketThickness;
+    moveY = bracketThickness - bracketThickness / 2;
+    moveZ = bracketHeight / screwHoleCount;
+    startZ = moveZ / 2;
+
+    difference()
+    {
+        linear_extrude(height = bracketHeight, center = false, convexity=10, twist=0) 
+        {
+            polygon(points = bracketPoints);        
         }
-        screwHolesY();
-        screwHolesX();        
-    }
+        screwHoles(forXside = false, 
+                    screwHoleCount = screwHoleCount, 
+                    screwHoleRadius = screwHoleRadius,  
+                    screwHoleDepth = screwHoleDepth,
+                    moveX = moveX,
+                    moveY = moveY,
+                    moveZ = moveZ,
+                    startZ = startZ
+                    );
 
+        screwHoles(forXside = true,
+                    screwHoleCount = screwHoleCount, 
+                    screwHoleRadius = screwHoleRadius,  
+                    screwHoleDepth = screwHoleDepth,
+                    moveX = moveX,
+                    moveY = moveY,
+                    moveZ = moveZ,
+                    startZ = startZ
+                    );
+    }
 }
 
-module screwHolesY()
+module screwHoles( 
+                    forXside = true, 
+                    screwHoleCount = ScrewHoleCount,
+                    screwHoleRadius = ScrewHoleRadius, 
+                    screwHoleDepth = 2 * BracketThickness, 
+                    moveX = 0,
+                    moveY = 0,
+                    moveZ = 0,
+                    startZ = 0
+                    )
 {
-    for(i = [0 : ScrewHoleCount - 1])
+    for(i = [0 : screwHoleCount - 1])
     {
-        translate([BracketThickness-2, ScrewHoleOffsetY+5, ScrewHoleOffsetZ * i  + ScrewHoleOffsetZ/2]) 
-        rotate([0, 90, 0]) 
-        cylinder(r=ScrewHoleRadius, h= 2 * BracketThickness, center=true);
+        if(!forXside)
+        {
+            translate([moveY, moveX, moveZ * i  + startZ]) 
+            rotate([0, 90, 0]) 
+            cylinder(r=screwHoleRadius, h= screwHoleDepth, center=true);            
+        }
+        else
+        {
+            translate([moveX, moveY, moveZ * i  + startZ]) 
+            rotate([90, 0, 0]) 
+            cylinder(r=screwHoleRadius, h= screwHoleDepth, center=true);             
+        }
     }
-    
 }
 
-module screwHolesX()
-{
-    for(i = [0 : ScrewHoleCount - 1])
-    {
-        translate([ScrewHoleOffsetX+5, BracketThickness-2,  ScrewHoleOffsetZ * i  + ScrewHoleOffsetZ/2]) 
-        rotate([90, 0, 0]) 
-        cylinder(r=ScrewHoleRadius, h= 2 * BracketThickness, center=true);
-    }
-    
-}
