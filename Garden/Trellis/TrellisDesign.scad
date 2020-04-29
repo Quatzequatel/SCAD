@@ -1,5 +1,9 @@
-$fn = 100;
+
 //standard
+$fn = 100;
+NozzleWidth = 1.0;
+LayerHeight = 0.24;
+InitialLayerHeight = 0.4;
 mmPerInch = 25.4;
 mmPerFoot = 304.8;
 
@@ -28,11 +32,12 @@ includeSquareLatticeTrellis = false;
 Build();
 function convertFeet2mm(feet) = feet * mmPerFoot;
 function convertInches2mm(inches) = inches * mmPerInch;
+function WallThickness(count) = count * NozzleWidth;
 
 module Build(args) 
 {
-                            //[0,1] = [enumThickness, enumDepth]
-        frameBoardDimension = [convertInches2mm(0.196), convertInches2mm(1)] ; 
+        //[0,1] = [enumThickness, enumDepth]
+        frameBoardDimension = [WallThickness(count = 4), convertInches2mm(1)] ; 
         latticeDimension = [convertInches2mm(0.07), convertInches2mm(0.07)];
         width = convertInches2mm(12) - getThickness(frameBoardDimension);
         height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
