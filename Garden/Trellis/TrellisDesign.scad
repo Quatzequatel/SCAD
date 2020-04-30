@@ -22,22 +22,47 @@ ScrewHoleCount = 2;
 //enum
 enumThickness = 0;
 enumDepth = 1;
+function getDepth(board) = board[enumDepth];
+function getThickness(board) = board[enumThickness];
 
 enumScrew_OD = 0;
 enumScrewCount = 1;
+
+enumWaveWidth = 0;
+enumWaveHeight = 1;
+enumWaveLength = 2;
+enumWaveType = 3;
+
+enumWaveTypeCos = 0;
+enumWaveTypeSin = 1;
+
+function getVectorValue(vector, enum) = vector[enum];
+
+function getWaveProperty(wave, enum) = wave[enum];
+function setWaveProperty(wave, width, height, length, type) =
+[
+    width == undef ? wave[enumWaveWidth] : width, 
+    height == undef ? wave[enumWaveHeight] : height, 
+    length == undef ? wave[enumWaveLength] : length, 
+    type == undef ? wave[enumWaveType] : type
+];
+
 
 enumincludeFrame = 0;
 enumincludeDiamondStyleTrellis = 1;
 enumincludeSquareLatticeTrellis = 2;
 enumincludeArchimedianSpiral = 3;
+enumincludeHorizontalWaveTrellis = 4;
 
-function getDepth(board) = board[enumDepth];
-function getThickness(board) = board[enumThickness];
-
-function includeFrame(includes) = includes[enumincludeFrame];
-function includeDiamondStyleTrellis(includes) = includes[enumincludeDiamondStyleTrellis];
-function includeSquareLatticeTrellis(includes) = includes[enumincludeSquareLatticeTrellis];
-function includeArchimedianSpiral(includes) = includes[enumincludeArchimedianSpiral];
+function getIncludeProperty(includes, enum) = includes[enum];
+function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis, spiralTrellis, waveTrellis) =
+[
+    frame == undef ? includes[enumincludeFrame] : frame, 
+    diamondStyleTrellis == undef ? includes[enumincludeDiamondStyleTrellis] : diamondStyleTrellis, 
+    squareTrellis == undef ? includes[enumincludeSquareLatticeTrellis] : squareTrellis, 
+    spiralTrellis == undef ? includes[enumincludeArchimedianSpiral] : spiralTrellis,
+    waveTrellis == undef ? includes[enumincludeHorizontalWaveTrellis] : waveTrellis
+];
 
 function convertFeet2mm(feet) = feet * mmPerFoot;
 function convertInches2mm(inches) = inches * mmPerInch;
@@ -46,8 +71,9 @@ function WallThickness(count) = count * NozzleWidth;
 function height2layers(mm = 1) = mm/LayerHeight;
 function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeight);
 
-//Includes = [enumincludeFrame, enumincludeDiamondStyleTrellis, enumincludeSquareLatticeTrellis, enumincludeArchimedianSpiral];
-Includes = [true, false, false, true];
+Includes = setIncludeProperty([], frame = true, diamondStyleTrellis = false, squareTrellis = false, spiralTrellis = true, waveTrellis = true);
+WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
+
 Panels = [1,1];
 
 Build();
@@ -60,7 +86,7 @@ module Build()
     latticeDimension = [WallThickness(2), layers2Height(8)];
     width = convertInches2mm(12) - getThickness(frameBoardDimension);
     height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
-    intervalCount = 1;
+    intervalCount = 3;
     includes = Includes;
     screwHoles = [ScrewHole_OD, ScrewHoleCount];
 
@@ -100,7 +126,7 @@ module Panel
     rotate([90,0,0])
     union()
     {
-        if(includeFrame(includes))
+        if(getIncludeProperty(includes, enumincludeFrame))
         {    
             Frame
             (
@@ -111,7 +137,7 @@ module Panel
             );
         }
 
-        if(includeDiamondStyleTrellis(includes))
+        if(getIncludeProperty(includes, enumincludeDiamondStyleTrellis))
         {
             DiamondStyleTrellis
             (
@@ -123,7 +149,7 @@ module Panel
             );
         }
 
-        if(includeSquareLatticeTrellis(includes))
+        if(getIncludeProperty(includes, enumincludeSquareLatticeTrellis))
         {    
             SquareLatticeTrellis
             (
@@ -135,13 +161,13 @@ module Panel
             );
         }
 
-        if(includeFrame(includes) && includeArchimedianSpiral(includes))
+        if(getIncludeProperty(includes, enumincludeFrame) && getIncludeProperty(includes, enumincludeArchimedianSpiral))
         {
             difference()
             {
                 translate([width/2, 0, height/2])
                 rotate([90,0,0])
-                if(includeArchimedianSpiral(includes))
+                if(getIncludeProperty(includes, enumincludeArchimedianSpiral))
                 {
                     ArchimedianSpiralTrellis
                     (
@@ -164,6 +190,19 @@ module Panel
                     cube(size=[height + getThickness(frameBoardDimension), offsetDepth, width + getThickness(frameBoardDimension)], center=false);
                 }
             }
+        }
+
+        if(getIncludeProperty(includes, enumincludeHorizontalWaveTrellis))
+        {
+            // echo(includeHorizontalWaveTrellis=includeHorizontalWaveTrellis(includes));
+            HorizontalWaveTrellis
+            (
+                width = width, 
+                height = height, 
+                frameBoardDimension = frameBoardDimension , 
+                latticeDimension = latticeDimension,
+                intervalCount = 4               
+            );
         }
 
     }
@@ -239,6 +278,111 @@ module ArchimedianSpiralTrellis
      ArchimedeanDoubleSpiral(height=getDepth(latticeDimension), width=getThickness(latticeDimension), range = 2000, scale = 0.1, a = 0, b = 1); 
 
 }
+
+module HorizontalWaveTrellis
+(
+        width = 0,
+        height = 0,
+        frameBoardDimension = [0,0] , 
+        latticeDimension = [0,0], 
+        intervalCount = 4
+)
+{
+        intervalHeight = (height - getThickness(frameBoardDimension))/ (intervalCount);
+
+        //horizontal
+        rotate([90,0,0])
+        translate([0, 0, -getThickness(latticeDimension)])
+        {
+            for(i = [1 : 1 : (height/intervalHeight -1)])
+            {
+                echo(horizontalWidth = i * intervalHeight)
+                translate([ getThickness(frameBoardDimension)/2, getThickness(frameBoardDimension) + i * intervalHeight, 0])
+                // rotate([0, 90, 0])
+                // color( i % 2 ? "red" : "blue" ) 
+                polyline
+                    (
+                        setWaveProperty(WaveProperties, length = width) , 
+                        latticeDimension = latticeDimension
+                    );                
+            }            
+        }
+
+}
+
+module AlternateWaveTrellis
+(
+        width = 0,
+        height = 0,
+        frameBoardDimension = [0,0] , 
+        latticeDimension = [0,0], 
+        intervalCount = 4
+)
+{
+        intervalWidth = (width - getThickness(frameBoardDimension))/ (intervalCount);
+
+        //horizontal
+        rotate([90,0,0])
+        translate([0, 0, -getThickness(latticeDimension)])
+        {
+            for(i = [1 : 1 : (height/intervalWidth -1)])
+            {
+                echo(horizontalWidth = i * intervalWidth)
+                translate([ getThickness(frameBoardDimension)/2, getThickness(frameBoardDimension) + i * intervalWidth, 0])
+                // rotate([0, 90, 0])
+                // color( i % 2 ? "red" : "blue" ) 
+                polyline
+                    (
+                        wave = i % 2 != 0 ? setWaveProperty(WaveProperties, length = width) : setWaveProperty(WaveProperties, length = width, type = enumWaveTypeSin), 
+                        latticeDimension = latticeDimension
+                    );                
+            }            
+        }
+
+}
+
+module polyline(wave = [0,0,0,0], latticeDimension = [2,2])
+{
+    echo(wave = wave);
+    if(enumWaveTypeCos == getWaveProperty(wave, enumWaveType))
+    {
+        linear_extrude(getDepth(latticeDimension))
+        polyline2d
+            (
+                points = polyCosWave
+                            (
+                                width = getWaveProperty(wave, enumWaveWidth), 
+                                height = getWaveProperty(wave, enumWaveHeight), 
+                                length = getWaveProperty(wave, enumWaveLength)
+                            ), 
+                width = getThickness(latticeDimension)
+            );
+    }
+    else 
+    {
+        linear_extrude(getDepth(latticeDimension))
+        polyline2d
+            (
+                points = polySinWave
+                            (
+                                width = getWaveProperty(wave, enumWaveWidth), 
+                                height = getWaveProperty(wave, enumWaveHeight), 
+                                length = getWaveProperty(wave, enumWaveLength)
+                            ), 
+                width = getThickness(latticeDimension)
+            );        
+    }
+}
+
+function polyCosWave(width, height, length) =
+[
+    for(x =[0 : 180/$fn : length/width * 90]) [ x * width/90,  cos(x) * height]
+];
+
+function polySinWave(width, height, length) =
+[
+    for(x =[-90 : 180/$fn : length/width * 90]) [ (x + 90) * width/90,  sin(x) * height]
+];
 
 module SquareLatticeTrellis
     (
