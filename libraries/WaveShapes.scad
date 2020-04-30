@@ -6,7 +6,8 @@ InitialLayerHeight = 0.4;
 IdealHeight = InitialLayerHeight + (LayerHeight * 8);
 LineCount = 8;
 LineWidth = NozzleWidth * LineCount;
-function LayersToHeight(layers) = InitialLayerHeight + (LayerHeight * layers);
+
+function LayersToHeight(layers) = InitialLayerHeight + (LayerHeight * (layers - 1));
 function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 function ThicknessOfPlate() = LayersToHeight(8);
 function heightAdjustment1() = LayerHeight/2;
