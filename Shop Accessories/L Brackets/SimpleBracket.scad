@@ -13,14 +13,14 @@ function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeigh
 function BaseHeight() = layers2Height(6);
 function WallThickness(count) = count * NozzleWidth;
 
-Height = InchTomm(0.75);
+Height = InchTomm(1);
 BracketThickness = 4 * NozzleWidth;
 BracketWidth = InchTomm(1) + BracketThickness;
 ScrewHoleRadius = 2;
 ScrewHoleCount = 2;
 
 
-Build("CornerBracket");
+Build("Bracket");
 
 
 
