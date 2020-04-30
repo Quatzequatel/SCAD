@@ -1,3 +1,6 @@
+/*
+    Create panels for Trellis
+*/
 
 //standard
 $fn = 100;
@@ -21,65 +24,113 @@ enumDepth = 1;
 enumScrewRadius = 0;
 enumScrewCount = 1;
 
-
 function getDepth(board) = board[enumDepth];
 function getThickness(board) = board[enumThickness];
 
-includeFrame = true;
-includeDiamondStyleTrellis = false;
-includeSquareLatticeTrellis = false;
-
-Build();
 function convertFeet2mm(feet) = feet * mmPerFoot;
 function convertInches2mm(inches) = inches * mmPerInch;
 function WallThickness(count) = count * NozzleWidth;
 
-module Build(args) 
+function height2layers(mm = 1) = mm/LayerHeight;
+function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeight);
+
+includeFrame = true;
+includeDiamondStyleTrellis = false;
+includeSquareLatticeTrellis = true;
+Panels = [1 : 1];
+
+Build();
+
+
+module Build()
+{
+    //[0,1] = [enumThickness, enumDepth]
+    frameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)] ; 
+    latticeDimension = [WallThickness(2), layers2Height(8)];
+    width = convertInches2mm(12) - getThickness(frameBoardDimension);
+    height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
+    intervalCount = 4;
+    angle = 45;
+
+    xDimension = Panels[0];
+    yDimension = Panels[1];
+
+    for(x = [0 : xDimension-1])
+    {
+        for(y = [0 : yDimension-1])
+        {
+            translate([x * (width + getThickness(frameBoardDimension)), y * (height + getThickness(frameBoardDimension)), 0])
+            Panel(
+                frameBoardDimension = frameBoardDimension ,
+                latticeDimension = latticeDimension,
+                width = width,
+                height = height,
+                intervalCount = intervalCount,
+                angle = angle       
+            );
+        }
+    }
+
+}
+
+module Panel
+(
+        frameBoardDimension = [0,0] ,
+        latticeDimension = [0,0],
+        width = 0,
+        height = 0,
+        intervalCount = 8,
+        angle = 45
+) 
 {
         //[0,1] = [enumThickness, enumDepth]
-        frameBoardDimension = [WallThickness(count = 4), convertInches2mm(1)] ; 
-        latticeDimension = [convertInches2mm(0.07), convertInches2mm(0.07)];
-        width = convertInches2mm(12) - getThickness(frameBoardDimension);
-        height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
-        intervalCount = 8;
-        angle = 45;
+        // frameBoardDimension = [WallThickness(count = 4), convertInches2mm(1)] ; 
+        // latticeDimension = [convertInches2mm(0.07), convertInches2mm(0.07)];
+        // width = convertInches2mm(12) - getThickness(frameBoardDimension);
+        // height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
+        // intervalCount = 8;
+        // angle = 45;
 
-    rotate([-90,0,0])
-    if(includeFrame)
-    {    
-        Frame
-        (
-            width = width, 
-            height = height, 
-            frameBoardDimension = frameBoardDimension,
-            screwHoles = [3, 3]
-        );
-    }
-
-    if(includeDiamondStyleTrellis)
+    rotate([90,0,0])
+    union()
     {
-        DiamondStyleTrellis
-        (
-            width = width, 
-            height = height, 
-            frameBoardDimension = frameBoardDimension , 
-            latticeDimension = latticeDimension,
-            intervalCount = intervalCount,
-            angle = angle
-        );
+        if(includeFrame)
+        {    
+            Frame
+            (
+                width = width, 
+                height = height, 
+                frameBoardDimension = frameBoardDimension,
+                screwHoles = [3, 3]
+            );
+        }
+
+        if(includeDiamondStyleTrellis)
+        {
+            DiamondStyleTrellis
+            (
+                width = width, 
+                height = height, 
+                frameBoardDimension = frameBoardDimension , 
+                latticeDimension = latticeDimension,
+                intervalCount = intervalCount,
+                angle = angle
+            );
+        }
+
+        if(includeSquareLatticeTrellis)
+        {    
+            SquareLatticeTrellis
+            (
+                width = width, 
+                height = height, 
+                frameBoardDimension = frameBoardDimension , 
+                latticeDimension = latticeDimension,
+                intervalCount = intervalCount
+            );
+        }
     }
 
-    if(includeSquareLatticeTrellis)
-    {    
-        SquareLatticeTrellis
-        (
-            width = width, 
-            height = height, 
-            frameBoardDimension = frameBoardDimension , 
-            latticeDimension = latticeDimension,
-            intervalCount = intervalCount
-        );
-    }
 }
 
 module Frame
@@ -186,24 +237,20 @@ module DiamondStyleTrellis
     //bottom
     for(i = [0: (intervalCount - 1)])
     {
-        // translate([ getThickness(frameBoardDimension)/2 + latticeMoveX(width = width, count = intervalCount, i = i), 0, getThickness(frameBoardDimension)/2 + getThickness(latticeDimension) * cos(angle)])
-        translate(translateBottom(adjWidth = adjustedWidth, latticeThickness = getThickness(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
+        translate(translateBottom(adjWidth = adjustedWidth, latticeThickness = getDepth(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
         rotate([0, angle, 0])
         {
-        // echo(AddZ(latticeDimension, latticeLength(width = width, count = intervalCount, angle = angle,  i = i)));
             color("red")cube(size=AddZ(latticeDimension, latticeLength(width = width, count = intervalCount, angle = angle,  i = i)), center=false);
-            // color("yellow")cube(size=AddZ(latticeDimension, hypotenuse(IntervalWidth(width = adjustedWidth, count = intervalCount, i = i), angle)), center=false);
         }
     }
 
     //top
     for(i = [1: (intervalCount - 1)])
     {
-        // translate([ latticeMoveX(width = width, count = intervalCount, i = i), getThickness(latticeDimension), height-(getThickness(latticeDimension) + cos(angle) * getThickness(latticeDimension))])
-        translate(translateTop(adjWidth = adjustedWidth, latticeThickness = getThickness(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
+        translate(translateTop(adjWidth = adjustedWidth, latticeThickness = getDepth(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
         rotate([180, -angle, 0])
         {
-            color("red")cube(size=AddZ(latticeDimension, latticeLength(width = width, count = intervalCount, angle = angle,  i = i)), center=false);
+            color("yellow")cube(size=AddZ(latticeDimension, latticeLength(width = width, count = intervalCount, angle = angle,  i = i)), center=false);
         }
     }
 
@@ -211,7 +258,7 @@ module DiamondStyleTrellis
     //left
     for(i = [1: heightIntervals])
     {
-        translate(translateLeft( adjWidth = adjustedWidth, latticeThickness = getThickness(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
+        translate(translateLeft( adjWidth = adjustedWidth, latticeThickness = getDepth(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
         rotate([0, angle, 0])
         {
         color("red")cube(size=AddZ(latticeDimension, latticeLength2(height = height, width = width, count = intervalCount, angle = angle,  i = i)), center=false);
@@ -221,17 +268,17 @@ module DiamondStyleTrellis
     //Right    
     for(i = [heightIntervals : -1 : 0])
     {
-        translate(translateRight( adjWidth = adjustedWidth, latticeThickness = getThickness(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
+        translate(translateRight( adjWidth = adjustedWidth, latticeThickness = getDepth(latticeDimension), frameThickness = getThickness(frameBoardDimension), i = i))
         rotate([180, -angle, 0])
         {
-            color("red")cube(size=AddZ(latticeDimension, latticeLength2(height = height, width = width, count = intervalCount, angle = angle,  i = i)), center=false);
+            color("yellow")cube(size=AddZ(latticeDimension, latticeLength2(height = height, width = width, count = intervalCount, angle = angle,  i = i)), center=false);
         }
     }  
     
     function translateTop(adjWidth, latticeThickness, frameThickness, i) = 
     [
         ((adjWidth/intervalCount * i) + frameThickness/2), 
-        0, 
+        latticeThickness, 
         height//-(frameThickness/2 + latticeThickness * cos(angle))
     ];
 
@@ -248,11 +295,7 @@ module DiamondStyleTrellis
         latticeThickness, 
         height - adjWidth/intervalCount * i + (cos(angle) * latticeThickness)
     ];
-    // [
-    //      getThickness(frameBoardDimension)/2, 
-    //      0, 
-    //      latticeMoveZ(width = width, count = intervalCount, i = i) + getThickness(frameBoardDimension)/2
-    // ]
+
     function translateLeft(adjWidth, latticeThickness, frameThickness, i) = 
     [
         frameThickness/2, 
