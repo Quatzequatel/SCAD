@@ -6,7 +6,7 @@ just a spacer under the planter to protect the wood.
 design 2
 a saucer that captures drained.
 */
-$fn=24;
+$fn=360;
 NozzleWidth = 1.0;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
@@ -23,7 +23,7 @@ Build();
 
 module Build()
 {
-    Saucer(radius = InchTomm(10.5)/2, depth = mmPerInch, thickness = BaseHeight());
+    Saucer(radius = InchTomm(12.5)/2, depth = mmPerInch, thickness = BaseHeight());
 }
 
 module Saucer(radius = 100, depth = mmPerInch, thickness = BaseHeight()) 
