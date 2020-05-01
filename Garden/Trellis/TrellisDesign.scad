@@ -24,6 +24,11 @@ enumThickness = 0;
 enumDepth = 1;
 function getDepth(board) = board[enumDepth];
 function getThickness(board) = board[enumThickness];
+function setDimension(board, depth, thickness) = 
+[
+    depth == undef ? board[enumThickness] : depth, 
+    thickness == undef ? board[enumDepth] : thickness     
+];
 
 enumScrew_OD = 0;
 enumScrewCount = 1;
@@ -74,7 +79,7 @@ function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeigh
 Includes = setIncludeProperty([], frame = true, diamondStyleTrellis = false, squareTrellis = false, spiralTrellis = true, waveTrellis = true);
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
 
-Panels = [1,1];
+Panels = [2,2];
 
 Build();
 
@@ -82,8 +87,8 @@ Build();
 module Build()
 {
     //[0,1] = [enumThickness, enumDepth]
-    frameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)] ; 
-    latticeDimension = [WallThickness(2), layers2Height(8)];
+    frameBoardDimension = setDimension([], depth =WallThickness(count = 4), thickness = convertInches2mm(0.5)); 
+    latticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
     width = convertInches2mm(12) - getThickness(frameBoardDimension);
     height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
     intervalCount = 3;
@@ -296,15 +301,19 @@ module HorizontalWaveTrellis
         {
             for(i = [1 : 1 : (height/intervalHeight -1)])
             {
-                echo(horizontalWidth = i * intervalHeight)
+                // echo(horizontalWidth = i * intervalHeight)
                 translate([ getThickness(frameBoardDimension)/2, getThickness(frameBoardDimension) + i * intervalHeight, 0])
                 // rotate([0, 90, 0])
                 // color( i % 2 ? "red" : "blue" ) 
-                polyline
-                    (
-                        setWaveProperty(WaveProperties, length = width) , 
-                        latticeDimension = latticeDimension
-                    );                
+                render() {
+                    polyline
+                        (
+                            setWaveProperty(WaveProperties, length = width) , 
+                            latticeDimension = latticeDimension
+                        );                     
+                }
+                
+               
             }            
         }
 
@@ -327,7 +336,7 @@ module AlternateWaveTrellis
         {
             for(i = [1 : 1 : (height/intervalWidth -1)])
             {
-                echo(horizontalWidth = i * intervalWidth)
+                // echo(horizontalWidth = i * intervalWidth)
                 translate([ getThickness(frameBoardDimension)/2, getThickness(frameBoardDimension) + i * intervalWidth, 0])
                 // rotate([0, 90, 0])
                 // color( i % 2 ? "red" : "blue" ) 
@@ -343,7 +352,7 @@ module AlternateWaveTrellis
 
 module polyline(wave = [0,0,0,0], latticeDimension = [2,2])
 {
-    echo(wave = wave);
+    // echo(wave = wave);
     if(enumWaveTypeCos == getWaveProperty(wave, enumWaveType))
     {
         linear_extrude(getDepth(latticeDimension))
@@ -398,7 +407,7 @@ module SquareLatticeTrellis
         //vertical
         for(i = [1 : 1 : intervalCount-1])
         {
-            echo(verticalWidth = i * intervalWidth)
+            // echo(verticalWidth = i * intervalWidth)
             translate([ getThickness(frameBoardDimension) + i * intervalWidth, 0, getThickness(frameBoardDimension)/2])
             // color("AntiqueWhite")
             cube(size=AddZ(latticeDimension, height), center=false);
@@ -406,7 +415,7 @@ module SquareLatticeTrellis
         //horizontal
         for(i = [1 : 1 : (height/intervalWidth -1)])
         {
-            echo(horizontalWidth = i * intervalWidth)
+            // echo(horizontalWidth = i * intervalWidth)
             translate([ getThickness(frameBoardDimension)/2, 0,  getThickness(frameBoardDimension) + i * intervalWidth])
             rotate([0, 90, 0])
             // color("AntiqueWhite")
