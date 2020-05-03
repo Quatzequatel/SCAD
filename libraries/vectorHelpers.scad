@@ -18,10 +18,10 @@ function vSwitch(v, x, y) = echo(v = v, x = x, y = y)
 ];
 
 //append a z value to an [x,y] vector.
-function ApendToV(v, zValue) = 
+function ApendToV(v, value) = 
 [
     for(i = [0 : len(v)]) 
-        (i == len(v) ? zValue : v[i])
+        (i == len(v) ? value : v[i])
 ];
 
 //add value to every element of v.

@@ -5,7 +5,7 @@ use <..\\..\\..\\libraries\\SpiralShapes.scad>
 */
 
 //standard
-$fn = 100;
+$fn = 360;
 NozzleWidth = 1.0;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
@@ -88,10 +88,10 @@ function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeigh
 Includes = setIncludeProperty
     ([], 
         frame = true, 
-        diamondStyleTrellis = true, 
-        squareTrellis = true, 
+        diamondStyleTrellis = false, 
+        squareTrellis = false, 
         spiralTrellis = true, 
-        waveTrellis = true,
+        waveTrellis = false,
         frameType = enumFrameTypeCircle
     );
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
@@ -107,8 +107,8 @@ module Build()
     //[0,1] = [enumThickness, enumDepth]
     frameBoardDimension = setDimension([], depth =WallThickness(count = 4), thickness = convertInches2mm(0.5)); 
     latticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
-    width = convertInches2mm(8) - getThickness(frameBoardDimension);
-    height = convertInches2mm(8)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
+    width = convertInches2mm(12) - getThickness(frameBoardDimension);
+    height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
     intervalCount = 3;
     includes = Includes;
     screwHoles = [ScrewHole_OD, ScrewHoleCount];
@@ -471,18 +471,18 @@ module ArchimedianSpiralTrellis
 {
     union()
     {
-        translate([0, 0 , -getDepth(latticeDimension)])
+        translate([0, 0 , -latticeDimension.y])
         {
             ArchimedeanDoubleSpiral
                 (
-                    height=getDepth(latticeDimension), 
-                    width=getThickness(latticeDimension), 
+                    height=latticeDimension.x, 
+                    width=latticeDimension.y, 
                     range = 2000, 
                     scale = 0.1, 
                     a = 0, 
                     b = 1); 
 
-            cylinder(h = getVectorValue( latticeDimension, 0), r = 5);
+            cylinder(h = latticeDimension.x, r = latticeDimension.y);
         }
 
     }
