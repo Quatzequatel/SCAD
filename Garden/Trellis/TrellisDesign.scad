@@ -41,7 +41,14 @@ enumWaveType = 3;
 enumWaveTypeCos = 0;
 enumWaveTypeSin = 1;
 
+enumFrameTypeSquare = 0;
+enumFrameTypeCircle = 1;
+
 function getVectorValue(vector, enum) = vector[enum];
+function setVectorValue(vector, enum, value) = 
+[
+    for(i = [0: 1 : len(v)-1])  i == enum ? value : v[i]
+];
 
 function getWaveProperty(wave, enum) = wave[enum];
 function setWaveProperty(wave, width, height, length, type) =
@@ -58,15 +65,17 @@ enumincludeDiamondStyleTrellis = 1;
 enumincludeSquareLatticeTrellis = 2;
 enumincludeArchimedianSpiral = 3;
 enumincludeHorizontalWaveTrellis = 4;
+enumincludeFrameType = 5;
 
 function getIncludeProperty(includes, enum) = includes[enum];
-function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis, spiralTrellis, waveTrellis) =
+function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis, spiralTrellis, waveTrellis, frameType) =
 [
     frame == undef ? includes[enumincludeFrame] : frame, 
     diamondStyleTrellis == undef ? includes[enumincludeDiamondStyleTrellis] : diamondStyleTrellis, 
     squareTrellis == undef ? includes[enumincludeSquareLatticeTrellis] : squareTrellis, 
     spiralTrellis == undef ? includes[enumincludeArchimedianSpiral] : spiralTrellis,
-    waveTrellis == undef ? includes[enumincludeHorizontalWaveTrellis] : waveTrellis
+    waveTrellis == undef ? includes[enumincludeHorizontalWaveTrellis] : waveTrellis,
+    frameType == undef ? includes[enumincludeFrameType] : frameType,
 ];
 
 function convertFeet2mm(feet) = feet * mmPerFoot;
@@ -76,12 +85,21 @@ function WallThickness(count) = count * NozzleWidth;
 function height2layers(mm = 1) = mm/LayerHeight;
 function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeight);
 
-Includes = setIncludeProperty([], frame = true, diamondStyleTrellis = false, squareTrellis = false, spiralTrellis = true, waveTrellis = true);
+Includes = setIncludeProperty
+    ([], 
+        frame = true, 
+        diamondStyleTrellis = false, 
+        squareTrellis = false, 
+        spiralTrellis = true, 
+        waveTrellis = true,
+        frameType = enumFrameTypeCircle
+    );
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
 
-Panels = [2,2];
+Panels = [1,1];
 
 Build();
+// Circles();
 
 
 module Build()
@@ -89,8 +107,8 @@ module Build()
     //[0,1] = [enumThickness, enumDepth]
     frameBoardDimension = setDimension([], depth =WallThickness(count = 4), thickness = convertInches2mm(0.5)); 
     latticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
-    width = convertInches2mm(12) - getThickness(frameBoardDimension);
-    height = convertInches2mm(12)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
+    width = convertInches2mm(8) - getThickness(frameBoardDimension);
+    height = convertInches2mm(8)  - getThickness(frameBoardDimension);// + 2*getThickness(frameBoardDimension); 
     intervalCount = 3;
     includes = Includes;
     screwHoles = [ScrewHole_OD, ScrewHoleCount];
@@ -102,37 +120,134 @@ module Build()
     {
         for(y = [0 : 1 : yDimension-1])
         {
-            translate([x * (width + getThickness(frameBoardDimension)), y * (height + getThickness(frameBoardDimension)), 0])
-            Panel(
-                frameBoardDimension = frameBoardDimension ,
-                latticeDimension = latticeDimension,
-                width = width,
-                height = height,
-                intervalCount = intervalCount,
-                includes = includes,
-                screwHoles = screwHoles
-            );
+            if(getIncludeProperty(includes, enumincludeFrameType) == enumFrameTypeSquare)
+            {
+                echo(frameType = "enumFrameTypeSquare");
+                translate([x * (width + getThickness(frameBoardDimension)), y * (height + getThickness(frameBoardDimension)), 0])
+                Panel( frameWidth = width, frameHeight = height);               
+            }
+            
+            if(getIncludeProperty(includes, enumincludeFrameType) == enumFrameTypeCircle)
+            {
+                echo(frameType = "enumFrameTypeCircle");
+                translate([x * (width + getThickness(frameBoardDimension)), y * (height + getThickness(frameBoardDimension)), 0])
+                Circles( radius = width/2);               
+            }
+
         }
     }
 
 }
 
-module Panel
+module Circles
 (
-        frameBoardDimension = [0,0] ,
-        latticeDimension = [0,0],
-        width = 0,
-        height = 0,
-        intervalCount = 8, 
-        includes = [true,false,false,false],
-        screwHoles = [10, 9]
-) 
+    radius
+)
 {
+    frameRadius = radius;
+    frameBoardDimension = setDimension([], depth =WallThickness(count = 4), thickness = convertInches2mm(0.5)); 
+    latticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
+    width = radius * 2;
+    height = radius * 2;
+    intervalCount = 3;
+    includes = Includes;
+    screwHoles = [ScrewHole_OD, ScrewHoleCount];
+
+    difference()
+    {    
+        union()
+        {
+            if(getIncludeProperty(includes, enumincludeFrame))
+            {
+                translate([0,0,getDepth(frameBoardDimension)/2])
+                CircleFrame
+                (
+                    frameRadius = frameRadius,
+                    frameBoardDimension = frameBoardDimension,
+                    screwHoles = [ScrewHole_OD, ScrewHoleCount]
+                );
+            }
+            if(getIncludeProperty(includes, enumincludeDiamondStyleTrellis))
+            {
+                translate([-frameRadius, frameRadius, 0])
+                rotate([90,0,0])
+                DiamondStyleTrellis
+                (
+                    width = width, 
+                    height = height, 
+                    frameBoardDimension = frameBoardDimension , 
+                    latticeDimension = latticeDimension,
+                    intervalCount = intervalCount
+                );
+            }
+            if(getIncludeProperty(includes, enumincludeSquareLatticeTrellis))
+            {
+                translate([-frameRadius, frameRadius, 0])
+                rotate([90,0,0])
+                SquareLatticeTrellis
+                (
+                    width = width, 
+                    height = height, 
+                    frameBoardDimension = frameBoardDimension , 
+                    latticeDimension = latticeDimension,
+                    intervalCount = intervalCount
+                );
+
+            }
+            if(getIncludeProperty(includes, enumincludeArchimedianSpiral))
+            {
+                translate([0, 0, getThickness(latticeDimension)])
+                // rotate([90,0,0])
+                    ArchimedianSpiralTrellis
+                    (
+                        width = width, 
+                        height = height, 
+                        frameBoardDimension = frameBoardDimension , 
+                        latticeDimension = latticeDimension              
+                    );
+            }
+            if(getIncludeProperty(includes, enumincludeHorizontalWaveTrellis))
+            {
+                translate([-frameRadius, frameRadius, 0])
+                rotate([90,0,0])
+                    HorizontalWaveTrellis
+                    (
+                        width = width, 
+                        height = height, 
+                        frameBoardDimension = frameBoardDimension , 
+                        latticeDimension = latticeDimension,
+                        intervalCount = 4               
+                    );
+
+            }        
+
+        }
+
+        CircleFrameCutter
+        (
+                    frameRadius = frameRadius,
+                    frameBoardDimension = [convertInches2mm(6), convertInches2mm(0.5)],
+                    screwHoles = [ScrewHole_OD, ScrewHoleCount]            
+        ) ;       
+    }
+}
+
+module Panel(frameWidth, frameHeight) 
+{
+        frameBoardDimension = [0,0] ;
+        latticeDimension = [0,0];
+        width = frameWidth;
+        height = frameHeight;
+        intervalCount = 8; 
+        includes = [true,false,false,false];
+        screwHoles = [10, 9];
+
     rotate([90,0,0])
     union()
     {
         if(getIncludeProperty(includes, enumincludeFrame))
         {    
+            echo(Panel = "Frame");
             Frame
             (
                 width = width, 
@@ -270,6 +385,67 @@ module Frame
 
 }
 
+module CircleFrame
+    (
+        frameRadius = 300,
+        frameBoardDimension = [convertInches2mm(1), convertInches2mm(2)],
+        screwHoles = [ScrewHole_OD, ScrewHoleCount]
+    )
+    {
+        difference()
+        {
+            union()
+            {
+                rotate_extrude(angle = 360)
+                {
+                    translate([frameRadius,0,0])
+                    {
+                        echo(x = [getVectorValue(frameBoardDimension, enumDepth), getVectorValue(frameBoardDimension, enumThickness)]);
+                        square(size = [getVectorValue(frameBoardDimension, enumThickness), getVectorValue(frameBoardDimension, enumDepth)], center = true);
+                        // square([12.7, 4], true);
+                    }                     
+                }
+           
+            }     
+     
+            if (len(screwHoles) != undef)
+            {
+                echo(screwHoles = screwHoles[enumScrewCount])
+                for(i = [1 : 2])
+                {
+                    rotate([90,0, i * 360/(screwHoles[enumScrewCount]*2)])
+                    translate([0,0, getThickness(frameBoardDimension)/2])
+                    cylinder(d=screwHoles[enumScrew_OD], h= 2 * (frameRadius + getDepth(frameBoardDimension)), center=true);
+                }
+            }
+        }
+
+    }
+
+module CircleFrameCutter
+    (
+        frameRadius = 300,
+        frameBoardDimension = [convertInches2mm(1), convertInches2mm(2)],
+        screwHoles = [ScrewHole_OD, ScrewHoleCount],
+    )
+{
+    union()
+    {
+        translate([0,0,-5])
+        rotate_extrude(angle = 360)
+        {
+            translate([frameRadius + getVectorValue(frameBoardDimension, enumDepth)/6,0,0])
+            // translate([frameRadius,0,0])
+            {
+                // echo(x = [getVectorValue(frameBoardDimension, enumDepth), getVectorValue(frameBoardDimension, enumThickness)]);
+                square(size = [getVectorValue(frameBoardDimension, enumThickness), getVectorValue(frameBoardDimension, enumDepth)], center = false);
+                // square(size = [1,1], center = true);
+            }                     
+        }
+    
+    }     
+}    
+
 module ArchimedianSpiralTrellis
 (
         width = 0,
@@ -279,8 +455,23 @@ module ArchimedianSpiralTrellis
         intervalCount = 4
 )
 {
-    translate([0, 0 , -getDepth(latticeDimension)])
-     ArchimedeanDoubleSpiral(height=getDepth(latticeDimension), width=getThickness(latticeDimension), range = 2000, scale = 0.1, a = 0, b = 1); 
+    union()
+    {
+        translate([0, 0 , -getDepth(latticeDimension)])
+        {
+            ArchimedeanDoubleSpiral
+                (
+                    height=getDepth(latticeDimension), 
+                    width=getThickness(latticeDimension), 
+                    range = 2000, 
+                    scale = 0.1, 
+                    a = 0, 
+                    b = 1); 
+
+            cylinder(h = getVectorValue( latticeDimension, 0), r = 5);
+        }
+
+    }
 
 }
 
