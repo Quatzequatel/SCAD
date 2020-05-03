@@ -1,15 +1,17 @@
 /*
     Library of useful helpers to transform vectors into propery bags.
+    note put any constants in constants.scad
 */
+include <constants.scad>;
 
-//enums
-enWidth = 0;
-enDepth = 1; 
-enLength = 2;
+// //enums are in include <constants.scad>;
+// enWidth = 0;
+// enDepth = 1; 
+// enLength = 2;
 
-enX = 0;
-enY = 1;
-enZ = 2;
+// enX = 0;
+// enY = 1;
+// enZ = 2;
 
 function getValue(v, enum) = v[enum];
 function setValue(v, enum, value) = 
