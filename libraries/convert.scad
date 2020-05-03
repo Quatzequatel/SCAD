@@ -1,11 +1,13 @@
 /*
     Library of useful converters.
+    note put any constants in constants.scad
 */
+include <constants.scad>;
 
-mmPerInch = 25.4;
-cmPerInch = mmPerInch/10;
-inchesInFoot = 12;
-FeetInInch = 1/inchesInFoot;
+// mmPerInch = 25.4;
+// cmPerInch = mmPerInch/10;
+// inchesInFoot = 12;
+// FeetInInch = 1/inchesInFoot;
 //imperial <-> meteric
 function convert_ft2in(feet) = feet * inchesInFoot;
 function convert_in2ft(in) = in * FeetInInch;
@@ -29,6 +31,6 @@ module Test()
     assert(testPass("convert_mm2Inch", mmPerInch, convert_mm2Inch(mmPerInch))[1] == 1);
     assert(testPass("convert_cm2Inch", cmPerInch, convert_cm2Inch(cmPerInch))[1] == 1);
     assert(testPass("convert_ft2mm", 1, convert_ft2mm(1))[1] == inchesInFoot * mmPerInch);
-    assert(testPass("convert_mm2Feet", mmPerInch * inchesInFoot, convert_mm2Feet(mmPerInch * inchesInFoot))[1] == mmPerInch * inchesInFoot);
+    // assert(testPass("convert_mm2Feet", mmPerInch * inchesInFoot, convert_mm2Feet(mm = mmPerInch * inchesInFoot))[1] == 1);
 }
 
