@@ -5,7 +5,7 @@ use <..\\..\\..\\libraries\\SpiralShapes.scad>
 */
 
 //standard
-$fn = 360;
+$fn = 60;
 NozzleWidth = 1.0;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
@@ -92,15 +92,16 @@ Includes = setIncludeProperty
         squareTrellis = false, 
         spiralTrellis = true, 
         waveTrellis = false,
-        frameType = enumFrameTypeCircle
+        frameType = enumFrameTypeSquare
     );
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
 
 Panels = [1,1];
 
-Build();
+// Build();
 // Circles();
 
+Frame();
 
 module Build()
 {
@@ -244,7 +245,7 @@ module Panel(frameWidth, frameHeight)
     screwHoles = [ScrewHole_OD, ScrewHoleCount];
     difference()
     {
-        rotate([90,0,0])
+        // rotate([90,0,0])
         union()
         {
             if(getIncludeProperty(includes, enumincludeFrame))
@@ -328,7 +329,7 @@ module Panel(frameWidth, frameHeight)
             }
         }
 
-        FrameCutter(frameWidth = width, frameHeight = height, frameBoardDimension = frameBoardDimension);
+        //FrameCutter(frameWidth = width, frameHeight = height, frameBoardDimension = frameBoardDimension);
     }
 }
 
@@ -336,7 +337,7 @@ module FrameCutter(frameWidth, frameHeight, frameBoardDimension)
 {
     echo(FrameCutter="FrameCutter", frameWidth=frameWidth, frameHeight=frameHeight, frameBoardDimension=frameBoardDimension);
     translate([0, 0, -getThickness(frameBoardDimension)])
-    #linear_extrude(height= 3 * frameBoardDimension.y)
+    linear_extrude(height= 3 * frameBoardDimension.y)
     {
         difference()
         {
@@ -348,8 +349,8 @@ module FrameCutter(frameWidth, frameHeight, frameBoardDimension)
 
 module Frame
     (
-        width = convertFeet2mm(4), 
-        height = convertFeet2mm(8), 
+        width = convertFeet2mm(1), 
+        height = convertFeet2mm(2), 
         frameBoardDimension = [convertInches2mm(1), convertInches2mm(1)],
         screwHoles = [ScrewHole_OD, ScrewHoleCount]
     )
@@ -358,50 +359,62 @@ module Frame
     {
         union()
         {    
-            //Top
-            translate([ getThickness(frameBoardDimension), 0, height + getThickness(frameBoardDimension) ])
-            rotate([0, 90, 0])
-            color("DeepSkyBlue") cube(AddZ(frameBoardDimension, width));
-            //Bottom
-            translate([ 0, 0, getThickness(frameBoardDimension) ])
-            rotate([0, 90, 0])
-            color("DeepSkyBlue") cube(AddZ(frameBoardDimension, width));
-            //Left
-            translate([ 0, 0, getThickness(frameBoardDimension) ])
-            rotate([0, 0, 0])
-            color("Lime") cube(AddZ(frameBoardDimension, height));    
-            //Right
-            translate([ width, 0, 0 ])
-            rotate([0, 0, 0])
-            color("Lime") cube(AddZ(frameBoardDimension, height));
+            // Box
+            linear_extrude(height = frameBoardDimension.y)
+            difference()
+            {
+                square(size=[width, height], center=true);
+                square(size=[width - frameBoardDimension.x, height - frameBoardDimension.x], center=true);
+            }
         }   
 
         if (len(screwHoles) != undef) 
         {
             incrementHoz = height / (screwHoles[enumScrewCount] + 1);
-            // echo(getActualHeight = getActualHeight(), enumScrewCount  = screwHoles[enumScrewCount], increment = increment);
+            echo(width = width, height  = height, screwHoles = screwHoles);
+            echo(getActualHeight = getActualHeight(), ScrewCount  = screwHoles[enumScrewCount], incrementHoz = incrementHoz);
             for(i = [1 : screwHoles[enumScrewCount]])
             {
-                translate([getActualWidth()/2, getDepth(frameBoardDimension)/2, i * incrementHoz])
-                rotate([0,90,0])
-                cylinder(d=screwHoles[enumScrew_OD], h= getActualWidth() + getDepth(frameBoardDimension), center=true);
+                //note: p[x=>length]
+                point_hole
+                    (
+                        diameter = screwHoles[enumScrew_OD], 
+                        p1 = [ - getActualWidth()/2, (i * incrementHoz - height/2), frameBoardDimension.y/2], 
+                        p2 = [   getActualWidth()/2, (i * incrementHoz - height/2), frameBoardDimension.y/2]
+                    );
             }
 
             incrementVert = width / (screwHoles[enumScrewCount] + 1);
-            // echo(getActualHeight = getActualHeight(), enumScrewCount  = screwHoles[enumScrewCount], increment = increment);
+            echo(getActualHeight = getActualHeight(), ScrewCount  = screwHoles[enumScrewCount], incrementVert = incrementVert);
             for(i = [1 : screwHoles[enumScrewCount]])
             {
-                translate([i * incrementVert, getDepth(frameBoardDimension)/2, getActualWidth()/2, ])
-                rotate([0,0,90])
-                cylinder(d=screwHoles[enumScrew_OD], h= getActualWidth() + getDepth(frameBoardDimension), center=true);
+                //note: p[y=>length]
+                point_hole
+                    (
+                        diameter = screwHoles[enumScrew_OD], 
+                        p1 = [(i * incrementVert - width/2), - getActualHeight()/2, frameBoardDimension.y/2], 
+                        p2 = [(i * incrementVert - width/2),   getActualHeight()/2, frameBoardDimension.y/2]
+                    );                
             }
         }        
     }
 
-    function getActualWidth() = width + getThickness(frameBoardDimension);
-    function getActualHeight() = height + getThickness(frameBoardDimension);
+    function getActualWidth() = width + frameBoardDimension.x;
+    function getActualHeight() = height + frameBoardDimension.x;
 
 }
+
+module point_hole(diameter, p1, p2)
+{
+    echo(p1 = p1, p2 = p2);
+    
+    hull()
+    {
+        translate(p1) sphere(d = diameter);
+        translate(p2) sphere(d = diameter);
+    } 
+}
+
 
 module CircleFrame
     (
@@ -431,7 +444,6 @@ module CircleFrame
                 for(i = [1 : 2])
                 {
                     rotate([90,0, i * 360/(screwHoles[enumScrewCount]*2)])
-                    translate([0,0, frameBoardDimension.y/2])
                     cylinder(d=screwHoles[enumScrew_OD], h= 2 * (frameRadius + frameBoardDimension.x), center=true);
                 }
             }
