@@ -90,18 +90,18 @@ Includes = setIncludeProperty
         frame = true, 
         diamondStyleTrellis = false, 
         squareTrellis = false, 
-        spiralTrellis = true, 
-        waveTrellis = false,
+        spiralTrellis = false, 
+        waveTrellis = true,
         frameType = enumFrameTypeSquare
     );
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
 
 Panels = [1,1];
 
-// Build();
+Build();
 // Circles();
 
-Frame();
+// Frame();
 
 module Build()
 {
@@ -288,8 +288,7 @@ module Panel(frameWidth, frameHeight)
             {
                 difference()
                 {
-                    translate([width/2, 0, height/2])
-                    rotate([90,0,0])
+                    translate([ 0, 0, latticeDimension.y])
                     if(getIncludeProperty(includes, enumincludeArchimedianSpiral))
                     {
                         ArchimedianSpiralTrellis
@@ -300,18 +299,6 @@ module Panel(frameWidth, frameHeight)
                             latticeDimension = latticeDimension              
                         );
                     }            
-
-                    // offsetxy = 200;
-                    // offsetDepth = 100;
-                    // difference()
-                    // {
-                    //     translate([-offsetxy/2, -offsetDepth/2, -offsetxy/2])
-                    //     {
-                    //         cube(size=[height + offsetxy, offsetDepth, width + offsetxy], center=false);
-                    //     }
-                    //     translate([0, -offsetDepth/2, 0])
-                    //     cube(size=[height + getThickness(frameBoardDimension), offsetDepth, width + getThickness(frameBoardDimension)], center=false);
-                    // }
                 }
             }
 
@@ -329,20 +316,21 @@ module Panel(frameWidth, frameHeight)
             }
         }
 
-        //FrameCutter(frameWidth = width, frameHeight = height, frameBoardDimension = frameBoardDimension);
+        FrameCutter(frameWidth = width, frameHeight = height, frameBoardDimension = frameBoardDimension);
     }
 }
 
 module FrameCutter(frameWidth, frameHeight, frameBoardDimension)
 {
     echo(FrameCutter="FrameCutter", frameWidth=frameWidth, frameHeight=frameHeight, frameBoardDimension=frameBoardDimension);
+    offset =  NozzleWidth/4; //values needs to be less than nozzel width
     translate([0, 0, -getThickness(frameBoardDimension)])
     linear_extrude(height= 3 * frameBoardDimension.y)
     {
         difference()
         {
             square(size = [2 * frameWidth, 2 * frameHeight], center = true);
-            square(size = [frameWidth + getDepth(frameBoardDimension), frameHeight + getDepth(frameBoardDimension)], center = true);
+            square(size = [frameWidth + offset, frameHeight  +offset], center = true);
         }
     }
 }
@@ -510,30 +498,22 @@ module HorizontalWaveTrellis
         intervalCount = 4
 )
 {
-        intervalHeight = (height - getThickness(frameBoardDimension))/ (intervalCount);
+    intervalHeight = (height - getThickness(frameBoardDimension))/ (intervalCount);
 
-        //horizontal
-        rotate([90,0,0])
-        translate([0, 0, -getThickness(latticeDimension)])
+    translate([ - width/2, - height/2, 0])
+    {
+        for(i = [1 : 1 : (height/intervalHeight -1)])
         {
-            for(i = [1 : 1 : (height/intervalHeight -1)])
-            {
-                // echo(horizontalWidth = i * intervalHeight)
-                translate([ getThickness(frameBoardDimension)/2, getThickness(frameBoardDimension) + i * intervalHeight, 0])
-                // rotate([0, 90, 0])
-                // color( i % 2 ? "red" : "blue" ) 
-                render() {
-                    polyline
-                        (
-                            setWaveProperty(WaveProperties, length = width) , 
-                            latticeDimension = latticeDimension
-                        );                     
-                }
-                
-               
-            }            
-        }
-
+            translate([ 0, frameBoardDimension.y + i * intervalHeight, 0])
+            render() {
+                polyline
+                    (
+                        setWaveProperty(WaveProperties, length = width) , 
+                        latticeDimension = latticeDimension
+                    );                     
+            }
+        }            
+    }
 }
 
 module AlternateWaveTrellis
