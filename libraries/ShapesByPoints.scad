@@ -8,7 +8,6 @@ have an x,y orientation. the side-effect is it starts and ends in the
 x,y plane.
 */
 
-use <vectorHelper.scad>
 // $fn=100;
 Test();
 
