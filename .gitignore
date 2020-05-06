@@ -5,6 +5,6 @@
 !*.scad
 #!*.stl
 !*.3mf
-!*.gcode
+*.gcode
 !*.txt
 
