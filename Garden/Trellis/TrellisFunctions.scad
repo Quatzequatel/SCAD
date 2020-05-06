@@ -69,3 +69,20 @@ function AddZ(v, zValue) =
 [
     for(i = [0 : len(v)]) (i == len(v) ? zValue : v[i])
 ];
+
+function testPass(note, value1, value2) = echo(note = note, input = value1, return = value2) [value1, value2];
+
+
+Test();
+
+module Test() 
+{
+    echo(LayerHeight = LayerHeight);
+    // assert(testPass("hypotenuse(width, angle)", [3,4], hypotenuse(width, angle)[1] == inchesInFoot);
+    assert(testPass("height2layers(4 * LayerHeight)", 4 * LayerHeight , height2layers(4 * LayerHeight))[1] == 4);
+    // assert(testPass("convert_in2mm", 1, convert_in2mm(1))[1] == mmPerInch);
+    // assert(testPass("convert_mm2Inch", mmPerInch, convert_mm2Inch(mmPerInch))[1] == 1);
+    // assert(testPass("convert_cm2Inch", cmPerInch, convert_cm2Inch(cmPerInch))[1] == 1);
+    // assert(testPass("convert_ft2mm", 1, convert_ft2mm(1))[1] == inchesInFoot * mmPerInch);
+    // assert(testPass("convert_mm2Feet", mmPerInch * inchesInFoot, convert_mm2Feet(mm = mmPerInch * inchesInFoot))[1] == 1);
+}
