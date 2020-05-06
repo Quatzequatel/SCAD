@@ -2,6 +2,7 @@
 
 */
 use <vectorHelpers.scad>;
+use <shapesByPoints.scad>;
 
 SquareLatticeTrellis();
 
@@ -14,23 +15,38 @@ module SquareLatticeTrellis
         intervalCount = 4,
     )
     {
-        intervalWidth = (width - frameBoardDimension.x)/ (intervalCount);
-        // echo(intervalWidth = intervalWidth);
+        intervalWidth = width/ intervalCount;
+        echo(intervalWidth = intervalWidth);
         //vertical
         for(i = [1 : 1 : intervalCount-1])
         {
-            // echo(verticalWidth = i * intervalWidth)
-            translate([ frameBoardDimension.x + i * intervalWidth, 0, frameBoardDimension.x/2])
-            // color("AntiqueWhite")
-            cube(size=ApendToV(latticeDimension, height), center=false);
+            echo(verticalWidth = i * intervalWidth, latticeDimension = latticeDimension);
+
+            let
+            ( 
+                p1 = [ i * intervalWidth, 0, 0], 
+                p2 = [ i * intervalWidth, height, 0]
+            )
+            {
+                echo(type = "vsrt", p1 = p1, p2 = p2);
+                point_square(psqSize = latticeDimension, p1 = p1, p2 = p2, zRes = latticeDimension.y);                
+            }
+
         }
         //horizontal
-        for(i = [1 : 1 : (height/intervalWidth -1)])
+        verticalWidth = height / intervalCount;
+        echo(verticalWidth = intervalWidth, latticeDimension = latticeDimension);
+        echo();
+        for(i = [0 : 1 :  intervalCount - 1])
         {
-            // echo(horizontalWidth = i * intervalWidth)
-            translate([ frameBoardDimension.x/2, 0,  frameBoardDimension.x + i * intervalWidth])
-            rotate([0, 90, 0])
-            // color("AntiqueWhite")
-            cube(size=ApendToV(latticeDimension, width), center=false);
+            let
+            ( 
+                p1 = [ 0,verticalWidth + i * verticalWidth, 0], 
+                p2 = [ width, verticalWidth + i * verticalWidth, 0]
+            )
+            {
+                echo(type = "horz", i = i, verticalWidth = verticalWidth, p1 = p1, p2 = p2);
+                point_square(psqSize = vSwitch(latticeDimension, 0, 1), p1 = p1, p2 = p2, zRes = latticeDimension.y);                
+            }
         }
     }
