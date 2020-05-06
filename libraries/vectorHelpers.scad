@@ -17,6 +17,15 @@ function vSwitch(v, x, y) = echo(v = v, x = x, y = y)
     
 ];
 
+function vSetValue(v, idx, value)=
+[
+    for(i = [0 : len(v)-1]) 
+        (i == idx ? value : v[i])
+];
+
+function vGetValue(v, idx)= v[idx];
+
+
 //append a z value to an [x,y] vector.
 function ApendToV(v, value) = 
 [
@@ -49,5 +58,6 @@ Test();
 module Test() 
 {
     assert(testPass("ApendToV(v=[], value = 3)", [], ApendToV([], 3))[1] == [3]);
+    assert(testPass("vSetValue(v=[1,2,3], value = 2)", [1,2,3], vSetValue([1,2,3], 2, 1))[1] == [1,2,1]);
     assert(testPass("vSwitch(v=[1,2,3], value = 0,2)", [1,2,3], vSwitch([1,2,3], 0, 2))[1] == [3,2,1]);
 }
