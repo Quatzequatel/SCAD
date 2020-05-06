@@ -89,9 +89,9 @@ Includes = setIncludeProperty
     ([], 
         frame = true, 
         diamondStyleTrellis = false, 
-        squareTrellis = false, 
+        squareTrellis = true, 
         spiralTrellis = false, 
-        waveTrellis = true,
+        waveTrellis = false,
         frameType = enumFrameTypeSquare
     );
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
