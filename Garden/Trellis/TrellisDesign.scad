@@ -561,36 +561,6 @@ function polySinWave(width, height, length) =
     for(x =[-90 : 180/$fn : length/width * 90]) [ (x + 90) * width/90,  sin(x) * height]
 ];
 
-// module SquareLatticeTrellis
-//     (
-//         width = convertFeet2mm(4), 
-//         height = convertFeet2mm(8), 
-//         frameBoardDimension = [convertInches2mm(1), convertInches2mm(1)] , 
-//         latticeDimension = [convertInches2mm(0.5), convertInches2mm(0.5)],
-//         intervalCount = 4,
-//     )
-//     {
-//         intervalWidth = (width - getThickness(frameBoardDimension))/ (intervalCount);
-//         // echo(intervalWidth = intervalWidth);
-//         //vertical
-//         for(i = [1 : 1 : intervalCount-1])
-//         {
-//             // echo(verticalWidth = i * intervalWidth)
-//             translate([ getThickness(frameBoardDimension) + i * intervalWidth, 0, getThickness(frameBoardDimension)/2])
-//             // color("AntiqueWhite")
-//             cube(size=AddZ(latticeDimension, height), center=false);
-//         }
-//         //horizontal
-//         for(i = [1 : 1 : (height/intervalWidth -1)])
-//         {
-//             // echo(horizontalWidth = i * intervalWidth)
-//             translate([ getThickness(frameBoardDimension)/2, 0,  getThickness(frameBoardDimension) + i * intervalWidth])
-//             rotate([0, 90, 0])
-//             // color("AntiqueWhite")
-//             cube(size=AddZ(latticeDimension, width), center=false);
-//         }
-//     }
-
 module DiamondStyleTrellis
     (
         width = convertFeet2mm(4), 
