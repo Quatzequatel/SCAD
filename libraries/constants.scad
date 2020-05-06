@@ -2,6 +2,10 @@
 lib for common constants;
 i.e. enums
 */
+//machine values
+NozzleWidth = 1.0;
+LayerHeight = 0.24;
+InitialLayerHeight = 0.4;
 
 //enums
 enThickness = 0;
@@ -13,7 +17,9 @@ enX = 0;
 enY = 1;
 enZ = 2;
 
+//measurements
 mmPerInch = 25.4;
+mmPerFoot = 12 * mmPerInch;
 cmPerInch = mmPerInch/10;
 inchesInFoot = 12;
 FeetInInch = 1/inchesInFoot;
