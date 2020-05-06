@@ -50,7 +50,7 @@ module point_polygon(points, paths, p1, p2, zRes = 0.01)
 
 module point_square(size, p1, p2, zRes = 0.01)
 {
-    echo(func = "point_cube", p1 = p1, p2 = p2);
+    echo(func = "point_square", size = size, p1 = p1, p2 = p2);
     
     hull()
     {

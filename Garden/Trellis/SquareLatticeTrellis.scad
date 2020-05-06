@@ -29,7 +29,7 @@ module SquareLatticeTrellis
             )
             {
                 echo(type = "vsrt", p1 = p1, p2 = p2);
-                point_square(psqSize = latticeDimension, p1 = p1, p2 = p2, zRes = latticeDimension.y);                
+                point_square(size = latticeDimension, p1 = p1, p2 = p2, zRes = latticeDimension.y);                
             }
 
         }
@@ -46,7 +46,7 @@ module SquareLatticeTrellis
             )
             {
                 echo(type = "horz", i = i, verticalWidth = verticalWidth, p1 = p1, p2 = p2);
-                point_square(psqSize = vSwitch(latticeDimension, 0, 1), p1 = p1, p2 = p2, zRes = latticeDimension.y);                
+                point_square(size = vSwitch(latticeDimension, 0, 1), p1 = p1, p2 = p2, zRes = latticeDimension.y);                
             }
         }
     }
