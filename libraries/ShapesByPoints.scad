@@ -11,14 +11,14 @@ x,y plane.
 // $fn=100;
 Test();
 
-module point_sphere(diameter, p1, p2)
+module point_sphere(diameter, p1, p2, fn = 20)
 {
-    echo(func = "point_sphere", p1 = p1, p2 = p2);
+    echo(func = "point_sphere", diameter = diameter, p1 = p1, p2 = p2);
     
     hull()
     {
-        translate(p1) sphere(d = diameter);
-        translate(p2) sphere(d = diameter);
+        translate(p1) sphere(d = diameter, $fn = fn);
+        translate(p2) sphere(d = diameter, $fn = fn);
     } 
 }
 
@@ -63,18 +63,19 @@ module point_square(size, p1, p2, zRes = 0.01)
     } 
 }
 
-module point_circle(diameter, p1, p2, zRes = 0.01)
+module point_circle(diameter, p1, p2, zRes = 0.01, fn = 6)
 {
-    echo(func = "point_circle", p1 = p1, p2 = p2);
+    echo(func = "point_circle", diameter = diameter, p1 = p1, p2 = p2, zRes = zRes, fn = fn);
     
     hull()
     {
         translate(p1) 
             linear_extrude(height = zRes)
-            circle(d=diameter);
+            circle(d=diameter, $fn = fn);
+
         translate(p2) 
             linear_extrude(height = zRes)
-            circle(d=diameter);
+            circle(d=diameter, $fn = fn);
     } 
 }
 
