@@ -138,14 +138,24 @@ module polyExtrude(length, points)
     polygon(points = points);
 }
 
-function polyCosWave(width, height) =
+// function polyCosWave(width, height) =
+// [
+//     for(x =[-90 : 1 : 90]) [ x * width/90,  cos(x) * height]
+// ];
+
+// function polySinWave(width, height) =
+// [
+//     for(x =[0 : 1 : 181]) [ x * width/90,  sin(x) * height]
+// ];
+
+function polyCosWave(width, height, length) =
 [
-    for(x =[-90 : StepSize(1) : 90]) [ x * width/90,  cos(x) * height]
+    for(x =[0 : 180/$fn : length/width * 90]) [ x * width/90,  cos(x) * height]
 ];
 
-function polySinWave(width, height) =
+function polySinWave(width, height, length) =
 [
-    for(x =[0 : StepSize(1) : 181]) [ x * width/90,  sin(x) * height]
+    for(x =[-90 : 180/$fn : length/width * 90]) [ (x + 90) * width/90,  sin(x) * height]
 ];
 
 function polyTriangle(width, height) =
