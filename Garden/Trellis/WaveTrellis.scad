@@ -9,6 +9,13 @@ use <WaveShapes.scad>;
 
 WaveTrellis();
 
+/*
+    frameDimension = Dimension of frame,
+    frameBoardDimension = Dimension of board used in frame , 
+    latticeDimension = Dimension of lattice within frame,
+    waveDimensions = Dimensions of wave [period, amplitude, length, enumWaveType[cos, sine, alternating]],
+    intervalCount = 4
+*/
 module WaveTrellis
     (
         frameDimension = [200, 400],
@@ -19,23 +26,34 @@ module WaveTrellis
     )
 {
     intervalSize = frameDimension.y/ intervalCount;
+    waveType = waveDimensions[enumWaveType];
     echo(intervalSize = intervalSize);
     //vertical
     translate([ - frameDimension.x/2, - frameDimension.y/2, 0])
     {
         for(i = [1 : 1 : (frameDimension.y/intervalSize -1)])
         {
-            translate([ 0, frameBoardDimension.y + i * intervalSize, 0])
-            render() {
-                polyline
-                    (
-                        [waveDimensions.x, waveDimensions.y, frameDimension.x, waveDimensions[enumWaveType]],
-                        latticeDimension = latticeDimension
-                    );                     
+            let ( waveType = 
+                (
+                    waveType == 2 ? 
+                    ( i % 2 != 0 ? enumWaveTypeCos : enumWaveTypeSin) 
+                    : waveType
+                )
+            )
+            {
+                translate([ 0, frameBoardDimension.y + i * intervalSize, 0])
+                render() {
+                    polyline
+                        (
+                            [waveDimensions.x, waveDimensions.y, frameDimension.x, waveType],
+                            latticeDimension = latticeDimension
+                        );                     
+                }
             }
         }            
     }
 }
+
 
 //
 // wave = [width, height, length, type]
