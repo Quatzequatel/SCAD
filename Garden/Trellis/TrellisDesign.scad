@@ -1,3 +1,6 @@
+
+include <constants.scad>;
+use <TrellisFunctions.scad>;
 use <polyline2d.scad>;
 use <SquareLatticeTrellis.scad>;
 use <..\\..\\..\\libraries\\SpiralShapes.scad>
@@ -7,11 +10,6 @@ use <..\\..\\..\\libraries\\SpiralShapes.scad>
 
 //standard
 $fn = 60;
-NozzleWidth = 1.0;
-LayerHeight = 0.24;
-InitialLayerHeight = 0.4;
-mmPerInch = 25.4;
-mmPerFoot = 304.8;
 
 //LatticeStrip
 LS_Length = convertFeet2mm(4);
@@ -23,13 +21,6 @@ ScrewHoleCount = 2;
 //enum
 enumThickness = 0;
 enumDepth = 1;
-function getDepth(board) = board.x;
-function getThickness(board) = board.y;
-function setDimension(board, depth, thickness) = 
-[
-    depth == undef ? board.x : depth, 
-    thickness == undef ? board.y : thickness     
-];
 
 enumScrew_OD = 0;
 enumScrewCount = 1;
@@ -44,21 +35,6 @@ enumWaveTypeSin = 1;
 
 enumFrameTypeSquare = 0;
 enumFrameTypeCircle = 1;
-
-function getVectorValue(vector, enum) = vector[enum];
-function setVectorValue(vector, enum, value) = 
-[
-    for(i = [0: 1 : len(v)-1])  i == enum ? value : v[i]
-];
-
-function getWaveProperty(wave, enum) = wave[enum];
-function setWaveProperty(wave, width, height, length, type) =
-[
-    width == undef ? wave[enumWaveWidth] : width, 
-    height == undef ? wave[enumWaveHeight] : height, 
-    length == undef ? wave[enumWaveLength] : length, 
-    type == undef ? wave[enumWaveType] : type
-];
 
 
 enumincludeFrame = 0;
@@ -79,12 +55,6 @@ function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis,
     frameType == undef ? includes[enumincludeFrameType] : frameType,
 ];
 
-function convertFeet2mm(feet) = feet * mmPerFoot;
-function convertInches2mm(inches) = inches * mmPerInch;
-function WallThickness(count) = count * NozzleWidth;
-
-function height2layers(mm = 1) = mm/LayerHeight;
-function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeight);
 
 Includes = setIncludeProperty
     ([], 
@@ -92,7 +62,7 @@ Includes = setIncludeProperty
         diamondStyleTrellis = false, 
         squareTrellis = true, 
         spiralTrellis = false, 
-        waveTrellis = false,
+        waveTrellis = true,
         frameType = enumFrameTypeCircle
     );
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
@@ -707,20 +677,20 @@ module DiamondStyleTrellis
     ];
 }
 
-function latticeLength(width, count, angle,  i) = (1/cos(angle) * IntervalWidth(width, count, i));
-function IntervalWidth(width, count, i) = width - (width/count * i);
-function hypotenuse(width, angle) = sqrt(pow(cos(angle) * width, 2) + (pow(sin(angle) * width,2)));
+// function latticeLength(width, count, angle,  i) = (1/cos(angle) * IntervalWidth(width, count, i));
+// function IntervalWidth(width, count, i) = width - (width/count * i);
+// function hypotenuse(width, angle) = sqrt(pow(cos(angle) * width, 2) + (pow(sin(angle) * width,2)));
 
-function latticeLength2(height, width, count, angle,  i) = 
-    (1/cos(angle) * (height - (width/ count) * i)) < (1/cos(angle) * width) 
-    ? 
-        (1/cos(angle) * (height - (width / count) * i)) 
-    : 
-        (1/cos(angle) * width);
-// function latticeMoveX(width, count, i) = (width/ count * i);
-function latticeMoveZ(width, count, i) = latticeIntervalWidth(width, count) * i;
-function latticeIntervalWidth(frameThickness, intervalCount ) = frameThickness/intervalCount;
-function latticeHeightCount(frameHeight, frameThickness, intervalCount) = frameHeight /latticeIntervalWidth(frameThickness, intervalCount );
+// function latticeLength2(height, width, count, angle,  i) = 
+//     (1/cos(angle) * (height - (width/ count) * i)) < (1/cos(angle) * width) 
+//     ? 
+//         (1/cos(angle) * (height - (width / count) * i)) 
+//     : 
+//         (1/cos(angle) * width);
+// // function latticeMoveX(width, count, i) = (width/ count * i);
+// function latticeMoveZ(width, count, i) = latticeIntervalWidth(width, count) * i;
+// function latticeIntervalWidth(frameThickness, intervalCount ) = frameThickness/intervalCount;
+// function latticeHeightCount(frameHeight, frameThickness, intervalCount) = frameHeight /latticeIntervalWidth(frameThickness, intervalCount );
 
 module mTube(vOuter, vInner,  radius = 1, center = true)
 {
@@ -764,9 +734,9 @@ module mCube(dimensions=[5,5,5], radius = 1, center = true)
     }
 }
 
-//vector functions
-//append a z value to an [x,y] vector.
-function AddZ(v, zValue) = 
-[
-    for(i = [0 : len(v)]) (i == len(v) ? zValue : v[i])
-];
+// //vector functions
+// //append a z value to an [x,y] vector.
+// function AddZ(v, zValue) = 
+// [
+//     for(i = [0 : len(v)]) (i == len(v) ? zValue : v[i])
+// ];
