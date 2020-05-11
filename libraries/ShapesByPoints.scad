@@ -13,7 +13,7 @@ Test();
 
 module point_sphere(diameter, p1, p2, fn = 20)
 {
-    echo(func = "point_sphere", diameter = diameter, p1 = p1, p2 = p2);
+    // echo(func = "point_sphere", diameter = diameter, p1 = p1, p2 = p2);
     
     hull()
     {
