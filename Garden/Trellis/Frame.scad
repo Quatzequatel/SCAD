@@ -9,16 +9,18 @@ use <convert.scad>;
 test();
 module test()
 {
-    difference()
-    {
-        SquareFrame();
-        FrameCutter();        
-    }
+    // difference()
+    // {
+    //     SquareFrame();
+    //     SquareFrameCutter();        
+    // }
 
     difference()
     {    
     CircleFrame();
     CircleFrameCutter();
+    // HexFrame();
+    // HexFrameCutter();
     }
 }
 
@@ -77,11 +79,30 @@ module SquareFrame
     function getActualHeight() = frameDimension.y + frameBoardDimension.x;
 }
 
+module SquareFrameCutter
+(
+    frameDimension = [convert_ft2mm(1), convert_ft2mm(2)],
+    frameBoardDimension = [convert_in2mm(1), convert_in2mm(1)]
+)
+{
+    echo(FrameCutter="FrameCutter", frameWidth=frameDimension.x, frameHeight=frameDimension.y, frameBoardDimension=frameBoardDimension);
+    offset =  NozzleWidth/4; //values needs to be less than nozzel frameDimension.x
+    translate([0, 0, -frameBoardDimension.y])
+    linear_extrude(height= 3 * frameBoardDimension.y)
+    {
+        difference()
+        {
+            square(size = [2 * frameDimension.x, 2 * frameDimension.y], center = true);
+            square(size = [frameDimension.x + offset, frameDimension.y  +offset], center = true);
+        }
+    }
+}
+
 module CircleFrame
 (
     frameRadius = 300,
     frameBoardDimension = [convert_in2mm(1), convert_in2mm(2)],
-    screwHoles = [5, 3]
+    screwHoles = [10, 3]  //[od, count]
 )
 {
     difference()
@@ -101,31 +122,12 @@ module CircleFrame
     
         if (len(screwHoles) != undef)
         {
-            echo(screwHoles = screwHoles[enumScrewCount])
-            for(i = [1 : 2])
+            echo(screwHoleCount = screwHoles[enumScrewCount], screwHoleOD = screwHoles[enumScrew_OD]);
+            for(i = [1 : screwHoles[enumScrewCount]])
             {
-                rotate([90,0, i * 360/(screwHoles[enumScrewCount]*2)])
+                rotate([90,0, i * 360/(screwHoles[enumScrewCount])])
                 cylinder(d=screwHoles[enumScrew_OD], h= 2 * (frameRadius + frameBoardDimension.x), center=true);
             }
-        }
-    }
-}
-
-module FrameCutter
-(
-    frameDimension = [convert_ft2mm(1), convert_ft2mm(2)],
-    frameBoardDimension = [convert_in2mm(1), convert_in2mm(1)]
-)
-{
-    echo(FrameCutter="FrameCutter", frameWidth=frameDimension.x, frameHeight=frameDimension.y, frameBoardDimension=frameBoardDimension);
-    offset =  NozzleWidth/4; //values needs to be less than nozzel frameDimension.x
-    translate([0, 0, -frameBoardDimension.y])
-    linear_extrude(height= 3 * frameBoardDimension.y)
-    {
-        difference()
-        {
-            square(size = [2 * frameDimension.x, 2 * frameDimension.y], center = true);
-            square(size = [frameDimension.x + offset, frameDimension.y  +offset], center = true);
         }
     }
 }
@@ -133,20 +135,78 @@ module FrameCutter
 module CircleFrameCutter
     (
         frameRadius = 300,
-        frameBoardDimension = [convert_in2mm(0.5), convert_in2mm(0.5)]
+        frameBoardDimension = [convert_in2mm(1), convert_in2mm(2)]
     )
 {
     union()
     {
-        translate([0,0,-frameBoardDimension.y/6])
+        translate([0,0,-frameBoardDimension.y/2])
         rotate_extrude(angle = 360)
         {
-            translate([frameRadius + frameBoardDimension.y/6,0,0])
+            translate([frameRadius + frameBoardDimension.x/2 + 0.01,0,0])
             {
-                // echo(size = frameBoardDimension);
+                echo(size = frameBoardDimension);
                 square(size = frameBoardDimension, center = false);
             }                     
         }
-    
     }     
+} 
+
+module HexFrame
+(
+    frameRadius = 300,
+    frameBoardDimension = [convert_in2mm(1), convert_in2mm(2)],
+    screwHoles = [5, 3]  //[od, count [0:3]]
+)
+{
+    difference()
+    {
+        union()
+        {
+            translate([0,0,-frameBoardDimension.y/2])
+           linear_extrude(height = frameBoardDimension.y)
+            {
+                difference()
+                {
+                    circle(r=frameRadius, $fn = 6);
+                    circle(r=frameRadius - frameBoardDimension.x, $fn = 6);
+                }                   
+            }        
+        }     
+    
+        if (len(screwHoles) != undef)
+        {
+            echo(screwHoleCount = screwHoles[enumScrewCount], screwHoleOD = screwHoles[enumScrew_OD]);
+            assert(screwHoles[enumScrewCount] < 4, "max value for screw holes is 3.");
+
+            for(i = [0 : screwHoles[enumScrewCount]-1])
+            {
+                // echo(info = [ 90, 0, screwAngle(i = i)]);
+                rotate([90, 0, screwAngle(i = i)])
+                cylinder(d=screwHoles[enumScrew_OD], h= 2 * (frameRadius + frameBoardDimension.x), center=true);
+            }
+        }
+    }
+
+    function screwAngle(i) = 60 + (i * 60);
+}
+
+module HexFrameCutter
+(
+    frameRadius = 300,
+    frameBoardDimension = [convert_in2mm(1), convert_in2mm(2)],
+)
+{
+    union()
+    {
+        translate([0,0,-frameBoardDimension.y/2])
+        linear_extrude(height = frameBoardDimension.y)
+        {
+            difference()
+            {
+                circle(r=2 * frameRadius, $fn = 6);
+                circle(r=frameRadius + 0.01, $fn = 6);
+            }                   
+        }        
+    }    
 } 
