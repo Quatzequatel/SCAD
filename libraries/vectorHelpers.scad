@@ -9,7 +9,7 @@ function vHalfDiff(v1, v2) =
     for (i = [ 0 : len(v1) - 1 ] ) halfDiff( v1[i], v2[i]) 
 ];
 
-function vSwitch(v, x, y) = echo(v = v, x = x, y = y)
+function vSwitch(v, x, y) = //echo(v = v, x = x, y = y)
 [
     for(i = [0 : 1 : len(v)-1]) 
          i == x ? v[y] :
