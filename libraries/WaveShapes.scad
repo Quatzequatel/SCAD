@@ -154,7 +154,6 @@ function polyCosWave(width, height, length) =
     for(x =[0 : 180/$fn : length/width * 90]) [ x * width/90,  cos(x) * height]
 ];
 
-//[width, height, length] => [period, amplitude, length]
 function polySinWave(width, height, length) =
 [
     for(x =[-90 : 180/$fn : length/width * 90]) [ (x + 90) * width/90,  sin(x) * height]
