@@ -1,5 +1,6 @@
 
 include <constants.scad>;
+include <TrellisEnums.scad>;
 use <TrellisFunctions.scad>;
 use <polyline2d.scad>;
 use <Frame.scad>;
@@ -46,6 +47,7 @@ enumWaveTypeSin = 1;
 
 enumFrameTypeSquare = 0;
 enumFrameTypeCircle = 1;
+enumFrameTypeHex = 2;
 
 
 enumincludeFrame = 0;
@@ -70,14 +72,14 @@ function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis,
 Includes = setIncludeProperty
     ([], 
         frame = true, 
-        diamondStyleTrellis = true, 
-        squareTrellis = false, 
-        spiralTrellis = false, 
+        diamondStyleTrellis = false, 
+        squareTrellis = true, 
+        spiralTrellis = true, 
         waveTrellis = false,
-        frameType = enumFrameTypeSquare
+        frameType = enumFrameTypeHex
     );
 IntervalCount =2;    
-WaveProperties = setWaveProperty(wave = [], width = 10, height = 38, length = 0, type = enumWaveTypeCos);
+WaveProperties = setWaveProperty(wave = [], width = 10, height = 50, length = 0, type = enumWaveTypeBoth);
 
 Panels = [1,1];
 
@@ -117,6 +119,13 @@ module Build()
                 echo(frameType = "enumFrameTypeCircle");
                 translate([x * (width + getThickness(frameBoardDimension)), y * (height + getThickness(frameBoardDimension)), 0])
                 Circles( radius = width/2);               
+            }
+
+            if(getIncludeProperty(includes, enumincludeFrameType) == enumFrameTypeHex)
+            {
+                echo(frameType = "enumFrameTypeHex");
+                translate([x * (width + getThickness(frameBoardDimension)), y * (height + getThickness(frameBoardDimension)), 0])
+                HexFrames( radius = width/2);               
             }
 
         }
@@ -213,13 +222,103 @@ module Circles
     }
 }
 
+module HexFrames
+(
+    radius
+)
+{
+    frameRadius = radius;
+    frameBoardDimension = setDimension([], depth =WallThickness(count = 4), thickness = convertInches2mm(0.5)); 
+    latticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
+    width = radius * 2;
+    height = radius * 2;
+    intervalCount = IntervalCount;
+    includes = Includes;
+    screwHoles = [ScrewHole_OD, ScrewHoleCount];
+
+    difference()
+    {    
+        union()
+        {
+            if(getIncludeProperty(includes, enumincludeFrame))
+            {
+                echo(frameBoardDimension=frameBoardDimension);
+
+                translate([0,0, frameBoardDimension.y/2])
+                HexFrame
+                (
+                    frameRadius = frameRadius,
+                    frameBoardDimension = frameBoardDimension,
+                    screwHoles = [ScrewHole_OD, ScrewHoleCount]
+                );
+            }
+            if(getIncludeProperty(includes, enumincludeDiamondStyleTrellis))
+            {
+                // echo(DiagonalLattice = 1);
+                translate([-frameRadius, -frameRadius, 0])
+                // rotate([90,0,0])
+                DiagonalLattice2
+                (
+                   frameDimension = [width, height],  
+                    frameBoardDimension = frameBoardDimension , 
+                    latticeDimension = latticeDimension,
+                    intervalCount = intervalCount
+                );
+            }
+            if(getIncludeProperty(includes, enumincludeSquareLatticeTrellis))
+            {
+                translate([- width/2,- height/2, 0])
+                SquareLatticeTrellis
+                (
+                    frameDimension = [width, height], 
+                    frameBoardDimension = frameBoardDimension , 
+                    latticeDimension = latticeDimension,
+                    intervalCount = intervalCount
+                );
+
+            }
+            if(getIncludeProperty(includes, enumincludeArchimedianSpiral))
+            {
+                translate([0, 0, getThickness(latticeDimension)])
+                // rotate([90,0,0])
+                    ArchimedianSpiralTrellis
+                    (
+                        width = width, 
+                        height = height, 
+                        frameBoardDimension = frameBoardDimension , 
+                        latticeDimension = latticeDimension              
+                    );
+            }
+            if(getIncludeProperty(includes, enumincludeHorizontalWaveTrellis))
+            {
+                WaveTrellis
+                (
+                    frameDimension = [width, height],
+                    frameBoardDimension = frameBoardDimension , 
+                    latticeDimension = latticeDimension,
+                    waveDimensions = WaveProperties,
+                    intervalCount = intervalCount
+                );
+            }        
+
+        }
+
+        HexFrameCutter
+        (
+                    frameRadius = frameRadius,
+                    frameBoardDimension = [convertInches2mm(6), convertInches2mm(0.5)]
+        ) ;       
+    }
+}
+
+
 module Panel(frameWidth, frameHeight) 
 {
     frameBoardDimension = setDimension([], depth =WallThickness(count = 4), thickness = convertInches2mm(0.5)); 
     latticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
     width = frameWidth;
     height = frameHeight;
-    intervalCount = 3;
+    intervalCount = IntervalCount;
     includes = Includes;
     screwHoles = [ScrewHole_OD, ScrewHoleCount];
     difference()
@@ -294,7 +393,7 @@ module Panel(frameWidth, frameHeight)
             }
         }
 
-        FrameCutter(frameDimension = [width, height], frameBoardDimension = frameBoardDimension);
+        SquareFrameCutter(frameDimension = [width, height], frameBoardDimension = frameBoardDimension);
     }
 }
 
