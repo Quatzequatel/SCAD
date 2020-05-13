@@ -15,6 +15,7 @@ enumWaveType = 3;
 
 enumWaveTypeCos = 0;
 enumWaveTypeSin = 1;
+enumWaveTypeBoth = 2;
 
 enumFrameTypeSquare = 0;
 enumFrameTypeCircle = 1;
