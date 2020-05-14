@@ -92,7 +92,7 @@ module SquareFrameCutter
     {
         difference()
         {
-            square(size = [2 * frameDimension.x, 2 * frameDimension.y], center = true);
+            square(size = [3 * frameDimension.x, 3 * frameDimension.y], center = true);
             square(size = [frameDimension.x + offset, frameDimension.y  +offset], center = true);
         }
     }
@@ -114,7 +114,7 @@ module CircleFrame
                 translate([frameRadius,0,0])
                 {
                     // echo(size = [frameBoardDimension.x, frameBoardDimension.y]);
-                    square(size = frameBoardDimension, center = true);
+                    square(size = [2*frameBoardDimension.x, 2*frameBoardDimension.y], center = true);
                 }                     
             }
         
