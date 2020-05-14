@@ -8,9 +8,12 @@ use <shapesByPoints.scad>;
 use <Frame.scad>;
 use <convert.scad>;
 use <TrellisFunctions.scad>;
+use <TrigHelpers.scad>;
+use <lattice.scad>;
+
 $fn=100;
 
-CirclesTrellis();
+v();
 
 module CirclesTrellis
     (
@@ -29,3 +32,25 @@ module CirclesTrellis
         );
     }
 }
+
+module BubblesTrellis
+    (
+        minframeRadius = convert_in2mm(1),
+        maxframeRadius = 175,
+        frameBoardDimension = [WallThickness(count = 4), convert_in2mm(0.5)]
+    )
+{
+    for( i = [minframeRadius : 4*frameBoardDimension.x : maxframeRadius])
+    {
+
+        CircleLattice(diameter= 40, latticeDimension = frameBoardDimension);
+    }
+}
+
+function RandomPoint(min_value = 0, max_value = 0, value_count = 4, seed = PI) = 
+    rands(
+            min_value = min_value, 
+            max_value = max_value, 
+            value_count = 4, 
+            seed = seed
+        );
