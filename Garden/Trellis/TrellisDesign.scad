@@ -7,6 +7,8 @@ use <Frame.scad>;
 use <SquareLatticeTrellis.scad>;
 use <DiagonalTrellis.scad>;
 use <WaveTrellis.scad>;
+use <TrigHelpers.scad>;
+use <.\\lattice.scad>;
 use <..\\..\\..\\libraries\\SpiralShapes.scad>
 /*
     Create panels for Trellis
@@ -56,9 +58,10 @@ enumincludeSquareLatticeTrellis = 2;
 enumincludeArchimedianSpiral = 3;
 enumincludeHorizontalWaveTrellis = 4;
 enumincludeFrameType = 5;
+enumincludeBubbles = 6;
 
 function getIncludeProperty(includes, enum) = includes[enum];
-function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis, spiralTrellis, waveTrellis, frameType) =
+function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis, spiralTrellis, waveTrellis, frameType, bubblesTrellis) =
 [
     frame == undef ? includes[enumincludeFrame] : frame, 
     diamondStyleTrellis == undef ? includes[enumincludeDiamondStyleTrellis] : diamondStyleTrellis, 
@@ -66,6 +69,7 @@ function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis,
     spiralTrellis == undef ? includes[enumincludeArchimedianSpiral] : spiralTrellis,
     waveTrellis == undef ? includes[enumincludeHorizontalWaveTrellis] : waveTrellis,
     frameType == undef ? includes[enumincludeFrameType] : frameType,
+    bubblesTrellis == undef ? includes[enumincludeBubbles] : bubblesTrellis,
 ];
 
 
@@ -74,14 +78,16 @@ Includes = setIncludeProperty
         frame = true, 
         diamondStyleTrellis = false, 
         squareTrellis = true, 
-        spiralTrellis = true, 
+        spiralTrellis = false, 
         waveTrellis = false,
-        frameType = enumFrameTypeHex
+        frameType = enumFrameTypeSquare,
+        bubblesTrellis = true
     );
 IntervalCount =2;    
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 50, length = 0, type = enumWaveTypeBoth);
 
-Panels = [1,1];
+Panels = [2,2];
+Seed = 7;
 
 Build();
 // Circles();
@@ -214,6 +220,18 @@ module Circles
 
         }
 
+        if(getIncludeProperty(includes, enumincludeBubbles))
+        {
+            BubblesTrellis
+            (
+                minframeRadius = hypotenuse(frameDimension.x, frameDimension.y)/10,
+                maxframeRadius = hypotenuse(frameDimension.x, frameDimension.y),
+                latticeDimension = latticeDimension,
+                count = intervalCount,
+                seed = Seed
+            );
+        }
+
         CircleFrameCutter
         (
                     frameRadius = frameRadius,
@@ -299,8 +317,19 @@ module HexFrames
                     waveDimensions = WaveProperties,
                     intervalCount = intervalCount
                 );
-            }        
+            }   
 
+            if(getIncludeProperty(includes, enumincludeBubbles))
+            {
+                BubblesTrellis
+                (
+                    minframeRadius = frameRadius/10,
+                    maxframeRadius = frameRadius,
+                    latticeDimension = latticeDimension,
+                    count = intervalCount,
+                    seed = Seed
+                );
+            }
         }
 
         HexFrameCutter
@@ -389,6 +418,18 @@ module Panel(frameWidth, frameHeight)
                     latticeDimension = latticeDimension,
                     waveDimensions = WaveProperties,
                     intervalCount = intervalCount
+                );
+            }
+
+            if(getIncludeProperty(includes, enumincludeBubbles))
+            {
+                BubblesTrellis
+                (
+                    minframeRadius = hypotenuse(width, height)/10,
+                    maxframeRadius = hypotenuse(width, height),
+                    latticeDimension = latticeDimension,
+                    count = intervalCount * 4,
+                    seed = Seed
                 );
             }
         }
