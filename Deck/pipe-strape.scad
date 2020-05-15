@@ -5,9 +5,9 @@ WallThickness = LineWidth * 3; //
 Target_Radius = half(Inches(0.25) +  WallThickness); // mm 3/4inch
 $fn = 100;
 
-radius = 20;
-angles = [-80, 270];
-width = 2;
+// radius = 20;
+// angles = [-80, 270];
+// width = 2;
 fn = 60;
 
 

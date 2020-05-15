@@ -12,15 +12,27 @@ use <trigHelpers.scad>;
 test();
 module test()
 {
-    // CircleLattice(diameter= 40, latticeDimension = [2, 2]);
-    BubblesTrellis
-    (
-        minframeRadius = convert_in2mm(1),
-        maxframeRadius = 175,
-        latticeDimension = [4, convert_in2mm(0.5)],
-        count =5,
-        seed = PI        
-    );
+    CircleLattice(diameter= 40, latticeDimension = [2, 2]);
+    // BubblesTrellis
+    // (
+    //     minframeRadius = convert_in2mm(1),
+    //     maxframeRadius = 600,
+    //     latticeDimension = [4, convert_in2mm(0.5)],
+    //     count =5 * 2,
+    //     seed = 12        
+    // );
+}
+
+module foobar
+(
+    frameDimension = [1,2],
+    latticeDimension = [1,2],
+    diameter = 2,
+    points = [[0,0]],
+    panels = [1,2]
+)
+{
+
 }
 
 module BubblesTrellis

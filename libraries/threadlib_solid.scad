@@ -4,7 +4,7 @@
 * Version 30.01.2017_Experimental
 */
  
-$fn=360;
+// $fn=360;
 s_thread(10,1.5,12);
 
 module s_thread(diameter, slope, height) {
