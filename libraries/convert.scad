@@ -15,7 +15,28 @@ function convert_in2mm(in) = in * mmPerInch;
 function convert_ft2mm(feet) = convert_ft2in(feet) * mmPerInch;
 // function convert_ft2in(feet) = feet*12;
 function convert_mm2Inch(mm) = mm/mmPerInch;
+function convertV_mm2Inch(mm) = 
+    [
+        for(i = [0 : 1 : len(mm)-1]) convert_mm2Inch(mm[i])
+    ];
+
 function convert_mm2Feet(mm) = convert_in2ft(in = convert_mm2Inch(mm));
+
+function convertV_mm2Feet(mm) =
+    [
+        for(i = [0 : 1 : len(mm)-1]) convert_in2ft(in = convert_mm2Inch(mm[i]))
+    ];
+
+function convertVPts_mm2Feet(mm) =
+[
+    for(i = [0 : 1 : len(mm) - 1]) convertV_mm2Feet(mm = convertV_mm2Feet(mm[i]))
+];
+
+function convertVPts_mm2Inch(mm) =
+[
+    for(i = [0 : 1 : len(mm) - 1]) convertV_mm2Inch(mm = mm[i])
+];
+
 function convert_cm2Inch(cm) = convert_mm2Inch(cm) * 10;
 
 function testPass(note, value1, value2) = echo(note = note, input = value1, return = value2) [value1, value2];
