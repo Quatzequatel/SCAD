@@ -12,47 +12,51 @@ function sq(value) = value * value;
 function hypotenuse(side1, side2) = sqrt(sq(side1) + sq(side2));
 function insideHypotenuse(side1, side2, board) = sqrt(sq(side1 - getValue(board, enThickness)) + sq(side2 - getValue(board, enThickness)));
 
-Board2by4 = newVector(v = [], p1 = convert_in2mm(1.5), p2 = convert_in2mm(3.5), p3 = convert_ft2mm(8));
+Board2x4 = newVector(v = [], p1 = convert_in2mm(1.5), p2 = convert_in2mm(3.5), p3 = convert_ft2mm(8));
 angle = 44.3;
 
 Build();
+isDebugMode = false;
 
 module Build()
 {
     // House();
-    polyBoardAngle(board = horizontalBoard(board = Board2by4), startlocation = [0,0,0], angle = 45, color = "green");
-
+    Wall(
+        wallOD = [convert_ft2mm(16), Board2x4.y, convert_in2mm(72)], 
+        board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+        spacing = convert_in2mm(16),
+        finished = true
+        );
 }
 
-function horizontalBoard(board) = vSwitch(board, 0, 2);
 
 module House()
 {
     
-    // verticalBoard(Board2by4, startlocation = [0,0,getValue(Board2by4, enThickness)], color = "blue");
-    // verticalBoard(Board2by4, startlocation = [getValue(Board2by4, enLength) - getValue(Board2by4, enThickness),0,getValue(Board2by4, enThickness)], color = "blue");
-    verticalBoard(Board2by4, startlocation = [0 - getValue(Board2by4, enThickness), 0, 0], color = "blue");
-    verticalBoard(Board2by4, startlocation = [getValue(Board2by4, enLength) , 0, 0], color = "blue");
-    HorizontalBoard(Board2by4, startlocation = [0, 0, 0], color = "red");
-    HorizontalBoard(Board2by4, startlocation = [0, 0, getValue(Board2by4, enLength) + getValue(Board2by4, enThickness)], color = "red");
-    HorizontalBoard(Board2by4, startlocation = [0, 0, getValue(Board2by4, enLength) -getValue(Board2by4, enThickness)  ], color = "red");
+    // verticalBoard(Board2x4, startlocation = [0,0,getValue(Board2x4, enThickness)], color = "blue");
+    // verticalBoard(Board2x4, startlocation = [getValue(Board2x4, enLength) - getValue(Board2x4, enThickness),0,getValue(Board2x4, enThickness)], color = "blue");
+    verticalBoard(Board2x4, startlocation = [0 - getValue(Board2x4, enThickness), 0, 0], color = "blue");
+    verticalBoard(Board2x4, startlocation = [getValue(Board2x4, enLength) , 0, 0], color = "blue");
+    xyHorizontalBoard(Board2x4, startlocation = [0, 0, 0], color = "red");
+    xyHorizontalBoard(Board2x4, startlocation = [0, 0, getValue(Board2x4, enLength) + getValue(Board2x4, enThickness)], color = "red");
+    xyHorizontalBoard(Board2x4, startlocation = [0, 0, getValue(Board2x4, enLength) -getValue(Board2x4, enThickness)  ], color = "red");
     AngleBoard
     (
         board = setValue
             (
-                v = Board2by4, 
+                v = Board2x4, 
                 enum = enZ, 
                 value = hypotenuse
                     (
-                        side1 = getValue(Board2by4, enLength) , 
-                        side2 = getValue(Board2by4, enLength) 
-                        // side1 = getValue(Board2by4, enLength) + (getValue(Board2by4, enThickness) * cos(angle) / 2), 
-                        // side2 = getValue(Board2by4, enLength) + (getValue(Board2by4, enThickness) * sin(angle) / 2)
+                        side1 = getValue(Board2x4, enLength) , 
+                        side2 = getValue(Board2x4, enLength) 
+                        // side1 = getValue(Board2x4, enLength) + (getValue(Board2x4, enThickness) * cos(angle) / 2), 
+                        // side2 = getValue(Board2x4, enLength) + (getValue(Board2x4, enThickness) * sin(angle) / 2)
                     )
             ), 
         angle = -angle, 
         // location = [0, 0, 0], 
-        location = [-getValue(Board2by4, enThickness) , 0, 0 ], 
+        location = [-getValue(Board2x4, enThickness) , 0, 0 ], 
         color = "yellow"
     );
 
@@ -60,49 +64,109 @@ module House()
     (
         board = setValue
             (
-                v = Board2by4, 
+                v = Board2x4, 
                 enum = enZ, 
                 value = insideHypotenuse
                     (
-                        side1 = getValue(Board2by4, enLength) , 
-                        side2 = getValue(Board2by4, enLength) ,
-                        board = Board2by4
-                        // side1 = getValue(Board2by4, enLength) + (getValue(Board2by4, enThickness) * cos(angle) / 2), 
-                        // side2 = getValue(Board2by4, enLength) + (getValue(Board2by4, enThickness) * sin(angle) / 2)
+                        side1 = getValue(Board2x4, enLength) , 
+                        side2 = getValue(Board2x4, enLength) ,
+                        board = Board2x4
+                        // side1 = getValue(Board2x4, enLength) + (getValue(Board2x4, enThickness) * cos(angle) / 2), 
+                        // side2 = getValue(Board2x4, enLength) + (getValue(Board2x4, enThickness) * sin(angle) / 2)
                     )
             ), 
         angle = angle, 
         // location = [0, 0, 0], 
-        location = [-getValue(Board2by4, enThickness) , 0, getValue(Board2by4, enLength) ], 
+        location = [-getValue(Board2x4, enThickness) , 0, getValue(Board2x4, enLength) ], 
         color = "pink"
     );
 }
 
-module verticalBoard(board, startlocation, color = "blue")
+/*
+    visualize creating a wall frame on the ground.
+    then picking it up and putting into place.
+    note2self:
+        z should always be 0. from origion y is the wallod.z
+*/
+module Wall(wallOD, board, spacing, includeStuds = true, finished = false)
 {
-    polyBoard(board, startlocation, color = color );
+    finishedColor = "slategray" ;
+    // echo(module_name = "Wall", wallOD = wallOD, board = board, spacing = spacing);
+    if(!finished)
+    {
+        //base
+        xyHorizontalBoard(board = board, startlocation = [0,0,0], color = "red");
+        //top
+        xyHorizontalBoard(board = board, startlocation = [0 ,wallOD.z, 0], color = "green");
+    }
+    else
+    {
+        if(board.z != wallOD.x) echo(CAUTION = "BASE and Top board cut required. board is ", convert_mm2Inch(board.z), "but needs to be ", convert_mm2Inch(wallOD.x));
+        //base
+        xyHorizontalBoard(board = vSetValue(board, 2, wallOD.x), startlocation = [0,0,0], color = "slategray");
+        //top
+        xyHorizontalBoard(board = vSetValue(board, 2, wallOD.x), startlocation = [0 ,wallOD.z, 0], color = "slategray");
+    }
+
+    if(includeStuds)
+    {
+        if(!finished)
+        {
+            //studs
+            for(i = [0 : 1 : wallOD.x/spacing - 1])
+            {
+                debugEcho(str(i = i ));
+                xyVerticalBoard(board = board, startlocation = [i * spacing ,board.x, 0], color = "blue");
+            }
+            xyVerticalBoard(board = board, startlocation = [wallOD.x - 2*board.x ,board.x, 0], color = "yellow");
+        }
+        else
+        {
+            if(board.z != wallOD.z - board.x) echo(CAUTION = "STUD boards cut required. board is ", convert_mm2Inch(board.z), "but needs to be ", convert_mm2Inch(wallOD.z - board.x));
+            //studs
+            for(i = [0 : 1 : wallOD.x/spacing])
+            {
+                debugEcho(str(i = i ));
+                xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [i * spacing ,board.x, 0], color = finishedColor);
+            }
+            xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [wallOD.x - board.x ,board.x, 0], color = finishedColor);
+        }        
+    }
+
 }
 
-module HorizontalBoard(board, startlocation, color = "red")
+module xyVerticalBoard(board, startlocation, color = "blue")
 {
-
-    polyBoard(board = vSwitch(board, 0, 2), startlocation, color = color );
+    polyBoard(board = transpose2xzy(b = board), startlocation = startlocation, color = color );
 }
+
+module xyHorizontalBoard(board, startlocation, color = "red")
+{
+    debugEcho(str(module_name = "xyHorizontalBoard", board = board, startlocation = startlocation));
+    polyBoard(board = transpose2zxy(b = board), startlocation = startlocation, color = color );
+    // polyBoard(board = board, startlocation = startlocation, color = color );
+}
+
+//[2,4,72] board drawn [72,2,4] in xy plane horizontal
+function transpose2zxy(b) = [b.z, b.x, b.y];
+//[2,4,72] board drawn [2,72,4] in xy plane vertical
+function transpose2xzy(b) = [b.x, b.z, b.y];
 
 module polyBoard(board, startlocation, color = "green")
 {
+    debugEcho(str(module_name = "polyBoard", startlocation = startlocation, board = board, cubePoints = cubePoints(o = startlocation, d = board)));
     color(color)
-    polyhedron(points = cubePoints(startlocation, board), faces = CubeFaces, convexity = 1);
+    polyhedron(points = cubePoints(o = startlocation, d = board), faces = cubeFaces(), convexity = 1);
 }
 
 module polyBoardAngle(board, startlocation, angle, color = "green")
 {
     color(color)
-    polyhedron(points = cubePointsAngle(startlocation, board, angle), faces = CubeFaces, convexity = 1);
+    polyhedron(points =  cubePointsAngle(startlocation, board, angle), faces = cubeFaces(), convexity = 1);
 }
 
 // o = origin, d = dimension
-function cubePoints(o, d) =
+function cubePoints(o, d) = //echo(function_name = "cubePoints", o=o, d=d)
 [
     [o.x, o.y, o.z],                //0
     [o.x + d.x, o.y, o.z],          //1
@@ -112,6 +176,16 @@ function cubePoints(o, d) =
     [o.x + d.x, o.y,o.z + d.z],     //5
     [o.x + d.x, o.y + d.y, o.z + d.z], //6
     [o.x, o.y + d.y, o.z + d.z],       //7
+];
+
+function cubeFaces() = 
+[
+    [0,1,2,3],  //bottom
+    [4,5,1,0], //front
+    [7,6,5,4], //top
+    [5,6,2,1], //right
+    [6,7,3,2], //back
+    [7,4,0,3], //left
 ];
 
 // o = origin, d = dimension, a = angle

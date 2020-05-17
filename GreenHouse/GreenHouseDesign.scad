@@ -15,6 +15,7 @@ use <shapesByPoints.scad>;
 use <convert.scad>;
 use <ObjectHelpers.scad>;
 use <trigHelpers.scad>;
+use <Construction.scad>;
 
 use <box_extrude.scad>;
 
@@ -28,9 +29,9 @@ function setBoardProperty(board, thickness, width, length) =
 ];
 
 //board is in mm
-Board2x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 1));
-Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 4), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 1));
-Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 6), length = convert_ft2mm(feet = 1));
+Board2x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 8));
+Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 4), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 8));
+Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 6), length = convert_ft2mm(feet = 8));
 
 BoardDimensions = [convert_in2mm(in = 2), convert_in2mm(in = 4), convert_ft2mm(feet = 8)];
 
@@ -95,10 +96,147 @@ module Build(args)
     // rotate([0,0, 90])
     // simpleView(true, true, false);
 
-    HouseFrame();
-    EntryFrame();
-    RoofFrame();
+    // HouseFrame();
+    // EntryFrame();
+    // RoofFrame();
 
+    HouseFrame2();
+    EntryFrame2();
+
+}
+
+module HouseFrame2()
+{
+    isFinished = true;
+    //back wall
+    translate([0, 0, 0])
+    rotate([90, 0, 90]) 
+    {
+        color("blue")
+        Wall(
+            wallOD = [HouseDimensions.y, HouseDimensions.x, HouseDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            finished = isFinished
+        );        
+    }
+
+    //right side wall
+    translate([Board2x4.y, HouseDimensions.y, 0])
+    rotate([90, 0, 0]) 
+    {
+        color("red")
+        Wall(
+            wallOD = [HouseDimensions.x - Board2x4.y, HouseDimensions.y, HouseDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            finished = isFinished
+        );        
+    }
+    
+    //left side wall
+    translate([Board2x4.y, Board2x4.y, 0])
+    rotate([90, 0, 0]) 
+    {
+        color("red")
+        Wall(
+            wallOD = [HouseDimensions.x - Board2x4.y, HouseDimensions.y, HouseDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            finished = isFinished
+        );        
+    }
+
+    //front wall  left side
+    translate([HouseDimensions.x, 0, 0])
+    rotate([90, 0, 90]) 
+    {
+        color("blue")
+        Wall(
+            wallOD = [HouseDimensions.y/2 - EntryDimensions.x/2, HouseDimensions.x, HouseDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            finished = isFinished
+        );        
+    }
+
+    //front wall  right side
+    translate([HouseDimensions.x, HouseDimensions.y - (HouseDimensions.y/2 - EntryDimensions.x/2), 0])
+    rotate([90, 0, 90]) 
+    {
+        color("blue")
+        Wall(
+            wallOD = [HouseDimensions.y/2 - EntryDimensions.x/2, HouseDimensions.x, HouseDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            finished = isFinished
+        );        
+    }
+}
+
+module EntryFrame2()
+{
+    isFinished = true;
+    //left side wall
+    translate
+    (
+        [
+            HouseDimensions.x + Board2x4.y, 
+            HouseDimensions.y - (HouseDimensions.y/2 - EntryDimensions.x/2) + Board2x4.y, 
+            0
+        ]
+    )
+    rotate([90, 0, 0]) 
+    {
+        color("yellow")
+        Wall(
+            wallOD = [EntryDimensions.x - Board2x4.y, EntryDimensions.y, EntryDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            finished = isFinished
+        );        
+    }
+
+    //right side wall
+    translate
+    (
+        [
+            HouseDimensions.x + Board2x4.y, 
+            (HouseDimensions.y/2 - EntryDimensions.x/2), 
+            0
+        ]
+    )
+    rotate([90, 0, 0]) 
+    {
+        color("yellow")
+        Wall(
+            wallOD = [EntryDimensions.x - Board2x4.y, EntryDimensions.y, EntryDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            finished = isFinished
+        );        
+    }
+
+    //Doorway
+    translate
+    (
+        [
+            HouseDimensions.x + EntryDimensions.x - Board2x4.y, 
+            (HouseDimensions.y/2 - EntryDimensions.x/2), 
+            0
+        ]
+    )
+    rotate([90, 0, 90]) 
+    {
+        color("yellow")
+        Wall(
+            wallOD = [EntryDimensions.x, EntryDimensions.y, EntryDimensions.z], 
+            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+            spacing = convert_in2mm(16),
+            includeStuds = false,
+            finished = isFinished
+        );        
+    }    
 }
 
 module simpleView(showentry = true, showRoof = true, showwalls = true)
@@ -260,13 +398,6 @@ module RoofFrame()
 
     echo(RoofFrame = "Roof spine");
     color("deepskyblue") point_square(size = Board2x6, p1 = p2, p2 = p5, height = Board2x6.y);
-}
-
-module Wall(wallDimension) 
-{
-    //floorboard
-
-    //Ceiling
 }
 
 // module SideView()
