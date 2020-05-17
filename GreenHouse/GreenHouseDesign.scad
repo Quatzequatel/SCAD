@@ -9,18 +9,15 @@
         wall height = 6.8038 ft or 81.64617 in
         roof height with 60 degree angle = 5.196 ft or 62.35383 in
 */
+// include <TrellisEnums.scad>;
+include <constants.scad>;
+use <shapesByPoints.scad>;
 use <convert.scad>;
 use <ObjectHelpers.scad>;
 use <trigHelpers.scad>;
 
-//enums
-enThickness = 0;
-enWidth = 1; 
-enLength = 2;
+use <box_extrude.scad>;
 
-enX = 0;
-enY = 1;
-enZ = 2;
 
 function getBoardProperty(board, enum) = getValue(v = board, enum = enum);
 function setBoardProperty(board, thickness, width, length) =
@@ -31,24 +28,49 @@ function setBoardProperty(board, thickness, width, length) =
 ];
 
 //board is in mm
-Board = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 1));
+Board2x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 1));
+Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 4), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 1));
+Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 6), length = convert_ft2mm(feet = 1));
+
+BoardDimensions = [convert_in2mm(in = 2), convert_in2mm(in = 4), convert_ft2mm(feet = 8)];
+
 
 //all in mm
-Length = convert_ft2mm(feet = 12);
-Width = convert_ft2mm(feet = 15);
-EntryDepth = convert_ft2mm(feet = 4);
-EntryWidth = convert_ft2mm(feet = 8);
-MaxHeight = convert_ft2mm(feet = 15);
+Length = convert_ft2mm(feet = 15);
+Width = convert_ft2mm(feet = 12);
+WallHeight = convert_ft2mm(feet = 8);
 RoofAngle = 45;
-RoofWidth = Width/2; //((Width - in2ft(Board.x))/2);
-RoofHeight = RoofWidth * sin(RoofAngle);
-RoofLength = sqrt((RoofHeight * RoofHeight) + (RoofWidth * RoofWidth));
-WallHeight = MaxHeight - RoofHeight;
+EntryRoofAngle = 45;
 
-EntryRoofWidth = EntryWidth/2; //((Width - in2ft(Board.x))/2);
-EntryRoofHeight = EntryRoofWidth * sin(RoofAngle);
-EntryRoofLength = hypotenuse(EntryRoofHeight, EntryRoofWidth);// sqrt((EntryRoofHeight * EntryRoofHeight) + (EntryRoofWidth * EntryRoofWidth));
+EntryLength = convert_ft2mm(feet = 4);
+EntryWidth = convert_ft2mm(feet = 5);
+MaxHeight = convert_ft2mm(feet = 15);
+HouseDimensions = [Width, Length, WallHeight];
+EntryDimensions = [EntryWidth, EntryLength, WallHeight];
+
+// RoofAngle = 45;
+// RoofWidth = Width/2; //((Width - in2ft(Board2x4.x))/2);
+// RoofHeight = RoofWidth * sin(RoofAngle);
+// RoofLength = hypotenuse(RoofHeight, RoofWidth);
+
+RoofDimensions = [
+        HouseDimensions.x/2,    
+        HouseDimensions.y,  
+        HouseDimensions.x/2 * sin(RoofAngle), 
+        RoofAngle ];
+
+EntryRoofDimensions = [
+    EntryDimensions.x/2,                                        //width
+    EntryDimensions.y + HouseDimensions.z * cos(RoofAngle) + convert_in2mm(in = 4),   //length
+    EntryDimensions.x * sin(EntryRoofAngle),                  //height
+    EntryRoofAngle ];                                           //angle
+
+// EntryRoofWidth = EntryWidth/2; //((Width - in2ft(Board2x4.x))/2);
+// EntryRoofHeight = EntryRoofWidth * sin(RoofAngle);
+// EntryRoofLength = hypotenuse(EntryRoofHeight, EntryRoofWidth);// sqrt((EntryRoofHeight * EntryRoofHeight) + (EntryRoofWidth * EntryRoofWidth));
 // WallHeight = MaxHeight - RoofHeight;
+// EntryDimensions = [Length, Width, MaxHeight];
+// EntryRoofDimensions = [Width/2, RoofLength,  hypotenuse(RoofHeight, RoofWidth), RoofAngle ];
 
 
 Build();
@@ -56,102 +78,237 @@ Build();
 module Build(args) 
 {
     echo("Base Dimensions:");
-    echo(Length = convert_mm2Feet(mm = Length));
-    echo(Width = convert_mm2Feet(mm = Width));
-    echo(MaxHeight = convert_mm2Feet(mm = MaxHeight));
+    echo(Length = convert_mm2Feet(mm = HouseDimensions.y));
+    echo(Width = convert_mm2Feet(mm = HouseDimensions.x));
+    echo(Height = convert_mm2Feet(mm = HouseDimensions.z + RoofDimensions.z));
     echo(RoofAngle = RoofAngle);
-    echo(RoofHeight = convert_mm2Feet(mm = RoofHeight));
-    echo(RoofWidth = convert_mm2Feet(mm = RoofWidth));
-    echo(WallHeight = convert_mm2Feet(mm = WallHeight));
-    echo(RoofLength = convert_mm2Feet(mm = RoofLength));
-    echo(sin45 = sin(45));
+    echo(RoofHeight = convert_mm2Feet(mm = RoofDimensions.z));
+    echo(RoofWidth = convert_mm2Feet(mm = RoofDimensions.x));
+    echo(WallHeight = convert_mm2Feet(mm = HouseDimensions.z));
+    echo(RoofLength = convert_mm2Feet(mm = RoofDimensions.y));
+    echo(EntryRoofDimensions_inches = convertV_mm2Inch(mm = EntryRoofDimensions));
+    echo(EntryRoofAngle = EntryRoofDimensions[3]);
+    // echo(sin45 = sin(45));
 
-    SideView();
-    translate([Width/2,0,0])
-    rotate([0,0, 90])
-    simpleView(false, true, false);
+    // SideView();
+    // translate([Width/2,0,0])
+    // rotate([0,0, 90])
+    // simpleView(true, true, false);
+
+    HouseFrame();
+    EntryFrame();
+    RoofFrame();
 
 }
 
 module simpleView(showentry = true, showRoof = true, showwalls = true)
 {
-    if(showwalls)
     {
-        //sides
-        linear_extrude(height=WallHeight)
-        square(size=[Width, Length], center=true);
-    }
-    if(showRoof)
-    {
-        //roof
-        translate([0,0,WallHeight])
-        linear_extrude(height=RoofHeight, scale=[1,0.01])
-        square(size=[Width, Length], center=true);
+        sidePoints = housePoints(houseDi = HouseDimensions, roofDi = RoofDimensions, p0 = [0,0]);
+
+        // echo(sidePoints = sidePoints);
+        // echo(sidePoints = convertVPts_mm2Inch(sidePoints));
+
+        translate([0,HouseDimensions.y,0])
+        rotate([90,0,0])
+        %linear_extrude(height = HouseDimensions.y)
+        polygon(points=sidePoints);
+
     }
     if(showentry)
     {
-        //entry
-        translate([0, Length/2 - EntryDepth/2,0])
-        rotate([0, 0, 90])
-        union()
-        {
-            linear_extrude(height=WallHeight)
-            square(size=[3*EntryDepth, EntryWidth], center=true);
+            entryPoints = housePoints(houseDi = EntryDimensions, roofDi = EntryRoofDimensions, p0 = [0,0]);
+            echo(entryPoints = entryPoints);
+            echo(EntryDimensions = EntryDimensions, EntryRoofDimensions = EntryRoofDimensions);
 
-            //entry roof
-            translate([0,0,WallHeight])
-            linear_extrude(height=EntryRoofHeight, scale=[1,0.01])
-            square(size=[3*EntryDepth, EntryWidth], center=true);        
-        }
+            translate([HouseDimensions.x - (EntryRoofDimensions.y - EntryDimensions.x), HouseDimensions.y/2 - EntryDimensions.x/2,0])
+            rotate([90,0,90])
+            difference()
+            {
+                linear_extrude(height = EntryRoofDimensions.y)
+                polygon(points=entryPoints);
+
+                union()
+                {
+                    linear_extrude(height = EntryRoofDimensions.y/2)
+                    square([EntryDimensions.x + 1,EntryDimensions.z + 1], center = false);
+                    tripoints = [
+                        [0,EntryDimensions.z],
+                        [EntryRoofDimensions.y/2,EntryDimensions.z],
+                        [0, EntryRoofDimensions.y/2 ]
+                        ];
+                        echo(tripoints=tripoints);
+                        echo(tripoints=convertVPts_mm2Inch(tripoints));
+                    // translate([0,EntryDimensions.z,0])
+                    // !#rotate([0,-90,90])
+                    // translate([0,-EntryDimensions.z,0])
+                    // linear_extrude(height = EntryDimensions.x)
+                    // polygon(points=tripoints);
+                }
+            }
+
+
+            //left garden box
+            translate([HouseDimensions.x, 0, 0])
+            // linear_extrude(height = EntryRoofDimensions.y)
+            color("white") box_extrude(height = convert_ft2mm(2), shell_thickness = convert_in2mm(in = 2)) 
+            square([EntryDimensions.x,(HouseDimensions.y - EntryDimensions.x)/2], center = false);
+
+            //right garden box
+            translate([HouseDimensions.x, HouseDimensions.y - (HouseDimensions.y - EntryDimensions.x)/2 , 0])
+            // linear_extrude(height = EntryRoofDimensions.y)
+            color("white") box_extrude(height = convert_ft2mm(2), shell_thickness = convert_in2mm(in = 2)) 
+            square([EntryDimensions.x,(HouseDimensions.y - EntryDimensions.x)/2], center = false);
     }
 
 }
 
-module SideView()
+module HouseFrame()
 {
-    
+    p1 = [0,0,0];
+    p2 = [p1.x, HouseDimensions.y, p1.z];
+    p3 = [HouseDimensions.x, p2.y, p1.z];
+    p4 = [p3.x, p1.y, p1.z];
+
+    p5 = [p1.x, p1.y, HouseDimensions.z];
+    p6 = [p2.x, p2.y, HouseDimensions.z];
+    p7 = [p3.x, p3.y, HouseDimensions.z];
+    p8 = [p4.x, p4.y, HouseDimensions.z];
+
+    echo(HouseFrame = "Floor");
+    color("red") point_square(size = Board2x4, p1 = p1, p2 = p2, height = Board2x4.x, center = true);
+    color("blue") point_square(size = Board2x4, p1 = p2, p2 = p3, height = Board2x4.x);
+    color("yellow") point_square(size = Board2x4, p1 = p3, p2 = p4, height = Board2x4.x);
+    color("green") point_square(size = Board2x4, p1 = p4, p2 = p1, height = Board2x4.x, center = true);
+
+    echo(HouseFrame = "ceiling");
+    color("red") point_square(size = Board2x4, p1 = p5, p2 = p6, height = Board2x4.x, center = true);
+    color("blue") point_square(size = Board2x4, p1 = p6, p2 = p7, height = Board2x4.x);
+    color("yellow") point_square(size = Board2x4, p1 = p7, p2 = p8, height = Board2x4.x);
+    color("green") point_square(size = Board2x4, p1 = p8, p2 = p5, height = Board2x4.x, center = true);
+
+    echo(HouseFrame = "corners");
+    color("red") point_square(size = Board4x4, p1 = p1, p2 = p5, height = Board2x4.x);
+    color("blue") point_square(size = Board4x4, p1 = p2, p2 = p6, height = Board2x4.x);
+    color("yellow") point_square(size = Board4x4, p1 = p3, p2 = p7, height = Board2x4.x);
+    color("green") point_square(size = Board4x4, p1 = p4, p2 = p8, height = Board4x4.y);
+
+}
+
+module EntryFrame()
+{
+    p1 = 
+        [
+            HouseDimensions.x,
+            HouseDimensions.y/2 - EntryDimensions.x/2 + Board4x4.y,
+            0
+        ];
+    p2 = [p1.x, p1.y + EntryDimensions.y, p1.z];
+    p3 = [p1.x + EntryDimensions.x, p2.y, p1.z];
+    p4 = [p3.x, p1.y, p1.z];
+
+    p5 = [p1.x, p1.y, EntryDimensions.z];
+    p6 = [p2.x, p2.y, EntryDimensions.z];
+    p7 = [p3.x, p3.y, EntryDimensions.z];
+    p8 = [p4.x, p4.y, EntryDimensions.z];
+
+    echo(EntryFrame = "Floor");
+    color("red") point_square(size = Board2x4, p1 = p1, p2 = p2, height = Board2x4.y, center = true);
+    color("blue") point_square(size = Board2x4, p1 = p2, p2 = p3, height = Board2x4.y);
+    color("yellow") point_square(size = Board2x4, p1 = p3, p2 = p4, height = Board2x4.y);
+    color("green") point_square(size = Board2x4, p1 = p4, p2 = p1, height = Board2x4.y, center = true);
+
+    echo(EntryFrame = "ceiling");
+    color("red") point_square(size = Board2x4, p1 = p5, p2 = p6, height = Board2x4.y, center = true);
+    color("blue") point_square(size = Board2x4, p1 = p6, p2 = p7, height = Board2x4.y);
+    color("yellow") point_square(size = Board2x4, p1 = p7, p2 = p8, height = Board2x4.y);
+    color("green") point_square(size = Board2x4, p1 = p8, p2 = p5, height = Board2x4.y, center = true);
+
+    echo(EntryFrame = "corners");
+    color("red") point_square(size = Board4x4, p1 = p1, p2 = p5, height = Board2x4.y);
+    color("blue") point_square(size = Board4x4, p1 = p2, p2 = p6, height = Board2x4.y);
+    color("yellow") point_square(size = Board4x4, p1 = p3, p2 = p7, height = Board2x4.y);
+    color("green") point_square(size = Board4x4, p1 = p4, p2 = p8, height = Board4x4.y);
+}
+
+module RoofFrame()
+{
+    p1 = [ 0, 0,HouseDimensions.z ];
+    p2 = [ HouseDimensions.x/2, p1.y, p1.z + HouseDimensions.x/2 * sin(RoofAngle) ];
+    p3 = [HouseDimensions.x, p1.y, p1.z];
+
+    p4 = [ p1.x, p1.y + HouseDimensions.y, p1.z ];
+    p5 = [p2.x, p4.y, p2.z ];
+    p6 = [p3.x, p4.y, p3.z];    
+
+    p7 = [p2.x, p2.y, HouseDimensions.z];
+    p8 = [p5.x, p5.y, HouseDimensions.z];
+
+    echo(RoofFrame = "Roof1");
+    color("red") point_square(size = Board2x4, p1 = p1, p2 = p2, height = Board2x4.y, center = true);
+    color("blue") point_square(size = Board2x4, p1 = p2, p2 = p3, height = Board2x4.y);
+    color("yellow") point_square(size = Board2x4, p1 = p3, p2 = p1, height = Board2x4.y);
+
+    echo(RoofFrame = "Roof2");
+    color("red") point_square(size = Board2x4, p1 = p4, p2 = p5, height = Board2x4.y, center = true);
+    color("blue") point_square(size = Board2x4, p1 = p5, p2 = p6, height = Board2x4.y);
+    color("yellow") point_square(size = Board2x4, p1 = p6, p2 = p4, height = Board2x4.y);;
+
+    echo(RoofFrame = "king post");
+    color("red") point_square(size = Board4x4, p1 = p7, p2 = p2, height = Board4x4.y);
+    color("blue") point_square(size = Board4x4, p1 = p8, p2 = p5, height = Board4x4.y);
+
+    echo(RoofFrame = "Roof spine");
+    color("deepskyblue") point_square(size = Board2x6, p1 = p2, p2 = p5, height = Board2x6.y);
+}
+
+module Wall(wallDimension) 
+{
+    //floorboard
+
+    //Ceiling
 }
 
 // module SideView()
 // {
-//     echo(Board = Board);
-//     verticalBoard(setBoardProperty(board = Board, length = WallHeight), [0,0,Board.x]);
-//     verticalBoard(setBoardProperty(board = Board, length = WallHeight), [Width - Board.x, 0, Board.x]);
+//     echo(Board2x4 = Board2x4);
+//     verticalBoard(setBoardProperty(board = Board2x4, length = WallHeight), [0,0,Board2x4.x]);
+//     verticalBoard(setBoardProperty(board = Board2x4, length = WallHeight), [Width - Board2x4.x, 0, Board2x4.x]);
 //     verticalBoard
 //     (
 //         setBoardProperty
 //         (
-//             board = Board, 
+//             board = Board2x4, 
 //             length = (MaxHeight)), 
 //             [
-//                 (Width)/2 - Board.x/2, 
+//                 (Width)/2 - Board2x4.x/2, 
 //                 0, 
-//                 Board.x
+//                 Board2x4.x
 //             ]
 //     );
-//     HorizontalBoard(setBoardProperty(board = Board, length = (Width)), [0, 0, 0]);
-//     HorizontalBoard(setBoardProperty(board = Board, length = (Width)), [0, 0, (WallHeight) + Board.x]);
+//     HorizontalBoard(setBoardProperty(board = Board2x4, length = (Width)), [0, 0, 0]);
+//     HorizontalBoard(setBoardProperty(board = Board2x4, length = (Width)), [0, 0, (WallHeight) + Board2x4.x]);
 
 //     AngleBoard
 //         (
-//             setBoardProperty(board = Board, length = (RoofLength)), 
+//             setBoardProperty(board = Board2x4, length = (RoofLength)), 
 //             angle = -RoofAngle, 
 //             location = 
 //                 [
 //                     0,
 //                     0,
-//                     (WallHeight) + Board.x
+//                     (WallHeight) + Board2x4.x
 //                 ]
 //         );
 //     AngleBoard
 //         (
-//             setBoardProperty(board = Board, length = (RoofLength)), 
+//             setBoardProperty(board = Board2x4, length = (RoofLength)), 
 //             angle = -((90 - RoofAngle) + 90), 
 //             location = 
 //                 [
 //                     (Width) ,
 //                     0,
-//                     (WallHeight) +  Board.x
+//                     (WallHeight) +  Board2x4.x
 //                 ]
 //         );
 // }
@@ -217,6 +374,15 @@ module SideView()
 //     color("yellow") 
 //     cube(size=boardDimensions, center = true);
 // }
+
+function housePoints(houseDi, roofDi, p0) = 
+[
+    p0,                             //p0
+    [houseDi.x, p0.y],           //p1
+    [houseDi.x, houseDi.z],   //p2
+    [houseDi.x/2, houseDi.z + roofDi.z],   //p3
+    [p0.x, houseDi.z]           //p4
+];
 
 
 function half(v) = 
