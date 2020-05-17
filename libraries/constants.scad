@@ -12,6 +12,14 @@ function LayersToHeight(layers) =
   InitialLayerHeight + (LayerHeight * (layers - 1));
 function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 
+module debugEcho(args) 
+{
+  if(isDebugMode)
+  {
+    echo(debugEcho = args);
+  }
+}
+
 //enums
 enThickness = 0;
 enWidth = 1;
