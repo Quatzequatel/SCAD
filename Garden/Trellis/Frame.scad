@@ -3,8 +3,11 @@
 */
 include <TrellisEnums.scad>;
 include <constants.scad>;
+use <TrellisFunctions.scad>;
 use <shapesByPoints.scad>;
 use <convert.scad>;
+
+ISDEBUGEMODE = false;
 
 test();
 module test()
@@ -47,8 +50,12 @@ module SquareFrame
         if (len(screwHoles) != undef) 
         {
             incrementHoz = frameDimension.y / (screwHoles[enumScrewCount] + 1);
-            echo(width = frameDimension.x, height  = frameDimension.y, screwHoles = screwHoles);
-            echo(getActualHeight = getActualHeight(), ScrewCount  = screwHoles[enumScrewCount], incrementHoz = incrementHoz);
+            debugEcho(str("module_name is ","SquareFrame()", 
+                ", frameDimension = ", frameDimension, 
+                ", frameBoardDimension = ", frameBoardDimension, 
+                ", screwHoles = ", screwHoles ));
+            // echo(width = frameDimension.x, height  = frameDimension.y, screwHoles = screwHoles);
+            // echo(getActualHeight = getActualHeight(), ScrewCount  = screwHoles[enumScrewCount], incrementHoz = incrementHoz);
             for(i = [1 : screwHoles[enumScrewCount]])
             {
                 //note: p[x=>length]
@@ -85,7 +92,12 @@ module SquareFrameCutter
     frameBoardDimension = [convert_in2mm(1), convert_in2mm(1)]
 )
 {
-    echo(FrameCutter="FrameCutter", frameWidth=frameDimension.x, frameHeight=frameDimension.y, frameBoardDimension=frameBoardDimension);
+    debugEcho(str("module_name is ","SquareFrameCutter()", 
+        ", frameWidth = ", frameDimension.x, 
+        ", frameHeight = ", frameDimension.y, 
+        ", frameBoardDimension = ", frameBoardDimension));
+    
+    // echo(FrameCutter="FrameCutter", frameWidth=frameDimension.x, frameHeight=frameDimension.y, frameBoardDimension=frameBoardDimension);
     offset =  NozzleWidth/4; //values needs to be less than nozzel frameDimension.x
     translate([0, 0, -frameBoardDimension.y])
     linear_extrude(height= 3 * frameBoardDimension.y)
@@ -93,7 +105,7 @@ module SquareFrameCutter
         difference()
         {
             square(size = [3 * frameDimension.x, 3 * frameDimension.y], center = true);
-            square(size = [frameDimension.x + offset, frameDimension.y  +offset], center = true);
+            square(size = [frameDimension.x + offset, frameDimension.y + offset], center = true);
         }
     }
 }
@@ -105,6 +117,12 @@ module CircleFrame
     screwHoles = [10, 3]  //[od, count]
 )
 {
+    debugEcho(str("module_name is ","CircleFrame()", 
+        ", frameRadius = ", frameRadius, 
+        ", frameBoardDimension = ", frameBoardDimension,
+        ", screwHoles = ", screwHoles
+        ));    
+    // echo(CircleFrame="CircleFrame", frameRadius=frameRadius, frameBoardDimension=frameBoardDimension);
     difference()
     {
         union()
@@ -138,6 +156,11 @@ module CircleFrameCutter
         frameBoardDimension = [convert_in2mm(1), convert_in2mm(2)]
     )
 {
+    debugEcho(str("module_name is ","CircleFrameCutter()", 
+        ", frameRadius = ", frameRadius, 
+        ", frameBoardDimension = ", frameBoardDimension));        
+    // echo(CircleFrameCutter="CircleFrameCutter", frameRadius=frameRadius, frameBoardDimension=frameBoardDimension);
+
     union()
     {
         translate([0,0,-frameBoardDimension.y/2])
@@ -159,6 +182,14 @@ module HexFrame
     screwHoles = [5, 3]  //[od, count [0:3]]
 )
 {
+    debugEcho(str("module_name is ","HexFrame()", 
+        ", frameRadius = ", frameRadius, 
+        ", frameBoardDimension = ", frameBoardDimension,
+        ", screwHoles = ", screwHoles
+        ));   
+
+    // echo(HexFrame="HexFrame", frameRadius=frameRadius, frameBoardDimension=frameBoardDimension);
+
     difference()
     {
         union()
@@ -176,7 +207,11 @@ module HexFrame
     
         if (len(screwHoles) != undef)
         {
-            echo(screwHoleCount = screwHoles[enumScrewCount], screwHoleOD = screwHoles[enumScrew_OD]);
+            debugEcho(str("module_name is ","HexFrame()", 
+                ", screwHoleCount = ", screwHoles[enumScrewCount], 
+                ", screwHoleOD = ", screwHoles[enumScrew_OD]
+                ));               
+            // echo(screwHoleCount = screwHoles[enumScrewCount], screwHoleOD = screwHoles[enumScrew_OD]);
             assert(screwHoles[enumScrewCount] < 4, "max value for screw holes is 3.");
 
             for(i = [0 : screwHoles[enumScrewCount]-1])
@@ -197,6 +232,11 @@ module HexFrameCutter
     frameBoardDimension = [convert_in2mm(1), convert_in2mm(2)],
 )
 {
+    debugEcho(str("module_name is ","HexFrameCutter()", 
+        ", frameRadius = ", frameRadius, 
+        ", frameBoardDimension = ", frameBoardDimension
+        ));      
+
     union()
     {
         translate([0,0,-frameBoardDimension.y/2])
