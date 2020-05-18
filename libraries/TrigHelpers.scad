@@ -18,6 +18,10 @@ function AddPoints(p1, p2) = [p1.x + p2.x, p2.y + p2.y, 0];
 
 function testPass(note, value1, value2) = echo(note = note, input = value1, return = value2) [value1, value2];
 
+function Height(x, angle) = tan(angle) * x;
+
+function Angle(x, y) = asin(x / hypotenuse(x,y));
+
 Test();
 
 module Test() 
