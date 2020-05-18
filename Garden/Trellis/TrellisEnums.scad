@@ -19,3 +19,4 @@ enumWaveTypeBoth = 2;
 
 enumFrameTypeSquare = 0;
 enumFrameTypeCircle = 1;
+enumFrameTypeHex = 2;
