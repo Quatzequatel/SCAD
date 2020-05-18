@@ -49,6 +49,7 @@ module Test()
     assert(testPass("convert_ft2in", 1, convert_ft2in(1))[1] == inchesInFoot);
     assert(testPass("convert_in2ft", inchesInFoot, convert_in2ft(inchesInFoot))[1] == 1);
     assert(testPass("convert_in2mm", 1, convert_in2mm(1))[1] == mmPerInch);
+    // assert(testPass("convert_in2mm", 11.71875, convert_in2mm(11.71875))[1] ==  297.656);
     assert(testPass("convert_mm2Inch", mmPerInch, convert_mm2Inch(mmPerInch))[1] == 1);
     assert(testPass("convert_cm2Inch", cmPerInch, convert_cm2Inch(cmPerInch))[1] == 1);
     assert(testPass("convert_ft2mm", 1, convert_ft2mm(1))[1] == inchesInFoot * mmPerInch);

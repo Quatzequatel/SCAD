@@ -6,6 +6,7 @@ i.e. enums
 NozzleWidth = 1.0;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
+ISDEBUGEMODE = true;
 
 function LayersToHeight(layers) = 
   echo(NozzleWidth = NozzleWidth, InitialLayerHeight = InitialLayerHeight, LayerHeight = LayerHeight) 
@@ -14,7 +15,7 @@ function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 
 module debugEcho(args) 
 {
-  if(isDebugMode)
+  if(ISDEBUGEMODE)
   {
     echo(debugEcho = args);
   }
