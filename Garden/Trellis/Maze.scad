@@ -10,6 +10,7 @@ this library is a personal customization of Justin Lin's work
 */
 include <constants.scad>;
 use <convert.scad>;
+use <TrellisFunctions.scad>;
 
 // wall constants
 
@@ -32,31 +33,29 @@ module Test()
     //     starting_maze(maze_rows, maze_columns),  
     //     maze_rows, maze_columns
     // );
-    frameDimension = [300,300];
-    frameBoardDimension = [4 * NozzleWidth, convert_in2mm(0.5)];
-    LatticeDimension = [WallThickness(count = 2), layers2Height(8)];
+    FrameDimension = [300,300];
+    FrameBoardDimension = [WallThickness(count = 8), convert_in2mm(0.5)];
+    LatticeDimension = [WallThickness(count = 4), layers2Height(8)];
     // cellwidth =  FrameBoardDimension.y;
 
-    DrawMazeFrame(frameDimension = frameDimension, frameBoardDimension = frameBoardDimension, latticeDimension = LatticeDimension);
+    DrawMazeFrame
+    (
+        frameDimension = FrameDimension, 
+        frameBoardDimension = FrameBoardDimension, 
+        latticeDimension = LatticeDimension
+    );
     
-    // DrawMazeFrame
-    // (
-    //     rows = floor(FrameDimension.x/cellwidth ), 
-    //     columns = floor(FrameDimension.y/cellwidth ), 
-    //     width = cellwidth, 
-    //     thickness = FrameBoardDimension.x
-    // );
 }
 
 module DrawMazeFrame(frameDimension, frameBoardDimension, latticeDimension)
 {
-    cellwidth =  latticeDimension.x * 5;
+    cellwidth =  latticeDimension.x * 4;
     DrawMaze
     (
         rows = floor(frameDimension.x/cellwidth ), 
         columns = floor(frameDimension.y/cellwidth ), 
         width = cellwidth, 
-        thickness = latticeDimension.y
+        thickness = latticeDimension.x
     );
 }
 
