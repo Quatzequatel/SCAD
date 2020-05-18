@@ -7,6 +7,7 @@ use <Frame.scad>;
 use <SquareLatticeTrellis.scad>;
 use <DiagonalTrellis.scad>;
 use <WaveTrellis.scad>;
+use <MazeLattice.scad>;
 use <TrigHelpers.scad>;
 use <.\\lattice.scad>;
 use <..\\..\\..\\libraries\\SpiralShapes.scad>
@@ -59,9 +60,21 @@ enumincludeArchimedianSpiral = 3;
 enumincludeHorizontalWaveTrellis = 4;
 enumincludeFrameType = 5;
 enumincludeBubbles = 6;
+enumincludeMaze = 6;
 
 function getIncludeProperty(includes, enum) = includes[enum];
-function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis, spiralTrellis, waveTrellis, frameType, bubblesTrellis) =
+function setIncludeProperty
+    (
+        includes, 
+        frame, 
+        diamondStyleTrellis, 
+        squareTrellis, 
+        spiralTrellis, 
+        waveTrellis, 
+        frameType, 
+        bubblesTrellis,
+        mazeTrellis
+    ) =
 [
     frame == undef ? includes[enumincludeFrame] : frame, 
     diamondStyleTrellis == undef ? includes[enumincludeDiamondStyleTrellis] : diamondStyleTrellis, 
@@ -70,6 +83,7 @@ function setIncludeProperty(includes, frame, diamondStyleTrellis, squareTrellis,
     waveTrellis == undef ? includes[enumincludeHorizontalWaveTrellis] : waveTrellis,
     frameType == undef ? includes[enumincludeFrameType] : frameType,
     bubblesTrellis == undef ? includes[enumincludeBubbles] : bubblesTrellis,
+    mazeTrellis == undef ? includes[enumincludeMaze] : mazeTrellis,
 ];
 
 
@@ -81,7 +95,8 @@ Includes = setIncludeProperty
         spiralTrellis = false, 
         waveTrellis = false,
         frameType = enumFrameTypeSquare,
-        bubblesTrellis = true
+        bubblesTrellis = true,
+        mazeTrellis = true
     );
 IntervalCount =2;    
 WaveProperties = setWaveProperty(wave = [], width = 10, height = 50, length = 0, type = enumWaveTypeBoth);
@@ -232,10 +247,23 @@ module Circles
             );
         }
 
+        if(getIncludeProperty(includes, enumincludeMaze))
+        {
+            MazeLattice
+            (
+                frameType = enumFrameTypeCircle,
+                frameDimension = [width, height],
+                frameBoardDimension = FrameBoardDimension,
+                latticeDimension = LatticeDimension,
+                screwHoles = ScrewHoles,
+                showFrame = false
+            );
+        }
+
         CircleFrameCutter
         (
                     frameRadius = frameRadius,
-                    frameBoardDimension = [convertInches2mm(6), convertInches2mm(0.5)]
+                    frameBoardDimension = frameBoardDimension
         ) ;       
     }
 }
@@ -330,12 +358,25 @@ module HexFrames
                     seed = Seed
                 );
             }
+
+            if(getIncludeProperty(includes, enumincludeMaze))
+            {
+                MazeLattice
+                (
+                    frameType = enumFrameTypeHex,
+                    frameDimension = [width, height],
+                    frameBoardDimension = FrameBoardDimension,
+                    latticeDimension = LatticeDimension,
+                    screwHoles = ScrewHoles,
+                    showFrame = false
+                );
+            }            
         }
 
         HexFrameCutter
         (
                     frameRadius = frameRadius,
-                    frameBoardDimension = [convertInches2mm(6), convertInches2mm(0.5)]
+                    frameBoardDimension = FrameBoardDimension
         ) ;       
     }
 }
@@ -432,6 +473,19 @@ module Panel(frameWidth, frameHeight)
                     seed = Seed
                 );
             }
+
+            if(getIncludeProperty(includes, enumincludeMaze))
+            {
+                MazeLattice
+                (
+                    frameType = enumFrameTypeSquare,
+                    frameDimension = [width, height],
+                    frameBoardDimension = frameBoardDimension,
+                    latticeDimension = latticeDimension,
+                    screwHoles = screwHoles,
+                    showFrame = false
+                );
+            }            
         }
 
         SquareFrameCutter(frameDimension = [width, height], frameBoardDimension = frameBoardDimension);
