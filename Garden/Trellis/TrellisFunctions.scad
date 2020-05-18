@@ -45,6 +45,9 @@ function convertFeet2mm(feet) = feet * mmPerFoot;
 function convertInches2mm(inches) = inches * mmPerInch;
 function WallThickness(count) = count * NozzleWidth;
 
+function getActualWidth(frame, board) = frame.x + board.x;
+function getActualHeight(frame, board) = frame.y + board.x;
+
 function height2layers(mm = 1) = mm/LayerHeight;
 function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeight);
 
