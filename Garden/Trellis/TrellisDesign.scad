@@ -111,32 +111,36 @@ Includes = setIncludeProperty
 //Frame type Properties
 SquareProperties = 
 [
-    FrameDimension,         //[0] enumPropertyFrame
-    FrameBoardDimension,    //[1] enumPropertyFrameBoard
-    LatticeDimension,       //[2] enumPropertyLattice
-    ScrewHoles,             //[3] enumPropertyScrewHoles
-    IntervalCount,          //[4] enumPropertyInterval
-    Includes                //[5] enumPropertyInclude.
+    FrameDimension,         //[0] enumPropertyFrame [width (x), depth (y), height (z)]
+    FrameBoardDimension,    //[1] enumPropertyFrameBoard [width (x), depth (y), length (z)] aka 2x4 x|84
+    LatticeDimension,       //[2] enumPropertyLattice  [width (x), depth (y), length (z)] aka 1x2 x|24
+    ScrewHoles,             //[3] enumPropertyScrewHoles [diameter, count], ex [woodScrewShankDiaN_8, 2]
+    IntervalCount,          //[4] enumPropertyInterval, int, howmany lattice to repeat.
+    Includes                //[5] enumPropertyInclude. See above setIncludeProperty()
 ];
 
 CircleProperties = 
 [
-    FrameDimension,         //[0] enumPropertyFrame
-    FrameBoardDimension,    //[1] enumPropertyFrameBoard
-    LatticeDimension,       //[2] enumPropertyLattice
-    ScrewHoles,             //[3] enumPropertyScrewHoles
-    IntervalCount,          //[4] enumPropertyInterval
-    Includes                //[5] enumPropertyInclude.
-];
+    FrameDimension,         //[0] enumPropertyFrame [width (x), depth (y), height (z)]
+    FrameBoardDimension,    //[1] enumPropertyFrameBoard [width (x), depth (y), length (z)] aka 2x4 x|84
+    LatticeDimension,       //[2] enumPropertyLattice  [width (x), depth (y), length (z)] aka 1x2 x|24
+    ScrewHoles,             //[3] enumPropertyScrewHoles [diameter, count], ex [woodScrewShankDiaN_8, 2]
+    IntervalCount,          //[4] enumPropertyInterval, int, howmany lattice to repeat.
+    Includes,               //[5] enumPropertyInclude.
+    [convert_in2mm(1),175, 5, PI] //[6] enumPropertyTrellisSpecific, this is a data bag. Current example:
+                                  //CirclesTrellisData=>[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
+};
 
 HexProperties = 
 [
-    FrameDimension,         //[0] enumPropertyFrame
-    FrameBoardDimension,    //[1] enumPropertyFrameBoard
-    LatticeDimension,       //[2] enumPropertyLattice
-    ScrewHoles,             //[3] enumPropertyScrewHoles
-    IntervalCount,          //[4] enumPropertyInterval
-    Includes                //[5] enumPropertyInclude.
+    FrameDimension,         //[0] enumPropertyFrame [width (x), depth (y), height (z)]
+    FrameBoardDimension,    //[1] enumPropertyFrameBoard [width (x), depth (y), length (z)] aka 2x4 x|84
+    LatticeDimension,       //[2] enumPropertyLattice  [width (x), depth (y), length (z)] aka 1x2 x|24
+    ScrewHoles,             //[3] enumPropertyScrewHoles [diameter, count], ex [woodScrewShankDiaN_8, 2]
+    IntervalCount,          //[4] enumPropertyInterval, int, howmany lattice to repeat.
+    Includes,               //[5] enumPropertyInclude.
+    [convert_in2mm(1),175, 5, PI] //[6] enumPropertyTrellisSpecific, this is a data bag. Current example:
+                                  //CirclesTrellisData=>[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
 ];
 
 
