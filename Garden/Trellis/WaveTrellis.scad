@@ -18,22 +18,19 @@ WaveTrellis();
 */
 module WaveTrellis
     (
-        frameDimension = [200, 200],
-        frameBoardDimension = [4, 12.7] , 
-        latticeDimension = [2, 2.08],
-        waveDimensions = [10, 40, 0, enumWaveTypeBoth],
-        intervalCount = 3
+        frameProperties,
+        waveDimensions = [10, 40, 0, enumWaveTypeBoth]
     )
 {
-    intervalWidth = frameDimension.y / (intervalCount + 1);
+    intervalWidth = frameProperties[enumPropertyFrame].y / (frameProperties[enumPropertyInterval] + 1);
     // intervalWidth = (frameDimension.y - waveDimensions.y) / (intervalCount + 1);
     waveType = waveDimensions[enumWaveType];
-    echo(intervalWidth = intervalWidth, frameDimension_y = frameDimension.y, count = (frameDimension.y/intervalWidth -1));
+    echo(intervalWidth = intervalWidth, frameDimension_y = frameProperties[enumPropertyFrame].y, count = (frameProperties[enumPropertyFrame].y/intervalWidth -1));
     //vertical
     // translate([ - frameDimension.x/2, - frameDimension.y/2, 0])
-     translate([ - frameDimension.x/2, 0, 0])
+     translate([ - frameProperties[enumPropertyFrame].x/2, 0, 0])
     {
-        for(i = [0 : 1 : intervalCount-1])
+        for(i = [0 : 1 : frameProperties[enumPropertyInterval]-1])
         {
             let ( waveType = 
                 (
@@ -45,12 +42,12 @@ module WaveTrellis
             {
                 // echo(i = i, intervalWidth = intervalWidth,  t = [ 0, ((i * intervalWidth + intervalWidth) + waveDimensions.y/2) - frameDimension.y/2, 0]);
                 // translate([ 0, ((i * intervalWidth + intervalWidth) + waveDimensions.y/2) - frameDimension.y/2, 0])
-                translate([ 0, ((i * intervalWidth + intervalWidth)) - frameDimension.y/2, 0])
+                translate([ 0, ((i * intervalWidth + intervalWidth)) - frameProperties[enumPropertyFrame].y/2, 0])
                 render() {
                     polyline
                         (
-                            [waveDimensions.x, waveDimensions.y, frameDimension.x, waveType],
-                            latticeDimension = latticeDimension
+                            [waveDimensions.x, waveDimensions.y, frameProperties[enumPropertyFrame].x, waveType],
+                            latticeDimension = frameProperties[enumPropertyLattice]
                         );                     
                 }
             }

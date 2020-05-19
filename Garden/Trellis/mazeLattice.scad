@@ -4,6 +4,7 @@
 */
 include <TrellisEnums.scad>;
 include <constants.scad>;
+use <TrellisFunctions.scad>;
 use <Frame.scad>;
 use <vectorHelpers.scad>;
 use <shapesByPoints.scad>;
@@ -13,37 +14,52 @@ use <trigHelpers.scad>;
 use <TrellisFunctions.scad>;
 use <Maze.scad>;
 
-FrameType = enumFrameTypeSquare;
-FrameDimension = [300,300];
-FrameBoardDimension = [WallThickness(count = 12), convert_in2mm(0.5)];
-LatticeDimension = [WallThickness(count = 3), layers2Height(8)];
-ScrewHoles = [woodScrewShankDiaN_8, 2]; //diameter, count/side.
+ShowFrame = true;
 
 test();
 module test(showFrame = true)
 {
+    //Global Properties
+    FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)]; 
+    FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
+    LatticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
+    ScrewHoles = [woodScrewShankDiaN_8, 2];
+    IntervalCount =2;    
+    Includes = setIncludeProperty
+        ([], 
+            frame = true, 
+            diamondStyleTrellis = false, 
+            squareTrellis = false, 
+            spiralTrellis = false, 
+            waveTrellis = false,
+            frameType = enumFrameTypeSquare
+        );
+
+    //Frame type Properties
+    frameProperties = 
+    [
+        FrameDimension,         //[0] enumPropertyFrame
+        FrameBoardDimension,    //[1] enumPropertyFrameBoard
+        LatticeDimension,       //[2] enumPropertyLattice
+        ScrewHoles,             //[3] enumPropertyScrewHoles
+        IntervalCount,          //[4] enumPropertyInterval
+        Includes                //[5] enumPropertyInclude.
+    ];
+
     MazeLattice
     (
-        frameType = enumFrameTypeCircle,
-        frameDimension = FrameDimension,
-        frameBoardDimension = FrameBoardDimension,
-        latticeDimension = LatticeDimension,
-        screwHoles = ScrewHoles,
+        frameProperties = frameProperties,
         showFrame = showFrame
     );
 }
 
 module MazeLattice
 (
-    frameType,
-    frameDimension,
-    frameBoardDimension,
-    latticeDimension,
-    screwHoles,
+    frameProperties, 
     showFrame = false
 )
 {
-    echo(frameType = frameType, showFrame = showFrame);
+    echo(frameType = frameProperties[enumPropertyInclude][enumincludeFrameType], showFrame = showFrame);
 
     difference()
     {
@@ -51,81 +67,70 @@ module MazeLattice
         {
            if(showFrame)
             {
-                if(frameType == enumFrameTypeSquare)
+                if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeSquare)
                 {
-                    echo(frameType = "enumFrameTypeSquare", frameBoardDimension=frameBoardDimension);
+                    echo(frameType = "enumFrameTypeSquare", frameBoardDimension=frameProperties[enumPropertyFrameBoard]);
 
                     SquareFrame
                     (
-                        frameDimension = frameDimension,
-                        frameBoardDimension = FrameBoardDimension,
-                        screwHoles = ScrewHoles
+                        frameProperties = frameProperties
                     );
                 }
 
-                if(frameType == enumFrameTypeCircle)
+                if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeCircle)
                 {
-                    echo(frameType = "enumFrameTypeCircle", frameBoardDimension=frameBoardDimension);
+                    echo(frameType = "enumFrameTypeCircle", frameBoardDimension=frameProperties[enumPropertyFrameBoard]);
 
-                    translate([0,0, frameBoardDimension.y/2])
+                    translate([0,0, frameProperties[enumPropertyFrameBoard].y/2])
                     CircleFrame
                     (
-                        frameRadius = frameDimension.x,
-                        frameBoardDimension = frameBoardDimension,
-                        screwHoles = screwHoles
+                        frameProperties = frameProperties
                     );
                 }
 
-                if(frameType == enumFrameTypeHex)
+                if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeHex)
                 {
-                    echo(frameType = "enumFrameTypeHex", frameBoardDimension=frameBoardDimension);
+                    echo(frameType = "enumFrameTypeHex", frameBoardDimension=frameProperties[enumPropertyFrameBoard]);
 
-                    translate([0,0, frameBoardDimension.y/2])
+                    translate([0,0, frameProperties[enumPropertyFrameBoard].y/2])
                     HexFrame
                     (
-                        frameRadius = frameDimension.x,
-                        frameBoardDimension = frameBoardDimension,
-                        screwHoles = screwHoles
+                        frameProperties = frameProperties
                     );
                 }                                
             }
 
-            translate([-frameDimension.x/2, -frameDimension.y/2, 0])
-            linear_extrude(height = latticeDimension.y)
+            translate([-frameProperties[enumPropertyFrame].x/2, -frameProperties[enumPropertyFrame].y/2, 0])
+            linear_extrude(height = frameProperties[enumPropertyLattice].y)
             DrawMazeFrame
                 (
-                    frameDimension = frameDimension, 
-                    frameBoardDimension = frameBoardDimension, 
-                    latticeDimension = latticeDimension
+                    frameProperties = frameProperties
                 );
         }
 
         if(showFrame)
         {
-            if(FrameType == enumFrameTypeSquare)
+            if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeSquare)
             {
                 SquareFrameCutter
                     (
-                        frameDimension = frameDimension, 
-                        frameBoardDimension = frameBoardDimension
+                        frameProperties = frameProperties
                     );
             }
             
-            if(frameType == enumFrameTypeCircle)
+            if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeCircle)
             {
                 CircleFrameCutter
                 (
-                            frameRadius = frameDimension.x,
-                            frameBoardDimension = frameBoardDimension
+                    frameProperties = frameProperties
                 ) ;
             }
 
-            if(frameType == enumFrameTypeHex)
+            if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeHex)
             {
                 HexFrameCutter
                 (
-                            frameRadius = frameDimension.x,
-                            frameBoardDimension = frameBoardDimension
+                    frameProperties = frameProperties
                 ) ;
             } 
         }

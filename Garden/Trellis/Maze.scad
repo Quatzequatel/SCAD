@@ -9,6 +9,7 @@ this library is a personal customization of Justin Lin's work
 
 */
 include <constants.scad>;
+include <TrellisEnums.scad>;
 use <convert.scad>;
 use <TrellisFunctions.scad>;
 
@@ -28,34 +29,62 @@ Test();
 
 module Test()
 {
+    //Global Properties
+    FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)]; 
+    FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
+    LatticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
+    ScrewHoles = [woodScrewShankDiaN_8, 2];
+    IntervalCount =2;    
+    Includes = setIncludeProperty
+        ([], 
+            frame = true, 
+            diamondStyleTrellis = false, 
+            squareTrellis = false, 
+            spiralTrellis = false, 
+            waveTrellis = false,
+            frameType = enumFrameTypeSquare
+        );
+
+    //Frame type Properties
+    frameProperties = 
+    [
+        FrameDimension,         //[0] enumPropertyFrame
+        FrameBoardDimension,    //[1] enumPropertyFrameBoard
+        LatticeDimension,       //[2] enumPropertyLattice
+        ScrewHoles,             //[3] enumPropertyScrewHoles
+        IntervalCount,          //[4] enumPropertyInterval
+        Includes                //[5] enumPropertyInclude.
+    ];
+
     // maze_blocks = go_maze(
     //     1, 1,   // the starting point
     //     starting_maze(maze_rows, maze_columns),  
     //     maze_rows, maze_columns
     // );
-    FrameDimension = [300,300];
-    FrameBoardDimension = [WallThickness(count = 8), convert_in2mm(0.5)];
-    LatticeDimension = [WallThickness(count = 4), layers2Height(8)];
+    // FrameDimension = [300,300];
+    // FrameBoardDimension = [WallThickness(count = 8), convert_in2mm(0.5)];
+    // LatticeDimension = [WallThickness(count = 4), layers2Height(8)];
     // cellwidth =  FrameBoardDimension.y;
 
     DrawMazeFrame
     (
-        frameDimension = FrameDimension, 
-        frameBoardDimension = FrameBoardDimension, 
-        latticeDimension = LatticeDimension
+        frameProperties = frameProperties
     );
     
 }
 
-module DrawMazeFrame(frameDimension, frameBoardDimension, latticeDimension)
+module DrawMazeFrame
+(
+    frameProperties
+)
 {
-    cellwidth =  latticeDimension.x * 4;
+    cellwidth =  frameProperties[enumPropertyLattice].x * 4;
     DrawMaze
     (
-        rows = floor(frameDimension.x/cellwidth ), 
-        columns = floor(frameDimension.y/cellwidth ), 
+        rows = floor(frameProperties[enumPropertyFrame].x/cellwidth ), 
+        columns = floor(frameProperties[enumPropertyFrame].y/cellwidth ), 
         width = cellwidth, 
-        thickness = latticeDimension.x
+        thickness = frameProperties[enumPropertyLattice].x
     );
 }
 
