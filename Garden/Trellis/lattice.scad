@@ -20,7 +20,7 @@ module test()
     ScrewHoles = [woodScrewShankDiaN_8, 2];
     IntervalCount =2;    
     //[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
-    CirclesTrellisData = [convert_in2mm(1),175, 5, PI];
+    CirclesTrellisData = ["circlestrellisdata", [convert_in2mm(1),175, 8, PI]];
     Includes = setIncludeProperty
         ([], 
             frame = true, 
@@ -43,40 +43,48 @@ module test()
         CirclesTrellisData      //[6] enumPropertyTrellisSpecific
     ];
 
-    CircleLattice(frameProperties = frameProperties );
-    BubblesTrellis
+    // CircleLattice(frameProperties = frameProperties );
+    DrawBubbles
     (
         frameProperties = frameProperties        
     );
 }
 
-module BubblesTrellis
+module DrawBubbles
 (
     frameProperties
 )
 {
+    circlesTrellisData = getKeyValue(frameProperties, "circlestrellisdata");
+    // assert(circlesTrellisData == undef, str("circlestrellisdata, key not found in frameProperties"))
+    echo(circlesTrellisData = circlesTrellisData);
+    echo(frameProperties = frameProperties);
     points = rands2Points
         (
             v = randomVector
                 (
-                    3 * frameProperties[enumPropertyTrellisSpecific][enumCircleCount], 
-                    frameProperties[enumPropertyTrellisSpecific][enumCircleMinRadius], 
-                    frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius], 
-                    frameProperties[enumPropertyTrellisSpecific][enumCircleSeed]
+                    3 * circlesTrellisData[enumCircleCount], 
+                    circlesTrellisData[enumCircleMinRadius], 
+                    circlesTrellisData[enumCircleMaxRadius], 
+                    circlesTrellisData[enumCircleSeed]
                 )
         );
-    echo(points = points)
-    translate([-frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]/2, -frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]/2,0])
+    // echo(points = points)
+    translate([-circlesTrellisData[enumCircleMaxRadius]/2, -circlesTrellisData[enumCircleMaxRadius]/2,0])
     union()
     {
-        for( i = [0: 2: 2*(frameProperties[enumPropertyTrellisSpecific][enumCircleCount] - 1)])
+        for( i = [0: 2: 2*(circlesTrellisData[enumCircleCount] - 1)])
         {
             let( diameter = Distance(p1 = [points[i].x, points[i].y], p2 = [points[i + 1].x, points[i + 1].y]))
             {
                 echo(diameter= frameProperties[enumPropertyFrameBoard].x, latticeDimension = frameProperties[enumPropertyLattice]);
 
                 translate([points[i].x, points[i].y, 0]) 
-                CircleLattice(frameProperties);
+                CircleLattice
+                (
+                    radius = diameter/2,
+                    latticeDimension = frameProperties[enumPropertyLattice]                 
+                );
             }
         }        
     }
@@ -85,15 +93,18 @@ module BubblesTrellis
 
 module CircleLattice
 (
-    frameProperties
+    radius,
+    latticeDimension
 )
 {
-    r = frameProperties[enumPropertyFrameBoard].x/2;
+    // debugEcho("lattice.scad::CircleLattice(inputs)", [radius, latticeDimension]);
+    // r = frameProperties[enumPropertyFrameBoard].x/2;
+    // circlesTrellisData = getKeyValue(frameProperties, "circlestrellisdata");
     rotate_extrude(angle = 360)
     {
-        translate([r,0,0])
+        translate([radius, 0 , 0])
         {
-            square(size = frameProperties[enumPropertyLattice], center = true);
+            square(size = latticeDimension, center = true);
         }                     
     }
 }

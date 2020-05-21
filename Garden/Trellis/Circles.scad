@@ -25,7 +25,7 @@ module Test()
     ScrewHoles = [woodScrewShankDiaN_8, 2];
     IntervalCount =2;    
     //[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
-    CirclesTrellisData = [convert_in2mm(1),175, 5, PI];
+    CirclesTrellisData = ["circlestrellisdata", [convert_in2mm(1), 175, 2, PI]];
     Includes = setIncludeProperty
         ([], 
             frame = true, 
@@ -71,18 +71,20 @@ module BubblesTrellis
         frameProperties
     )
 {
-    echo(enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
-    for( i = 
-        [
-            frameProperties[enumPropertyTrellisSpecific][enumCircleMinRadius] : 
-            4*frameProperties[enumPropertyFrameBoard].x : 
-            frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]
-        ]
-    )
-    {
-        echo(i = i, enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
-        CircleLattice(frameProperties = frameProperties);
-    }
+    DrawBubbles(frameProperties);
+    // echo(enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
+    // for( i = 
+    //     [
+    //         frameProperties[enumPropertyTrellisSpecific][enumCircleMinRadius] : 
+    //         4*frameProperties[enumPropertyFrameBoard].x : 
+    //         frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]
+    //     ]
+    // )
+    // {
+    //     echo(i = i, enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
+    //     CircleLattice(frameProperties = frameProperties);
+    // }
+
 }
 
 function RandomPoint(min_value = 0, max_value = 0, value_count = 4, seed = PI) = 

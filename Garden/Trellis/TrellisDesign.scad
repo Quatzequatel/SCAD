@@ -1,6 +1,7 @@
 
 include <constants.scad>;
 include <TrellisEnums.scad>;
+use <convert.scad>;
 use <TrellisFunctions.scad>;
 use <polyline2d.scad>;
 use <Frame.scad>;
@@ -95,7 +96,7 @@ FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)];
 FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
 LatticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
 ScrewHoles = [ScrewHole_OD, ScrewHoleCount];
-IntervalCount =2;    
+IntervalCount =[3,3];    
 Includes = setIncludeProperty
     ([], 
         frame = true, 
@@ -129,7 +130,7 @@ CircleProperties =
     Includes,               //[5] enumPropertyInclude.
     [convert_in2mm(1),175, 5, PI] //[6] enumPropertyTrellisSpecific, this is a data bag. Current example:
                                   //CirclesTrellisData=>[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
-};
+];
 
 HexProperties = 
 [
@@ -436,16 +437,16 @@ module HexFrames
 }
 
 
-module Square_Frame(squareProperties) 
+module Square_Frame(frameProperties) 
 {
-    frameDimension = squareProperties[enumPropertyFrame]; 
-    frameBoardDimension = squareProperties[enumPropertyFrameBoard]; 
-    latticeDimension = squareProperties[enumPropertyLattice]; 
+    frameDimension = frameProperties[enumPropertyFrame]; 
+    frameBoardDimension = frameProperties[enumPropertyFrameBoard]; 
+    latticeDimension = frameProperties[enumPropertyLattice]; 
     // width = frameWidth;
     // height = frameHeight;
-    screwHoles = squareProperties[enumPropertyScrewHoles];     
-    intervalCount = squareProperties[enumPropertyInterval];
-    includes = squareProperties[enumPropertyInclude]; 
+    screwHoles = frameProperties[enumPropertyScrewHoles];     
+    intervalCount = frameProperties[enumPropertyInterval];
+    includes = frameProperties[enumPropertyInclude]; 
 
     difference()
     {
@@ -457,9 +458,7 @@ module Square_Frame(squareProperties)
                 echo(Panel = "SquareFrame");
                 SquareFrame
                 (
-                    frameDimension = frameDimension,
-                    frameBoardDimension = frameBoardDimension,
-                    screwHoles = [4, 3]
+                    frameProperties
                 );
             }
 
@@ -469,10 +468,7 @@ module Square_Frame(squareProperties)
                 // rotate([90,0,0])
                 DiagonalLattice
                 (
-                    frameDimension = frameDimension, 
-                    frameBoardDimension = frameBoardDimension , 
-                    latticeDimension = latticeDimension,
-                    intervalCount = intervalCount
+                    frameProperties
                 );
             }
 
@@ -481,10 +477,7 @@ module Square_Frame(squareProperties)
                 translate([- frameDimension.x/2,- frameDimension.y/2, 0])
                 SquareLatticeTrellis
                 (
-                    frameDimension = frameDimension, 
-                    frameBoardDimension = frameBoardDimension , 
-                    latticeDimension = latticeDimension,
-                    intervalCount = intervalCount
+                    frameProperties
                 );
             }
 
@@ -497,10 +490,7 @@ module Square_Frame(squareProperties)
                     {
                         ArchimedianSpiralTrellis
                         (
-                            width = width, 
-                            height = height, 
-                            frameBoardDimension = frameBoardDimension , 
-                            latticeDimension = latticeDimension              
+                            frameProperties              
                         );
                     }            
                 }
@@ -510,11 +500,7 @@ module Square_Frame(squareProperties)
             {
                 WaveTrellis
                 (
-                    frameDimension = [width, height],
-                    frameBoardDimension = frameBoardDimension , 
-                    latticeDimension = latticeDimension,
-                    waveDimensions = WaveProperties,
-                    intervalCount = intervalCount
+                    frameProperties
                 );
             }
 
@@ -522,11 +508,7 @@ module Square_Frame(squareProperties)
             {
                 BubblesTrellis
                 (
-                    minframeRadius = hypotenuse(squareProperties[enumPropertyFrame].x, squareProperties[enumPropertyFrame].y)/10,
-                    maxframeRadius = hypotenuse(squareProperties[enumPropertyFrame].x, squareProperties[enumPropertyFrame].y),
-                    latticeDimension = latticeDimension,
-                    count = intervalCount * 4,
-                    seed = Seed
+                    frameProperties
                 );
             }
 
@@ -534,17 +516,12 @@ module Square_Frame(squareProperties)
             {
                 MazeLattice
                 (
-                    frameType = enumFrameTypeSquare,
-                    frameDimension = [width, height],
-                    frameBoardDimension = frameBoardDimension,
-                    latticeDimension = latticeDimension,
-                    screwHoles = screwHoles,
-                    showFrame = false
+                    frameProperties
                 );
             }            
         }
 
-        SquareFrameCutter(frameDimension = [width, height], frameBoardDimension = frameBoardDimension);
+        SquareFrameCutter(frameProperties);
     }
 }
 
@@ -552,11 +529,7 @@ module Square_Frame(squareProperties)
 
 module ArchimedianSpiralTrellis
 (
-        width = 0,
-        height = 0,
-        frameBoardDimension = [0,0] , 
-        latticeDimension = [0,0], 
-        intervalCount = 4
+        frameProperties
 )
 {
     union()
