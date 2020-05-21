@@ -3,15 +3,15 @@
 */
 
 //length of hypotenuse for right angled triangle.
-function hypotenuse(a, b) = echo(hypotenuse = 1, a = a, b = b) 
+function hypotenuse(a, b) = //echo(hypotenuse = 1, a = a, b = b) 
     sqrt((a * a) + (b * b));
 //point 2 given point 1 and angle assuming in a right angle triangle.
 function p2(p1, angle) = [p1.x * cos(angle), p1.y * sin(angle)];
 
-function Distance(p1, p2) = echo(Distance = 1, p1 = p1,p2 = p2) 
+function Distance(p1, p2) = //echo(Distance = 1, p1 = p1,p2 = p2) 
     hypotenuse((p1.x - p2.x), (p1.y - p2.y));
 
-function sqr(i) = echo(sqr = 1, i=i) 
+function sqr(i) = //echo(sqr = 1, i=i) 
     i * i;
 
 function AddPoints(p1, p2) = [p1.x + p2.x, p2.y + p2.y, 0];

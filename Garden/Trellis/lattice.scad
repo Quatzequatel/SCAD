@@ -55,42 +55,69 @@ module DrawBubbles
     frameProperties
 )
 {
-    circlesTrellisData = getKeyValue(frameProperties, "circlestrellisdata") != undef ?
-        getKeyValue(frameProperties, "circlestrellisdata") :
-        getKeyValue(frameProperties, "bublestrellis");
-
-    // assert(circlesTrellisData == undef, str("circlestrellisdata, key not found in frameProperties"))
-    echo(circlesTrellisData = circlesTrellisData);
-    echo(frameProperties = frameProperties);
-    points = rands2Points
-        (
-            v = randomVector
-                (
-                    3 * circlesTrellisData[enumCircleCount], 
-                    circlesTrellisData[enumCircleMinRadius], 
-                    circlesTrellisData[enumCircleMaxRadius], 
-                    circlesTrellisData[enumCircleSeed]
-                )
-        );
-    // echo(points = points)
-    translate([-circlesTrellisData[enumCircleMaxRadius]/2, -circlesTrellisData[enumCircleMaxRadius]/2,0])
-    union()
+    let
+    (
+        frameDictionary = getKeyValue(frameProperties, "framedimensionproperties"),
+        frameSize = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frame dimension"),
+        frameBoard = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frameboard dimension"),
+        screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
+        featuresDictionary = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "trellisfeatures"),
+        // latticeDictionary = getKeyValue(frameProperties, "bublestrellis")
+        latticeDictionary = getKeyValue(frameProperties, "circlestrellisdata") != undef ?
+            getKeyValue(frameProperties, "circlestrellisdata") :
+            getKeyValue(frameProperties, "bublestrellis")  
+        // debugmode = getKeyValue(getKeyValue(frameProperties, "squaretrellisproperties"), "debug")
+    )    
     {
-        for( i = [0: 2: 2*(circlesTrellisData[enumCircleCount] - 1)])
+        assert(circlesTrellisData != undef, str("circlestrellisdata or bublestrellis, dictionary not found in frameProperties"));
+        let
+        (
+            minRadius = getKeyValue(latticeDictionary, "minRadius"),
+            maxRadius = getKeyValue(latticeDictionary, "maxRadius"),
+            circleCount = getKeyValue(latticeDictionary, "circleCount"),
+            Seed = getKeyValue(latticeDictionary, "Seed"),
+            latticeDimension = getLatticeSize(latticeDictionary),
+            debugmode = getKeyValue(latticeDictionary, "debug")
+        )
         {
-            let( diameter = Distance(p1 = [points[i].x, points[i].y], p2 = [points[i + 1].x, points[i + 1].y]))
-            {
-                echo(diameter= frameProperties[enumPropertyFrameBoard].x, latticeDimension = frameProperties[enumPropertyLattice]);
+            debugEcho("minRadius", minRadius, debugmode);
+            debugEcho("maxRadius", maxRadius, debugmode);
+            debugEcho("circleCount", circleCount, debugmode);
+            debugEcho("Seed", Seed, debugmode);
 
-                translate([points[i].x, points[i].y, 0]) 
-                CircleLattice
+            points = rands2Points
                 (
-                    radius = diameter/2,
-                    latticeDimension = frameProperties[enumPropertyLattice]                 
+                    v = randomVector
+                        (
+                            3 * circleCount, 
+                            minRadius, 
+                            maxRadius, 
+                            Seed
+                        )
                 );
+            // echo(points = points)
+            translate([-maxRadius/2, -maxRadius/2,0])
+            union()
+            {
+                for( i = [0: 2: 2*(circleCount - 1)])
+                {
+                    let( diameter = Distance(p1 = [points[i].x, points[i].y], p2 = [points[i + 1].x, points[i + 1].y]))
+                    {
+                        echo(diameter= frameBoard.x, latticeDimension = latticeDimension);
+
+                        translate([points[i].x, points[i].y, 0]) 
+                        CircleLattice
+                        (
+                            radius = diameter/2,
+                            latticeDimension = latticeDimension                 
+                        );
+                    }
+                }        
             }
-        }        
+        }
     }
+
+
 
 }
 
@@ -101,7 +128,7 @@ module CircleLattice
 )
 {
     // debugEcho("lattice.scad::CircleLattice(inputs)", [radius, latticeDimension]);
-    // r = frameProperties[enumPropertyFrameBoard].x/2;
+    // r = frameBoard.x/2;
     // circlesTrellisData = getKeyValue(frameProperties, "circlestrellisdata");
     rotate_extrude(angle = 360)
     {
