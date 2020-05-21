@@ -16,37 +16,56 @@ module test()
     //Global Properties
     FrameBoardDimension = [WallThickness(count = 4), convert_in2mm(0.5)]; 
     FrameDimension = [convert_in2mm(12) - FrameBoardDimension.y, convert_in2mm(12) - FrameBoardDimension.y];
-    LatticeDimension = setDimension([], depth = WallThickness(count = 2), thickness = layers2Height(8)); 
-    ScrewHoles = [woodScrewShankDiaN_8, 2];
-    IntervalCount =2;    
-    //[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
-    CirclesTrellisData = ["circlestrellisdata", [convert_in2mm(1),175, 8, PI]];
-    Includes = setIncludeProperty
-        ([], 
-            frame = true, 
-            diamondStyleTrellis = false, 
-            squareTrellis = false, 
-            spiralTrellis = false, 
-            waveTrellis = false,
-            frameType = enumFrameTypeSquare
-        );
 
-    //Frame type Properties
-    frameProperties = 
+    FrameDimensionProperties = 
     [
-        FrameDimension,         //[0] enumPropertyFrame
-        FrameBoardDimension,    //[1] enumPropertyFrameBoard
-        LatticeDimension,       //[2] enumPropertyLattice
-        ScrewHoles,             //[3] enumPropertyScrewHoles
-        IntervalCount,          //[4] enumPropertyInterval
-        Includes,               //[5] enumPropertyInclude.
-        CirclesTrellisData      //[6] enumPropertyTrellisSpecific
+        "framedimensionproperties",
+        [
+            ["frame type", enumFrameTypeSquare],
+            ["frame dimension", FrameDimension],
+            ["frameboard dimension", FrameBoardDimension],
+            ["screw holes", [woodScrewShankDiaN_4, 1]],
+            ["debug", true]
+        ]
     ];
 
-    // CircleLattice(frameProperties = frameProperties );
+    LatticeProperties = 
+    [
+        "lattice properties",
+        [
+            ["width", WallThickness(count = 2)],
+            ["depth", layers2Height(8)],
+            ["height", 0]
+        ]
+    ];    
+
+    LatticeDimension = setDimension([], depth = WallThickness(count = 2), thickness = layers2Height(8)); 
+
+    //[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
+    CirclesTrellisData = 
+        [
+            "circlestrellisdata", 
+            [
+                ["minRadius", convert_in2mm(1)],
+                ["maxRadius", 175],
+                ["circleCount", 18],
+                ["Seed", PI],
+                LatticeProperties,
+                ["debug", true]
+            ]
+        ];
+
+
+    //Frame type Properties
+    FrameProperties = 
+    [
+        FrameDimensionProperties,
+        CirclesTrellisData 
+    ];
+
     DrawBubbles
     (
-        frameProperties = frameProperties        
+        frameProperties = FrameProperties
     );
 }
 
@@ -69,7 +88,7 @@ module DrawBubbles
         // debugmode = getKeyValue(getKeyValue(frameProperties, "squaretrellisproperties"), "debug")
     )    
     {
-        assert(circlesTrellisData != undef, str("circlestrellisdata or bublestrellis, dictionary not found in frameProperties"));
+        assert(latticeDictionary != undef, str("circlestrellisdata or bublestrellis, dictionary not found in frameProperties"));
         let
         (
             minRadius = getKeyValue(latticeDictionary, "minRadius"),
@@ -103,7 +122,7 @@ module DrawBubbles
                 {
                     let( diameter = Distance(p1 = [points[i].x, points[i].y], p2 = [points[i + 1].x, points[i + 1].y]))
                     {
-                        echo(diameter= frameBoard.x, latticeDimension = latticeDimension);
+                        debugEcho("DrawBubbles()", [["diameter", diameter], ["p1", [points[i].x, points[i].y]], ["p2", [points[i + 1].x, points[i + 1]]]], debugmode);
 
                         translate([points[i].x, points[i].y, 0]) 
                         CircleLattice
@@ -127,9 +146,6 @@ module CircleLattice
     latticeDimension
 )
 {
-    // debugEcho("lattice.scad::CircleLattice(inputs)", [radius, latticeDimension]);
-    // r = frameBoard.x/2;
-    // circlesTrellisData = getKeyValue(frameProperties, "circlestrellisdata");
     rotate_extrude(angle = 360)
     {
         translate([radius, 0 , 0])
