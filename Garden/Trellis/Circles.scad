@@ -21,49 +21,89 @@ module Test()
     //Global Properties
     FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)]; 
     FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
-    LatticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
-    ScrewHoles = [woodScrewShankDiaN_8, 2];
-    IntervalCount =2;    
+
+    FrameDimensionProperties = 
+    [
+        "framedimensionproperties",
+        [
+            ["frame type", enumFrameTypeSquare],
+            ["frame dimension", FrameDimension],
+            ["frameboard dimension", FrameBoardDimension],
+            ["screw holes", [woodScrewShankDiaN_4, 1]],
+            ["debug", true]
+        ]
+    ];
+
+    LatticeProperties = 
+    [
+        "lattice properties",
+        [
+            ["width", WallThickness(count = 2)],
+            ["depth", layers2Height(8)],
+            ["height", 0]
+        ]
+    ]; 
+
     //[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
-    CirclesTrellisData = ["circlestrellisdata", [convert_in2mm(1), 175, 2, PI]];
-    Includes = setIncludeProperty
-        ([], 
-            frame = true, 
-            diamondStyleTrellis = false, 
-            squareTrellis = false, 
-            spiralTrellis = false, 
-            waveTrellis = false,
-            frameType = enumFrameTypeSquare
-        );
+    CirclesTrellisData = 
+        [
+            "circlestrellisdata", 
+            [
+                ["minRadius", convert_in2mm(1)],
+                ["maxRadius", 175],
+                ["circleCount", 18],
+                ["Seed", PI],
+                LatticeProperties,
+                ["debug", true]
+            ]
+        ];
 
     //Frame type Properties
-    frameProperties = 
+    FrameProperties = 
     [
-        FrameDimension,         //[0] enumPropertyFrame
-        FrameBoardDimension,    //[1] enumPropertyFrameBoard
-        LatticeDimension,       //[2] enumPropertyLattice
-        ScrewHoles,             //[3] enumPropertyScrewHoles
-        IntervalCount,          //[4] enumPropertyInterval
-        Includes,               //[5] enumPropertyInclude.
-        CirclesTrellisData      //[6] enumPropertyTrellisSpecific
+        FrameDimensionProperties,
+        CirclesTrellisData 
     ];
 
     // CirclesTrellis(frameProperties);
-    BubblesTrellis(frameProperties);
+    BubblesTrellis(FrameProperties);
 }
 
 module CirclesTrellis
-    (
-        frameProperties
-    )
+(
+    frameProperties
+)
 {
-    for( i = [frameProperties[enumPropertyTrellisSpecific][enumCircleMinRadius] : 4*frameProperties[enumPropertyFrameBoard].x : frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]])
+    let
+    (
+        frameDictionary = getKeyValue(frameProperties, "framedimensionproperties"),
+        frameSize = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frame dimension"),
+        frameBoard = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frameboard dimension"),
+        screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
+        featuresDictionary = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "trellisfeatures"),
+        latticeDictionary = getKeyValue(frameProperties, "bublestrellis")
+        // debugmode = getKeyValue(getKeyValue(frameProperties, "squaretrellisproperties"), "debug")
+    )    
     {
-        CircleFrame
+        let
         (
-            frameProperties = frameProperties
-        );
+            minRadius = getKeyValue(latticeDictionary, "minRadius"),
+            maxRadius = getKeyValue(latticeDictionary, "maxRadius"),
+            circleCount = getKeyValue(latticeDictionary, "circleCount"),
+            Seed = getKeyValue(latticeDictionary, "Seed"),
+            debugmode = getKeyValue(latticeDictionary, "debug")
+        )
+        {
+            for( i = [minRadius : 4*frameBoard.x : maxRadius])
+            {
+                CircleFrame
+                (
+                    frameProperties = frameProperties
+                );
+            }            
+        }
     }
+
 }
 
 module BubblesTrellis
@@ -72,18 +112,6 @@ module BubblesTrellis
     )
 {
     DrawBubbles(frameProperties);
-    // echo(enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
-    // for( i = 
-    //     [
-    //         frameProperties[enumPropertyTrellisSpecific][enumCircleMinRadius] : 
-    //         4*frameProperties[enumPropertyFrameBoard].x : 
-    //         frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]
-    //     ]
-    // )
-    // {
-    //     echo(i = i, enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
-    //     CircleLattice(frameProperties = frameProperties);
-    // }
 
 }
 

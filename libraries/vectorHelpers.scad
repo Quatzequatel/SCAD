@@ -42,7 +42,7 @@ function vGetValue(v, idx)= v[idx];
     use as a dictionary look up
 */
 function getKeyValue(v, key, i = 0, result) = 
-    assert(isVector(v), str(v, "is not an array."))
+    assert(isVector(v), str("parameter v is not an array."))
     privateGetKeyValue(v, key);
 
 

@@ -17,7 +17,6 @@ module test()
     //Global Properties
     FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)]; 
     FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
-    IntervalCount =2;    
 
     FrameDimensionProperties = 
     [
