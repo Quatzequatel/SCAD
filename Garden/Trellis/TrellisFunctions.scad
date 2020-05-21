@@ -8,7 +8,13 @@ use <vectorHelpers.scad>;
 
 function getFrameProperty(fp) = fp[enumPropertyFrame];
 function getFrameBoardDimension(fp) =  fp[enumPropertyFrameBoard];
-function getLatticeDimension(fp) =  fp[enumPropertyLattice];
+function getLatticeSize(ld) = //echo(ld)
+[
+     getKeyValue(getKeyValue(ld, "lattice properties"), "width"),
+     getKeyValue(getKeyValue(ld, "lattice properties"), "depth")
+    //  getKeyValue(getKeyValue(ld, "lattice properties"), "height")
+];
+
 function getScrewHoles(fp) =  fp[enumPropertyScrewHoles];
 function getIntervalCount(fp) =  isVector(fp[enumPropertyInterval]) ? fp[enumPropertyInterval][0] : fp[enumPropertyInterval];
 function vgetIntervalCount(fp) =  
