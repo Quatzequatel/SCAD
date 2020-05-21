@@ -97,7 +97,6 @@ Seed = 7;
 //Global Properties
 FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)]; 
 FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
-// LatticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
 ScrewHoles = [ScrewHole_OD, ScrewHoleCount];
 IntervalCount = [3,3];    
 Includes = setIncludeProperty
@@ -117,7 +116,7 @@ LatticeProperties =
 [
     "lattice properties",
     [
-        ["width", WallThickness(count = 20)],
+        ["width", WallThickness(count = 2)],
         ["depth", layers2Height(8)],
         ["height", 0]
     ]
@@ -189,13 +188,6 @@ SquareTrellisProperties =
 //Frame type Properties
 SquareProperties = 
 [
-    // FrameDimension,         //[0] enumPropertyFrame [width (x), depth (y), height (z)]
-    // FrameBoardDimension,    //[1] enumPropertyFrameBoard [width (x), depth (y), length (z)] aka 2x4 x|84
-    // LatticeDimension,       //[2] enumPropertyLattice  [width (x), depth (y), length (z)] aka 1x2 x|24
-    // ScrewHoles,             //[3] enumPropertyScrewHoles [diameter, count], ex [woodScrewShankDiaN_8, 2]
-    // [IntervalCount],          //[4] enumPropertyInterval, int, howmany lattice to repeat.
-    // Includes,                //[5] enumPropertyInclude. See above setIncludeProperty()
-    //[6] enumPropertyTrellisSpecific, this is a data bag. WaveProperty below:
     FrameDimensionProperties,
     // LatticeProperties,
     TrellisFeatures,
@@ -206,26 +198,12 @@ SquareProperties =
 
 CircleProperties = 
 [
-    // FrameDimension,         //[0] enumPropertyFrame [width (x), depth (y), height (z)]
-    // FrameBoardDimension,    //[1] enumPropertyFrameBoard [width (x), depth (y), length (z)] aka 2x4 x|84
-    // LatticeDimension,       //[2] enumPropertyLattice  [width (x), depth (y), length (z)] aka 1x2 x|24
-    // ScrewHoles,             //[3] enumPropertyScrewHoles [diameter, count], ex [woodScrewShankDiaN_8, 2]
-    // IntervalCount,          //[4] enumPropertyInterval, int, howmany lattice to repeat.
-    // Includes,               //[5] enumPropertyInclude.
     BubblesTrellisProperties //[6] enumPropertyTrellisSpecific, this is a data bag. Current example:
-                                  //CirclesTrellisData=>[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
 ];
 
 HexProperties = 
 [
-    // FrameDimension,         //[0] enumPropertyFrame [width (x), depth (y), height (z)]
-    // FrameBoardDimension,    //[1] enumPropertyFrameBoard [width (x), depth (y), length (z)] aka 2x4 x|84
-    // LatticeDimension,       //[2] enumPropertyLattice  [width (x), depth (y), length (z)] aka 1x2 x|24
-    // ScrewHoles,             //[3] enumPropertyScrewHoles [diameter, count], ex [woodScrewShankDiaN_8, 2]
-    // IntervalCount,          //[4] enumPropertyInterval, int, howmany lattice to repeat.
-    // Includes,               //[5] enumPropertyInclude.
     BubblesTrellisProperties //[6] enumPropertyTrellisSpecific, this is a data bag. Current example:
-                                  //CirclesTrellisData=>[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
 ];
 
 Build(frameProperty = SquareProperties);
@@ -315,7 +293,6 @@ module Circles
         {    
             union()
             {
-                // getKeyValue(featuresDictionary, "hasFrame")
                 if(getKeyValue(featuresDictionary, "hasFrame"))
                 {
                     echo(frameBoardDimension=frameProperties[enumPropertyFrameBoard]);
@@ -328,7 +305,6 @@ module Circles
                 }
                 if(getKeyValue(featuresDictionary, "diamondstyletrellis"))
                 {
-                    // echo(DiagonalLattice = 1);
                     translate([-frameRadius, -frameRadius, 0])
                     // rotate([90,0,0])
                     DiagonalLattice2
@@ -397,7 +373,6 @@ module HexFrames
         screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
         featuresDictionary = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "trellisfeatures"),
         debugmode = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "debug")
-
     )
     {
         debugEcho("HexFrames()", [frameRadius,frameBoardDimension,latticeDimension,intervalCount,includes,screwHoles]);
@@ -418,7 +393,6 @@ module HexFrames
                 }
                 if(getKeyValue(featuresDictionary, "diamondstyletrellis"))
                 {
-                    // echo(DiagonalLattice = 1);
                     translate([-frameRadius, -frameRadius, 0])
                     // rotate([90,0,0])
                     DiagonalLattice2
@@ -521,8 +495,6 @@ module Square_Frame(frameProperties)
                     );
                 }
 
-                // if(getIncludes( frameProperties, enumincludeSquareLatticeTrellis))
-                // debugEcho(lable = "Include:SquareLatticeTrellis", args = getIncludes(frameProperties)[enumincludeSquareLatticeTrellis]);
                 if(getKeyValue(featuresDictionary, "squaretrellis"))
                 {    
                     debugEcho("Panel: Square_Frame", "enumincludeSquareLatticeTrellis");
