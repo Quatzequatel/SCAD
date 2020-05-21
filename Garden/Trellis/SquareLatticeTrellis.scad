@@ -45,45 +45,86 @@ module test()
 }
 
 module SquareLatticeTrellis
+(
+    frameProperties
+)
+let
+(
+    frameDictionary = getKeyValue(frameProperties, "framedimensionproperties"),
+    frameSize = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frame dimension"),
+    frameBoard = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frameboard dimension"),
+    screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
+    featuresDictionary = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "trellisfeatures"),
+    latticeDictionary = getKeyValue(frameProperties, "squaretrellisproperties")
+    // debugmode = getKeyValue(getKeyValue(frameProperties, "squaretrellisproperties"), "debug")
+)
+{
+    let
     (
-        frameProperties
+        rows = getKeyValue(latticeDictionary, "rows"),
+        columns = getKeyValue(latticeDictionary, "columns"),
+        intervalWidth = getKeyValue(latticeDictionary, "hoz width"),
+        verticalWidth = getKeyValue(latticeDictionary, "vert width"),
+        debugmode = getKeyValue(latticeDictionary, "debug")
     )
     {
-        debugEcho(lable = "SquareLatticeTrellis : frameProperties", args = frameProperties);
-        debugEcho(lable = "IntervalCount.x", args = vgetIntervalCount(frameProperties).x);
-        
-        intervalWidth = getFrameProperty(frameProperties).x/ (vgetIntervalCount(frameProperties).x + 1);
-        
-        debugEcho(lable = "intervalWidth", args = intervalWidth);
+        echo(SquareLatticeTrellis_debugmode=debugmode);
 
-        //vertical
-        for(i = [1 : 1 : vgetIntervalCount(frameProperties).x-1 ])
+        debugEcho("rows", rows, debugmode);
+        debugEcho("columns", columns, debugmode);
+        debugEcho("hoz width", intervalWidth, debugmode);
+        debugEcho("vert width", verticalWidth, debugmode);
+    
         {
-            let
-            ( 
-                p1 = [ i * intervalWidth, 0, 0], 
-                p2 = [ i * intervalWidth, getFrameProperty(frameProperties).y, 0]
-            )
-            {
-                point_square(size = getLatticeDimension(frameProperties), p1 = p1, p2 = p2, height = getLatticeDimension(frameProperties).y);                
-            }
+            debugEcho("SquareLatticeTrellis : frameProperties", frameProperties);
+            debugEcho("SquareLatticeTrellis : latticeDictionary", latticeDictionary);
+            debugEcho("IntervalCount.x", vgetIntervalCount(frameProperties).x);
+            
+            intervalWidth = intervalWidth == undef ? 
+                frameSize.x/ (vgetIntervalCount(frameProperties).x + 1)
+                : intervalWidth
+                ;
+            
+            debugEcho("intervalWidth", intervalWidth);
 
-        }
-        //horizontal
-        verticalWidth = getFrameProperty(frameProperties).y / vgetIntervalCount(frameProperties).y + 1;
-        debugEcho(lable = "IntervalCount.y", args = vgetIntervalCount(frameProperties).y);
-        debugEcho(lable = "verticalWidth", args = verticalWidth);
-
-        for(i = [0 : 1 :  vgetIntervalCount(frameProperties).y - 1])
-        {
-            let
-            ( 
-                p1 = [ 0,verticalWidth + i * verticalWidth, 0], 
-                p2 = [ getFrameProperty(frameProperties).x, verticalWidth + i * verticalWidth, 0]
-            )
+            //vertical
+            for(i = [1 : 1 : rows ])
             {
-                // color("blue")
-                point_square(size = vSwitch(getLatticeDimension(frameProperties), 0, 1), p1 = p1, p2 = p2, height = getLatticeDimension(frameProperties).y);                
+                let
+                ( 
+                    p1 = [ i * intervalWidth, 0, 0], 
+                    p2 = [ i * intervalWidth, getFrameProperty(frameProperties).y, 0]
+                )
+                {
+                    point_square(size = getLatticeDimension(frameProperties), p1 = p1, p2 = p2, height = getLatticeDimension(frameProperties).y);                
+                }
+
             }
-        }
+            //horizontal
+            verticalWidth = verticalWidth == undef ?
+                getFrameProperty(frameProperties).y / vgetIntervalCount(frameProperties).y + 1
+                : verticalWidth
+                ;
+                
+            debugEcho("IntervalCount.y", vgetIntervalCount(frameProperties).y);
+            debugEcho("verticalWidth", verticalWidth);
+
+            for(i = [0 : 1 :  columns])
+            {
+                let
+                ( 
+                    p1 = [ 0,verticalWidth + i * verticalWidth, 0], 
+                    p2 = [ getFrameProperty(frameProperties).x, verticalWidth + i * verticalWidth, 0]
+                )
+                {
+                    // color("blue")
+                    point_square(size = vSwitch(getLatticeDimension(frameProperties), 0, 1), p1 = p1, p2 = p2, height = getLatticeDimension(frameProperties).y);                
+                }
+            }
+        }   
     }
+
+
+     
+}
+
