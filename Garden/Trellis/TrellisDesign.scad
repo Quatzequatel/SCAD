@@ -1,6 +1,7 @@
 
 include <constants.scad>;
 include <TrellisEnums.scad>;
+use <vectorHelpers.scad>;
 use <convert.scad>;
 use <TrellisFunctions.scad>;
 use <polyline2d.scad>;
@@ -110,10 +111,48 @@ Includes = setIncludeProperty
         bubblesTrellis = true,
         mazeTrellis = false
     );
+
 //specific trellis type properties
+TrellisFeatures = 
+[
+    "trellisfeatures",
+    [
+        ["hasFrame", true],
+        ["diamondstyletrellis", false],
+        ["squaretrellis", true],
+        ["spiraltrellis", false],
+        ["wavetrellis", false],
+        ["bubblestrellis", false],
+        ["mazetrellis", false],
+        ["debug", true]
+    ]
+];
+
+FrameDimensionProperties = 
+    [
+        "framedimensionproperties",
+        [
+            ["frame type", enumFrameTypeSquare],
+            ["frame dimension", FrameDimension],
+            ["frameboard dimension", FrameBoardDimension],
+            ["screw holes", [ScrewHole_OD, 1]],
+            ["debug", false]
+        ]
+    ];
 WaveProperties = ["wavetrellis", setWaveProperty(wave = [], width = 10, height = 50, length = 0, type = enumWaveTypeBoth)];
                             //[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
 BubblesTrellisProperties = ["bublestrellis", [convert_in2mm(1),175, 18, PI]];
+SquareTrellisProperties = 
+    [
+        "squaretrellisproperties", 
+        [
+            ["rows", 3],
+            ["columns", 2],
+            ["hoz width", 100],
+            ["vert width", 75],
+            ["debug", true]
+        ]
+    ];
 
 //Frame type Properties
 SquareProperties = 
@@ -125,8 +164,11 @@ SquareProperties =
     [IntervalCount],          //[4] enumPropertyInterval, int, howmany lattice to repeat.
     Includes,                //[5] enumPropertyInclude. See above setIncludeProperty()
     //[6] enumPropertyTrellisSpecific, this is a data bag. WaveProperty below:
+    FrameDimensionProperties,
+    TrellisFeatures,
     WaveProperties,
-    BubblesTrellisProperties
+    BubblesTrellisProperties,
+    SquareTrellisProperties
 ];
 
 CircleProperties = 
@@ -153,24 +195,26 @@ HexProperties =
                                   //CirclesTrellisData=>[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
 ];
 
-Build();
-// Circles();
+Build(frameProperty = SquareProperties);
 
-// Frame();
-
-module Build()
+module Build(frameProperty)
 {
     let
     (
-        frameProperty = getIncludeProperty(Includes, enumincludeFrameType) == enumFrameTypeSquare ?
-            SquareProperties :
-            getIncludeProperty(Includes, enumincludeFrameType) == enumFrameTypeCircle ?
-            CircleProperties :
-            HexProperties
+        frameDictionary = getKeyValue(frameProperty, "framedimensionproperties"),
+        frameSize = getKeyValue(getKeyValue(frameProperty, "framedimensionproperties"), "frame dimension"),
+        frameBoard = getKeyValue(getKeyValue(frameProperty, "framedimensionproperties"), "frameboard dimension"),
+        screwHoles = getKeyValue(getKeyValue(frameProperty, "framedimensionproperties"), "screw holes"),
+        debugmode = getKeyValue(getKeyValue(frameProperty, "framedimensionproperties"), "debug")
     )
     {
-        debugEcho("Build()", frameProperty);
-        debugEcho("Include values", getIncludes(frameProperty));
+        debugEcho("Build()", frameProperty, debugmode);
+        debugEcho("Include values", getIncludes(frameProperty), debugmode);
+
+        debugEcho("frameDictionary", getKeyValue(frameProperty, "framedimensionproperties"), debugmode);
+        debugEcho("debug", getKeyValue(getKeyValue(frameProperty, "framedimensionproperties"), "debug"), debugmode);
+        debugEcho("frameboard dimension", getKeyValue(getKeyValue(frameProperty, "framedimensionproperties"), "frameboard dimension"), debugmode);
+
         xDimension = Panels[0];
         yDimension = Panels[1];
 
@@ -178,13 +222,13 @@ module Build()
         {
             for(y = [0 : 1 : yDimension-1])
             {
-                if(getIncludeProperty(Includes, enumincludeFrameType) == enumFrameTypeSquare)
+                if(getKeyValue(frameDictionary, "frame type") == enumFrameTypeSquare)
                 {
                     echo(frameType = "enumFrameTypeSquare");
                     translate(
                         [
-                            x * (getFrameProperty(frameProperty).x + getFrameBoardDimension(frameProperty).x), 
-                            y * (getFrameProperty(frameProperty).x + getFrameBoardDimension(frameProperty).x), 
+                            x * (frameSize.x + frameBoard.x), 
+                            y * (frameSize.x + frameBoard.x), 
                             0
                         ])
                     Square_Frame( frameProperty);               
@@ -195,8 +239,8 @@ module Build()
                     echo(frameType = "enumFrameTypeCircle");
                     translate(
                         [
-                            x * (getFrameProperty(frameProperty).x + getFrameBoardDimension(frameProperty).x), 
-                            y * (getFrameProperty(frameProperty).x + getFrameBoardDimension(frameProperty).x), 
+                            x * (frameSize.x + frameBoard.x), 
+                            y * (frameSize.x + frameBoard.x), 
                             0
                         ])
                     Circles( frameProperty);               
@@ -207,8 +251,8 @@ module Build()
                     echo(frameType = "enumFrameTypeHex");
                     translate(
                         [
-                            x * (getFrameProperty(frameProperty).x + getFrameBoardDimension(frameProperty).x), 
-                            y * (getFrameProperty(frameProperty).x + getFrameBoardDimension(frameProperty).x), 
+                            x * (frameSize.x + frameBoard.x), 
+                            y * (frameSize.x + frameBoard.x), 
                             0
                         ])
                     HexFrames( frameProperty);               
@@ -223,77 +267,88 @@ module Circles
     frameProperties
 )
 {
-    difference()
-    {    
-        union()
-        {
-            if(getIncludesPropertyValue( frameProperties, enumincludeFrame))
-            {
-                echo(frameBoardDimension=frameProperties[enumPropertyFrameBoard]);
+    let
+    (
+        frameDictionary = getKeyValue(frameProperties, "framedimensionproperties"),
+        frameSize = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frame dimension"),
+        frameBoard = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frameboard dimension"),
+        screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
+        featuresDictionary = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "trellisfeatures"),
+        debugmode = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "debug")
 
-                translate([0,0, frameProperties[enumPropertyFrameBoard].y/2])
-                CircleFrame
-                (
-                    frameProperties
-                );
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeDiamondStyleTrellis))
+    )
+    {
+        difference()
+        {    
+            union()
             {
-                // echo(DiagonalLattice = 1);
-                translate([-frameRadius, -frameRadius, 0])
-                // rotate([90,0,0])
-                DiagonalLattice2
-                (
-                   frameProperties
-                );
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeSquareLatticeTrellis))
-            {
-                translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
-                SquareLatticeTrellis
-                (
-                    frameProperties
-                );
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeArchimedianSpiral))
-            {
-                translate([0, 0, getThickness(latticeDimension)])
-                // rotate([90,0,0])
-                    ArchimedianSpiralTrellis
+                // getKeyValue(featuresDictionary, "hasFrame")
+                if(getKeyValue(featuresDictionary, "hasFrame"))
+                {
+                    echo(frameBoardDimension=frameProperties[enumPropertyFrameBoard]);
+
+                    translate([0,0, frameProperties[enumPropertyFrameBoard].y/2])
+                    CircleFrame
                     (
-                        frameProperties             
+                        frameProperties
                     );
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeHorizontalWaveTrellis))
-            {
-                WaveTrellis
-                (
+                }
+                if(getKeyValue(featuresDictionary, "diamondstyletrellis"))
+                {
+                    // echo(DiagonalLattice = 1);
+                    translate([-frameRadius, -frameRadius, 0])
+                    // rotate([90,0,0])
+                    DiagonalLattice2
+                    (
                     frameProperties
-                );
-            }        
-        }
+                    );
+                }
+                if(getKeyValue(featuresDictionary, "squaretrellis"))
+                {
+                    translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
+                    SquareLatticeTrellis
+                    (
+                        frameProperties
+                    );
+                }
+                if(getKeyValue(featuresDictionary, "spiraltrellis"))
+                {
+                    translate([0, 0, getThickness(latticeDimension)])
+                    // rotate([90,0,0])
+                        ArchimedianSpiralTrellis
+                        (
+                            frameProperties             
+                        );
+                }
+                if(getKeyValue(featuresDictionary, "wavetrellis"))
+                {
+                    WaveTrellis
+                    (
+                        frameProperties
+                    );
+                }        
+                if(getKeyValue(featuresDictionary, "bubblestrellis"))
+                {
+                    BubblesTrellis
+                    (
+                    frameProperties
+                    );
+                }
+                if(getKeyValue(featuresDictionary, "mazetrellis"))
+                {
+                    MazeLattice
+                    (
+                    frameProperties
+                    );
+                }            
+            }
 
-        if(getIncludesPropertyValue( frameProperties, enumincludeBubbles))
-        {
-            BubblesTrellis
+            CircleFrameCutter
             (
-               frameProperties
-            );
+                frameProperties
+            );       
         }
-
-        if(getIncludesPropertyValue( frameProperties, enumincludeMaze))
-        {
-            MazeLattice
-            (
-               frameProperties
-            );
-        }
-
-        CircleFrameCutter
-        (
-            frameProperties
-        ) ;       
-    }
+    }   
 }
 
 module HexFrames
@@ -301,174 +356,198 @@ module HexFrames
     frameProperties
 )
 {
-    frameRadius = frameProperties[enumPropertyFrame].x;
-    frameBoardDimension = frameProperties[enumPropertyFrameBoard]; 
-    latticeDimension = frameProperties[enumPropertyLattice]; 
-    intervalCount = frameProperties[enumPropertyInterval];
-    includes = frameProperties[enumPropertyInclude]; 
-    screwHoles = frameProperties[enumPropertyScrewHoles];  
+    let
+    (
+        frameDictionary = getKeyValue(frameProperties, "framedimensionproperties"),
+        frameSize = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frame dimension"),
+        frameBoard = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frameboard dimension"),
+        screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
+        featuresDictionary = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "trellisfeatures"),
+        debugmode = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "debug")
 
-    debugEcho("HexFrames()", [frameRadius,frameBoardDimension,latticeDimension,intervalCount,includes,screwHoles]);
-
-    difference()
-    {    
-        union()
-        {
-            if(getIncludesPropertyValue( frameProperties, enumincludeFrame))
-            {
-                echo(frameBoardDimension=frameBoardDimension);
-
-                translate([0,0, frameBoardDimension.y/2])
-                HexFrame
-                (
-                    frameProperties
-                );
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeDiamondStyleTrellis))
-            {
-                // echo(DiagonalLattice = 1);
-                translate([-frameRadius, -frameRadius, 0])
-                // rotate([90,0,0])
-                DiagonalLattice2
-                (
-                   frameProperties
-                );
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeSquareLatticeTrellis))
-            {
-                translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
-                SquareLatticeTrellis
-                (
-                    frameProperties
-                );
-
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeArchimedianSpiral))
-            {
-                translate([0, 0, getThickness(latticeDimension)])
-                // rotate([90,0,0])
-                    ArchimedianSpiralTrellis
-                    (
-                        frameProperties              
-                    );
-            }
-            if(getIncludesPropertyValue( frameProperties, enumincludeHorizontalWaveTrellis))
-            {
-                WaveTrellis
-                (
-                    frameProperties
-                );
-            }   
-
-            if(getIncludesPropertyValue( frameProperties, enumincludeBubbles))
-            {
-                BubblesTrellis
-                (
-                    frameProperties
-                );
-            }
-
-            if(getIncludesPropertyValue( frameProperties, enumincludeMaze))
-            {
-                MazeLattice
-                (
-                    frameProperties
-                );
-            }            
-        }
-
-        HexFrameCutter
-        (
-            frameProperties
-        ) ;       
-    }
-}
-
-module Square_Frame(frameProperties) 
-{
-    difference()
+    )
     {
-        // rotate([90,0,0])
-        union()
-        {
-            if(getIncludes(frameProperties)[enumincludeFrame])
-            {    
-                echo(Panel = "Square_Frame : enumincludeFrame");
-                SquareFrame
-                (
-                    frameProperties = frameProperties
-                );
-            }
+        debugEcho("HexFrames()", [frameRadius,frameBoardDimension,latticeDimension,intervalCount,includes,screwHoles]);
 
-            if(getIncludes(frameProperties)[enumincludeDiamondStyleTrellis])
+        difference()
+        {    
+            union()
             {
-                echo(Panel = "Square_Frame : enumincludeDiamondStyleTrellis");
-                translate([-frameProperties[enumPropertyFrame].x/2, -frameProperties[enumPropertyFrame].y/2,0])
-                // rotate([90,0,0])
-                DiagonalLattice
-                (
-                    frameProperties
-                );
-            }
-
-            // if(getIncludes( frameProperties, enumincludeSquareLatticeTrellis))
-            // debugEcho(lable = "Include:SquareLatticeTrellis", args = getIncludes(frameProperties)[enumincludeSquareLatticeTrellis]);
-            if(getIncludes(frameProperties)[enumincludeSquareLatticeTrellis])
-            {    
-                debugEcho("Panel: Square_Frame", "enumincludeSquareLatticeTrellis");
-                translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
-                SquareLatticeTrellis
-                (
-                    frameProperties
-                );
-            }
-
-            if(getIncludesPropertyValue( frameProperties, enumincludeFrame) && getIncludesPropertyValue( frameProperties, enumincludeArchimedianSpiral))
-            {
-                debugEcho("Panel: Square_Frame", "enumincludeArchimedianSpiral");
-                difference()
+                if(getKeyValue(featuresDictionary, "hasFrame"))
                 {
-                    translate([ 0, 0, latticeDimension.y])
-                    if(getIncludesPropertyValue( frameProperties, enumincludeArchimedianSpiral))
-                    {
+                    echo(frameBoardDimension=frameBoardDimension);
+
+                    translate([0,0, frameBoardDimension.y/2])
+                    HexFrame
+                    (
+                        frameProperties
+                    );
+                }
+                if(getKeyValue(featuresDictionary, "diamondstyletrellis"))
+                {
+                    // echo(DiagonalLattice = 1);
+                    translate([-frameRadius, -frameRadius, 0])
+                    // rotate([90,0,0])
+                    DiagonalLattice2
+                    (
+                    frameProperties
+                    );
+                }
+                if(getKeyValue(featuresDictionary, "squaretrellis"))
+                {
+                    translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
+                    SquareLatticeTrellis
+                    (
+                        frameProperties
+                    );
+
+                }
+                if(getKeyValue(featuresDictionary, "spiraltrellis"))
+                {
+                    translate([0, 0, getThickness(latticeDimension)])
+                    // rotate([90,0,0])
                         ArchimedianSpiralTrellis
                         (
                             frameProperties              
                         );
-                    }            
                 }
+                if(getKeyValue(featuresDictionary, "wavetrellis"))
+                {
+                    WaveTrellis
+                    (
+                        frameProperties
+                    );
+                }   
+
+                if(getKeyValue(featuresDictionary, "bubblestrellis"))
+                {
+                    BubblesTrellis
+                    (
+                        frameProperties
+                    );
+                }
+
+                if(getKeyValue(featuresDictionary, "mazetrellis"))
+                {
+                    MazeLattice
+                    (
+                        frameProperties
+                    );
+                }            
             }
 
-            if(getIncludesPropertyValue( frameProperties, enumincludeHorizontalWaveTrellis))
-            {
-                debugEcho("Panel: Square_Frame", "enumincludeHorizontalWaveTrellis");
-                WaveTrellis
-                (
-                    frameProperties = frameProperties
-                );
-            }
-
-            if(getIncludesPropertyValue( frameProperties, enumincludeBubbles))
-            {
-                debugEcho("Panel: Square_Frame", "enumincludeBubbles");
-                DrawBubbles
-                (
-                    frameProperties = frameProperties
-                );
-            }
-
-            if(getIncludesPropertyValue( frameProperties, enumincludeMaze))
-            {
-                debugEcho("Panel: Square_Frame", "enumincludeMaze");
-                // MazeLattice
-                // (
-                //     frameProperties = frameProperties
-                // );
-            }            
+            HexFrameCutter
+            (
+                frameProperties
+            ) ;       
         }
+    } 
+}
 
-        SquareFrameCutter(frameProperties = frameProperties);
+module Square_Frame(frameProperties) 
+{
+    let
+    (
+        frameDictionary = getKeyValue(frameProperties, "framedimensionproperties"),
+        frameSize = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frame dimension"),
+        frameBoard = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frameboard dimension"),
+        screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
+        featuresDictionary = getKeyValue(frameProperties, "trellisfeatures"),
+        debugmode = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "debug")
+    )
+    {
+        debugEcho("Square_Frame.let.frameDictionary", frameDictionary, debugmode);
+        debugEcho("Square_Frame.let.frameSize", frameSize, debugmode);
+        debugEcho("Square_Frame.let.frameBoard", frameBoard, debugmode);
+        debugEcho("Square_Frame.let.screwHoles", screwHoles, debugmode);
+        debugEcho("Square_Frame.let.featuresDictionary", featuresDictionary, debugmode);
+        echo(featuresDictionary = featuresDictionary);
+
+        difference()
+        {
+            // rotate([90,0,0])
+            union()
+            {
+                if(getKeyValue(featuresDictionary, "hasFrame"))
+                {    
+                    echo(Panel = "Square_Frame : enumincludeFrame");
+                    SquareFrame
+                    (
+                        frameProperties = frameProperties
+                    );
+                }
+
+                if(getKeyValue(featuresDictionary, "diamondstyletrellis"))
+                {
+                    echo(Panel = "Square_Frame : enumincludeDiamondStyleTrellis");
+                    translate([-frameProperties[enumPropertyFrame].x/2, -frameProperties[enumPropertyFrame].y/2,0])
+                    // rotate([90,0,0])
+                    DiagonalLattice
+                    (
+                        frameProperties
+                    );
+                }
+
+                // if(getIncludes( frameProperties, enumincludeSquareLatticeTrellis))
+                // debugEcho(lable = "Include:SquareLatticeTrellis", args = getIncludes(frameProperties)[enumincludeSquareLatticeTrellis]);
+                if(getKeyValue(featuresDictionary, "squaretrellis"))
+                {    
+                    debugEcho("Panel: Square_Frame", "enumincludeSquareLatticeTrellis");
+                    translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
+                    SquareLatticeTrellis
+                    (
+                        frameProperties
+                    );
+                }
+
+                if(getKeyValue(featuresDictionary, "spiraltrellis"))
+                {
+                    debugEcho("Panel: Square_Frame", "enumincludeArchimedianSpiral");
+                    difference()
+                    {
+                        translate([ 0, 0, latticeDimension.y])
+                        if(getIncludesPropertyValue( frameProperties, enumincludeArchimedianSpiral))
+                        {
+                            ArchimedianSpiralTrellis
+                            (
+                                frameProperties              
+                            );
+                        }            
+                    }
+                }
+
+                if(getKeyValue(featuresDictionary, "wavetrellis"))
+                {
+                    debugEcho("Panel: Square_Frame", "enumincludeHorizontalWaveTrellis");
+                    WaveTrellis
+                    (
+                        frameProperties = frameProperties
+                    );
+                }
+
+                if(getKeyValue(featuresDictionary, "bubblestrellis"))
+                {
+                    debugEcho("Panel: Square_Frame", "enumincludeBubbles");
+                    DrawBubbles
+                    (
+                        frameProperties = frameProperties
+                    );
+                }
+
+                if(getKeyValue(featuresDictionary, "mazetrellis"))
+                {
+                    debugEcho("Panel: Square_Frame", "enumincludeMaze");
+                    // MazeLattice
+                    // (
+                    //     frameProperties = frameProperties
+                    // );
+                }            
+            }
+
+            SquareFrameCutter(frameProperties = frameProperties);
+        }
     }
+
 }
 
 
