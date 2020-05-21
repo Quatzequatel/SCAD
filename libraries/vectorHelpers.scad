@@ -1,6 +1,7 @@
 /*
 library of useful vector functions.
 */
+include <constants.scad>;
 
 function diff(i, j) = i - j;
 function halfDiff(i, j) = diff(i, j) / 2;
@@ -16,9 +17,9 @@ function vSwitch(v, x, y) = //echo(vSwitch = v, x = x, y = y)
             ((i == y) ? v[x] : v[i] )    
 ];
 
-function getKeyValue(v, key, i = 0, result) = //echo(v=v, key=key, i=i, result=result)
+function privateGetKeyValue(v, key, i = 0, result) = //echo(v=v, key=key, i=i, result=result)
 ( i < len(v) ? 
-    getKeyValue
+    privateGetKeyValue
     (
         v = v,
         key = key,
@@ -40,17 +41,9 @@ function vGetValue(v, idx)= v[idx];
 /*
     use as a dictionary look up
 */
-function getKeyValue(v, key, i = 0, result) = //echo(v=v, key=key, i=i, result=result)
-    ( i < len(v) ? 
-        getKeyValue
-        (
-            v = v,
-            key = key,
-            i = i + 1,
-            result = v[i][0] == key 
-                ? v[i] : result
-        ) : result[1]
-    );
+function getKeyValue(v, key, i = 0, result) = 
+    assert(isVector(v), str(v, "is not an array."))
+    privateGetKeyValue(v, key);
 
 
 //append a z value to an [x,y] vector.
