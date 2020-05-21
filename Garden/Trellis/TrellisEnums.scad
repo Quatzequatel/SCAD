@@ -38,10 +38,11 @@ enumincludeFrameType = 5;
 enumincludeBubbles = 6;
 enumincludeMaze = 7;
 
-//enumPropertyTrellisSpecific
+
 //CirclesTrellisData
 enumCircleMinRadius = 0;
 enumCircleMaxRadius = 1;
 enumCircleCount = 2;
 enumCircleSeed = 3;
-
+//enumPropertyTrellisSpecific
+// enumBubble
