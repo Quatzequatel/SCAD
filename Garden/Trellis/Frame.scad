@@ -1,8 +1,9 @@
 /*
 
 */
-include <TrellisEnums.scad>;
 include <constants.scad>;
+include <TrellisEnums.scad>;
+// include <TrellisEnums.scad>;
 use <vectorHelpers.scad>;
 use <TrellisFunctions.scad>;
 use <shapesByPoints.scad>;
@@ -16,31 +17,30 @@ module test()
     //Global Properties
     FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)]; 
     FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
-    LatticeDimension = setDimension([], depth =WallThickness(count = 2), thickness = layers2Height(8)); 
-    ScrewHoles = [woodScrewShankDiaN_8, 2];
     IntervalCount =2;    
-    Includes = setIncludeProperty
-        ([], 
-            frame = true, 
-            diamondStyleTrellis = false, 
-            squareTrellis = false, 
-            spiralTrellis = false, 
-            waveTrellis = false,
-            frameType = enumFrameTypeSquare
-        );
+
+    FrameDimensionProperties = 
+    [
+        "framedimensionproperties",
+        [
+            ["frame type", enumFrameTypeSquare],
+            ["frame dimension", FrameDimension],
+            ["frameboard dimension", FrameBoardDimension],
+            ["screw holes", [woodScrewShankDiaN_4, 1]],
+            ["debug", true]
+        ]
+    ];
 
     //Frame type Properties
     frameProperties = 
     [
-        FrameDimension,         //[0] enumPropertyFrame
-        FrameBoardDimension,    //[1] enumPropertyFrameBoard
-        LatticeDimension,       //[2] enumPropertyLattice
-        ScrewHoles,             //[3] enumPropertyScrewHoles
-        IntervalCount,          //[4] enumPropertyInterval
-        Includes                //[5] enumPropertyInclude.
+        FrameDimensionProperties
     ];
 
-    if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeSquare)
+    frameDictionary = getKeyValue(frameProperties, "framedimensionproperties");
+    frameType = getKeyValue(frameDictionary, "frame type");
+
+    if(frameType == enumFrameTypeSquare)
     {        
         difference()
         {
@@ -49,7 +49,7 @@ module test()
         }   
     }
     
-    if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeCircle)
+    if(frameType == enumFrameTypeCircle)
     {        
         difference()
         {
@@ -58,7 +58,7 @@ module test()
         }   
     }
 
-    if(frameProperties[enumPropertyInclude][enumincludeFrameType] == enumFrameTypeHex)
+    if(frameType == enumFrameTypeHex)
     {        
         difference()
         {
