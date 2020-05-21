@@ -72,16 +72,16 @@ let
 
         debugEcho("rows", rows, debugmode);
         debugEcho("columns", columns, debugmode);
-        debugEcho("hoz width", intervalWidth, debugmode);
-        debugEcho("vert width", verticalWidth, debugmode);
+        debugEcho("intervalWidth", intervalWidth, debugmode);
+        debugEcho("verticalWidth", verticalWidth, debugmode);
     
         {
             debugEcho("SquareLatticeTrellis : frameProperties", frameProperties);
             debugEcho("SquareLatticeTrellis : latticeDictionary", latticeDictionary);
-            debugEcho("IntervalCount.x", vgetIntervalCount(frameProperties).x);
+            debugEcho("IntervalCount.x", columns);
             
             intervalWidth = intervalWidth == undef ? 
-                frameSize.x/ (vgetIntervalCount(frameProperties).x + 1)
+                frameSize.x/ (columns + 1)
                 : intervalWidth
                 ;
             
@@ -93,16 +93,16 @@ let
                 let
                 ( 
                     p1 = [ i * intervalWidth, 0, 0], 
-                    p2 = [ i * intervalWidth, getFrameProperty(frameProperties).y, 0]
+                    p2 = [ i * intervalWidth, frameSize.y, 0]
                 )
                 {
-                    point_square(size = getLatticeDimension(frameProperties), p1 = p1, p2 = p2, height = getLatticeDimension(frameProperties).y);                
+                    point_square(size = getLatticeSize(latticeDictionary), p1 = p1, p2 = p2, height = getLatticeSize(latticeDictionary).y);                
                 }
 
             }
             //horizontal
             verticalWidth = verticalWidth == undef ?
-                getFrameProperty(frameProperties).y / vgetIntervalCount(frameProperties).y + 1
+                frameSize.y / vgetIntervalCount(frameProperties).y + 1
                 : verticalWidth
                 ;
                 
@@ -114,11 +114,12 @@ let
                 let
                 ( 
                     p1 = [ 0,verticalWidth + i * verticalWidth, 0], 
-                    p2 = [ getFrameProperty(frameProperties).x, verticalWidth + i * verticalWidth, 0]
+                    p2 = [ frameSize.x, verticalWidth + i * verticalWidth, 0]
                 )
                 {
                     // color("blue")
-                    point_square(size = vSwitch(getLatticeDimension(frameProperties), 0, 1), p1 = p1, p2 = p2, height = getLatticeDimension(frameProperties).y);                
+                    // point_square(size = vSwitch(getLatticeSize(latticeDictionary), 0, 1), p1 = p1, p2 = p2, height = getLatticeSize(latticeDictionary).y);                
+                    point_square(size = getLatticeSize(latticeDictionary), p1 = p1, p2 = p2, height = getLatticeSize(latticeDictionary).y);                
                 }
             }
         }   
