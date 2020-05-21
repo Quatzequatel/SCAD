@@ -42,17 +42,16 @@ module point_polygon(points, paths, p1, p2, height = 0.01)
     // hull()
     // {
         translate(p1) 
-<<<<<<< Updated upstream
             linear_extrude(height = height)
             polygon(points=points, paths=paths);
         translate(p2) 
             linear_extrude(height = height)
             polygon(points=points, paths=paths);
-    } 
+    // } 
 }
 
 module point_square(size, p1, p2, height = 0.01)
-=======
+{
             linear_extrude(height = zRes)
             if(paths == undef)
                 polygon(points=points);
@@ -68,21 +67,11 @@ module point_square(size, p1, p2, height = 0.01)
 }
 
 module point_square(size, p1, p2, height = 0.01, center = true)
->>>>>>> Stashed changes
 {
     debugEcho("ShapesByPoints::point_square() ", [size, p1, p2]);
-    ;
     
     hull()
     {
-<<<<<<< Updated upstream
-        translate(p1) 
-            linear_extrude(height = height)
-            square(size=size, center = true);
-        translate(p2) 
-            linear_extrude(height = height)
-            square(size=size, center = true);
-=======
         if(p1.y == p2.y)
         {
             translate(p1) 
@@ -101,8 +90,6 @@ module point_square(size, p1, p2, height = 0.01, center = true)
                 linear_extrude(height = height)
                 square(size= [size.x, size.y], center = center);            
         }
-
->>>>>>> Stashed changes
     } 
 }
 
