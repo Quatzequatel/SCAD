@@ -19,6 +19,9 @@ use <Construction.scad>;
 
 use <box_extrude.scad>;
 
+// ISDEBUGEMODE = false;
+
+
 
 function getBoardProperty(board, enum) = getValue(v = board, enum = enum);
 function setBoardProperty(board, thickness, width, length) =
@@ -34,6 +37,8 @@ Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 4), width
 Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 6), length = convert_ft2mm(feet = 8));
 
 BoardDimensions = [convert_in2mm(in = 2), convert_in2mm(in = 4), convert_ft2mm(feet = 8)];
+
+
 
 
 //all in mm
@@ -244,6 +249,7 @@ module EntryFrame2()
 
 module RoofFrame2()
 {
+     debugEcho(str("module_name is ","RoofFrame2()", ", RoofDimensions = ", RoofDimensions, ", board = ", Board2x4, ", spacing = ", convert_in2mm(16) ));
     //back
     translate([0, 0, HouseDimensions.z + Board2x4.y])
     rotate([90, 0, 90]) 
@@ -266,6 +272,31 @@ module RoofFrame2()
         board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
         spacing = convert_in2mm(16),
         includeHeader = false,
+        includeStuds = true,
+        finished = true
+    );
+}
+
+module EntryRoofFrame2()
+{
+    //left
+    // translate([0, 0, HouseDimensions.z + Board2x4.y])
+    // rotate([90, 0, 90]) 
+    translate
+    (
+        [
+            HouseDimensions.x + Board2x4.y, 
+            HouseDimensions.y - (HouseDimensions.y/2 - EntryDimensions.x/2) + Board2x4.y, 
+            0
+        ]
+    )
+    rotate([90, 0, 0])    
+    Roof
+    (
+        roofOD = EntryRoofDimensions, //[x,y,z,angle]
+        board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+        spacing = convert_in2mm(16),
+        includeHeader = true,
         includeStuds = true,
         finished = true
     );

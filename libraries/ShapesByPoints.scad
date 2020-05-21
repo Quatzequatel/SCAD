@@ -7,6 +7,7 @@ going from point to point. because these modules always use the
 have an x,y orientation. the side-effect is it starts and ends in the
 x,y plane.
 */
+include <constants.scad>;
 use <hull_polyline2d.scad>;
 
 // $fn=100;
@@ -36,11 +37,12 @@ module point_cylinder(diameter, p1, p2, height = 0.01)
 
 module point_polygon(points, paths, p1, p2, height = 0.01)
 {
-    echo(func = "point_polygon", p1 = p1, p2 = p2);
+    echo(func = "point_polygon", points = points, paths = paths, p1 = p1, p2 = p2);
     
-    hull()
-    {
+    // hull()
+    // {
         translate(p1) 
+<<<<<<< Updated upstream
             linear_extrude(height = height)
             polygon(points=points, paths=paths);
         translate(p2) 
@@ -50,17 +52,57 @@ module point_polygon(points, paths, p1, p2, height = 0.01)
 }
 
 module point_square(size, p1, p2, height = 0.01)
+=======
+            linear_extrude(height = zRes)
+            if(paths == undef)
+                polygon(points=points);
+            else
+                polygon(points=points, paths=paths);
+        translate(p2) 
+            linear_extrude(height = zRes)
+            if(paths == undef)
+                polygon(points=points);
+            else
+                polygon(points=points, paths=paths);    
+    // } 
+}
+
+module point_square(size, p1, p2, height = 0.01, center = true)
+>>>>>>> Stashed changes
 {
-    echo(func = "point_square", size = size, p1 = p1, p2 = p2);
+    debugEcho("ShapesByPoints::point_square() ", [size, p1, p2]);
+    ;
     
     hull()
     {
+<<<<<<< Updated upstream
         translate(p1) 
             linear_extrude(height = height)
             square(size=size, center = true);
         translate(p2) 
             linear_extrude(height = height)
             square(size=size, center = true);
+=======
+        if(p1.y == p2.y)
+        {
+            translate(p1) 
+                linear_extrude(height = height)
+                square(size= [size.y, size.x], center = center);
+            translate(p2) 
+                linear_extrude(height = height)
+                square(size= [size.y, size.x], center = center);
+        }
+        else
+        {
+            translate(p1) 
+                linear_extrude(height = height)
+                square(size= [size.x, size.y], center = center);
+            translate(p2) 
+                linear_extrude(height = height)
+                square(size= [size.x, size.y], center = center);            
+        }
+
+>>>>>>> Stashed changes
     } 
 }
 

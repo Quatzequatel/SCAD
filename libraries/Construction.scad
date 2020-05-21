@@ -21,21 +21,34 @@ isDebugMode = false;
 module Build()
 {
     // House();
-    // Wall(
-    //     wallOD = [convert_ft2mm(16), Board2x4.y, convert_in2mm(72)], 
-    //     board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-    //     spacing = convert_in2mm(16),
-    //     finished = true
-    //     );
-    Roof
-    (
-        roofOD = [convert_ft2mm(16), Board2x4.y, convert_in2mm(72), 45], //[x,y,z,angle]
+    rotate([90, 0, 90])
+    Wall(
+        wallOD = [convert_ft2mm(16), Board2x4.y, convert_in2mm(72)], 
         board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
         spacing = convert_in2mm(16),
-        includeHeader = true,
-        includeStuds = true,
-        finished = true
-    );
+        finished = true,
+        ascending = true
+        );
+
+    translate([8* Board2x4.y, 0,0])
+    rotate([90, 0, 90])
+    Wall(
+        wallOD = [convert_ft2mm(16), Board2x4.y, convert_in2mm(72)], 
+        board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+        spacing = convert_in2mm(16),
+        finished = true,
+        ascending = false
+        );
+    // Roof
+    // (
+    //     roofOD = [convert_ft2mm(16), Board2x4.y, convert_in2mm(72), 45], //[x,y,z,angle]
+    //     board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+    //     spacing = convert_in2mm(16),
+    //     includeHeader = true,
+    //     includeStuds = true,
+    //     finished = true, 
+    //     ascending = false
+    // );
 
     // board = Board2x4; //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x)
     // startlocation = [0,0,0];
@@ -111,8 +124,9 @@ module House()
     note2self:
         z should always be 0. from origion y is the wallod.z
 */
-module Wall(wallOD, board, spacing, includeStuds = true, finished = false)
+module Wall(wallOD, board, spacing, includeStuds = true, finished = false, ascending = true)
 {
+    echo(str("Wall()", parseArgsToString(args)));
     finishedColor = "slategray" ;
     // echo(module_name = "Wall", wallOD = wallOD, board = board, spacing = spacing);
     if(!finished)
@@ -136,23 +150,41 @@ module Wall(wallOD, board, spacing, includeStuds = true, finished = false)
         if(!finished)
         {
             //studs
-            for(i = [0 : 1 : wallOD.x/spacing - 1])
+            for(i = ascending == true ? [0 : 1 : wallOD.x/spacing - 1] : [wallOD.x/spacing - 1 : -1 : 0] )
             {
                 debugEcho(str(i = i ));
-                xyVerticalBoard(board = board, startlocation = [i * spacing ,board.x, 0], color = "blue");
+                xyVerticalBoard(board = board, startlocation = [i * spacing ,board.x, 0], color = ascending ? "blue" : "skyblue" );
             }
-            xyVerticalBoard(board = board, startlocation = [wallOD.x - 2*board.x ,board.x, 0], color = "yellow");
+            
+            if(ascending)
+            {
+                // xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [wallOD.x - board.x ,board.x, 0], color = finishedColor);
+                xyVerticalBoard(board = board, startlocation = [wallOD.x - 2*board.x , board.x, 0], color = "yellow");
+            }
+            else
+            {
+                xyVerticalBoard(board = board, startlocation = [0 , board.x, 0], color = "yellow");
+            }            
         }
         else
         {
             if(board.z != wallOD.z - board.x) echo(CAUTION = "STUD boards cut required. board is ", convert_mm2Inch(board.z), "but needs to be ", convert_mm2Inch(wallOD.z - board.x));
             //studs
-            for(i = [0 : 1 : wallOD.x/spacing])
+            for(i = ascending == true ? [0 : 1 : wallOD.x/spacing] : [wallOD.x/spacing - 1 : -1 : 0] )
             {
                 debugEcho(str(i = i ));
-                xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [i * spacing ,board.x, 0], color = finishedColor);
+                xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [i * spacing ,board.x, 0], color = ascending ? finishedColor : "skyblue");
             }
-            xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [wallOD.x - board.x ,board.x, 0], color = finishedColor);
+            if(ascending)
+            {
+                xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [wallOD.x - board.x ,board.x, 0], color = finishedColor );
+            }
+            else
+            {
+                xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [wallOD.x - board.x ,board.x, 0], color = finishedColor );
+                xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [0 ,board.x, 0],  color = ascending ? finishedColor : "yellow");
+            }
+            
         }        
     }
 }
@@ -183,7 +215,8 @@ module Roof(roofOD, board, spacing, includeHeader = true, includeFacet = true, i
         if(includeStuds)
         {
             //studs
-            for(i = [0 : 1 : roofOD.x/spacing - 1])
+            // for(i = [0 : 1 : roofOD.x/spacing - 1])
+            for(i = ascending == true ? [0 : 1 : roofOD.x/spacing - 1] : [roofOD.x/spacing - 1 : -1 : 0] )
             {
                 debugEcho(str("module_name is ","Roof()", ", i = ",i ));
                 xyVerticalBoard(board = board, startlocation = [i * spacing ,board.x, 0], angle = roofOD[3], color = "blue");
@@ -210,7 +243,8 @@ module Roof(roofOD, board, spacing, includeHeader = true, includeFacet = true, i
         if(includeStuds)
         {
             //studs
-            for(i = [0 : 1 : roofOD.x/spacing - 1])
+            // for(i = [0 : 1 : roofOD.x/spacing - 1])
+            for(i = ascending == true ? [0 : 1 : roofOD.x/spacing - 1] : [roofOD.x/spacing - 1 : -1 : 0] )
             {
                 xyVerticalBoard(board = vSetValue(board, 2, roofOD.z - board.x), startlocation = [i * spacing ,board.x, 0], angle = roofOD[3], color = finishedColor);
             }
@@ -269,7 +303,12 @@ module polyBoardAngle(board, startlocation, angle, color = "green")
     {
         polyhedron(points =  cubePoints(o = startlocation, d = board), faces = cubeFaces(), convexity = 1);
 
-        translate([-0.5,board.y - board.z,0])
+        translate(
+            [
+                startlocation.x + board.x-0.5,
+                startlocation.y + board.y - board.z,
+                startlocation.z + board.z])
+        rotate([0,180,0])
         polyhedron(points =  prismPoints(startlocation,  l = board.x + 1, w = board.z + 1, h = tan(angle) * board.z), faces = prismFaces(), convexity = 1);       
     }
 

@@ -13,13 +13,46 @@ function LayersToHeight(layers) =
   InitialLayerHeight + (LayerHeight * (layers - 1));
 function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 
-module debugEcho(args) 
+function isVector(args) = args.x != undef;
+
+module debugEcho(lable, args) 
 {
   if(ISDEBUGEMODE)
   {
-    echo(debugEcho = args);
+    let(foobar = fargsEcho(lable, args));
   }
 }
+
+function fargsEcho(lable, args) = 
+isVector(args) ?
+[   for(i = [0 : len(args)-1])
+       echo(str(lable, " ", i ), args[i])
+] : echo(lable, args);
+
+// function debugEcho(lable, value) =
+// let
+// (
+//     nothing = 
+//         [ 
+//             for (i = [1:1]) 
+//                 if (ISDEBUGEMODE) echo(str(lable, ": ", value)) 
+//         ]
+        
+// ) "";
+
+// function fargsEcho(lable, args) = 
+// let
+// (
+//   doOnce = 
+//   [
+//     for (one = [1:1])  
+//       if (args.x != undef)
+//       if (ISDEBUGEMODE)
+//         for(i = [0 : len(args)-1])
+//           echo(str(str(lable, " ", i ), ": ", args[i]))
+//       else echo(str(lable, "xxxxx : ", args))
+//   ]
+// ) "";
 
 //enums
 enThickness = 0;

@@ -6,6 +6,33 @@ include <TrellisEnums.scad>;
 include <constants.scad>;
 use <vectorHelpers.scad>;
 
+function getFrameProperty(fp) = fp[enumPropertyFrame];
+function getFrameBoardDimension(fp) =  fp[enumPropertyFrameBoard];
+function getLatticeDimension(fp) =  fp[enumPropertyLattice];
+function getScrewHoles(fp) =  fp[enumPropertyScrewHoles];
+function getIntervalCount(fp) =  isVector(fp[enumPropertyInterval]) ? fp[enumPropertyInterval][0] : fp[enumPropertyInterval];
+function vgetIntervalCount(fp) =  
+    isVector(fp[enumPropertyInterval]) ? 
+    fp[enumPropertyInterval] 
+    : assert(false, "getIntervalCount is not an array.")
+    ;
+
+function getIncludes(fp) =  fp[enumPropertyInclude];
+function getIncludesPropertyValue(fp, enum) = getIncludes(fp)[enum];
+function getTrellisProperty(key, frameProperties) = getKeyValue(frameProperties, key);
+
+function getKeyValue(v, key, i = 0, result) = //echo(v=v, key=key, i=i, result=result)
+( i < len(v) ? 
+    getKeyValue
+    (
+        v = v,
+        key = key,
+        i = i + 1,
+        result = v[i][0] == key 
+            ? v[i] : result
+    ) : result[1] //[0] returns ket, [1] returns value and nothing returns booth
+);
+
 
 function getDepth(board) = board.x;
 function getThickness(board) = board.y;
