@@ -6,7 +6,8 @@ i.e. enums
 NozzleWidth = 1.0;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
-ISDEBUGEMODE = true;
+// ISDEBUGEMODE = true;
+IS_DEBUG_DEBUG = false;
 
 function LayersToHeight(layers) = 
   echo(NozzleWidth = NozzleWidth, InitialLayerHeight = InitialLayerHeight, LayerHeight = LayerHeight) 
@@ -15,44 +16,29 @@ function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 
 function isVector(args) = args.x != undef;
 
-module debugEcho(lable, args) 
+module debugEcho(lable, args, mode) 
 {
-  if(ISDEBUGEMODE)
+  bogus = debugDebug(lable, args, mode);
+  if(mode)
   {
     let(foobar = fargsEcho(lable, args));
   }
 }
 
+function debugDebug(lable, args, mode) = IS_DEBUG_DEBUG ? echo(debugEcho=lable, args, mode) : "";
+
 function fargsEcho(lable, args) = 
-isVector(args) ?
-[   for(i = [0 : len(args)-1])
-       echo(str(lable, " ", i ), args[i])
-] : echo(lable, args);
-
-// function debugEcho(lable, value) =
-// let
-// (
-//     nothing = 
-//         [ 
-//             for (i = [1:1]) 
-//                 if (ISDEBUGEMODE) echo(str(lable, ": ", value)) 
-//         ]
-        
-// ) "";
-
-// function fargsEcho(lable, args) = 
-// let
-// (
-//   doOnce = 
-//   [
-//     for (one = [1:1])  
-//       if (args.x != undef)
-//       if (ISDEBUGEMODE)
-//         for(i = [0 : len(args)-1])
-//           echo(str(str(lable, " ", i ), ": ", args[i]))
-//       else echo(str(lable, "xxxxx : ", args))
-//   ]
-// ) "";
+let
+(
+  doOnce = 
+  [
+    for (one = [1:1])  
+      if (isVector(args))
+        for(i = [0 : len(args)-1])
+          echo(str(str(lable, " ", i ), ": ", args[i]))
+      else echo(str(lable, " : ", args))
+  ]
+) "";
 
 //enums
 enThickness = 0;
