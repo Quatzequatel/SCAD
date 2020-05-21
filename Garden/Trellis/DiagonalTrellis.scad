@@ -179,21 +179,21 @@ module DiagonalLattice2
             if( i == 0)
             {
             // color("pink") 
-            point_square(size = latticeDimension, p1 = p1, p2 = p2, zRes = latticeDimension.y);       
+            point_square(size = latticeDimension, p1 = p1, p2 = p2, height = latticeDimension.y);       
             // color("aqua") 
-            point_square(size = latticeDimension, p1 = p4, p2 = p3, zRes = latticeDimension.y);            
+            point_square(size = latticeDimension, p1 = p4, p2 = p3, height = latticeDimension.y);            
 
             }
             else
             {
                 // color("red") 
-                point_square(size = latticeDimension, p1 = p1, p2 = p2, zRes = latticeDimension.y);                
+                point_square(size = latticeDimension, p1 = p1, p2 = p2, height = latticeDimension.y);                
                 // color("blue") 
-                point_square(size = latticeDimension, p1 = p2, p2 = p3, zRes = latticeDimension.y);   
+                point_square(size = latticeDimension, p1 = p2, p2 = p3, height = latticeDimension.y);   
                 // color("yellow") 
-                point_square(size = latticeDimension, p1 = p3, p2 = p4, zRes = latticeDimension.y);                        
+                point_square(size = latticeDimension, p1 = p3, p2 = p4, height = latticeDimension.y);                        
                 // color("green") 
-                point_square(size = latticeDimension, p1 = p4, p2 = p1, zRes = latticeDimension.y); 
+                point_square(size = latticeDimension, p1 = p4, p2 = p1, height = latticeDimension.y); 
             }
         }
     }

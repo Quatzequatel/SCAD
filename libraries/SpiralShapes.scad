@@ -73,8 +73,8 @@ module Spiral()
     ArchimedeanSpiral(height=height, width=height, range = range, scale = scale, a = a, b = b); 
 
 // translate([0, 0, 10]) 
-    point_square(size = [width, height], p1 = p1, p2 = p2, zRes = height);
-    point_square(size = [width, height], p1 = p3, p2 = p2, zRes = height);
+    point_square(size = [width, height], p1 = p1, p2 = p2, height = height);
+    point_square(size = [width, height], p1 = p3, p2 = p2, height = height);
 
 }
 

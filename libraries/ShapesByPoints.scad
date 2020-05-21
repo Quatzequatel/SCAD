@@ -23,74 +23,74 @@ module point_sphere(diameter, p1, p2, fn = 20)
     } 
 }
 
-module point_cylinder(diameter, p1, p2, zRes = 0.01)
+module point_cylinder(diameter, p1, p2, height = 0.01)
 {
     echo(func = "point_sphere", p1 = p1, p2 = p2);
     
     hull()
     {
-        translate(p1) cylinder(d = diameter, h=zRes, center=true);
-        translate(p2) cylinder(d = diameter, h=zRes, center=true);
+        translate(p1) cylinder(d = diameter, h=height, center=true);
+        translate(p2) cylinder(d = diameter, h=height, center=true);
     } 
 }
 
-module point_polygon(points, paths, p1, p2, zRes = 0.01)
+module point_polygon(points, paths, p1, p2, height = 0.01)
 {
     echo(func = "point_polygon", p1 = p1, p2 = p2);
     
     hull()
     {
         translate(p1) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             polygon(points=points, paths=paths);
         translate(p2) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             polygon(points=points, paths=paths);
     } 
 }
 
-module point_square(size, p1, p2, zRes = 0.01)
+module point_square(size, p1, p2, height = 0.01)
 {
     echo(func = "point_square", size = size, p1 = p1, p2 = p2);
     
     hull()
     {
         translate(p1) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             square(size=size, center = true);
         translate(p2) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             square(size=size, center = true);
     } 
 }
 
-module point_squareTube(size, wall, p1, p2, zRes = 0.01)
+module point_squareTube(size, wall, p1, p2, height = 0.01)
 {
     echo(func = "point_squareTube", size = size, p1 = p1, p2 = p2);
     
     // hull()
     // {
         translate(p1) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             polygon(pointsSquareTube(size = size, p0=[p1.x, p1.y], wall=wall));
         translate(p2) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             polygon(pointsSquareTube(size = size, p0=[p1.x, p1.y], wall=wall));
     // } 
 }
 
-module point_circle(diameter, p1, p2, zRes = 0.01, fn = 6)
+module point_circle(diameter, p1, p2, height = 0.01, fn = 6)
 {
-    echo(func = "point_circle", diameter = diameter, p1 = p1, p2 = p2, zRes = zRes, fn = fn);
+    echo(func = "point_circle", diameter = diameter, p1 = p1, p2 = p2, height = height, fn = fn);
     
     hull()
     {
         translate(p1) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             circle(d=diameter, $fn = fn);
 
         translate(p2) 
-            linear_extrude(height = zRes)
+            linear_extrude(height = height)
             circle(d=diameter, $fn = fn);
     } 
 }

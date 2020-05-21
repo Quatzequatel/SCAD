@@ -72,9 +72,15 @@ module BubblesTrellis
     )
 {
     echo(enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
-    for( i = [frameProperties[enumPropertyTrellisSpecific][enumCircleMinRadius] : 4*frameProperties[enumPropertyFrameBoard].x : frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]])
+    for( i = 
+        [
+            frameProperties[enumPropertyTrellisSpecific][enumCircleMinRadius] : 
+            4*frameProperties[enumPropertyFrameBoard].x : 
+            frameProperties[enumPropertyTrellisSpecific][enumCircleMaxRadius]
+        ]
+    )
     {
-
+        echo(i = i, enumPropertyTrellisSpecific = frameProperties[enumPropertyTrellisSpecific]);
         CircleLattice(frameProperties = frameProperties);
     }
 }
