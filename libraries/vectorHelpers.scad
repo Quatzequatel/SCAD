@@ -26,6 +26,22 @@ function vSetValue(v, idx, value)=
 function vGetValue(v, idx)= v[idx];
 
 
+/*
+    use as a dictionary look up
+*/
+function getKeyValue(v, key, i = 0, result) = //echo(v=v, key=key, i=i, result=result)
+    ( i < len(v) ? 
+        getKeyValue
+        (
+            v = v,
+            key = key,
+            i = i + 1,
+            result = v[i][0] == key 
+                ? v[i] : result
+        ) : result[1]
+    );
+
+
 //append a z value to an [x,y] vector.
 function ApendToV(v, value) = 
 [
