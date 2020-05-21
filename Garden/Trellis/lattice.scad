@@ -55,7 +55,10 @@ module DrawBubbles
     frameProperties
 )
 {
-    circlesTrellisData = getKeyValue(frameProperties, "circlestrellisdata");
+    circlesTrellisData = getKeyValue(frameProperties, "circlestrellisdata") != undef ?
+        getKeyValue(frameProperties, "circlestrellisdata") :
+        getKeyValue(frameProperties, "bublestrellis");
+
     // assert(circlesTrellisData == undef, str("circlestrellisdata, key not found in frameProperties"))
     echo(circlesTrellisData = circlesTrellisData);
     echo(frameProperties = frameProperties);

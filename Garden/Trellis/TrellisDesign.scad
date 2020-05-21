@@ -107,13 +107,13 @@ Includes = setIncludeProperty
         spiralTrellis = false, 
         waveTrellis = false,
         frameType = enumFrameTypeSquare,
-        bubblesTrellis = false,
+        bubblesTrellis = true,
         mazeTrellis = false
     );
 //specific trellis type properties
 WaveProperties = ["wavetrellis", setWaveProperty(wave = [], width = 10, height = 50, length = 0, type = enumWaveTypeBoth)];
                             //[minframeRadius, maxframeRadius, enumCircleCount, enumCircleSeed]
-BubblesTrellisProperties = ["bublestrellis", [convert_in2mm(1),175, 5, PI]];
+BubblesTrellisProperties = ["bublestrellis", [convert_in2mm(1),175, 18, PI]];
 
 //Frame type Properties
 SquareProperties = 
@@ -125,7 +125,8 @@ SquareProperties =
     [IntervalCount],          //[4] enumPropertyInterval, int, howmany lattice to repeat.
     Includes,                //[5] enumPropertyInclude. See above setIncludeProperty()
     //[6] enumPropertyTrellisSpecific, this is a data bag. WaveProperty below:
-    WaveProperties 
+    WaveProperties,
+    BubblesTrellisProperties
 ];
 
 CircleProperties = 
@@ -233,9 +234,7 @@ module Circles
                 translate([0,0, frameProperties[enumPropertyFrameBoard].y/2])
                 CircleFrame
                 (
-                    frameRadius = frameRadius,
-                    frameBoardDimension = frameProperties[enumPropertyFrameBoard],
-                    screwHoles = [ScrewHole_OD, ScrewHoleCount]
+                    frameProperties
                 );
             }
             if(getIncludesPropertyValue( frameProperties, enumincludeDiamondStyleTrellis))
@@ -245,10 +244,7 @@ module Circles
                 // rotate([90,0,0])
                 DiagonalLattice2
                 (
-                   frameDimension = [width, height],  
-                    frameBoardDimension = frameProperties[enumPropertyFrameBoard] , 
-                    latticeDimension = latticeDimension,
-                    intervalCount = intervalCount
+                   frameProperties
                 );
             }
             if(getIncludesPropertyValue( frameProperties, enumincludeSquareLatticeTrellis))
@@ -256,10 +252,7 @@ module Circles
                 translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
                 SquareLatticeTrellis
                 (
-                    frameDimension = [width, height], 
-                    frameBoardDimension = frameProperties[enumPropertyFrameBoard] , 
-                    latticeDimension = latticeDimension,
-                    intervalCount = intervalCount
+                    frameProperties
                 );
             }
             if(getIncludesPropertyValue( frameProperties, enumincludeArchimedianSpiral))
@@ -268,18 +261,14 @@ module Circles
                 // rotate([90,0,0])
                     ArchimedianSpiralTrellis
                     (
-                        width = width, 
-                        height = height, 
-                        frameBoardDimension = frameProperties[enumPropertyFrameBoard] , 
-                        latticeDimension = latticeDimension              
+                        frameProperties             
                     );
             }
             if(getIncludesPropertyValue( frameProperties, enumincludeHorizontalWaveTrellis))
             {
                 WaveTrellis
                 (
-                    frameProperties = frameProperties,
-                    waveDimensions = WaveProperties
+                    frameProperties
                 );
             }        
         }
@@ -288,11 +277,7 @@ module Circles
         {
             BubblesTrellis
             (
-                minframeRadius = hypotenuse(frameProperties[enumPropertyFrame].x, frameProperties[enumPropertyFrame].y)/10,
-                maxframeRadius = hypotenuse(frameProperties[enumPropertyFrame].x, frameProperties[enumPropertyFrame].y),
-                latticeDimension = latticeDimension,
-                count = intervalCount,
-                seed = Seed
+               frameProperties
             );
         }
 
@@ -300,34 +285,30 @@ module Circles
         {
             MazeLattice
             (
-                frameType = enumFrameTypeCircle,
-                frameDimension = [width, height],
-                frameBoardDimension = FrameBoardDimension,
-                latticeDimension = LatticeDimension,
-                screwHoles = ScrewHoles,
-                showFrame = false
+               frameProperties
             );
         }
 
         CircleFrameCutter
         (
-                    frameRadius = frameRadius,
-                    frameBoardDimension = frameProperties[enumPropertyFrameBoard]
+            frameProperties
         ) ;       
     }
 }
 
 module HexFrames
 (
-    hexProperties
+    frameProperties
 )
 {
-    frameRadius = hexProperties[enumPropertyFrame].x;
-    frameBoardDimension = hexProperties[enumPropertyFrameBoard]; 
-    latticeDimension = hexProperties[enumPropertyLattice]; 
-    intervalCount = hexProperties[enumPropertyInterval];
-    includes = hexProperties[enumPropertyInclude]; 
-    screwHoles = hexProperties[enumPropertyScrewHoles];  
+    frameRadius = frameProperties[enumPropertyFrame].x;
+    frameBoardDimension = frameProperties[enumPropertyFrameBoard]; 
+    latticeDimension = frameProperties[enumPropertyLattice]; 
+    intervalCount = frameProperties[enumPropertyInterval];
+    includes = frameProperties[enumPropertyInclude]; 
+    screwHoles = frameProperties[enumPropertyScrewHoles];  
+
+    debugEcho("HexFrames()", [frameRadius,frameBoardDimension,latticeDimension,intervalCount,includes,screwHoles]);
 
     difference()
     {    
@@ -340,9 +321,7 @@ module HexFrames
                 translate([0,0, frameBoardDimension.y/2])
                 HexFrame
                 (
-                    frameRadius = frameRadius,
-                    frameBoardDimension = frameBoardDimension,
-                    screwHoles = [ScrewHole_OD, ScrewHoleCount]
+                    frameProperties
                 );
             }
             if(getIncludesPropertyValue( frameProperties, enumincludeDiamondStyleTrellis))
@@ -352,10 +331,7 @@ module HexFrames
                 // rotate([90,0,0])
                 DiagonalLattice2
                 (
-                   frameDimension = [width, height],  
-                    frameBoardDimension = frameBoardDimension , 
-                    latticeDimension = latticeDimension,
-                    intervalCount = intervalCount
+                   frameProperties
                 );
             }
             if(getIncludesPropertyValue( frameProperties, enumincludeSquareLatticeTrellis))
@@ -363,10 +339,7 @@ module HexFrames
                 translate([- frameProperties[enumPropertyFrame].x/2,- frameProperties[enumPropertyFrame].y/2, 0])
                 SquareLatticeTrellis
                 (
-                    frameDimension = [width, height], 
-                    frameBoardDimension = frameBoardDimension , 
-                    latticeDimension = latticeDimension,
-                    intervalCount = intervalCount
+                    frameProperties
                 );
 
             }
@@ -376,21 +349,14 @@ module HexFrames
                 // rotate([90,0,0])
                     ArchimedianSpiralTrellis
                     (
-                        width = width, 
-                        height = height, 
-                        frameBoardDimension = frameBoardDimension , 
-                        latticeDimension = latticeDimension              
+                        frameProperties              
                     );
             }
             if(getIncludesPropertyValue( frameProperties, enumincludeHorizontalWaveTrellis))
             {
                 WaveTrellis
                 (
-                    frameDimension = [width, height],
-                    frameBoardDimension = frameBoardDimension , 
-                    latticeDimension = latticeDimension,
-                    waveDimensions = WaveProperties,
-                    intervalCount = intervalCount
+                    frameProperties
                 );
             }   
 
@@ -398,11 +364,7 @@ module HexFrames
             {
                 BubblesTrellis
                 (
-                    minframeRadius = frameRadius/10,
-                    maxframeRadius = frameRadius,
-                    latticeDimension = latticeDimension,
-                    count = intervalCount,
-                    seed = Seed
+                    frameProperties
                 );
             }
 
@@ -410,20 +372,14 @@ module HexFrames
             {
                 MazeLattice
                 (
-                    frameType = enumFrameTypeHex,
-                    frameDimension = [width, height],
-                    frameBoardDimension = FrameBoardDimension,
-                    latticeDimension = LatticeDimension,
-                    screwHoles = ScrewHoles,
-                    showFrame = false
+                    frameProperties
                 );
             }            
         }
 
         HexFrameCutter
         (
-                    frameRadius = frameRadius,
-                    frameBoardDimension = FrameBoardDimension
+            frameProperties
         ) ;       
     }
 }
@@ -451,10 +407,7 @@ module Square_Frame(frameProperties)
                 // rotate([90,0,0])
                 DiagonalLattice
                 (
-                    frameDimension = frameProperties[enumPropertyFrame], 
-                    frameBoardDimension = frameBoardDimension , 
-                    latticeDimension = latticeDimension,
-                    intervalCount = intervalCount
+                    frameProperties
                 );
             }
 
@@ -498,7 +451,7 @@ module Square_Frame(frameProperties)
             if(getIncludesPropertyValue( frameProperties, enumincludeBubbles))
             {
                 debugEcho("Panel: Square_Frame", "enumincludeBubbles");
-                BubblesTrellis
+                DrawBubbles
                 (
                     frameProperties = frameProperties
                 );
@@ -507,10 +460,10 @@ module Square_Frame(frameProperties)
             if(getIncludesPropertyValue( frameProperties, enumincludeMaze))
             {
                 debugEcho("Panel: Square_Frame", "enumincludeMaze");
-                MazeLattice
-                (
-                    frameProperties = frameProperties
-                );
+                // MazeLattice
+                // (
+                //     frameProperties = frameProperties
+                // );
             }            
         }
 
