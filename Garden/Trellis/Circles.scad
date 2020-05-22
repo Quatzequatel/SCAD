@@ -20,7 +20,7 @@ module Test()
 {
     //Global Properties
     FrameBoardDimension = [WallThickness(count = 4), convertInches2mm(0.5)]; 
-    FrameDimension = [convertInches2mm(12) - FrameBoardDimension.y, convertInches2mm(12) - FrameBoardDimension.y];
+    FrameDimension = [175, 175];
 
     FrameDimensionProperties = 
     [
@@ -30,7 +30,7 @@ module Test()
             ["frame dimension", FrameDimension],
             ["frameboard dimension", FrameBoardDimension],
             ["screw holes", [woodScrewShankDiaN_4, 1]],
-            ["debug", true]
+            ["debug", false]
         ]
     ];
 
@@ -54,7 +54,7 @@ module Test()
                 ["circleCount", 18],
                 ["Seed", PI],
                 LatticeProperties,
-                ["debug", true]
+                ["debug", false]
             ]
         ];
 
@@ -65,7 +65,7 @@ module Test()
         CirclesTrellisData 
     ];
 
-    // CirclesTrellis(frameProperties);
+    CirclesTrellis(FrameProperties);
     BubblesTrellis(FrameProperties);
 }
 
@@ -76,34 +76,41 @@ module CirclesTrellis
 {
     let
     (
-        frameDictionary = getKeyValue(frameProperties, "framedimensionproperties"),
-        frameSize = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frame dimension"),
-        frameBoard = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "frameboard dimension"),
-        screwHoles = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "screw holes"),
-        featuresDictionary = getKeyValue(getKeyValue(frameProperties, "framedimensionproperties"), "trellisfeatures"),
-        latticeDictionary = getKeyValue(frameProperties, "bublestrellis")
-        // debugmode = getKeyValue(getKeyValue(frameProperties, "squaretrellisproperties"), "debug")
-    )    
+        frameDictionary = getKeyValue(frameProperties, "framedimensionproperties")
+    )
     {
         let
         (
-            minRadius = getKeyValue(latticeDictionary, "minRadius"),
-            maxRadius = getKeyValue(latticeDictionary, "maxRadius"),
-            circleCount = getKeyValue(latticeDictionary, "circleCount"),
-            Seed = getKeyValue(latticeDictionary, "Seed"),
-            debugmode = getKeyValue(latticeDictionary, "debug")
-        )
+            frameSize = getKeyValue(frameDictionary, "frame dimension"),
+            frameBoard = getKeyValue(frameDictionary, "frameboard dimension"),
+            screwHoles = getKeyValue(frameDictionary, "screw holes"),
+            // featuresDictionary = getKeyValue(frameDictionary, "trellisfeatures"),
+            latticeDictionary = getKeyValue(frameProperties, "circlestrellisdata") != undef ?
+                getKeyValue(frameProperties, "circlestrellisdata") :
+                getKeyValue(frameProperties, "bublestrellis")  
+            // debugmode = getKeyValue(frameDictionary, "debug")
+        )    
         {
-            for( i = [minRadius : 4*frameBoard.x : maxRadius])
+            let
+            (
+                minRadius = getKeyValue(latticeDictionary, "minRadius"),
+                maxRadius = getKeyValue(latticeDictionary, "maxRadius"),
+                circleCount = getKeyValue(latticeDictionary, "circleCount"),
+                Seed = getKeyValue(latticeDictionary, "Seed"),
+                debugmode = getKeyValue(latticeDictionary, "debug")
+            )
             {
-                CircleFrame
-                (
-                    frameProperties = frameProperties
-                );
-            }            
+                for( i = [minRadius : 4*frameBoard.x : maxRadius])
+                {
+                    debugEcho("CirclesTrellis()", [["minRadius", minRadius], ["step size", 4*frameBoard.x],  ["maxRadius", maxRadius], ["i", i]], debugmode);
+                    CircleFrame
+                    (
+                        frameProperties = frameProperties
+                    );
+                }            
+            }
         }
     }
-
 }
 
 module BubblesTrellis
