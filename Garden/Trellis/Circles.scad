@@ -26,7 +26,7 @@ module Test()
     [
         "framedimensionproperties",
         [
-            ["frame type", enumFrameTypeSquare],
+            ["frame type", enumFrameTypeHex],
             ["frame dimension", FrameDimension],
             ["frameboard dimension", FrameBoardDimension],
             ["screw holes", [woodScrewShankDiaN_4, 1]],
