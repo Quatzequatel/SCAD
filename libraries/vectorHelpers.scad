@@ -72,9 +72,19 @@ function vHalf(v) =
         v[i]/2
 ];
 
-function vAddToAxis(v, axis, value) =
+
+
+
+
+
+function vAddToAxis(v, axis, value) = echo( vAddToAxis="input", v= v, axis =axis, value = value)
 [
-    for(i = [0 : len(v)-1]) (i == axis ? v[i] + value : v[i])
+    for(i = [0 : len(v)-1]) echo(vAddToAxis = i, v = v[i], add = i == axis, value = value) (i == axis ? v[i] + value : v[i])
+];
+
+function vvAddToAxis(v, axis, value) = echo( vAddToAxis="input", v= v, axis =axis, value = value)
+[
+    for(i = [0 : len(v)-1]) vAddToAxis(v = v[i], axis = axis, value = value)
 ];
 
 function getvAxis(v, axis) =
@@ -151,5 +161,6 @@ module Test()
                 )[1] ==  [10, 50, 0, 2]
         );
 
-
+    echo(dictionary=midpoint(p1=[-50.8, 0, 0], p2= [0, 0, 0]));
+    echo(directionPoint=directionPoint(p = [0,0,0], angle = 45, length = 10));
 }
