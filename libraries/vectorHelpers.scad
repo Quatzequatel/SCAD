@@ -72,20 +72,24 @@ function vHalf(v) =
         v[i]/2
 ];
 
+function vAddToAxis(v, axis, value) = 
+    let( foo = ISDEBUGEMODE ? fargsEcho("vAddToAxis([0]=v, [1]=axis , [2]=value)", [v, axis, value]) : 0)
+    let
+    (
+        result = [for(i = [0 : len(v)-1]) (i == axis ? v[i] + value : v[i])]
+    )
+    let( foo = ISDEBUGEMODE ? fargsEcho("vAddToAxis()=> [0]=x, [1]=y, [2]=z", result) : 0)
+    result;
 
+function vvAddToAxis(v, axis, value) = 
+    let( foo = ISDEBUGEMODE ? fargsEcho("vvAddToAxis([0]=v, [1]=axis , [2]=value)", [v, axis, value]) : 0)
+    let
+    (
+        result = [for(i = [0 : len(v)-1]) vAddToAxis(v = v[i], axis = axis, value = value)]
+    )
+    let( foo = ISDEBUGEMODE ? fargsEcho("vvAddToAxis()=> []=", result) : 0)
+    result;
 
-
-
-
-function vAddToAxis(v, axis, value) = echo( vAddToAxis="input", v= v, axis =axis, value = value)
-[
-    for(i = [0 : len(v)-1]) echo(vAddToAxis = i, v = v[i], add = i == axis, value = value) (i == axis ? v[i] + value : v[i])
-];
-
-function vvAddToAxis(v, axis, value) = echo( vAddToAxis="input", v= v, axis =axis, value = value)
-[
-    for(i = [0 : len(v)-1]) vAddToAxis(v = v[i], axis = axis, value = value)
-];
 
 function getvAxis(v, axis) =
 [
