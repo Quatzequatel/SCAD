@@ -43,15 +43,15 @@ module anglebracket(angle, len1, len2, thickness, width)
             focusPoint = midpoint(points[0], topPoints[2])
             )
         {
-            echo(midpoint = midpoint, focusPoint = focusPoint);
+            // echo(midpoint = midpoint, focusPoint = focusPoint);
             debugEcho
             (   
                 lable = "anglebracket [angle, len1, len2, thickness, width, midpoint, points, topPoints]", 
                 args = 
                 [
                     angle, len1, len2, thickness, width, midpoint, points, topPoints
-                ], 
-                mode = true
+                ]
+                // ,mode = true
             );
             difference()
             {
@@ -72,11 +72,24 @@ module anglebracket(angle, len1, len2, thickness, width)
                         let(midpoint = midpoint(points[1], topPoints[i]))
                         {
                             // # screwhole(point1 = points[1], point2=topPoints[i], length = width) ; 
-                            #point_sphere( 
-                                diameter = woodScrewShankDiaN_8,
-                                p1 = Add2Y(midpoint, thickness), 
-                                p2 = Add2Y(midpoint, -thickness)
-                                );                            
+                            if(i == 0)
+                            {
+                                #point_sphere
+                                ( 
+                                    diameter = woodScrewShankDiaN_8,
+                                    p1 = Add2Y(midpoint, thickness), 
+                                    p2 = Add2Y(midpoint, -thickness)
+                                );     
+                            }   
+                            else
+                            {
+                                #point_sphere
+                                ( 
+                                    diameter = woodScrewShankDiaN_8,
+                                    p1 = Add2Y(midpoint, thickness), 
+                                    p2 = directionPoint(p=midpoint, angle=-angle, length=2*thickness)
+                                );     
+                            }                                                
                         }
                     }                                  
                 }
