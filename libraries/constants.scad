@@ -6,7 +6,7 @@ i.e. enums
 NozzleWidth = 1.0;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
-// ISDEBUGEMODE = true;
+ISDEBUGEMODE = true;
 IS_DEBUG_DEBUG = false;
 
 function LayersToHeight(layers) = 
@@ -19,7 +19,7 @@ function isVector(args) = args.x != undef;
 module debugEcho(lable, args, mode) 
 {
   bogus = debugDebug(lable, args, mode);
-  if(mode)
+  if(mode || IS_DEBUG_DEBUG)
   {
     let(foobar = fargsEcho(lable, args));
   }
