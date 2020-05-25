@@ -14,14 +14,33 @@ build();
 
 module build() 
 {
-    anglebracket
-        (
-            angle = 35, 
-            len1 = 2 * mmPerInch, 
-            len2 = 2 * mmPerInch, 
-            thickness = 5, 
-            width = 2.5 * mmPerInch
-        );
+    let(len1 = 1 * mmPerInch , len2 = 2 * mmPerInch , len3 = 1 * mmPerInch, len4 = 2 * mmPerInch, thickness = 5, width = 34)
+    {
+        anglebracket
+            (
+                angle = 90, 
+                len1 = len1, 
+                len2 = len2, 
+                thickness = thickness, 
+                width = width
+            );
+
+        // translate([-len3, 0, 0])
+        // mirror([1, 0, 0]) 
+        // {
+        //     anglebracket
+        //         (
+        //             angle = 90, 
+        //             len1 = len3, 
+        //             len2 = len4, 
+        //             thickness = thickness, 
+        //             width = width
+        //         );            
+        // }        
+    }
+
+    
+    
 }
 
 module anglebracket(angle, len1, len2, thickness, width)
@@ -43,7 +62,7 @@ module anglebracket(angle, len1, len2, thickness, width)
             focusPoint = midpoint(points[0], topPoints[2])
             )
         {
-            // echo(midpoint = midpoint, focusPoint = focusPoint);
+            echo(midpoint = midpoint, focusPoint = focusPoint);
             debugEcho
             (   
                 lable = "anglebracket [angle, len1, len2, thickness, width, midpoint, points, topPoints]", 
@@ -83,34 +102,30 @@ module anglebracket(angle, len1, len2, thickness, width)
                             }   
                             else
                             {
-                                #point_sphere
-                                ( 
-                                    diameter = woodScrewShankDiaN_8,
-                                    p1 = Add2Y(midpoint, thickness), 
-                                    p2 = directionPoint(p=midpoint, angle=-angle, length=2*thickness)
-                                );     
+                                if(angle == 90)
+                                {
+                                    #point_sphere
+                                    ( 
+                                        diameter = woodScrewShankDiaN_8,
+                                        p1 = Add2X(midpoint, thickness), 
+                                        p2 = focusPoint
+                                    ); 
+                                }
+                                else
+                                {
+                                    #point_sphere
+                                    ( 
+                                        diameter = woodScrewShankDiaN_8,
+                                        p1 = Add2Y(midpoint, thickness), 
+                                        p2 = directionPoint(p=midpoint, angle=-angle, length=2*thickness)
+                                    );    
+                                } 
                             }                                                
                         }
                     }                                  
                 }
             }        
         }        
-    }
-}
-
-module screwhole(point1, point2, length) 
-{
-    let
-    (
-        midpoint = midpoint(point1, point2)
-    )
-    {
-        point_sphere
-            (
-                diameter = woodScrewShankDiaN_8, 
-                p1 =vAddToAxis(midpoint, 1, -length), 
-                p2 =vAddToAxis(midpoint, 1, length)
-            );        
     }
 }
 
