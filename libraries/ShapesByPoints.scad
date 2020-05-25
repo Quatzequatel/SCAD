@@ -13,10 +13,14 @@ use <hull_polyline2d.scad>;
 // $fn=100;
 Test();
 
-module point_sphere(diameter, p1, p2, fn = 20)
+module point_sphere(diameter = 1, p1, p2, fn = 20)
 {
-    // echo(func = "point_sphere", diameter = diameter, p1 = p1, p2 = p2);
-    
+    debugEcho
+        (
+            lable = "point_sphere([0]=diameter, [1]=p1, [2]=p2)", 
+            args = [diameter, p1, p2]
+        ) ;
+
     hull()
     {
         translate(p1) sphere(d = diameter, $fn = fn);
@@ -26,7 +30,11 @@ module point_sphere(diameter, p1, p2, fn = 20)
 
 module point_cylinder(diameter, p1, p2, height = 0.01)
 {
-    echo(func = "point_sphere", p1 = p1, p2 = p2);
+    debugEcho
+        (
+            lable = "point_cylinder([0]=diameter, [1]=p1, [2]=p2, [3]=height)", 
+            args = [diameter, p1, p2, height]
+        ) ;
     
     hull()
     {
@@ -37,7 +45,12 @@ module point_cylinder(diameter, p1, p2, height = 0.01)
 
 module point_polygon(points, paths, p1, p2, height = 0.01)
 {
-    echo(func = "point_polygon", points = points, paths = paths, p1 = p1, p2 = p2);
+    // echo(func = "point_polygon", points = points, paths = paths, p1 = p1, p2 = p2);
+    debugEcho
+        (
+            lable = "point_polygon([0]=points, [1]=paths, [2]=p1, [3]=p2, [4]=height)", 
+            args = [points, paths, p1, p2, height]
+        ) ;    
     
     // hull()
     // {
