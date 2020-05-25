@@ -22,20 +22,27 @@ function midpoint(p1, p2) = //echo( midpoint="input", p1 = p1, p2 = p2)
     result;
 
 
-function directionPoint(p = [0,0,0], angle = 10, length = 10) = //echo("directionPoint(p, angle, length)", [p, angle, length])
+function directionPoint(p = [0,0,0], angle = 10, length = 10) = 
 let( foo = ISDEBUGEMODE ? fargsEcho("directionPoint([0]=p, [1]=angle , [2]=length)", [p, angle, length]) : 0)
 let
     (
-        result = 
-        [
-            (p.x + length) * cos(angle),
-            (p.y + length) * sin(angle),
-            p.z            
-        ]
+        result = pointOnCircle(origin=p, angle=angle, radius=length)
     )
     let( foo = ISDEBUGEMODE ? fargsEcho("directionPoint()=> [0]=x, [1]=y, [2]=z", result) : 0)
     
     result;
+
+function pointOnCircle(origin, angle, radius) =
+let
+(
+    result = 
+    [
+        origin.x + radius * cos(angle),
+        origin.y + radius * sin(angle),
+        origin.z          
+    ]
+)
+result;
 
 function AddPoints(p1, p2) = [p1.x + p2.x, p2.y + p2.y, 0];
 
