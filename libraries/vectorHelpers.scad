@@ -18,7 +18,7 @@ function vSwitch(v, x, y) = //echo(vSwitch = v, x = x, y = y)
 ];
 
 function privateGetKeyValue(v, key, i = 0, result) = //echo(v=v, key=key, i=i, result=result)
-( i < len(v) ? 
+( result == undef && i < len(v) ?                   //added optimzation.
     privateGetKeyValue
     (
         v = v,
@@ -138,6 +138,7 @@ module Test()
         ];
 
     dictionary = [
+                    "dictionary name",
                     ["dog",1],
                     ["cat",2],
                     ["bird",3],
@@ -152,8 +153,9 @@ module Test()
     echo(dictionary=getKeyValue(dictionary, "bug"));
     echo(dictionary=getKeyValue(dictionary, "bird"));
     echo(dictionary=getKeyValue(dictionary, "dog"));
+    echo(dictionary=getKeyValue(dictionary, "dictionary name"));
 
-    assert(testPass("getKeyValue(dictionary, 'dog')", "dog", getKeyValue(dictionary, "dog"))[1] == 1);
+    assert(testPass("getDictionaryValue(dictionary, 'dog')", "dog", getKeyValue(dictionary, "dog"))[1] == 1);
     assert(testPass("getKeyValue(dictionary, 'bug')", "bug", getKeyValue(dictionary, "bug"))[1] == 4);
     assert
         (
@@ -164,7 +166,4 @@ module Test()
                     getKeyValue(squareProperties, "wavetrellis")
                 )[1] ==  [10, 50, 0, 2]
         );
-
-    echo(dictionary=midpoint(p1=[-50.8, 0, 0], p2= [0, 0, 0]));
-    echo(directionPoint=directionPoint(p = [0,0,0], angle = 45, length = 10));
 }
