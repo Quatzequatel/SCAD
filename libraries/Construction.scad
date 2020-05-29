@@ -5,12 +5,73 @@
 use <convert.scad>;
 use <ObjectHelpers.scad>;
 use <vectorHelpers.scad>;
+use <TrigHelpers.scad>;
+use <ShapesByPoints.scad>;
 
 include <constants.scad>;
+
 
 function sq(value) = value * value;
 function hypotenuse(side1, side2) = sqrt(sq(side1) + sq(side2));
 function insideHypotenuse(side1, side2, board) = sqrt(sq(side1 - getValue(board, enThickness)) + sq(side2 - getValue(board, enThickness)));
+CONSTRUCTION_DEBUG_ECHO = false;
+polyBoardAngle_DEBUG = true;
+ROOF_DEBUG = true;
+//orientation  origin i
+
+function frame(p0, h, l, board) = 
+let( tp0 = Add2Z(p0, h)) echo(tp0 = tp0, p0 = p0, h = h, l = l, board = board)
+let
+    (
+        flatBoard = [board.y, board.x],
+        result = 
+        [
+            ["bottom", [getCenter(p0, flatBoard), getCenter([p0.x + l, p0.y, p0.z], flatBoard)]],
+            ["left", [getCenter([p0.x, p0.y, p0.z + board.x], flatBoard), getCenter([p0.x, p0.y, p0.z + h], flatBoard)]],
+            ["top",  [getCenter(p0, flatBoard), getCenter([p0.x + l, p0.y, p0.z], flatBoard)]],
+            ["right", [tp0, Add2X(tp0, l - board.x)]]
+        ]
+    )
+    let( foo = fargsEcho("frame()=>", result) )
+result;
+
+module drawFrame(p0, h, l, board)
+{
+    let(pointCollection = frame(p0, h, l, board))
+    {
+        // echo(section = pointCollection[i].x, p0=pointCollection[i].y.x, p1 = pointCollection[i].y.y);
+        // for(i = [0: len(pointCollection)-1])
+        for(i = [0: 1])
+        {
+            echo(section = pointCollection[i].x, p0=pointCollection[i].y.x, p1 = pointCollection[i].y.y);
+            let
+            (
+                section = pointCollection[i].x, 
+                pstart = pointCollection[i].y.x, 
+                pend = pointCollection[i].y.y
+            )
+            {
+                echo(section = section, mod = i % 2, pstart=pstart, pend = pend); 
+                if(section == "bottom")
+                {
+                    point_square1(size = [board.y,board.y], p1 = pstart, p2 = pend, height = board.x);
+                }
+                else
+                {
+                    point_square1(size = board, p1 = pstart, p2 = pend, height = board.y);   
+                    // !point_square(size = board, p1 = pstart, p2 = pend, height = board.y, center = true) ;               
+                }
+            
+            }
+
+        }
+    }
+}
+
+function getCenter(p0, board) = 
+let( foo = fargsEcho("getCenter([0]=p0, [1]=board", [p0, board]))
+let(result = vSetValue(AddPoints(p1 = p0, p2 = midpoint( p1 =p0 , p2 = [board.x, board.y, p0.z] )), 2, p0.z))
+result;
 
 Board2x4 = newVector(v = [], p1 = convert_in2mm(1.5), p2 = convert_in2mm(3.5), p3 = convert_ft2mm(8));
 angle = 44.3;
@@ -126,7 +187,7 @@ module House()
 */
 module Wall(wallOD, board, spacing, includeStuds = true, finished = false, ascending = true)
 {
-    echo(str("Wall()", parseArgsToString(args)));
+    // echo(str("Wall()", parseArgsToString(args)));
     finishedColor = "slategray" ;
     // echo(module_name = "Wall", wallOD = wallOD, board = board, spacing = spacing);
     if(!finished)
@@ -189,87 +250,90 @@ module Wall(wallOD, board, spacing, includeStuds = true, finished = false, ascen
     }
 }
 
-module Roof(roofOD, board, spacing, includeHeader = true, includeFacet = true, includeStuds = true, finished = false)
+module Roof(roofOD, board, spacing, includeHeader = true, includeFacet = true, includeStuds = true, finished = false, ascending = true)
 {
     finishedColor = "slategray" ;
-    debugEcho(str("module_name is ","Roof()", ", roofOD = ", roofOD, ", board = ", board, ", spacing = ", spacing ));
-    debugEcho(str("module_name is ","Roof()", ", includeHeaders = ", includeHeader, ", includeStuds = ", includeStuds, ", finished = ", finished ));
-    rotate([roofOD[3],0,0])
-    if(!finished)
-    {
-        if (includeHeader) 
+    debugEcho("Roof([0]=House.y, [1]=house.x, [2]=height, [3]=RoofAngle)", roofOD, CONSTRUCTION_DEBUG_ECHO || ROOF_DEBUG);
+    debugEcho("Roof([0]=roofOD.in, [1]=board.in, [2]=spacing.in)", [convertV_mm2Inch(roofOD), convertV_mm2Inch(board), convert_mm2Inch(spacing)], CONSTRUCTION_DEBUG_ECHO || ROOF_DEBUG);
+    debugEcho("Roof([0]=includeHeader, [1]=includeFacet, [2]=includeStuds, [3]=finished)", [includeHeader, includeFacet, includeStuds, finished], CONSTRUCTION_DEBUG_ECHO || ROOF_DEBUG);
+    let(pitch = roofOD[3])
+    let(roofHeight = Height(x=roofOD.x/2, angle = pitch))
+    rotate([pitch,0,0])
+    {    
+        union()
         {
-            //top
-            translate([0, roofOD.z - board.y , board.x * sin(roofOD[3])])
-            rotate([-roofOD[3], 0, 0])
-            xyHorizontalBoard(board = board, startlocation = [0 ,0, 0], color = "green");            
-        }        
-        
-        if(includeFacet)
-        {
-            //base
-            xyHorizontalBoard(board = board, startlocation = [0,0,0], color = "red");
-
-        }
-
-        if(includeStuds)
-        {
-            //studs
-            // for(i = [0 : 1 : roofOD.x/spacing - 1])
-            for(i = ascending == true ? [0 : 1 : roofOD.x/spacing - 1] : [roofOD.x/spacing - 1 : -1 : 0] )
+            if (includeHeader) 
             {
-                debugEcho(str("module_name is ","Roof()", ", i = ",i ));
-                xyVerticalBoard(board = board, startlocation = [i * spacing ,board.x, 0], angle = roofOD[3], color = "blue");
+                //top
+                translate([0, roofOD.z - board.y , roofHeight])
+                rotate([-pitch, 0, 0])
+                if(finished)
+                {
+                    xyHorizontalBoard(board = vSetValue(board, enZ, roofOD.x), startlocation = [0,0,0], color = finishedColor);
+                }
+                else
+                {
+                    xyHorizontalBoard(board = board, startlocation = [0 ,0, 0], color = "green");  
+                }                      
+            }        
+            
+            if(includeFacet)
+            {
+                //base
+                if(finished)
+                {
+                    xyHorizontalBoard(board = vSetValue(board, enZ, roofOD.x), startlocation = [0,0,0], color = finishedColor);
+                }
+                else
+                {
+                    xyHorizontalBoard(board = board, startlocation = [0,0,0], color = "red");
+                }            
             }
-            xyVerticalBoard(board = board, startlocation = [roofOD.x - 2*board.x ,board.x, 0], angle = roofOD[3], color = "yellow");            
+
+            if(includeStuds)
+            {
+                //studs
+                if(finished)
+                {
+                    for(i = ascending == true ? [0 : 1 : roofOD.x/spacing - 1] : [roofOD.x/spacing - 1 : -1 : 0] )
+                    {
+                        xyVerticalBoard(board = vSetValue(board, enZ, roofOD.z - board.x), startlocation = [i * spacing ,board.x, 0], angle = roofOD[3], color = finishedColor);
+                    }
+                    xyVerticalBoard(board = vSetValue(board, enZ, roofOD.z - board.x), startlocation = [roofOD.x - board.x ,board.x, 0], angle = roofOD[3], color = finishedColor);
+                }
+                else
+                {
+                    let(stop = roofOD.x/spacing - 1, thecolor = !finished ? "blue" : finishedColor)
+                    for(i = ascending == true ? [0 : 1 : stop] : [stop : -1 : 0] )
+                    {
+                        // debugEcho(str("module_name is ","Roof()", ", i = ",i ));
+                        xyVerticalBoard(board = board, startlocation = [i * spacing ,board.x, 0], angle = pitch, color = i == 0 ? "yellow" :thecolor);
+                    }
+                    xyVerticalBoard(board = board, startlocation = [roofOD.x - 1*board.x ,board.x, 0], angle = pitch, color = "yellow");                 
+                }
+                        
+            }
         }
     }
-    else
-    {
-        if(includeHeader)
-        {
-            //top
-            translate([0, roofOD.z - board.y , board.x * sin(roofOD[3])])
-            rotate([-roofOD[3], 0, 0])
-            xyHorizontalBoard(board = vSetValue(board, 2, roofOD.x), startlocation = [0,0,0], color = finishedColor);
-        }
-        
-        if(includeFacet)
-        {
-            //base
-            xyHorizontalBoard(board = vSetValue(board, 2, roofOD.x), startlocation = [0,0,0], color = finishedColor);
-        }
-        
-        if(includeStuds)
-        {
-            //studs
-            // for(i = [0 : 1 : roofOD.x/spacing - 1])
-            for(i = ascending == true ? [0 : 1 : roofOD.x/spacing - 1] : [roofOD.x/spacing - 1 : -1 : 0] )
-            {
-                xyVerticalBoard(board = vSetValue(board, 2, roofOD.z - board.x), startlocation = [i * spacing ,board.x, 0], angle = roofOD[3], color = finishedColor);
-            }
-            xyVerticalBoard(board = vSetValue(board, 2, roofOD.z - board.x), startlocation = [roofOD.x - board.x ,board.x, 0], angle = roofOD[3], color = finishedColor);
-        }
-    }
-
 }
 
 module xyVerticalBoard(board, startlocation, color = "blue", angle)
 {
-    debugEcho(str("module_name is ","xyVerticalBoard()", ", board = ", board, ", startlocation = ", startlocation, ", angle = ", angle));
+    debugEcho("xyVerticalBoard([0]=board, [1]=startlocation, [2]=color, [3]=angle)",[board, startlocation, color, angle], CONSTRUCTION_DEBUG_ECHO);
     if(angle == undef)
     {
         polyBoard(board = transpose2xzy(b = board), startlocation = startlocation, color = color );
     }
     else
     {
+        debugEcho("xyVerticalBoard([0]=board, [1]=startlocation, [2]=color, [3]=angle)",[board, startlocation, color, angle], CONSTRUCTION_DEBUG_ECHO);
         polyBoardAngle(board = transpose2xzy(b = board), startlocation = startlocation, angle = angle, color = color );
     }    
 }
 
 module xyHorizontalBoard(board, startlocation, color = "red", angle)
 {
-    debugEcho(str("module_name is ","xyHorizontalBoard()", ", board = ", board, ", startlocation = ", startlocation));
+    debugEcho("xyHorizontalBoard([0]=board, [1]=startlocation, [2]=color, [3]=angle)", [board, startlocation, color, angle], CONSTRUCTION_DEBUG_ECHO);
     // polyBoard(board = transpose2zxy(b = board), startlocation = startlocation, color = color );
     if(angle == undef)
     {
@@ -296,8 +360,9 @@ module polyBoard(board, startlocation, color = "green")
 
 module polyBoardAngle(board, startlocation, angle, color = "green")
 {
-    debugEcho(str("module is = polyBoardAngle() ", ", startlocation = ", startlocation, 
-            ", board = ", board, ",  cubePoints = ", cubePoints(o = startlocation, d = board)));
+    debugEcho("polyBoardAngle([0]=board, [1]=startlocation, [2]=color, [3]=angle)", [board, startlocation, color, angle], CONSTRUCTION_DEBUG_ECHO || polyBoardAngle_DEBUG);
+    // debugEcho(str("module is = polyBoardAngle() ", ", startlocation = ", startlocation, 
+    //         ", board = ", board, ",  cubePoints = ", cubePoints(o = startlocation, d = board)));
     color(color)
     difference()
     {
