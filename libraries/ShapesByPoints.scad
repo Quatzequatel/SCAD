@@ -63,25 +63,51 @@ module point_polygon(points, paths, p1, p2, height = 0.01)
     // } 
 }
 
-module point_square(size, p1, p2, height = 0.01)
+module point_square1(size, p1, p2, height = 0.01)
 {
-            linear_extrude(height = zRes)
-            if(paths == undef)
-                polygon(points=points);
-            else
-                polygon(points=points, paths=paths);
-        translate(p2) 
-            linear_extrude(height = zRes)
-            if(paths == undef)
-                polygon(points=points);
-            else
-                polygon(points=points, paths=paths);    
-    // } 
+    debugEcho("ShapesByPoints1::point_square1() ", [size, p1, p2]);
+    let
+    (
+        points1 = getPoints(p1, size),
+        points2 = getPoints(p2, size)
+    )
+    {
+        debugEcho("point_square1() ", [points1, points2]);
+
+        if(p1.z != p2.z && p1.x == p2.x && p1.y == p2.y)
+        {
+            linear_extrude(height = p1.z)
+            polygon(points=getPoints(p1, size));
+        }
+        else
+        {
+            linear_extrude(height = height)
+            polygon(points=points1);
+
+            translate(p2) 
+            polygon(points=points2);
+        }
+    }
+    function getPoints(p1, size) = 
+    let
+    (
+        result = 
+            [
+                [p1.x, p1.y], 
+                [p1.x, p1.y + size.y],
+                [p1.x + size.x, p1.y + size.y],
+                [p1.x + size.x, p1.y]
+            ]
+    )
+    result;
 }
+
+
+
 
 module point_square(size, p1, p2, height = 0.01, center = true)
 {
-    debugEcho("ShapesByPoints::point_square() ", [size, p1, p2]);
+    // debugEcho("ShapesByPoints::point_square() ", [size, p1, p2]);
     
     hull()
     {
