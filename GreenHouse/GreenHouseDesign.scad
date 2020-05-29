@@ -37,8 +37,29 @@ Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 4), width
 Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 6), length = convert_ft2mm(feet = 8));
 
 BoardDimensions = [convert_in2mm(in = 2), convert_in2mm(in = 4), convert_ft2mm(feet = 8)];
+Stud = Board2x4;
+Rafter = Board2x6
+Post = Board4x4;
 
+StudProperties = 
+[
+    "StudProperties",
+    [
+        ["thickness", Board2x4.x],
+        ["depth", Board2x4.y],
+        ["length", Board2x4.z]
+    ]
+];
 
+RafterProperties = 
+[
+    "RafterProperties",
+    [
+        ["thickness", Board2x6.x],
+        ["depth", Board2x6.y],
+        ["length", Board2x6.z]
+    ]
+];
 
 
 //all in mm
@@ -47,13 +68,14 @@ Width = convert_ft2mm(feet = 12);
 WallHeight = convert_ft2mm(feet = 8);
 //ideal seattle  summer/winter [66/18] avg = 42
 RoofAngle = 42;
-EntryRoofAngle = 45;
+EntryRoofAngle = 30;
 
 EntryLength = convert_ft2mm(feet = 4);
 EntryWidth = convert_ft2mm(feet = 5);
 MaxHeight = convert_ft2mm(feet = 15);
 HouseDimensions = [Width, Length, WallHeight];
 EntryDimensions = [EntryWidth, EntryLength, WallHeight];
+StudSpacing = convert_in2mm(24);
 
 // RoofAngle = 45;
 // RoofWidth = Width/2; //((Width - in2ft(Board2x4.x))/2);
@@ -63,14 +85,26 @@ EntryDimensions = [EntryWidth, EntryLength, WallHeight];
 RoofDimensions = [
         HouseDimensions.y,    
         HouseDimensions.x,  
-        Height(x= HouseDimensions.x, angle = RoofAngle), 
+        Height(x= HouseDimensions.x/2, angle = RoofAngle), 
         RoofAngle ];
 
 EntryRoofDimensions = [
     EntryDimensions.x/2,                                        //width
     EntryDimensions.y + HouseDimensions.z * tan(RoofAngle) + convert_in2mm(in = 4),   //length
-    Height(x= EntryDimensions.x, angle = EntryRoofAngle),                  //height
+    Height(x= EntryDimensions.x/2, angle = EntryRoofAngle),                  //height
     EntryRoofAngle ];                                           //angle
+
+RoofProperties = 
+[
+    "roof properties",
+    [
+        ["angle", RoofAngle],
+        ["width", HouseDimensions.y/2],
+        ["length", HouseDimensions.x],
+        ["height", sideB(side_a = HouseDimensions.y/2, aA = RoofAngle)],
+        ["rafter length", sideC(side_a = HouseDimensions.y/2, aA = RoofAngle)],
+    ]
+];
 
 // EntryRoofWidth = EntryWidth/2; //((Width - in2ft(Board2x4.x))/2);
 // EntryRoofHeight = EntryRoofWidth * sin(RoofAngle);
@@ -100,7 +134,7 @@ module Build(args)
     // SideView();
     // translate([Width/2,0,0])
     // rotate([0,0, 90])
-    // simpleView(true, true, false);
+    simpleView(true, true, false);
 
     // HouseFrame();
     // EntryFrame();
@@ -108,8 +142,8 @@ module Build(args)
 
     HouseFrame2();
     EntryFrame2();
-    RoofFrame2();
-    EntryRoofFrame2();
+    // RoofFrame2();
+    // EntryRoofFrame2();
 
 }
 
@@ -120,13 +154,14 @@ module HouseFrame2()
     translate([0, 0, 0])
     rotate([90, 0, 90]) 
     {
-        color("blue")
+        color("aqua")
         Wall(
             wallOD = [HouseDimensions.y, HouseDimensions.x, HouseDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             finished = isFinished
         );        
+        // drawFrame([0,0,0], HouseDimensions.z, HouseDimensions.x, Board2x4);
     }
 
     //right side wall
@@ -137,7 +172,7 @@ module HouseFrame2()
         Wall(
             wallOD = [HouseDimensions.x - Board2x4.y, HouseDimensions.y, HouseDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             finished = isFinished
         );        
     }
@@ -150,7 +185,7 @@ module HouseFrame2()
         Wall(
             wallOD = [HouseDimensions.x - Board2x4.y, HouseDimensions.y, HouseDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             finished = isFinished
         );        
     }
@@ -163,7 +198,7 @@ module HouseFrame2()
         Wall(
             wallOD = [HouseDimensions.y/2 - EntryDimensions.x/2, HouseDimensions.x, HouseDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             finished = isFinished
         );        
     }
@@ -176,7 +211,7 @@ module HouseFrame2()
         Wall(
             wallOD = [HouseDimensions.y/2 - EntryDimensions.x/2, HouseDimensions.x, HouseDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             finished = isFinished
         );        
     }
@@ -200,7 +235,7 @@ module EntryFrame2()
         Wall(
             wallOD = [EntryDimensions.x - Board2x4.y, EntryDimensions.y, EntryDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             finished = isFinished
         );        
     }
@@ -220,7 +255,7 @@ module EntryFrame2()
         Wall(
             wallOD = [EntryDimensions.x - Board2x4.y, EntryDimensions.y, EntryDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             finished = isFinished
         );        
     }
@@ -240,7 +275,7 @@ module EntryFrame2()
         Wall(
             wallOD = [EntryDimensions.x, EntryDimensions.y, EntryDimensions.z], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = convert_in2mm(16),
+            spacing = StudSpacing,
             includeStuds = false,
             finished = isFinished
         );        
@@ -249,7 +284,8 @@ module EntryFrame2()
 
 module RoofFrame2()
 {
-     debugEcho(str("module_name is ","RoofFrame2()", ", RoofDimensions = ", RoofDimensions, ", board = ", Board2x4, ", spacing = ", convert_in2mm(16) ));
+     
+     debugEcho("RoofFrame2([0]=RoofDimensions, [1]=Board2x4, [2]=StudSpacing)",[RoofDimensions, Board2x4, StudSpacing], true);
     //back
     translate([0, 0, HouseDimensions.z + Board2x4.y])
     rotate([90, 0, 90]) 
@@ -257,20 +293,22 @@ module RoofFrame2()
     (
         roofOD = RoofDimensions, //[x,y,z,angle]
         board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-        spacing = convert_in2mm(16),
+        spacing = StudSpacing,
         includeHeader = false,
         includeStuds = true,
-        finished = true
+        finished = false
     );
 
     //front
-    translate([HouseDimensions.x + Board2x4.y, HouseDimensions.y, HouseDimensions.z + Board2x4.y])
-    rotate([90, 0, 270]) 
+    mirror([1,0,0])
+    translate([-(HouseDimensions.x + Board2x4.y), 0, HouseDimensions.z + Board2x4.y])
+    //  translate([HouseDimensions.x + Board2x4.y, HouseDimensions.y, HouseDimensions.z + Board2x4.y])
+    rotate([90, 0, 90]) 
     Roof
     (
         roofOD = RoofDimensions, //[x,y,z,angle]
         board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-        spacing = convert_in2mm(16),
+        spacing = StudSpacing,
         includeHeader = false,
         includeStuds = true,
         finished = true
@@ -279,6 +317,7 @@ module RoofFrame2()
 
 module EntryRoofFrame2()
 {
+    echo(EntryRoofFrame2 = 1, EntryRoofDimensions=EntryRoofDimensions);
     //left
     // translate([0, 0, HouseDimensions.z + Board2x4.y])
     // rotate([90, 0, 90]) 
@@ -287,7 +326,7 @@ module EntryRoofFrame2()
         [
             HouseDimensions.x + Board2x4.y, 
             HouseDimensions.y - (HouseDimensions.y/2 - EntryDimensions.x/2) + Board2x4.y, 
-            0
+            HouseDimensions.z + Board2x4.y
         ]
     )
     rotate([90, 0, 0])    
@@ -295,7 +334,27 @@ module EntryRoofFrame2()
     (
         roofOD = EntryRoofDimensions, //[x,y,z,angle]
         board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-        spacing = convert_in2mm(16),
+        spacing = StudSpacing,
+        includeHeader = true,
+        includeStuds = true,
+        finished = true
+    );
+
+    translate
+    (
+        [
+            HouseDimensions.x + Board2x4.y, 
+            (HouseDimensions.y/2 - EntryDimensions.x/2) - Board2x4.y , 
+            HouseDimensions.z + Board2x4.y
+        ]
+    )
+    mirror([0,1,0])
+    rotate([90, 0, 0])    
+    Roof
+    (
+        roofOD = EntryRoofDimensions, //[x,y,z,angle]
+        board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
+        spacing = StudSpacing,
         includeHeader = true,
         includeStuds = true,
         finished = true
@@ -364,10 +423,10 @@ module simpleView(showentry = true, showRoof = true, showwalls = true)
 
 }
 
-module EntryRoofFrame2()
-{
+// module EntryRoofFrame2()
+// {
 
-}
+// }
 
 function housePoints(houseDi, roofDi, p0) = 
 [
