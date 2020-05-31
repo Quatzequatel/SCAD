@@ -85,7 +85,8 @@ function vvAddToAxis(v, axis, value) =
     let( foo = ISDEBUGEMODE ? fargsEcho("vvAddToAxis([0]=v, [1]=axis , [2]=value)", [v, axis, value]) : 0)
     let
     (
-        result = [for(i = [0 : len(v)-1]) vAddToAxis(v = v[i], axis = axis, value = value)]
+        result = [for(i = [0 : len(v)-1]) 
+            vAddToAxis(v = v[i], axis = axis, value = value)]
     )
     let( foo = ISDEBUGEMODE ? fargsEcho("vvAddToAxis()=> []=", result) : 0)
     result;

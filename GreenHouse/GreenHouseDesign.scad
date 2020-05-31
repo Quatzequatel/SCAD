@@ -11,6 +11,7 @@
 */
 // include <TrellisEnums.scad>;
 include <constants.scad>;
+include <GreenHouseProperties.scad>;
 use <shapesByPoints.scad>;
 use <convert.scad>;
 use <ObjectHelpers.scad>;
@@ -22,89 +23,9 @@ use <box_extrude.scad>;
 // ISDEBUGEMODE = false;
 
 
-
-function getBoardProperty(board, enum) = getValue(v = board, enum = enum);
-function setBoardProperty(board, thickness, width, length) =
-[
-    thickness == undef ? board[enThickness] : thickness, 
-    width == undef ? board[enWidth] : width, 
-    length == undef ? board[enLength] : length
-];
-
-//board is in mm
-Board2x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 8));
-Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 4), width = convert_in2mm(in = 4), length = convert_ft2mm(feet = 8));
-Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 6), length = convert_ft2mm(feet = 8));
-
-BoardDimensions = [convert_in2mm(in = 2), convert_in2mm(in = 4), convert_ft2mm(feet = 8)];
-Stud = Board2x4;
-Rafter = Board2x6
-Post = Board4x4;
-
-StudProperties = 
-[
-    "StudProperties",
-    [
-        ["thickness", Board2x4.x],
-        ["depth", Board2x4.y],
-        ["length", Board2x4.z]
-    ]
-];
-
-RafterProperties = 
-[
-    "RafterProperties",
-    [
-        ["thickness", Board2x6.x],
-        ["depth", Board2x6.y],
-        ["length", Board2x6.z]
-    ]
-];
+//Note: moved definitions to GreenHouseProperties.scad
 
 
-//all in mm
-Length = convert_ft2mm(feet = 15);
-Width = convert_ft2mm(feet = 12);
-WallHeight = convert_ft2mm(feet = 8);
-//ideal seattle  summer/winter [66/18] avg = 42
-RoofAngle = 42;
-EntryRoofAngle = 30;
-
-EntryLength = convert_ft2mm(feet = 4);
-EntryWidth = convert_ft2mm(feet = 5);
-MaxHeight = convert_ft2mm(feet = 15);
-HouseDimensions = [Width, Length, WallHeight];
-EntryDimensions = [EntryWidth, EntryLength, WallHeight];
-StudSpacing = convert_in2mm(24);
-
-// RoofAngle = 45;
-// RoofWidth = Width/2; //((Width - in2ft(Board2x4.x))/2);
-// RoofHeight = RoofWidth * sin(RoofAngle);
-// RoofLength = hypotenuse(RoofHeight, RoofWidth);
-
-RoofDimensions = [
-        HouseDimensions.y,    
-        HouseDimensions.x,  
-        Height(x= HouseDimensions.x/2, angle = RoofAngle), 
-        RoofAngle ];
-
-EntryRoofDimensions = [
-    EntryDimensions.x/2,                                        //width
-    EntryDimensions.y + HouseDimensions.z * tan(RoofAngle) + convert_in2mm(in = 4),   //length
-    Height(x= EntryDimensions.x/2, angle = EntryRoofAngle),                  //height
-    EntryRoofAngle ];                                           //angle
-
-RoofProperties = 
-[
-    "roof properties",
-    [
-        ["angle", RoofAngle],
-        ["width", HouseDimensions.y/2],
-        ["length", HouseDimensions.x],
-        ["height", sideB(side_a = HouseDimensions.y/2, aA = RoofAngle)],
-        ["rafter length", sideC(side_a = HouseDimensions.y/2, aA = RoofAngle)],
-    ]
-];
 
 // EntryRoofWidth = EntryWidth/2; //((Width - in2ft(Board2x4.x))/2);
 // EntryRoofHeight = EntryRoofWidth * sin(RoofAngle);

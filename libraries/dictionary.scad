@@ -14,53 +14,42 @@ include <constants.scad>;
     returnType == 1, returns key
     returnType == 2, returns dictionary
 */
-function privateGetKVPair(v, key, i = 0, result) = echo(v = v, i=i, result=result)
-( result == undef && i < len(v) ? 
-    privateGetKVPair
-    (
-        v = v,
-        key = key,
-        i = i + 1,
-        result = echo(hello = i, vi = v[i]) ( v[i][0] == key ?  v[i] : undef )
-    ) : echo(result=result) result //[0] returns ket, [1] returns value and nothing returns pair
-);
-
-// function GetDictionary(v, key, i = 0, result) = echo(GetDictionary = 0, v=v, key=key, i=i, result=result)
-// ( result == undef && i < len(v) ? 
-//     GetDictionary
-//     (
-//         v = v,
-//         key = key,
-//         i = i + 1,
-//         result = v[i] == key 
-//             ? v[i][0] : result
-//     ) : result //[0] returns ket, [1] returns value and nothing returns pair
-// );
-
-// function foo(v, key) =
-//     echo(v = v, key = key)
-//     let
-//     (
-//         result = for( i = [0: len(v)-1]) v[i][0] == key ? v[i] : undef
-//     )
-//     echo(result = result)
-//     result;
+function privateGetKVPair(v, key, i = 0, type = 0, result=undef) = //echo(v = v, i=i, vi=v[i], result=result)
+    result != undef  ? result 
+    : i == len(v)      ? result 
+    : v[i] == key      ? 
+        type == 0      ? v[i+1] 
+        : type == 1      ? v[i] 
+                         : [v[i], v[i+1]]
+                     : privateGetKVPair(v,key, i+1, type, result);
 
 
 function getDictionaryValue(v, key) = 
     assert(isVector(v), str("parameter v is not an array."))
-    let(result = privateGetKVPair(v, key))
-    echo(result = result)
-    result[1];
-
-function getChildDictionary(v, key) = 
-    assert(isVector(v), str("parameter v is not an array."))
-    let(result = privateGetKVPair(v, key, 1))
+    assert(isString(v[0]), str("first element is not a key."))
+    let(result = privateGetKVPair(v, key, 0, 0))
     echo(result = result)
     result;
 
-// function dictionaryDepth(v)
+function getDictionary(v, key) = 
+    assert(isVector(v), str("parameter v is not an array."))
+    assert(isString(v[0]), str("first element is not a key."))
+    let(result = privateGetKVPair(v, key, 0, 2))
+    echo(result = result)
+    result;    
 
+// function getDictionaryPathValue(v, keys) = 
+//     //assert(isVector(v), str("parameter v is not an array."))
+//     //assert(isString(v[0]), str("first element is not a key."))
+//     for( i = [0: len(v)-1])
+//         let(child = privateGetKVPair(v, key, 0, 0))
+//         let(result = privateGetKVPair(v, key, 0, 0))
+//         echo(result = result)        
+
+//     result;        
+
+// function dictionaryDepth(v)
+function square(size) = [[-size,-size], [-size,size], [size,size], [size,-size]];
 
     dictionary = [  "animals",
                     [
@@ -72,6 +61,14 @@ function getChildDictionary(v, key) =
                 ];
 echo(lenV = len(dictionary));
 echo(getDictionaryValue = getDictionaryValue(dictionary, "animals"));  
-echo(fargsEcho("dictionary" , dictionary));
+echo(getDictionary = getDictionary(dictionary, "animals"));  
+
+// echo(type = type(dictionary[1]));
+// echo(fargsEcho("dictionary" , dictionary));
+// echo( found = Search("animals" , dictionary));
+
+// echo(square = square(4));
 // echo(getChildDictionary = getChildDictionary(dictionary, "cat"));  
 // echo(GetDictionary = GetDictionary(dictionary, "animals"));  
+echo();
+echo();

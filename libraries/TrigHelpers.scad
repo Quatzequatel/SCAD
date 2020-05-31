@@ -2,6 +2,7 @@
     library of useful Trigonometry functions.
 */
 include <constants.scad>;
+use <convert.scad>;
 
 //length of hypotenuse for right angled triangle.
 function hypotenuse(a, b) = //echo(hypotenuse = 1, a = a, b = b) 
