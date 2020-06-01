@@ -17,16 +17,26 @@ function vSwitch(v, x, y) = //echo(vSwitch = v, x = x, y = y)
             ((i == y) ? v[x] : v[i] )    
 ];
 
-function privateGetKeyValue(v, key, i = 0, result) = //echo(v=v, key=key, i=i, result=result)
+function privateGetKeyValue(v, key, type, i = 0,  result) = //echo(v=v, key=key, type=type, i=i, result=result)
 ( result == undef && i < len(v) ?                   //added optimzation.
     privateGetKeyValue
     (
         v = v,
         key = key,
+        type = type,
         i = i + 1,
-        result = v[i][0] == key 
-            ? v[i] : result
-    ) : result[1] //[0] returns ket, [1] returns value and nothing returns booth
+        result = v[i][0] == key
+            ? v[i] 
+            : v[i] == key ? v[i] 
+            : result
+    ) 
+    : !isVector(result)
+    ? result
+    : type == 2 
+    ? result 
+    : type == 0
+    ? result[0]
+    : result[1] //[0] returns key, [1] returns value and [2] returns booth
 );
 
 function vSetValue(v, idx, value)=
@@ -41,9 +51,9 @@ function vGetValue(v, idx)= v[idx];
 /*
     use as a dictionary look up
 */
-function getKeyValue(v, key, i = 0, result) = 
+function getKeyValue(v, key, type) = 
     assert(isVector(v), str("parameter v is not an array."))
-    privateGetKeyValue(v, key);
+    privateGetKeyValue(v, key, type);
 
 
 //append a z value to an [x,y] vector.
@@ -151,10 +161,10 @@ module Test()
     echo(value =  vMultiply([-283.797, 2277.9],  0.1));
 
     echo(circletrellis = getKeyValue(squareProperties, "circletrellis"));
-    echo(dictionary=getKeyValue(dictionary, "bug"));
-    echo(dictionary=getKeyValue(dictionary, "bird"));
-    echo(dictionary=getKeyValue(dictionary, "dog"));
-    echo(dictionary=getKeyValue(dictionary, "dictionary name"));
+    echo(dictionary=getKeyValue(dictionary, "bug", 0));
+    echo(dictionary=getKeyValue(dictionary, "bird", 1));
+    echo(dictionary=getKeyValue(dictionary, "dog", 2));
+    echo(dictionary=getKeyValue(dictionary, "dictionary name", 0));
 
     assert(testPass("getDictionaryValue(dictionary, 'dog')", "dog", getKeyValue(dictionary, "dog"))[1] == 1);
     assert(testPass("getKeyValue(dictionary, 'bug')", "bug", getKeyValue(dictionary, "bug"))[1] == 4);
