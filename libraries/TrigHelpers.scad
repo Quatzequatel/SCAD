@@ -66,35 +66,42 @@ all of the following functions are derived from the basic right triangle where:
     area = a*b*sin(C)/2
 */
 //sideB is the longer leg (ex: 3) and angleA is the smaller (ex: 36.87) of the two
-function sideA(side_b, aA)=
+function sideAaA(side_b, aA)=
 let
 (
-    result = side_b /tan(aA)
+    result = side_b * tan(aA)
 )
 result;
 
 //sideB is the longer leg (ex: 3) and angleB is the larger (ex: 53.13) of the two
-function sideA(side_b, aB)=
+function sideAaB(side_b, aB)=
 let
 (
-    result = side_b /tan(aB)
+    result = side_b / tan(aB)
 )
 result;
 
 /*
   sideB is the longer leg (ex: 4) and angleA is the smaller (ex: 36.87) of the two
 */
-function sideB(side_a, aA)=
+function sideBaA(side_a, aA)=
 let
 (
     result = side_a /tan(aA)
 )
 result;
 
-function sideC(side_a, aA)=
+function sideC_A(side_a, aA)=
 let
 (
     result = side_a /sin(aA)
+)
+result;
+
+function sideC_B(side_b, aA)=
+let
+(
+    result = side_b /cos(aA)
 )
 result;
 
@@ -120,7 +127,7 @@ let( do_echo = ISDEBUGEMODE ? fargsEcho("lengthOpposite([0]=side_b, [1]=angleA )
 let( angle = max(angleA, AngleOpposite(angleA)))
 let
     (
-        result = sideB(side_a, angle) 
+        result = sideBaA(side_a, angle) 
     )
     let( do_echo = ISDEBUGEMODE ? fargsEcho("lengthOpposite(result= )", [result]) : 0)
     result;
