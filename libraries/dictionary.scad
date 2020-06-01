@@ -14,28 +14,40 @@ include <constants.scad>;
     returnType == 1, returns key
     returnType == 2, returns dictionary
 */
-function privateGetKVPair(v, key, i = 0, type = 0, result=undef) = //echo(v = v, i=i, vi=v[i], result=result)
-    result != undef  ? result 
-    : i == len(v)      ? result 
-    : v[i] == key      ? 
-        type == 0      ? v[i+1] 
-        : type == 1      ? v[i] 
-                         : [v[i], v[i+1]]
-                     : privateGetKVPair(v,key, i+1, type, result);
-
+function privateGetKVPair(v, key, type=1, i = 0,  result) = //echo(v=v, key=key, type=type, i=i, result=result)
+( result == undef && i < len(v) ?                   //added optimzation.
+    privateGetKVPair
+    (
+        v = v,
+        key = key,
+        type = type,
+        i = i + 1,
+        result = v[i][0] == key
+            ? v[i] 
+            : v[i] == key ? v[i] 
+            : result
+    ) 
+    : !isVector(result)
+    ? result
+    : type == 2 
+    ? result 
+    : type == undef
+    ? result[1]
+    : result[type] //[0] returns key, [1] returns value and [2] returns booth
+);
 
 function getDictionaryValue(v, key) = 
     assert(isVector(v), str("parameter v is not an array."))
     assert(isString(v[0]), str("first element is not a key."))
-    let(result = privateGetKVPair(v, key, 0, 0))
-    echo(result = result)
+    let(result = privateGetKVPair(v, key, 1))
+    // echo(result = result)
     result;
 
 function getDictionary(v, key) = 
     assert(isVector(v), str("parameter v is not an array."))
     assert(isString(v[0]), str("first element is not a key."))
-    let(result = privateGetKVPair(v, key, 0, 2))
-    echo(result = result)
+    let(result = privateGetKVPair(v, key, 2))
+    // echo(result = result)
     result;    
 
 // function getDictionaryPathValue(v, keys) = 
@@ -53,15 +65,22 @@ function square(size) = [[-size,-size], [-size,size], [size,size], [size,-size]]
 
     dictionary = [  "animals",
                     [
+                        "mamals",
                         ["dog",1],
                         ["cat",2],
+                    ],
+                    [
+                        "Avian",
                         ["bird",3],
-                        ["bug",4],
+                    ],
+                    [
+                        "Insect",
+                        ["bug",4]                        
                     ]
                 ];
 echo(lenV = len(dictionary));
-echo(getDictionaryValue = getDictionaryValue(dictionary, "animals"));  
-echo(getDictionary = getDictionary(dictionary, "animals"));  
+echo(getDictionaryValue = getDictionaryValue(getDictionary(dictionary, "Avian"), "bird"));  
+echo(getDictionary = getDictionary(dictionary, "mamals"));  
 
 // echo(type = type(dictionary[1]));
 // echo(fargsEcho("dictionary" , dictionary));
