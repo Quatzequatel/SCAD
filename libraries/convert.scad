@@ -9,19 +9,19 @@ include <constants.scad>;
 // inchesInFoot = 12;
 // FeetInInch = 1/inchesInFoot;
 //imperial <-> meteric
-function convert_ft2in(feet) = feet * inchesInFoot;
+function convert_ft2in(ft) = ft * inchesInFoot;
 function convert_in2ft(in) = in * FeetInInch;
 function convert_in2mm(in) = in * mmPerInch;
-function convert_ft2mm(feet) = convert_ft2in(feet) * mmPerInch;
-// function convert_ft2in(feet) = feet*12;
+function convert_ft2mm(ft) = convert_ft2in(ft) * mmPerInch;
+// function convert_ft2in(ft) = ft*12;
 function convert_mm2Inch(mm) = mm/mmPerInch;
 function convertV_mm2Inch(mm) = 
     [
         for(i = [0 : 1 : len(mm)-1]) convert_mm2Inch(mm[i])
     ];
 
-function convert_mm2Feet(mm) = convert_in2ft(in = convert_mm2Inch(mm));
-function convert_feet2feet(feet) = feet;
+function convert_mm2ft(mm) = convert_in2ft(in = convert_mm2Inch(mm));
+function convert_feet2feet(ft) = ft;
 function convert_in2in(in) = in;
 
 function convertV_mm2Feet(mm) =
