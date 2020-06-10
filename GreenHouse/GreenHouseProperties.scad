@@ -28,13 +28,13 @@ Post = Board4x4;
 
 
 //all in mm
-HouseWidth = convert_ft2mm(ft = 13);
-HouseLength = convert_ft2mm(ft = 14);
+HouseWidth = convert_ft2mm(ft = 11.25);
+HouseLength = convert_ft2mm(ft = 16);
 HouseWallHeight = convert_ft2mm(ft = 8);
 //ideal seattle  summer/winter [66/18] avg = 42
-RoofAngle = 45;
-EntryRoofAngle = 30;
-RoofOverHangDepth = convert_in2mm(6);
+RoofAngle = 42;
+EntryRoofAngle = 45;
+RoofOverHangDepth = convert_in2mm(1);
 
 EntryWidth = convert_ft2mm(ft = 5);
 EntryLength = convert_ft2mm(ft = 4);
@@ -52,51 +52,42 @@ StudSpacing = convert_in2mm(24);
 StudProperties = 
 [
     "StudProperties",
-    // [
         ["thickness", Board2x4.x],
         ["depth", Board2x4.y],
         ["length", Board2x4.z]
-    // ]
 ];
 
 RafterProperties = 
 [
     "RafterProperties",
-    // [
         ["thickness", Board2x6.x],
         ["depth", Board2x6.y],
         ["length", Board2x6.z]
-    // ]
 ];
 
 HouseDimensions = 
 [
     "HouseDimensions",
-    // [
         ["width", HouseWidth],    
         ["length", HouseLength],  
         ["wall height", HouseWallHeight],  
         ["peak height", HouseWallHeight + Height(x= HouseWidth/2, angle = RoofAngle)], 
         ["angle", RoofAngle ]
-    // ]
 ];
 
 EntryRoofDimensions = 
 [
     "EntryRoofDimensions",
-    // [
         ["width", EntryWidth/2],    
         ["length", EntryLength + HouseWallHeight * tan(EntryRoofAngle) + convert_in2mm(in = 4)],  
         ["height", Height(x= EntryWidth/2, angle = EntryRoofAngle)], 
         ["rafter length", sideC_B(side_b = EntryWidth/2, aA = EntryRoofAngle)],
         ["angle", EntryRoofAngle ]
-    // ]
 ];
 
 RoofProperties = 
 [
     "roof properties",
-    // [
         ["angle", RoofAngle],
         ["width", HouseWidth/2],
         ["length", HouseLength],
@@ -106,7 +97,6 @@ RoofProperties =
         ["overhang length", sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
         ["rafter length", sideC_B(side_b = HouseWidth/2, aA = RoofAngle) + sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
         ["spacing", StudSpacing]
-    // ]
 ];
 
 module Info()
