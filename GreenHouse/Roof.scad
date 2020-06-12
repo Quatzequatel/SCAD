@@ -40,7 +40,7 @@ module main_roof()
 
     cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" ), center=false);
 
-    for (i=[0:6]) 
+    for (i=[0:getDictionaryValue(RoofProperties, "length" ) / getDictionaryValue(RoofProperties, "spacing" )-1]) 
     {
         translate
         (
@@ -83,6 +83,7 @@ module center_beam()
             getDictionaryValue(RoofProperties, "height" )        
         ]
     )
+    color("green")
         linear_extrude(getDictionaryValue(RafterProperties, "depth" ))
         {
             square(
@@ -272,4 +273,13 @@ function getTrianglePoints(sideA, angleA) =
     [0,0], 
     [0, sideA], 
     [sideBaA(side_a =  sideA, aA =  angleA) , 0]    
+];
+
+function getBoardEnd(size, angle) =
+[
+    h =  angle < 45 ? sideBaA(size.y, angle) : sideAaA(size.y, sideA) //hypotenuse
+    [0, 0],
+    [0, size.x],
+    [h, size.x],
+    [h, 0]
 ];
