@@ -9,8 +9,13 @@ InitialLayerHeight = 0.4;
 ISDEBUGEMODE = false;
 IS_DEBUG_DEBUG = false;
 
+// test();
+// module test(args) {
+//  echo(LayersToHeight = LayersToHeight(16));
+// }
+
 function LayersToHeight(layers) = 
-  echo(NozzleWidth = NozzleWidth, InitialLayerHeight = InitialLayerHeight, LayerHeight = LayerHeight) 
+  // echo(NozzleWidth = NozzleWidth, InitialLayerHeight = InitialLayerHeight, LayerHeight = LayerHeight) 
   InitialLayerHeight + (LayerHeight * (layers - 1));
 function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 
