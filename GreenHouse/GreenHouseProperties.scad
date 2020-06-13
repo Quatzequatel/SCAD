@@ -28,8 +28,8 @@ Post = Board4x4;
 
 
 //all in mm
-HouseWidth = convert_ft2mm(ft = 11.25);
-HouseLength = convert_ft2mm(ft = 16);
+HouseWidth = convert_ft2mm(ft = 16);
+HouseLength = convert_ft2mm(ft = 11.25);
 HouseWallHeight = convert_ft2mm(ft = 8);
 //ideal seattle  summer/winter [66/18] avg = 42
 RoofAngle = 42;
@@ -39,9 +39,11 @@ RoofOverHangDepth = convert_in2mm(1);
 EntryWidth = convert_ft2mm(ft = 5);
 EntryLength = convert_ft2mm(ft = 4);
 MaxHeight = convert_ft2mm(ft = 15);
-// HouseDimensions = [Width, Length, WallHeight];
-// EntryDimensions = [EntryWidth, EntryLength, WallHeight];
+
 StudSpacing = convert_in2mm(24);
+
+ColdFrame1_width = (HouseWidth-EntryWidth)/2;
+ColdFrame1_length = EntryLength;
 
 
 // RoofAngle = 45;
@@ -51,7 +53,7 @@ StudSpacing = convert_in2mm(24);
 
 StudProperties = 
 [
-    "StudProperties",
+    "stud properties",
         ["thickness", Board2x4.x],
         ["depth", Board2x4.y],
         ["length", Board2x4.z]
@@ -59,7 +61,7 @@ StudProperties =
 
 RafterProperties = 
 [
-    "RafterProperties",
+    "rafter properties",
         ["thickness", Board2x6.x],
         ["depth", Board2x6.y],
         ["length", Board2x6.z]
@@ -67,22 +69,74 @@ RafterProperties =
 
 HouseDimensions = 
 [
-    "HouseDimensions",
+    "house dimensions",
         ["width", HouseWidth],    
         ["length", HouseLength],  
         ["wall height", HouseWallHeight],  
         ["peak height", HouseWallHeight + Height(x= HouseWidth/2, angle = RoofAngle)], 
-        ["angle", RoofAngle ]
+        ["angle", RoofAngle ],
+        ["wall thickness", convert_in2mm(4)],  
+        ["foundation height", convert_in2mm(12)],  
+];
+
+EntryDimensions = 
+[
+    "entry dimensions",
+        ["width", EntryWidth],    
+        ["length", EntryLength],  
+        ["height", Height(x= EntryWidth/2, angle = EntryRoofAngle)],
+        ["wall thickness", convert_in2mm(4)],  
+        ["foundation height", convert_in2mm(4)],          
 ];
 
 EntryRoofDimensions = 
 [
-    "EntryRoofDimensions",
-        ["width", EntryWidth/2],    
-        ["length", EntryLength + HouseWallHeight * tan(EntryRoofAngle) + convert_in2mm(in = 4)],  
-        ["height", Height(x= EntryWidth/2, angle = EntryRoofAngle)], 
+    "entry roof dimensions",
+        ["width", getDictionaryValue(EntryDimensions, "width")],    
+        ["length", getDictionaryValue(EntryDimensions, "length")],  
+        ["height", getDictionaryValue(EntryDimensions, "height")], 
         ["rafter length", sideC_B(side_b = EntryWidth/2, aA = EntryRoofAngle)],
         ["angle", EntryRoofAngle ]
+];
+
+ColdFrame1 = 
+[
+    "cold frame 1",
+        ["width", ColdFrame1_width],    
+        ["length", ColdFrame1_length],  
+        ["height", getDictionaryValue(EntryDimensions, "height")],
+        ["wall thickness", convert_in2mm(4)],  
+        ["foundation height", convert_in2mm(4)],  
+];
+
+ColdFrame3 = 
+[
+    "cold frame 3",
+        ["width", EntryLength],    
+        ["length", HouseLength + EntryLength],  
+        ["height", getDictionaryValue(EntryDimensions, "height")],
+        ["wall thickness", convert_in2mm(4)],  
+        ["foundation height", convert_in2mm(4)],  
+];
+
+foundationProperties = 
+[
+    "foundation properties",
+        ["width", HouseWidth + getDictionaryValue(ColdFrame3, "width")],    
+        ["length", HouseLength + EntryLength],  
+        ["insulation thickness", convert_in2mm(2)],
+        ["insulation height", convert_in2mm(16)],
+        ["frost line", convert_in2mm(14)],
+];
+
+geothermalProperties =
+[
+    "geo thermal properties",
+    ["radius", convert_in2mm(12)],
+    ["height per turn", convert_in2mm(2)],
+    ["turns", 30],
+    ["height", convert_in2mm(60)],
+    ["pipe diameter", convert_in2mm(0.75)],
 ];
 
 RoofProperties = 
