@@ -2,7 +2,7 @@
 
 */
 $fn=100;
-NozzleWidth = 1.0;
+NozzleWidth = 1.2;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
 mmPerInch = 25.4;
@@ -13,11 +13,11 @@ function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeigh
 function BaseHeight() = layers2Height(6);
 function WallThickness(count) = count * NozzleWidth;
 
-Height = InchTomm(1);
-BracketThickness = 4 * NozzleWidth;
+Height = InchTomm(3.5);
+BracketThickness = 6 * NozzleWidth;
 BracketWidth = InchTomm(1) + BracketThickness;
 ScrewHoleRadius = 2;
-ScrewHoleCount = 2;
+ScrewHoleCount = 3;
 
 
 Build("Bracket");
