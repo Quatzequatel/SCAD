@@ -9,6 +9,7 @@ x,y plane.
 */
 include <constants.scad>;
 use <hull_polyline2d.scad>;
+use <trigHelpers.scad>;
 
 // $fn=100;
 Test();
@@ -102,7 +103,19 @@ module point_square1(size, p1, p2, height = 0.01)
     result;
 }
 
-
+function getRectPoints(origin, size, angle) = 
+let
+(
+    h =  angle < 45 ? sideBaA(size.y, angle) : sideAaA(size.y, sideA) //hypotenuse
+    result = 
+        [
+            [origin.x, origin.y], 
+            [origin.x, origin.y + size.y],
+            [origin.x + size.x + h, origin.y + size.y],
+            [origin.x + size.x + h, origin.y]
+        ]
+)
+result;
 
 
 module point_square(size, p1, p2, height = 0.01, center = true)
