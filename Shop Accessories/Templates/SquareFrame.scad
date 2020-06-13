@@ -6,11 +6,12 @@ use <vectorHelpers.scad>;
 
 Board2x4 = 
 [
-    convert_in2mm(in = 1.8),
+    convert_in2mm(in = 1.5),
     convert_in2mm(in = 3.55), 
-    convert_in2mm(in = 3.55 + 1.8)
+    convert_in2mm(in = 3.55 + 1.5)
 ];
 
+floorThickness = LayersToHeight(14);
 shellThickness = 5.55;
 shellCut = shellThickness + 4;
 screw_guide = [woodscrewHeadRad + 1, Board2x4.y - Board2x4.x/2, shellCut];
@@ -40,8 +41,8 @@ module T_frame()
                 square(size=[Board2x4.x, Board2x4.y ], center=false);        
             }
 
-            linear_extrude(shellThickness)
-            // shell(d=shellThickness) 
+            //floor
+            linear_extrude(floorThickness)
             union()
             {
                 translate([ 0, (-Board2x4.z + Board2x4.x)/2, 0])
@@ -55,7 +56,7 @@ module T_frame()
         union()
         {
             //cut through
-            translate([0, 0, shellThickness]) 
+            translate([0, 0, floorThickness]) 
             linear_extrude(height = Board2x4.z)
             union()
             {
@@ -98,7 +99,7 @@ module Corner_frame()
                 square(size=[Board2x4.x, Board2x4.y ], center=false);        
             }
 
-            linear_extrude(shellThickness)
+            linear_extrude(floorThickness)
             // shell(d=shellThickness) 
             union()
             {
@@ -112,7 +113,7 @@ module Corner_frame()
         union()
         {
             //cut through
-            translate([0,0, shellThickness])            
+            translate([0,0, floorThickness])            
             linear_extrude(Board2x4.y + shellCut)
             union()
             {
