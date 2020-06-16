@@ -42,8 +42,10 @@ MaxHeight = convert_ft2mm(ft = 15);
 
 StudSpacing = convert_in2mm(24);
 
-ColdFrame1_width = (HouseWidth-EntryWidth)/2;
-ColdFrame1_length = EntryLength;
+EntryColdFrame_width = (HouseWidth-EntryWidth)/2;
+EntryColdFrame_length = EntryLength;
+
+frost_line = convert_in2mm(14);
 
 
 // RoofAngle = 45;
@@ -76,7 +78,73 @@ HouseDimensions =
         ["peak height", HouseWallHeight + Height(x= HouseWidth/2, angle = RoofAngle)], 
         ["angle", RoofAngle ],
         ["wall thickness", convert_in2mm(4)],  
-        ["foundation height", convert_in2mm(12)],  
+];
+
+footing_properties = 
+[
+    "footing properties",
+        ["width", convert_in2mm(16)],  
+        ["height", convert_in2mm(8)],  
+        ["start", -1 * (frost_line + convert_in2mm(2))],
+];
+
+crushed_rock_properties = 
+[
+    "crushed rock properties",
+        ["width", convert_in2mm(16) + convert_in2mm(4)],
+        ["height", convert_in2mm(4)],
+        ["start", (getDictionaryValue(footing_properties, "start") - convert_in2mm(4))],
+];
+
+house_foundation_properties = 
+[
+    "house foundation properties",  
+        ["width", convert_in2mm(8)],  
+        ["height", convert_in2mm(8)],  
+        ["start", 
+            getDictionaryValue(footing_properties, "start") + 
+            getDictionaryValue(footing_properties, "height")
+        ],
+];
+
+drainage_properties =
+[
+    "drainage properties",
+    ["diameter", convert_in2mm(4)],
+    ["radius", convert_in2mm(2)],
+    ["corner_r", convert_in2mm(8)],
+    ["distance from wall", (getDictionaryValue(crushed_rock_properties, "width") - convert_in2mm(8))],
+    ["vertical start", getDictionaryValue(crushed_rock_properties, "start")],
+];
+
+electric_conduit = 
+[
+    "electric conduit",
+    ["diameter", convert_in2mm(4)],
+    ["radius", convert_in2mm(2)],
+    ["length", convert_in2mm(36)], 
+    ["location", 
+        [ 
+            -1 * HouseWidth/2, 
+            1 * (HouseLength/2 - convert_in2mm(36)), 
+            getDictionaryValue(footing_properties, "start")
+        ] 
+    ] 
+];
+
+water_conduit = 
+[
+    "water conduit",,
+    ["diameter", convert_in2mm(4)],
+    ["radius", convert_in2mm(2)],
+    ["length", convert_in2mm(36)], 
+    ["location", 
+        [ 
+            -1 * HouseWidth/2, 
+            -1 * (HouseLength/2 - convert_in2mm(36)), 
+            getDictionaryValue(footing_properties, "start")
+        ] 
+    ]
 ];
 
 EntryDimensions = 
@@ -99,19 +167,19 @@ EntryRoofDimensions =
         ["angle", EntryRoofAngle ]
 ];
 
-ColdFrame1 = 
+EntryColdFrame = 
 [
-    "cold frame 1",
-        ["width", ColdFrame1_width],    
-        ["length", ColdFrame1_length],  
+    "entry cold frame",
+        ["width", EntryColdFrame_width],    
+        ["length", EntryColdFrame_length],  
         ["height", getDictionaryValue(EntryDimensions, "height")],
         ["wall thickness", convert_in2mm(4)],  
         ["foundation height", convert_in2mm(4)],  
 ];
 
-ColdFrame3 = 
+SouthColdFrame = 
 [
-    "cold frame 3",
+    "south cold frame",
         ["width", EntryLength],    
         ["length", HouseLength + EntryLength],  
         ["height", getDictionaryValue(EntryDimensions, "height")],
@@ -122,16 +190,16 @@ ColdFrame3 =
 foundationProperties = 
 [
     "foundation properties",
-        ["width", HouseWidth + getDictionaryValue(ColdFrame3, "width")],    
+        ["width", HouseWidth + getDictionaryValue(SouthColdFrame, "width")],    
         ["length", HouseLength + EntryLength],  
         ["insulation thickness", convert_in2mm(2)],
         ["insulation height", convert_in2mm(16)],
-        ["frost line", convert_in2mm(14)],
+        ["frost line", frost_line],
 ];
 
-geothermalProperties =
+thermo_column_properties =
 [
-    "geo thermal properties",
+    "thermal column properties",
     ["radius", convert_in2mm(12)],
     ["height per turn", convert_in2mm(2)],
     ["turns", 30],

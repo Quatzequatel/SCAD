@@ -8,12 +8,18 @@ use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
+use <vectorHelpers.scad>;
 
 use <morphology.scad>;
 use <helix.scad>;
 use <hull_polyline3d.scad>;
+use <shape_square.scad>;
+use <shape_circle.scad>;
+use <path_extrude.scad>;
 
 include <GreenHouseProperties.scad>;
+use <transformations.scad>;
+
 $fn = 16;
 
 build();
@@ -21,63 +27,122 @@ build();
 module build(args) 
 {
     Info();
-    GH_base();
-    // entry_base();
-    Cold_Frame_1();
-    Cold_Frame_2();
-    Cold_Frame_3();
-    foundation_insulation();
-    translate_to_cold_frame_1(height = -getDictionaryValue(geothermalProperties, "height"))
-    geo_thermal_1(true);
+    drainage();
+    conduit(color = "red", properties = electric_conduit);
+    conduit(color = "blue", properties = water_conduit);
 
-    translate_to_cold_frame_2(height = -getDictionaryValue(geothermalProperties, "height"))
-    geo_thermal_1(true);
+    // greenhouse_gravel_layer();
+    greenhouse_foundation
+        (
+            color = "DimGray", 
+            additionalWidth = getDictionaryValue(crushed_rock_properties, "width"), 
+            properties = crushed_rock_properties
+        );
+    
+    // greenhouse_footings();
+    greenhouse_foundation
+        (
+            color = "DarkGray", 
+            additionalWidth = getDictionaryValue(footing_properties, "width"), 
+            properties = footing_properties
+        );
 
+    //foundation
+    greenhouse_foundation(color = "SlateGray", additionalWidth = 0, properties = house_foundation_properties);
+
+    move_to_cold_frame_to_left_of_entry(height = -getDictionaryValue(EntryColdFrame, "foundation height"))
+    entry_cold_frame();
+
+    move_to_cold_frame_to_right_of_entry(height = -getDictionaryValue(EntryColdFrame, "foundation height"))
+    entry_cold_frame();
+
+    move_to_cold_frame_to_left_of_house(height = -getDictionaryValue(EntryColdFrame, "foundation height"))
+    south_cold_frame();
+
+    // move_to_center_of_foundation(-getDictionaryValue(foundationProperties, "insulation height"))
+    // foundation_insulation();
+
+    // move_to_cold_frame_to_left_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
+    // thermo_column(true);
+
+    // move_to_cold_frame_to_right_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
+    // thermo_column(true);
+
+    // move_to_center_of_foundation(-getDictionaryValue(foundationProperties, "frost line"))
     // Frost_line();
 }
 
-module GH_base()
+module conduit(color = "red", properties = undef)
 {
-    %translate([ 0, 0, -getDictionaryValue(HouseDimensions, "foundation height")])
-    linear_extrude(getDictionaryValue(HouseDimensions, "foundation height"))
-    shell(- getDictionaryValue(HouseDimensions, "wall thickness"))
+    color(color)
+    translate(getDictionaryValue(properties, "location"))
+    rotate([0,90,0])
+    cylinder
+    (
+        r = getDictionaryValue(properties, "radius"), 
+        h = getDictionaryValue(properties, "length"), 
+        center=true
+    );
+}
+
+module drainage()
+{
+    outer_foundation_size = 
+    [
+        getDictionaryValue(HouseDimensions, "width") + getDictionaryValue(drainage_properties, "distance from wall"),
+        getDictionaryValue(HouseDimensions, "length") + getDictionaryValue(drainage_properties, "distance from wall")
+    ];
+    path_points = shape_square(size = outer_foundation_size, corner_r = getDictionaryValue(drainage_properties, "corner_r"));
+    shape_pts = shape_circle(radius = getDictionaryValue(drainage_properties, "radius"));
+    // echo(path_points=path_points);
+
+    color("white")
+    translate([ 0, 0, getDictionaryValue(crushed_rock_properties, "start")])
+    path_extrude(shape_pts, ApendToV(path_points, path_points[0]));
+}
+
+module greenhouse_foundation(color = "red", additionalWidth = 0, properties = undef)
+{
+    translate([ 0, 0, getDictionaryValue(properties, "start")])
+
+    color(color)
+    linear_extrude(getDictionaryValue(properties, "height"))
+    shell(- getDictionaryValue(properties, "width"))
     union()
     {
-        square([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "length")], center = true);
-        entry_base();
+        square
+        (
+            [
+                getDictionaryValue(HouseDimensions, "width") + additionalWidth/2, 
+                getDictionaryValue(HouseDimensions, "length") + additionalWidth/2
+            ], 
+            center = true
+        );
+        entry_foundation();
     }
 }
 
-module entry_base()
+module entry_foundation(width = 0)
 {
-    translate_to_entry_base(height = -getDictionaryValue(EntryDimensions, "foundation height"))
-    // linear_extrude(getDictionaryValue(EntryDimensions, "foundation height"))
-    // shell(- getDictionaryValue(EntryDimensions, "wall thickness"))
-    square([getDictionaryValue(EntryDimensions, "width"), getDictionaryValue(EntryDimensions, "length")], center = true);    
+    move_to_entry_base(height = 0)
+    square
+    (
+        [
+            getDictionaryValue(EntryDimensions, "width") + width, 
+            getDictionaryValue(EntryDimensions, "length") + width
+        ], 
+        center = true
+    );    
 }
 
-module translate_to_entry_base(height = 0)
-{
-    color("PeachPuff")
-    translate(
-        [ 
-            0, 
-            getDictionaryValue(HouseDimensions, "length")/2 + getDictionaryValue(EntryDimensions, "length")/2, 
-            height
-        ]
-        )
-        children();    
+module entry_cold_frame()
+{       
+    linear_extrude(getDictionaryValue(EntryColdFrame, "foundation height"))
+    shell(-getDictionaryValue(EntryColdFrame, "wall thickness"))
+    square([getDictionaryValue(EntryColdFrame, "width"), getDictionaryValue(EntryColdFrame, "length")], center = true);    
 }
 
-module Cold_Frame_1()
-{    
-    translate_to_cold_frame_1(height = -getDictionaryValue(ColdFrame1, "foundation height"))
-    linear_extrude(getDictionaryValue(ColdFrame1, "foundation height"))
-    shell(-getDictionaryValue(ColdFrame1, "wall thickness"))
-    square([getDictionaryValue(ColdFrame1, "width"), getDictionaryValue(ColdFrame1, "length")], center = true);    
-}
-
-module geo_thermal_1(helix = false)
+module thermo_column(helix = false)
 {   
     if(helix)
     {
@@ -85,120 +150,38 @@ module geo_thermal_1(helix = false)
         (
             radius = 
                 [
-                    getDictionaryValue(geothermalProperties, "radius"), 
-                    getDictionaryValue(geothermalProperties, "radius")
+                    getDictionaryValue(thermo_column_properties, "radius"), 
+                    getDictionaryValue(thermo_column_properties, "radius")
                 ],
-            levels = getDictionaryValue(geothermalProperties, "turns"),
-            level_dist = getDictionaryValue(geothermalProperties, "height per turn"),
+            levels = getDictionaryValue(thermo_column_properties, "turns"),
+            level_dist = getDictionaryValue(thermo_column_properties, "height per turn"),
             vt_dir = "SPI_UP", 
             rt_dir = "CLK"            
         );
 
-        hull_polyline3d(points, getDictionaryValue(geothermalProperties, "pipe diameter"));        
+        hull_polyline3d(points, getDictionaryValue(thermo_column_properties, "pipe diameter"));        
     }
     else
     {
-        linear_extrude(getDictionaryValue(geothermalProperties, "height"))
-        shell(-getDictionaryValue(geothermalProperties, "pipe diameter"))
+        linear_extrude(getDictionaryValue(thermo_column_properties, "height"))
+        shell(-getDictionaryValue(thermo_column_properties, "pipe diameter"))
         circle
             (
-                r=getDictionaryValue(geothermalProperties, "radius")
+                r=getDictionaryValue(thermo_column_properties, "radius")
             );
     }    
 }
 
-module Cold_Frame_2()
-{
 
-    // % color("darkKhaki")
-    // translate(
-    //     [ 
-    //         -1 * (getDictionaryValue(EntryDimensions, "width")/2 + getDictionaryValue(ColdFrame1, "width")/2),
-    //         getDictionaryValue(HouseDimensions, "length")/2 + getDictionaryValue(ColdFrame1, "length")/2, 
-    //         -getDictionaryValue(ColdFrame1, "foundation height")
-    //     ]
-    //     )        
-    translate_to_cold_frame_2(height = -getDictionaryValue(ColdFrame1, "foundation height"))
-    linear_extrude(getDictionaryValue(ColdFrame1, "foundation height"))
-    shell(- getDictionaryValue(ColdFrame1, "wall thickness"))    
-    square([getDictionaryValue(ColdFrame1, "width"), getDictionaryValue(ColdFrame1, "length")], center = true);    
+module south_cold_frame()
+{   
+    linear_extrude(getDictionaryValue(SouthColdFrame, "foundation height"))
+    shell(- getDictionaryValue(SouthColdFrame, "wall thickness"))    
+    square([getDictionaryValue(SouthColdFrame, "width"), getDictionaryValue(SouthColdFrame, "length")], center = true);    
 }
 
-module translate_to_cold_frame_2(height = 0)
-{
-    color("darkKhaki")
-    translate(
-        [ 
-            -1 * (getDictionaryValue(EntryDimensions, "width")/2 + getDictionaryValue(ColdFrame1, "width")/2),
-            getDictionaryValue(HouseDimensions, "length")/2 + getDictionaryValue(ColdFrame1, "length")/2, 
-            height
-        ]
-        )
-        children();    
-}
-
-module geo_thermal_2(helix = false)
-{
-    % color("Khaki")
-    translate(
-        [ 
-            getDictionaryValue(EntryDimensions, "width")/2 + getDictionaryValue(ColdFrame1, "width")/2,
-            getDictionaryValue(HouseDimensions, "length")/2 + getDictionaryValue(ColdFrame1, "length")/2, 
-            -getDictionaryValue(geothermalProperties, "height")
-        ]
-        )      
-    if(helix)
-    {
-        points = helix
-        (
-            radius = 
-                [
-                    getDictionaryValue(geothermalProperties, "radius"), 
-                    getDictionaryValue(geothermalProperties, "radius")
-                ],
-            levels = getDictionaryValue(geothermalProperties, "turns"),
-            level_dist = getDictionaryValue(geothermalProperties, "height per turn"),
-            vt_dir = "SPI_UP", 
-            rt_dir = "CLK"            
-        );
-
-        hull_polyline3d(points, getDictionaryValue(geothermalProperties, "pipe diameter"));        
-    }
-    else
-    {
-        linear_extrude(getDictionaryValue(geothermalProperties, "height"))
-        shell(-getDictionaryValue(geothermalProperties, "pipe diameter"))
-        circle
-            (
-                r=getDictionaryValue(geothermalProperties, "radius")
-            );
-    }    
-}
-
-module Cold_Frame_3()
-{
-
-    % color("darkKhaki")
-    translate(
-        [ 
-            getDictionaryValue(HouseDimensions, "width")/2 + getDictionaryValue(ColdFrame3, "width")/2,
-            -1 * getDictionaryValue(HouseDimensions, "length")/2 + getDictionaryValue(ColdFrame3, "length")/2 , 
-            -getDictionaryValue(ColdFrame3, "foundation height")
-        ]
-        )        
-    linear_extrude(getDictionaryValue(ColdFrame3, "foundation height"))
-    shell(- getDictionaryValue(ColdFrame3, "wall thickness"))    
-    square([getDictionaryValue(ColdFrame3, "width"), getDictionaryValue(ColdFrame3, "length")], center = true);    
-}
 module foundation_insulation()
 {
-    translate(
-        [
-            getDictionaryValue(ColdFrame3, "width")/2,
-            getDictionaryValue(ColdFrame1, "length")/2,
-            -getDictionaryValue(foundationProperties, "insulation height")
-        ]
-    )
     color("pink")
     linear_extrude(getDictionaryValue(foundationProperties, "insulation height"))
     shell(getDictionaryValue(foundationProperties, "insulation thickness"))    
@@ -207,37 +190,23 @@ module foundation_insulation()
 
 module Frost_line()
 {
-    translate(
-        [
-            getDictionaryValue(ColdFrame3, "width")/2,
-            getDictionaryValue(ColdFrame1, "length")/2,
-            -getDictionaryValue(foundationProperties, "frost line")
-        ]
-    )
     color("LightSteelBlue")
     square([getDictionaryValue(foundationProperties, "width") + 1000, getDictionaryValue(foundationProperties, "length") + 1000], center = true);    
 }
 
-module translate_to_cold_frame_1(height = 0)
-{
-    % color("Khaki")
-    translate(
-        [ 
-            getDictionaryValue(EntryDimensions, "width")/2 + getDictionaryValue(ColdFrame1, "width")/2,
-            getDictionaryValue(HouseDimensions, "length")/2 + getDictionaryValue(ColdFrame1, "length")/2, 
-            height
-        ]
-        ) 
-        children();    
-}
-
 module Info()
 {
+    debugEcho("House Dimensions", HouseDimensions, true);
+    echo();
     debugEcho("Entry Dimensions", EntryDimensions, true);
     echo();
-    debugEcho("Cold Frame 1", ColdFrame1, true);
+    debugEcho("EntryColdFrame", EntryColdFrame, true);
     echo();
-    debugEcho("House Dimensions", HouseDimensions, true);
+    debugEcho("house_foundation_properties", house_foundation_properties, true);
+    echo();
+    debugEcho("footing_properties", footing_properties, true);
+    echo();
+    debugEcho("crushed_rock_properties", crushed_rock_properties, true);
     echo();
     // debugEcho("Roof", RoofDimensions[1], true);
     echo();
