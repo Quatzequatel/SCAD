@@ -69,6 +69,14 @@ RafterProperties =
         ["length", Board2x6.z]
 ];
 
+footing_properties = 
+[
+    "footing properties",
+        ["width", convert_in2mm(16)],  
+        ["height", convert_in2mm(8)],  
+        ["start", -1 * (frost_line + convert_in2mm(2))],
+];
+
 HouseDimensions = 
 [
     "house dimensions",
@@ -80,22 +88,6 @@ HouseDimensions =
         ["wall thickness", convert_in2mm(4)],  
 ];
 
-footing_properties = 
-[
-    "footing properties",
-        ["width", convert_in2mm(16)],  
-        ["height", convert_in2mm(8)],  
-        ["start", -1 * (frost_line + convert_in2mm(2))],
-];
-
-crushed_rock_properties = 
-[
-    "crushed rock properties",
-        ["width", convert_in2mm(16) + convert_in2mm(4)],
-        ["height", convert_in2mm(4)],
-        ["start", (getDictionaryValue(footing_properties, "start") - convert_in2mm(4))],
-];
-
 house_foundation_properties = 
 [
     "house foundation properties",  
@@ -105,7 +97,18 @@ house_foundation_properties =
             getDictionaryValue(footing_properties, "start") + 
             getDictionaryValue(footing_properties, "height")
         ],
+        ["layers", 3]
 ];
+
+crushed_rock_properties = 
+[
+    "crushed rock properties",
+        ["width", getDictionaryValue(footing_properties, "width") + convert_in2mm(4)],
+        ["height", convert_in2mm(4)],
+        ["start", (getDictionaryValue(footing_properties, "start") - convert_in2mm(4))],
+];
+
+
 
 drainage_properties =
 [
@@ -125,7 +128,7 @@ electric_conduit =
     ["length", convert_in2mm(36)], 
     ["location", 
         [ 
-            -1 * HouseWidth/2, 
+            -1 * (HouseWidth/2 - convert_in2mm(3)), 
             1 * (HouseLength/2 - convert_in2mm(36)), 
             getDictionaryValue(footing_properties, "start")
         ] 
@@ -140,7 +143,7 @@ water_conduit =
     ["length", convert_in2mm(36)], 
     ["location", 
         [ 
-            -1 * HouseWidth/2, 
+            -1 * (HouseWidth/2 - convert_in2mm(3)), 
             -1 * (HouseLength/2 - convert_in2mm(36)), 
             getDictionaryValue(footing_properties, "start")
         ] 
@@ -190,11 +193,17 @@ SouthColdFrame =
 foundationProperties = 
 [
     "foundation properties",
-        ["width", HouseWidth + getDictionaryValue(SouthColdFrame, "width")],    
-        ["length", HouseLength + EntryLength],  
-        ["insulation thickness", convert_in2mm(2)],
-        ["insulation height", convert_in2mm(16)],
+        ["width", HouseWidth + getDictionaryValue(SouthColdFrame, "width") + getDictionaryValue(crushed_rock_properties, "width")/2],    
+        ["length", HouseLength + EntryLength + getDictionaryValue(crushed_rock_properties, "width")/2],  
         ["frost line", frost_line],
+];
+
+insulation_properties =
+[
+    "insulation_properties",
+    ["width" , convert_in2mm(2)],
+    ["height" , convert_in2mm(16)],
+    ["start" , [0,0,0]],
 ];
 
 thermo_column_properties =
