@@ -54,6 +54,7 @@ module Build(args)
     }
 }
 
+//this needs work.
 module CornerBracket( properties = "")
 {
     bracketHeight = getDictionaryValue(properties, "bracketHeight");
@@ -75,7 +76,7 @@ module CornerBracket( properties = "")
                     bracketDepth, 
                     bracketDepth, 
                     bracketThickness
-                ], center=false);
+                ], center=true);
         }       
 
         moveX = getMoveX(screwCount = screwHoleCount, screwRadius = screwHoleRadius, depth = bracketDepth);
