@@ -16,21 +16,16 @@ function layers2Height(layers) = InitialLayerHeight + ((layers - 1) * LayerHeigh
 function BaseHeight() = layers2Height(6);
 function WallThickness(count) = count * NozzleWidth;
 
-Height = InchTomm(1.75);
 BracketThickness = 6 * NozzleWidth;
-BracketWidth = InchTomm(4) + BracketThickness;
-ScrewHoleRadius = 2;
-ScrewHoleCount = 3;
-
 
 BracketProperties = 
 [
     "bracket",
-        ["bracketHeight", Height],
-        ["bracketDepth", BracketWidth],
-        ["bracketThickness", BracketThickness],
-        ["screwHoleCount", ScrewHoleCount],
-        ["screwHoleRadius", ScrewHoleRadius],
+        ["bracketHeight", InchTomm(1.75)],
+        ["bracketDepth", InchTomm(3.5) + BracketThickness],
+        ["bracketThickness", 6 * NozzleWidth],
+        ["screwHoleCount", 3],
+        ["screwHoleRadius", 2],
         ["screwHoleDepth", 2 * BracketThickness], 
         ["holes along axis", true],
         ["include support", true]
@@ -168,8 +163,8 @@ module Bracket( properties = "")
 module screwHoles( 
                     forXside = true, 
                     parallel = true,
-                    screwHoleCount = ScrewHoleCount,
-                    screwHoleRadius = ScrewHoleRadius, 
+                    screwHoleCount = undef,
+                    screwHoleRadius = undef, 
                     screwHoleDepth = 2 * BracketThickness, 
                     moveX = 0,
                     moveY = 0,
