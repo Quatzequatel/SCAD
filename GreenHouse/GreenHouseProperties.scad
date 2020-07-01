@@ -47,11 +47,9 @@ EntryColdFrame_length = EntryLength;
 
 frost_line = convert_in2mm(14);
 
-
-// RoofAngle = 45;
-// RoofWidth = Width/2; //((Width - in2ft(Board2x4.x))/2);
-// RoofHeight = RoofWidth * sin(RoofAngle);
-// RoofLength = hypotenuse(RoofHeight, RoofWidth);
+RoofWidth = HouseLength/2; //((Width - in2ft(Board2x4.x))/2);
+RoofHeight = RoofWidth * sin(RoofAngle);
+RoofLength = hypotenuse(RoofHeight, RoofWidth);
 
 StudProperties = 
 [
@@ -67,6 +65,20 @@ RafterProperties =
         ["thickness", Board2x6.x],
         ["depth", Board2x6.y],
         ["length", Board2x6.z]
+];
+
+RoofProperties = 
+[
+    "roof properties",
+        ["angle", RoofAngle],
+        ["width", HouseWidth],
+        ["length", HouseLength/2],
+        ["height", sideAaB(side_b = HouseWidth/2, aB = AngleOpposite(RoofAngle))],
+        ["overhang depth", RoofOverHangDepth],
+        ["overhang height", sideAaB(side_b = RoofOverHangDepth, aB = AngleOpposite(RoofAngle))],
+        ["overhang length", sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
+        ["rafter length", sideC_B(side_b = HouseWidth/2, aA = RoofAngle) + sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
+        ["spacing", StudSpacing]
 ];
 
 footing_properties = 
@@ -216,18 +228,13 @@ thermo_column_properties =
     ["pipe diameter", convert_in2mm(0.75)],
 ];
 
-RoofProperties = 
+Fence_Properties = 
 [
-    "roof properties",
-        ["angle", RoofAngle],
-        ["width", HouseWidth/2],
-        ["length", HouseLength],
-        ["height", sideAaB(side_b = HouseWidth/2, aB = AngleOpposite(RoofAngle))],
-        ["overhang depth", RoofOverHangDepth],
-        ["overhang height", sideAaB(side_b = RoofOverHangDepth, aB = AngleOpposite(RoofAngle))],
-        ["overhang length", sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
-        ["rafter length", sideC_B(side_b = HouseWidth/2, aA = RoofAngle) + sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
-        ["spacing", StudSpacing]
+    "fence properties",
+        ["width", convert_ft2mm(103.24)],
+        ["length", convert_in2mm(4)],
+        ["height", convert_in2mm(72)],
+        ["easement", -1 * convert_ft2mm(12)],
 ];
 
 module Info()

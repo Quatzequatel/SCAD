@@ -74,3 +74,16 @@ module move_to_center_of_foundation(height = 0)
     )    
     children();
 }
+
+module move_to_fence_line(fence_properties = undef)
+{
+    // echo(easement = getDictionaryValue(fence_properties, "easement"));
+    translate(
+        [
+            0,
+            getDictionaryValue(fence_properties, "easement"),
+            0
+        ]
+    )    
+    children();
+}

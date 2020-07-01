@@ -16,7 +16,8 @@ build();
 
 module build(args) 
 {
-    main_roof();
+    // main_roof();
+    Info();
 }
 
 module main_roof()
@@ -235,6 +236,14 @@ module rafter_right(offset=25)
     }
 }
 
+module rafter()
+{
+    length = getDictionaryValue(RafterProperties, "rafter length");
+    height = getDictionaryValue(RafterProperties, "depth");
+    angleA = getDictionaryValue(RafterProperties, "angle");
+    angleB = 90 - angleA;
+}
+
 module angle_cut_rightside(angle, sideA, doMirror = false) 
 {
     thickness = getDictionaryValue(RafterProperties, "thickness") + 2;
@@ -276,10 +285,44 @@ function getTrianglePoints(sideA, angleA) =
 ];
 
 function getBoardEnd(size, angle) =
-[
-    h =  angle < 45 ? sideBaA(size.y, angle) : sideAaA(size.y, sideA) //hypotenuse
+let(h =  angle < 45 ? sideBaA(size.y, angle) : sideAaA(size.y, sideA) )
+[    
     [0, 0],
     [0, size.x],
     [h, size.x],
     [h, 0]
 ];
+
+module Info()
+{
+    // debugEcho("House Dimensions", HouseDimensions, true);
+    // echo();
+    // debugEcho("Entry Dimensions", EntryDimensions, true);
+    // echo();
+    // debugEcho("EntryColdFrame", EntryColdFrame, true);
+    // echo();
+    // debugEcho("house_foundation_properties", house_foundation_properties, true);
+    // echo();
+    // debugEcho("footing_properties", footing_properties, true);
+    // echo();
+    // debugEcho("crushed_rock_properties", crushed_rock_properties, true);
+    // echo();
+    // debugEcho("Roof", RoofDimensions[1], true);
+    echo();
+    debugEcho("Entry Roof", EntryRoofDimensions, true);
+    echo();
+    debugEcho("Roof Properties", RoofProperties, true);
+    debugEcho("height", convert_mm2Inch(getDictionaryValue(RoofProperties, "height")), true);
+    // debugEcho("height", convert_mm2Inch(getDictionaryValue(RoofProperties, "height")), true);
+    debugEcho("rafter length", convert_mm2Inch(getDictionaryValue(RoofProperties, "rafter length")), true);
+
+    echo(RoofWidth = convert_mm2Inch(RoofWidth));
+    echo(RoofHeight = convert_mm2Inch(RoofHeight));
+    echo(RoofLength = convert_mm2Inch(RoofLength));
+    echo();
+    echo(RoofWidth = convert_mm2ft(RoofWidth));
+    echo(RoofHeight = convert_mm2ft(RoofHeight));
+    echo(RoofLength = convert_mm2ft(RoofLength));
+    echo();
+    echo(getTrianglePoints = getTrianglePoints(6, 42));
+}

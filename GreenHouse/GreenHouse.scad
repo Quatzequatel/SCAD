@@ -13,6 +13,7 @@ use <dictionary.scad>;
 use <transformations.scad>;
 use <Foundation.scad>;
 use <GeoThermal.scad>;
+use <Fence.scad>;
 
 build();
 
@@ -29,15 +30,17 @@ module greenhouse()
             conduit = true, 
             gravel = true, 
             footings = false, 
-            foundation = true, 
+            foundation = false, 
             cold_frame = false, 
             insulation = false, 
             info = true
         );
 
     move_to_cold_frame_to_left_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
-    thermo_column(true);
+    thermo_column(false);
 
     move_to_cold_frame_to_right_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
-    thermo_column(true);        
+    thermo_column(false);      
+
+    build_Fence();  
 }
