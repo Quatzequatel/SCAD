@@ -28,7 +28,9 @@ BracketProperties =
         ["screwHoleRadius", 2],
         ["screwHoleDepth", 2 * BracketThickness], 
         ["holes along axis", true],
-        ["include support", true]
+        ["include support", true],
+        ["support height", layers2Height(16)],
+        ["support length", InchTomm(3.5)]
 ];
 
 
@@ -98,6 +100,7 @@ module Bracket( properties = "")
     screwHoleDepth = 2 * getDictionaryValue(properties, "bracketThickness");
     parallel = getDictionaryValue(properties, "holes along axis");
     addSupport = getDictionaryValue(properties, "include support");
+    supportLength = getDictionaryValue(properties, "support length");
 
     bracketPoints = 
     [
@@ -112,8 +115,8 @@ module Bracket( properties = "")
     supportPoints = 
     [
         [0,0],
-        [bracketDepth, 0], 
-        [0, bracketDepth]
+        [supportLength, 0], 
+        [0, supportLength]
     ];
 
     moveX = bracketDepth / 2 + bracketThickness;
@@ -125,7 +128,8 @@ module Bracket( properties = "")
     {
         if(addSupport)
         {
-            linear_extrude(height = bracketThickness, center = false, convexity=10, twist=0) 
+            translate([BracketThickness,BracketThickness])
+            #linear_extrude(height = getDictionaryValue(properties, "support height"), center = false, convexity=10, twist=0) 
             polygon(points = supportPoints);            
         }
     
