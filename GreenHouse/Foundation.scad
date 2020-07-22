@@ -23,14 +23,14 @@ $fn = 16;
 
 foundation
     (
-        drainage = true, 
+        drainage = false, 
         conduit = true, 
         gravel = true, 
-        footings = false, 
+        footings = true, 
         foundation = true, 
         cold_frame = false, 
         insulation = false, 
-        info = true
+        info = false
     );
 
 module foundation(drainage = true, conduit = true, foundation = true, footings = true, gravel = true, cold_frame = true, insulation = true, info = false)
@@ -64,8 +64,8 @@ module foundation(drainage = true, conduit = true, foundation = true, footings =
         greenhouse_foundation
             (
                 color = "DarkGray", 
-                additionalWidth = getDictionaryValue(footing_properties, "width"), 
-                properties = footing_properties
+                additionalWidth = getDictionaryValue(concrete_footing_properties, "width"), 
+                properties = concrete_footing_properties
             );
     }
     
@@ -75,10 +75,12 @@ module foundation(drainage = true, conduit = true, foundation = true, footings =
         greenhouse_foundation
             (
                 color = "SlateGray", 
-                additionalWidth = 0, 
+                additionalWidth = 0,//getDictionaryValue(house_foundation_properties, "width"), 
                 properties = house_foundation_properties
             );
     }
+
+    rebar(height =  convert_in2mm(24));
 
     
     if(cold_frame)
@@ -99,11 +101,11 @@ module foundation(drainage = true, conduit = true, foundation = true, footings =
         foundation_insulation();
     }
 
-    if(frostline)
-    {
-        move_to_center_of_foundation(-getDictionaryValue(foundationProperties, "frost line"))
-        Frost_line();
-    }
+    // if(frostline)
+    // {
+    //     move_to_center_of_foundation(-getDictionaryValue(foundationProperties, "frost line"))
+    //     Frost_line();
+    // }
 
     if(info)
     {
@@ -202,6 +204,31 @@ module Frost_line()
     square([getDictionaryValue(foundationProperties, "width") + 1000, getDictionaryValue(foundationProperties, "length") + 1000], center = true);    
 }
 
+module rebar(height = 0, color = "NavajoWhite")
+{
+    loc = [[1, 1], [-1, -1], [-1, 1], [1,-1]];
+    x = getDictionaryValue(HouseDimensions, "width")/2;
+    y = getDictionaryValue(HouseDimensions, "length")/2;
+    spacer = 0; //convert_in2mm(36);
+    for(j = [0:1])
+    {
+        for (i=[0:3]) 
+        {
+            echo
+                (
+                    j, 
+                    i, 
+                    xy = convertV_mm2Inch([loc[i].x * (x + (j == 0 ? spacer : 0)), loc[i].y * (y + (j != 0 ? spacer : 0))]),
+                    hypo = hypotenuseV(convertV_mm2Inch([loc[i].x * (x + (j == 0 ? spacer : 0)), loc[i].y * (y + (j != 0 ? spacer : 0))]))
+                );
+            translate([loc[i].x * (x + (j == 0 ? spacer : 0)), loc[i].y * (y + (j != 0 ? spacer : 0))])
+            color(color) 
+            cylinder(r=convert_in2mm(0.5), h=height, center=false);        
+        }        
+    }
+
+}
+
 module Info()
 {
     debugEcho("House Dimensions", HouseDimensions, true);
@@ -212,7 +239,7 @@ module Info()
     echo();
     debugEcho("house_foundation_properties", house_foundation_properties, true);
     echo();
-    debugEcho("footing_properties", footing_properties, true);
+    debugEcho("concrete_footing_properties", concrete_footing_properties, true);
     echo();
     debugEcho("crushed_rock_properties", crushed_rock_properties, true);
     echo();
