@@ -81,7 +81,7 @@ RoofProperties =
         ["spacing", StudSpacing]
 ];
 
-footing_properties = 
+concrete_footing_properties = 
 [
     "footing properties",
         ["width", convert_in2mm(16)],  
@@ -106,18 +106,18 @@ house_foundation_properties =
         ["width", convert_in2mm(8)],  
         ["height", convert_in2mm(8)],  
         ["start", 
-            getDictionaryValue(footing_properties, "start") + 
-            getDictionaryValue(footing_properties, "height")
+            getDictionaryValue(concrete_footing_properties, "start") + 
+            getDictionaryValue(concrete_footing_properties, "height")
         ],
-        ["layers", 3]
+        ["layers", 4]
 ];
 
 crushed_rock_properties = 
 [
     "crushed rock properties",
-        ["width", getDictionaryValue(footing_properties, "width") + convert_in2mm(4)],
+        ["width", getDictionaryValue(concrete_footing_properties, "width") + convert_in2mm(4)],
         ["height", convert_in2mm(4)],
-        ["start", (getDictionaryValue(footing_properties, "start") - convert_in2mm(4))],
+        ["start", (getDictionaryValue(concrete_footing_properties, "start") - convert_in2mm(4))],
 ];
 
 
@@ -142,7 +142,7 @@ electric_conduit =
         [ 
             -1 * (HouseWidth/2 - convert_in2mm(3)), 
             1 * (HouseLength/2 - convert_in2mm(36)), 
-            getDictionaryValue(footing_properties, "start")
+            getDictionaryValue(concrete_footing_properties, "start")
         ] 
     ] 
 ];
@@ -157,7 +157,7 @@ water_conduit =
         [ 
             -1 * (HouseWidth/2 - convert_in2mm(3)), 
             -1 * (HouseLength/2 - convert_in2mm(36)), 
-            getDictionaryValue(footing_properties, "start")
+            getDictionaryValue(concrete_footing_properties, "start")
         ] 
     ]
 ];
@@ -236,7 +236,6 @@ Fence_Properties =
         ["height", convert_in2mm(72)],
         ["easement", -1 * convert_ft2mm(12)],
 ];
-
 module Info()
 {
     debugEcho("Stud", StudProperties[1], true);
