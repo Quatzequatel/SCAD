@@ -3,7 +3,7 @@ lib for common constants;
 i.e. enums
 */
 //machine values
-NozzleWidth = 1.0;
+NozzleWidth = 0.8;
 LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
 ISDEBUGEMODE = false;
