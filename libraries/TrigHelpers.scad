@@ -7,6 +7,8 @@ use <convert.scad>;
 //length of hypotenuse for right angled triangle.
 function hypotenuse(a, b) = //echo(hypotenuse = 1, a = a, b = b) 
     sqrt((a * a) + (b * b));
+function hypotenuseV(a) = //echo(hypotenuse = 1, a = a, b = b) 
+    sqrt((a.x * a.x) + (a.y * a.y));    
 //point 2 given point 1 and angle assuming in a right angle triangle.
 function p2(p1, angle) = [p1.x * cos(angle), p1.y * sin(angle)];
 
@@ -43,6 +45,13 @@ let
     ]
 )
 result;
+
+function isosceles_triangle(s) = 
+[
+    [0,0],
+    [s,0],
+    [s/2, s]
+];
 
 function AddPoints(p1, p2) = [p1.x + p2.x, p2.y + p2.y, p1.z + p2.z];
 
