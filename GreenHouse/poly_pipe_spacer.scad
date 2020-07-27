@@ -16,17 +16,19 @@ build();
 polypipe_properties = 
 [
     "poly pipe properties",
-    ["width", convert_in2mm(4)],
-    ["pipe diameter", convert_in2mm(3/4)],
-    ["wall thickness", 5 * NozzleWidth],
-    ["height", convert_in2mm(0.5)]
+    ["width", convert_in2mm(1.75)],
+    ["pipe diameter", convert_in2mm(7/8)],
+    ["wall thickness", 4 * NozzleWidth],
+    ["height", convert_in2mm(0.5)],
+    ["screw hole", true],
+    ["screw hole diameter", woodScrewShankDiaN_4]
 ];
 
 module build(args) 
 {
-    // poly_pipe_spacer();
-    rotate([90,0,0])
-    poly_pipe_180_end();
+    poly_pipe_spacer();
+    // rotate([90,0,0])
+    // poly_pipe_180_end();
     // poly_pipe_clip();
 }
 
@@ -66,29 +68,37 @@ module poly_pipe_clip()
 
 module poly_pipe_spacer()
 {
-    linear_extrude(getDictionaryValue(polypipe_properties, "height"))
     difference()
     {
-        poly_pipe_spacer_2D();        
+        linear_extrude(getDictionaryValue(polypipe_properties, "height"))
+        difference()
+        {
+            poly_pipe_spacer_2D();        
 
-        translate(
-            [
-                - getDictionaryValue(polypipe_properties, "pipe diameter")/4,
-                + getDictionaryValue(polypipe_properties, "wall thickness")/2,
-                0
-            ]
-        )
-        polygon
-        (
-            points =
-            isosceles_triangle
-            (
-                s = getDictionaryValue(polypipe_properties, "width") 
-                    + getDictionaryValue(polypipe_properties, "pipe diameter")/2
+            translate(
+                [
+                    - getDictionaryValue(polypipe_properties, "pipe diameter")/4,
+                    + getDictionaryValue(polypipe_properties, "wall thickness")/2,
+                    0
+                ]
             )
-        );
-        
-    }    
+            polygon
+            (
+                points =
+                isosceles_triangle
+                (
+                    s = getDictionaryValue(polypipe_properties, "width") 
+                        + getDictionaryValue(polypipe_properties, "pipe diameter")/2
+                )
+            );
+            
+        }    
+
+        translate([getDictionaryValue(polypipe_properties, "width")/2 ,0,getDictionaryValue(polypipe_properties, "height")/2])
+        rotate([90,0,0])
+        cylinder(r=getDictionaryValue(polypipe_properties, "screw hole diameter"), h=10, center=true);   
+    }
+    
 }
 
 module poly_pipe_spacer_2D()
