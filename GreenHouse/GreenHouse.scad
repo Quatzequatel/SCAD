@@ -29,7 +29,7 @@ module greenhouse()
             drainage = true, 
             conduit = true, 
             gravel = true, 
-            footings = false, 
+            footings = true, 
             foundation = false, 
             cold_frame = false, 
             insulation = false, 
@@ -42,5 +42,5 @@ module greenhouse()
     move_to_cold_frame_to_right_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
     thermo_column(false);      
 
-    build_Fence();  
+    // build_Fence();  
 }

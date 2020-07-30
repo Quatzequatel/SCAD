@@ -30,7 +30,7 @@ module squareTube(outerwidth, outerheight, wallThickness, height)
             circle(minkowski_circle);
         }
         
-        #translate([0,0,-2],true)
+        #translate([0,0,-2])
         linear_extrude(height+4,true)
         minkowski()
         {

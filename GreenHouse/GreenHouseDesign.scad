@@ -12,11 +12,12 @@
 // include <TrellisEnums.scad>;
 include <constants.scad>;
 include <GreenHouseProperties.scad>;
-use <shapesByPoints.scad>;
+// use <shapesByPoints.scad>;
 use <convert.scad>;
 use <ObjectHelpers.scad>;
 use <trigHelpers.scad>;
 use <Construction.scad>;
+use <dictionary.scad>;
 
 use <box_extrude.scad>;
 
@@ -32,7 +33,7 @@ use <box_extrude.scad>;
 // EntryRoofLength = hypotenuse(EntryRoofHeight, EntryRoofWidth);// sqrt((EntryRoofHeight * EntryRoofHeight) + (EntryRoofWidth * EntryRoofWidth));
 // WallHeight = MaxHeight - RoofHeight;
 // EntryDimensions = [Length, Width, MaxHeight];
-// EntryRoofDimensions = [Width/2, RoofLength,  hypotenuse(RoofHeight, RoofWidth), RoofAngle ];
+// EntryRoofProperties = [Width/2, RoofLength,  hypotenuse(RoofHeight, RoofWidth), RoofAngle ];
 
 
 Build();
@@ -40,14 +41,14 @@ Build();
 module Build(args) 
 {
     echo("Base Dimensions:");
-    echo(Length = convert_mm2Feet(mm = HouseDimensions.y));
-    echo(Width = convert_mm2Feet(mm = HouseDimensions.x));
-    echo(Height = convert_mm2Feet(mm = HouseDimensions.z + RoofDimensions.z));
+    echo(Length = convert_mm2ft(mm = getDictionaryValue(HouseDimensions, "length")));
+    echo(Width = convert_mm2ft(mm = getDictionaryValue(HouseDimensions, "width")));
+    echo(Height = convert_mm2ft(mm = getDictionaryValue(HouseDimensions, "wall height") + getDictionaryValue(RoofProperties, "height")));
     echo(RoofAngle = RoofAngle);
-    echo(RoofHeight = convert_mm2Feet(mm = RoofDimensions.z));
-    echo(RoofWidth = convert_mm2Feet(mm = RoofDimensions.x));
-    echo(WallHeight = convert_mm2Feet(mm = HouseDimensions.z));
-    echo(RoofLength = convert_mm2Feet(mm = RoofDimensions.y));
+    echo(RoofHeight = convert_mm2ft(mm = getDictionaryValue(RoofProperties, "height")));
+    echo(RoofWidth = convert_mm2ft(mm = getDictionaryValue(RoofProperties, "width")));
+    echo(WallHeight = convert_mm2ft(mm = getDictionaryValue(HouseDimensions, "wall height")));
+    echo(RoofLength = convert_mm2ft(mm = getDictionaryValue(RoofProperties, "length")));
     echo(EntryRoofDimensions_inches = convertV_mm2Inch(mm = EntryRoofDimensions));
     echo(EntryRoofAngle = EntryRoofDimensions[3]);
     // echo(sin45 = sin(45));
@@ -77,21 +78,21 @@ module HouseFrame2()
     {
         color("aqua")
         Wall(
-            wallOD = [HouseDimensions.y, HouseDimensions.x, HouseDimensions.z], 
+            wallOD = [getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "wall height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             finished = isFinished
         );        
-        // drawFrame([0,0,0], HouseDimensions.z, HouseDimensions.x, Board2x4);
+        // drawFrame([0,0,0], getDictionaryValue(HouseDimensions, "wall height"), getDictionaryValue(HouseDimensions, "width"), Board2x4);
     }
 
     //right side wall
-    translate([Board2x4.y, HouseDimensions.y, 0])
+    translate([Board2x4.y, getDictionaryValue(HouseDimensions, "width"), 0])
     rotate([90, 0, 0]) 
     {
         color("red")
         Wall(
-            wallOD = [HouseDimensions.x - Board2x4.y, HouseDimensions.y, HouseDimensions.z], 
+            wallOD = [getDictionaryValue(HouseDimensions, "width") - Board2x4.y, getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "wall height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             finished = isFinished
@@ -104,7 +105,7 @@ module HouseFrame2()
     {
         color("red")
         Wall(
-            wallOD = [HouseDimensions.x - Board2x4.y, HouseDimensions.y, HouseDimensions.z], 
+            wallOD = [getDictionaryValue(HouseDimensions, "width") - Board2x4.y, getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "wall height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             finished = isFinished
@@ -112,12 +113,12 @@ module HouseFrame2()
     }
 
     //front wall  left side
-    translate([HouseDimensions.x, 0, 0])
+    translate([getDictionaryValue(HouseDimensions, "width"), 0, 0])
     rotate([90, 0, 90]) 
     {
         color("blue")
         Wall(
-            wallOD = [HouseDimensions.y/2 - EntryDimensions.x/2, HouseDimensions.x, HouseDimensions.z], 
+            wallOD = [getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2, getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "wall height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             finished = isFinished
@@ -125,12 +126,12 @@ module HouseFrame2()
     }
 
     //front wall  right side
-    translate([HouseDimensions.x, HouseDimensions.y - (HouseDimensions.y/2 - EntryDimensions.x/2), 0])
+    translate([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "width") - (getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2), 0])
     rotate([90, 0, 90]) 
     {
         color("blue")
         Wall(
-            wallOD = [HouseDimensions.y/2 - EntryDimensions.x/2, HouseDimensions.x, HouseDimensions.z], 
+            wallOD = [getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2, getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "wall height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             finished = isFinished
@@ -145,8 +146,8 @@ module EntryFrame2()
     translate
     (
         [
-            HouseDimensions.x + Board2x4.y, 
-            HouseDimensions.y - (HouseDimensions.y/2 - EntryDimensions.x/2) + Board2x4.y, 
+            getDictionaryValue(HouseDimensions, "width") + Board2x4.y, 
+            getDictionaryValue(HouseDimensions, "width") - (getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2) + Board2x4.y, 
             0
         ]
     )
@@ -154,7 +155,7 @@ module EntryFrame2()
     {
         color("yellow")
         Wall(
-            wallOD = [EntryDimensions.x - Board2x4.y, EntryDimensions.y, EntryDimensions.z], 
+            wallOD = [getDictionaryValue(EntryDimensions, "width") - Board2x4.y, EntryDimensions.y, getDictionaryValue(EntryDimensions, "height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             finished = isFinished
@@ -165,8 +166,8 @@ module EntryFrame2()
     translate
     (
         [
-            HouseDimensions.x + Board2x4.y, 
-            (HouseDimensions.y/2 - EntryDimensions.x/2), 
+            getDictionaryValue(HouseDimensions, "width") + Board2x4.y, 
+            (getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2), 
             0
         ]
     )
@@ -174,7 +175,7 @@ module EntryFrame2()
     {
         color("yellow")
         Wall(
-            wallOD = [EntryDimensions.x - Board2x4.y, EntryDimensions.y, EntryDimensions.z], 
+            wallOD = [getDictionaryValue(EntryDimensions, "width") - Board2x4.y, EntryDimensions.y, getDictionaryValue(EntryDimensions, "height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             finished = isFinished
@@ -185,8 +186,8 @@ module EntryFrame2()
     translate
     (
         [
-            HouseDimensions.x + EntryDimensions.x - Board2x4.y, 
-            (HouseDimensions.y/2 - EntryDimensions.x/2), 
+            getDictionaryValue(HouseDimensions, "width") + getDictionaryValue(EntryDimensions, "width") - Board2x4.y, 
+            (getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2), 
             0
         ]
     )
@@ -194,7 +195,7 @@ module EntryFrame2()
     {
         color("yellow")
         Wall(
-            wallOD = [EntryDimensions.x, EntryDimensions.y, EntryDimensions.z], 
+            wallOD = [getDictionaryValue(EntryDimensions, "width"), EntryDimensions.y, getDictionaryValue(EntryDimensions, "height")], 
             board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
             spacing = StudSpacing,
             includeStuds = false,
@@ -206,13 +207,13 @@ module EntryFrame2()
 module RoofFrame2()
 {
      
-     debugEcho("RoofFrame2([0]=RoofDimensions, [1]=Board2x4, [2]=StudSpacing)",[RoofDimensions, Board2x4, StudSpacing], true);
+     debugEcho("RoofFrame2([0]=RoofProperties, [1]=Board2x4, [2]=StudSpacing)",[RoofProperties, Board2x4, StudSpacing], true);
     //back
-    translate([0, 0, HouseDimensions.z + Board2x4.y])
+    translate([0, 0, getDictionaryValue(HouseDimensions, "wall height") + Board2x4.y])
     rotate([90, 0, 90]) 
     Roof
     (
-        roofOD = RoofDimensions, //[x,y,z,angle]
+        roofOD = RoofProperties, //[x,y,z,angle]
         board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
         spacing = StudSpacing,
         includeHeader = false,
@@ -222,12 +223,12 @@ module RoofFrame2()
 
     //front
     mirror([1,0,0])
-    translate([-(HouseDimensions.x + Board2x4.y), 0, HouseDimensions.z + Board2x4.y])
-    //  translate([HouseDimensions.x + Board2x4.y, HouseDimensions.y, HouseDimensions.z + Board2x4.y])
+    translate([-(getDictionaryValue(HouseDimensions, "width") + Board2x4.y), 0, getDictionaryValue(HouseDimensions, "wall height") + Board2x4.y])
+    //  translate([getDictionaryValue(HouseDimensions, "width") + Board2x4.y, getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "wall height") + Board2x4.y])
     rotate([90, 0, 90]) 
     Roof
     (
-        roofOD = RoofDimensions, //[x,y,z,angle]
+        roofOD = RoofProperties, //[x,y,z,angle]
         board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
         spacing = StudSpacing,
         includeHeader = false,
@@ -240,14 +241,14 @@ module EntryRoofFrame2()
 {
     echo(EntryRoofFrame2 = 1, EntryRoofDimensions=EntryRoofDimensions);
     //left
-    // translate([0, 0, HouseDimensions.z + Board2x4.y])
+    // translate([0, 0, getDictionaryValue(HouseDimensions, "wall height") + Board2x4.y])
     // rotate([90, 0, 90]) 
     translate
     (
         [
-            HouseDimensions.x + Board2x4.y, 
-            HouseDimensions.y - (HouseDimensions.y/2 - EntryDimensions.x/2) + Board2x4.y, 
-            HouseDimensions.z + Board2x4.y
+            getDictionaryValue(HouseDimensions, "width") + Board2x4.y, 
+            getDictionaryValue(HouseDimensions, "width") - (getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2) + Board2x4.y, 
+            getDictionaryValue(HouseDimensions, "wall height") + Board2x4.y
         ]
     )
     rotate([90, 0, 0])    
@@ -264,9 +265,9 @@ module EntryRoofFrame2()
     translate
     (
         [
-            HouseDimensions.x + Board2x4.y, 
-            (HouseDimensions.y/2 - EntryDimensions.x/2) - Board2x4.y , 
-            HouseDimensions.z + Board2x4.y
+            getDictionaryValue(HouseDimensions, "width") + Board2x4.y, 
+            (getDictionaryValue(HouseDimensions, "width")/2 - getDictionaryValue(EntryDimensions, "width")/2) - Board2x4.y , 
+            getDictionaryValue(HouseDimensions, "wall height") + Board2x4.y
         ]
     )
     mirror([0,1,0])
@@ -285,14 +286,14 @@ module EntryRoofFrame2()
 module simpleView(showentry = true, showRoof = true, showwalls = true)
 {
     {
-        sidePoints = housePoints(houseDi = HouseDimensions, roofDi = RoofDimensions, p0 = [0,0]);
+        sidePoints = housePoints(houseDi = HouseDimensions, roofDi = RoofProperties, p0 = [0,0]);
 
-        // echo(sidePoints = sidePoints);
-        // echo(sidePoints = convertVPts_mm2Inch(sidePoints));
+        echo(sidePoints = sidePoints);
+        echo(sidePoints = convertVPts_mm2Inch(sidePoints));
 
-        translate([0,HouseDimensions.y,0])
+        translate([0,getDictionaryValue(HouseDimensions, "wall height"),0])
         rotate([90,0,0])
-        %linear_extrude(height = HouseDimensions.y)
+        %linear_extrude(height = getDictionaryValue(HouseDimensions, "wall height"))
         polygon(points=sidePoints);
 
     }
@@ -302,44 +303,50 @@ module simpleView(showentry = true, showRoof = true, showwalls = true)
             echo(entryPoints = entryPoints);
             echo(EntryDimensions = EntryDimensions, EntryRoofDimensions = EntryRoofDimensions);
 
-            translate([HouseDimensions.x - (EntryRoofDimensions.y - EntryDimensions.x), HouseDimensions.y/2 - EntryDimensions.x/2,0])
+            translate(
+                [
+                    getDictionaryValue(HouseDimensions, "width") - (getDictionaryValue(EntryRoofDimensions, "length") - getDictionaryValue(EntryDimensions, "width")), 
+                    getDictionaryValue(HouseDimensions, "wall height")/2 - getDictionaryValue(EntryDimensions, "width")/2,
+                    0
+                ]
+            )
             rotate([90,0,90])
             difference()
             {
-                linear_extrude(height = EntryRoofDimensions.y)
+                linear_extrude(height = getDictionaryValue(EntryRoofDimensions, "length"))
                 polygon(points=entryPoints);
 
                 union()
                 {
-                    linear_extrude(height = EntryRoofDimensions.y/2)
-                    square([EntryDimensions.x + 1,EntryDimensions.z + 1], center = false);
+                    linear_extrude(height = getDictionaryValue(EntryRoofDimensions, "length")/2)
+                    square([getDictionaryValue(EntryDimensions, "width") + 1,getDictionaryValue(EntryDimensions, "height") + 1], center = false);
                     tripoints = [
-                        [0,EntryDimensions.z],
-                        [EntryRoofDimensions.y/2,EntryDimensions.z],
-                        [0, EntryRoofDimensions.y/2 ]
+                        [0,getDictionaryValue(EntryDimensions, "height")],
+                        [getDictionaryValue(EntryRoofDimensions, "length")/2,getDictionaryValue(EntryDimensions, "height")],
+                        [0, getDictionaryValue(EntryRoofDimensions, "length")/2 ]
                         ];
                         echo(tripoints=tripoints);
                         echo(tripoints=convertVPts_mm2Inch(tripoints));
-                    // translate([0,EntryDimensions.z,0])
+                    // translate([0,getDictionaryValue(EntryDimensions, "height"),0])
                     // !#rotate([0,-90,90])
-                    // translate([0,-EntryDimensions.z,0])
-                    // linear_extrude(height = EntryDimensions.x)
+                    // translate([0,-getDictionaryValue(EntryDimensions, "height"),0])
+                    // linear_extrude(height = getDictionaryValue(EntryDimensions, "width"))
                     // polygon(points=tripoints);
                 }
             }
 
 
             //left garden box
-            translate([HouseDimensions.x, 0, 0])
-            // linear_extrude(height = EntryRoofDimensions.y)
+            translate([getDictionaryValue(HouseDimensions, "width"), 0, 0])
+            // linear_extrude(height = getDictionaryValue(EntryRoofDimensions, "length"))
             color("white") box_extrude(height = convert_ft2mm(2), shell_thickness = convert_in2mm(in = 2)) 
-            square([EntryDimensions.x,(HouseDimensions.y - EntryDimensions.x)/2], center = false);
+            square([getDictionaryValue(EntryDimensions, "width"),(getDictionaryValue(HouseDimensions, "wall height") - getDictionaryValue(EntryDimensions, "width"))/2], center = false);
 
             //right garden box
-            translate([HouseDimensions.x, HouseDimensions.y - (HouseDimensions.y - EntryDimensions.x)/2 , 0])
-            // linear_extrude(height = EntryRoofDimensions.y)
+            translate([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "wall height") - (getDictionaryValue(HouseDimensions, "wall height") - getDictionaryValue(EntryDimensions, "width"))/2 , 0])
+            // linear_extrude(height = getDictionaryValue(EntryRoofDimensions, "length"))
             color("white") box_extrude(height = convert_ft2mm(2), shell_thickness = convert_in2mm(in = 2)) 
-            square([EntryDimensions.x,(HouseDimensions.y - EntryDimensions.x)/2], center = false);
+            square([getDictionaryValue(EntryDimensions, "width"),(getDictionaryValue(HouseDimensions, "wall height") - getDictionaryValue(EntryDimensions, "width"))/2], center = false);
     }
 
 }
@@ -352,10 +359,10 @@ module simpleView(showentry = true, showRoof = true, showwalls = true)
 function housePoints(houseDi, roofDi, p0) = 
 [
     p0,                             //p0
-    [houseDi.x, p0.y],           //p1
-    [houseDi.x, houseDi.z],   //p2
-    [houseDi.x/2, houseDi.z + roofDi.z],   //p3
-    [p0.x, houseDi.z]           //p4
+    [getDictionaryValue(houseDi, "width"), p0.y],           //p1
+    [getDictionaryValue(houseDi, "width"), getDictionaryValue(houseDi, "wall height")],   //p2
+    [getDictionaryValue(houseDi, "width")/2, getDictionaryValue(houseDi, "peak height")],   //p3 
+    [p0.x, getDictionaryValue(houseDi, "wall height")]           //p4
 ];
 
 
