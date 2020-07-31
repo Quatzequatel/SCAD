@@ -1,8 +1,11 @@
+include <constants.scad>;
+use <dictionary.scad>;
+use <convert.scad>;
 INCH = 25.4;
-LineWidth = 0.6;
-WallThickness = LineWidth * 3; //
+nozzel_width = 0.6;
+WallThickness = nozzel_width * 3; //
 //3/4 poly tubing value is 0.72
-Target_Radius = half(Inches(0.25) +  WallThickness); // mm 3/4inch
+Target_Radius = half(convert_in2mm(0.25) +  WallThickness); // mm 3/4inch
 $fn = 100;
 
 // radius = 20;
@@ -10,42 +13,93 @@ $fn = 100;
 // width = 2;
 fn = 60;
 
+ Three_Quarter_Inch_Pipe_Properties = 
+[
+    "filename == Poly_pipe_clip_0_75_Inch",
+    ["radius", half(convert_in2mm(0.75))],
+    ["radius_adjusted", half(convert_in2mm(0.75) +  WallThickness)],
+    ["wall", WallThickness],
+    ["clip_length", convert_in2mm(1.5)],
+    ["clip_depth", 2 * WallThickness],
+    ["clip_width", convert_in2mm(0.75)],
+    ["clip_space", 2 * nozzel_width],
+    ["screwhole_radius", 2],
+    ["screwhole_length", 3 * WallThickness]
+];
+
+Quarter_Inch_Pipe_Properties = 
+[
+    "filename == Poly_pipe_clip_0_25_Inch",
+    ["radius", half(convert_in2mm(0.25))],
+    ["radius_adjusted", half(convert_in2mm(0.25) +  WallThickness)],
+    ["wall", WallThickness],
+    ["clip_length", convert_in2mm(1)],
+    ["clip_depth", 2 * WallThickness],
+    ["clip_width", convert_in2mm(0.5)],
+    ["clip_space", 2 * nozzel_width],
+    ["screwhole_radius", 2],
+    ["screwhole_length", 10]
+];
 
 function half(value) = value/2;
-function Inches(value) = INCH * value;
 function TailDepthAdjustment(value) = value < 2 ? 0.8 : value /2;
-build();
+
+build(Quarter_Inch_Pipe_Properties);
 
 module build(args) 
 {
-    echo( str("module is ", "P"), Target_Radius=Target_Radius);
+    echo( filename = args);
     difference()
     {
-        PolyPipeClip(radius = Target_Radius, wall = WallThickness, clipLength =  Inches(1.5), clipDepth = WallThickness * 3, height = Inches(0.75));  
+        PolyPipeClip
+        (
+            pipe_properties = args
+        );  
     }
 
 
 }
 
-module PolyPipeClip(radius, wall, clipLength, clipDepth, height=13, screHoleRadius = 3)
+module PolyPipeClip(pipe_properties)
 {
     difference()
     {
-        linear_extrude(height = height)
+        linear_extrude(height = getDictionaryValue(pipe_properties , "clip_width"))
         difference()
         {
-            P(radius+wall, clipLength, clipDepth);         
+            pin_shape(
+                getDictionaryValue(pipe_properties , "radius_adjusted"), 
+                getDictionaryValue(pipe_properties , "clip_length"), 
+                getDictionaryValue(pipe_properties , "clip_depth")
+                );         
 
-            P(radius, clipLength, 2*LineWidth);       
+            #pin_shape(
+                getDictionaryValue(pipe_properties , "radius"), 
+                getDictionaryValue(pipe_properties , "clip_length"), 
+                getDictionaryValue(pipe_properties , "clip_space")
+                );       
         }
 
-        translate([0.5*clipLength,-2,height/2]) rotate([90,0,0]) cylinder(r=screHoleRadius, h=10, center=true);
+        translate
+        (
+            [
+                half(getDictionaryValue(pipe_properties , "clip_length")),
+                - getDictionaryValue(pipe_properties , "radius") - 2 + half(getDictionaryValue(pipe_properties , "screwhole_length")),
+                half(getDictionaryValue(pipe_properties , "clip_width"))
+            ]
+        ) 
+        rotate([90,0,0]) 
+        #cylinder(
+            r=getDictionaryValue(pipe_properties , "screwhole_radius"), 
+            h=getDictionaryValue(pipe_properties , "screwhole_length"), 
+            center=true
+            );
     }
 }
 
-module P(radius, tailLengh, tailDepth)
+module pin_shape(radius, tailLengh, tailDepth)
 {
-    echo( str("module is ", "P"), radius=radius, wall=TailDepthAdjustment(tailDepth), tailLengh=tailLengh, clipDepth=tailDepth);
+    echo( str("module is ", "pin_shape"), radius=radius, wall=TailDepthAdjustment(tailDepth), tailLengh=tailLengh, clipDepth=tailDepth);
     //pipe
     circle(r=radius);
     //clip
