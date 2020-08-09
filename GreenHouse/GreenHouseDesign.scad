@@ -26,16 +26,6 @@ use <box_extrude.scad>;
 
 //Note: moved definitions to GreenHouseProperties.scad
 
-
-
-// EntryRoofWidth = EntryWidth/2; //((Width - in2ft(Board2x4.x))/2);
-// EntryRoofHeight = EntryRoofWidth * sin(RoofAngle);
-// EntryRoofLength = hypotenuse(EntryRoofHeight, EntryRoofWidth);// sqrt((EntryRoofHeight * EntryRoofHeight) + (EntryRoofWidth * EntryRoofWidth));
-// WallHeight = MaxHeight - RoofHeight;
-// EntryDimensions = [Length, Width, MaxHeight];
-// EntryRoofProperties = [Width/2, RoofLength,  hypotenuse(RoofHeight, RoofWidth), RoofAngle ];
-
-
 Build();
 
 module Build(args) 
@@ -53,19 +43,10 @@ module Build(args)
     echo(EntryRoofAngle = EntryRoofDimensions[3]);
     // echo(sin45 = sin(45));
 
-    // SideView();
-    // translate([Width/2,0,0])
-    // rotate([0,0, 90])
     simpleView(showentry = true, showRoof = true, showwalls = false);
 
-    // HouseFrame();
-    // EntryFrame();
-    // RoofFrame();
 
     HouseFrame2();
-    // EntryFrame2();
-    // RoofFrame2();
-    // EntryRoofFrame2();
 
 }
 
