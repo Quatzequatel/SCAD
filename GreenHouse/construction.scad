@@ -48,30 +48,6 @@ entry_length_id = getID(entry_length);
 house_length_with_entry_od = getOD(house_length_with_entry + entry_length);
 house_length_with_entry_id = getID(house_length_with_entry);
 
-echo( lengthof1A = convert_mm2Inch(FoundationWidth_od));
-echo( lengthof1B = convert_mm2Inch(FoundationWidth_id));
-
-echo( lengthof2A = convert_mm2Inch(FoundationLength_od - 1 * form_board_depth));
-echo( lengthof2B = convert_mm2Inch( FoundationLength_id - 1 * form_board_depth));
-
-echo( lengthof3A = convert_mm2Inch(FoundationLength_od - 1 * form_board_depth));
-echo( lengthof3B = convert_mm2Inch(FoundationLength_id - 1 * form_board_depth));
-
-echo( lengthof4A = convert_mm2Inch(special_entry_width + form_board_depth/2));
-echo( lengthof4B = convert_mm2Inch(special_entry_width + form_board_depth/2));
-
-echo( lengthof5A = convert_mm2Inch(special_entry_width + form_board_depth/2));
-echo( lengthof5B = convert_mm2Inch(special_entry_width + form_board_depth/2));
-
-echo( lengthof6A = convert_mm2Inch(entry_length));
-echo( lengthof6B = convert_mm2Inch(entry_length));
-
-echo( lengthof7A = convert_mm2Inch(entry_length));
-echo( lengthof7B = convert_mm2Inch(entry_length));
-
-echo( lengthof8A = convert_mm2Inch(entry_width_od));
-echo( lengthof8B = convert_mm2Inch(entry_width_id));
-
 block_1 = 
 [
     "block_1",
@@ -95,7 +71,7 @@ footing1 =
 block_2 = 
 [
     "block_2",
-    ["length" , block_length],
+    ["length", block_length],
     ["depth" , block_width],
     ["height", block_height],
     ["move", [- HouseWidth/2 + block_width/2, 0, 0]],
@@ -105,7 +81,7 @@ block_2 =
 board_1A = 
 [
     "board 1A",
-    ["length" , FoundationWidth_od],
+    ["length", FoundationWidth_od],
     ["depth" , form_board_depth],
     ["move", [0, FoundationLength_od/2, 0]],
     ["rotate", [0,0, 0]],
@@ -175,7 +151,7 @@ board_4A =
             0
         ]
     ],
-    ["rotate", [0,0, 0]]    ,
+    ["rotate", [0,0, 0]],
     ["color", "Maroon"]
 ];
 board_4B = 
@@ -192,7 +168,7 @@ board_4B =
             0
         ]
     ],    
-    ["rotate", [0,0, 0]]    ,
+    ["rotate", [0,0, 0]],
     ["color", "Brown"]
 ];
 
@@ -209,7 +185,7 @@ board_5A =
             0
         ]
     ],
-    ["rotate", [0,0, 0]]    ,
+    ["rotate", [0,0, 0]],
     ["color", "PowderBlue"]
 ];
 board_5B = 
