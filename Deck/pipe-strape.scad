@@ -1,17 +1,14 @@
 include <constants.scad>;
 use <dictionary.scad>;
 use <convert.scad>;
-INCH = 25.4;
-nozzel_width = 0.6;
-WallThickness = nozzel_width * 3; //
+
+WallThickness = NozzleWidth * 4; //
 //3/4 poly tubing value is 0.72
-Target_Radius = half(convert_in2mm(0.25) +  WallThickness); // mm 3/4inch
 $fn = 100;
 
 // radius = 20;
 // angles = [-80, 270];
 // width = 2;
-fn = 60;
 
  Three_Quarter_Inch_Pipe_Properties = 
 [
@@ -22,7 +19,7 @@ fn = 60;
     ["clip_length", convert_in2mm(1.5)],
     ["clip_depth", 2 * WallThickness],
     ["clip_width", convert_in2mm(0.75)],
-    ["clip_space", 2 * nozzel_width],
+    ["clip_space", 3 * NozzleWidth],
     ["screwhole_radius", 2],
     ["screwhole_length", 3 * WallThickness]
 ];
@@ -36,9 +33,9 @@ Quarter_Inch_Pipe_Properties =
     ["clip_length", convert_in2mm(1)],
     ["clip_depth", 2 * WallThickness],
     ["clip_width", convert_in2mm(0.5)],
-    ["clip_space", 2 * nozzel_width],
+    ["clip_space", 2 * NozzleWidth],
     ["screwhole_radius", 2],
-    ["screwhole_length", 10]
+    ["screwhole_length", 3 * WallThickness]
 ];
 
 function half(value) = value/2;
@@ -84,7 +81,7 @@ module PolyPipeClip(pipe_properties)
         (
             [
                 half(getDictionaryValue(pipe_properties , "clip_length")),
-                - getDictionaryValue(pipe_properties , "radius") - 2 + half(getDictionaryValue(pipe_properties , "screwhole_length")),
+                - getDictionaryValue(pipe_properties , "radius_adjusted")/2,
                 half(getDictionaryValue(pipe_properties , "clip_width"))
             ]
         ) 

@@ -51,17 +51,17 @@ house_length_with_entry_id = getID(house_length_with_entry);
 echo( lengthof1A = convert_mm2Inch(FoundationWidth_od));
 echo( lengthof1B = convert_mm2Inch(FoundationWidth_id));
 
-echo( lengthof2A = convert_mm2Inch(FoundationLength_od));
-echo( lengthof2B = convert_mm2Inch(FoundationLength_id));
+echo( lengthof2A = convert_mm2Inch(FoundationLength_od - 1 * form_board_depth));
+echo( lengthof2B = convert_mm2Inch( FoundationLength_id - 1 * form_board_depth));
 
-echo( lengthof3A = convert_mm2Inch(FoundationLength_od));
-echo( lengthof3B = convert_mm2Inch(FoundationLength_id));
+echo( lengthof3A = convert_mm2Inch(FoundationLength_od - 1 * form_board_depth));
+echo( lengthof3B = convert_mm2Inch(FoundationLength_id - 1 * form_board_depth));
 
-echo( lengthof4A = convert_mm2Inch(special_entry_width));
-echo( lengthof4B = convert_mm2Inch(special_entry_width));
+echo( lengthof4A = convert_mm2Inch(special_entry_width + form_board_depth/2));
+echo( lengthof4B = convert_mm2Inch(special_entry_width + form_board_depth/2));
 
-echo( lengthof5A = convert_mm2Inch(special_entry_width));
-echo( lengthof5B = convert_mm2Inch(special_entry_width));
+echo( lengthof5A = convert_mm2Inch(special_entry_width + form_board_depth/2));
+echo( lengthof5B = convert_mm2Inch(special_entry_width + form_board_depth/2));
 
 echo( lengthof6A = convert_mm2Inch(entry_length));
 echo( lengthof6B = convert_mm2Inch(entry_length));
@@ -71,39 +71,6 @@ echo( lengthof7B = convert_mm2Inch(entry_length));
 
 echo( lengthof8A = convert_mm2Inch(entry_width_od));
 echo( lengthof8B = convert_mm2Inch(entry_width_id));
-
-
-
-// // echo(board_1A);
-// echo
-//     (
-//         HouseWidth = convert_mm2Inch(HouseWidth), 
-//         HouseLength = convert_mm2Inch(HouseLength), 
-//         westwall_1a = convert_mm2Inch(FoundationWidth_od),
-//         westwall_1b = convert_mm2Inch(FoundationWidth_id),
-//         FoundationWidth_od = convert_mm2Inch(FoundationWidth_od), 
-//         FoundationWidth_id = convert_mm2Inch(FoundationWidth_id),
-//         block_width = convert_mm2Inch(block_width),
-//         footer_width = convert_mm2Inch(footer_width)
-//     );
-
-// echo
-//     (
-//         FoundationWidth_od_inches = convert_mm2Inch(FoundationWidth_od), 
-//         FoundationWidth_id_inches = convert_mm2Inch(FoundationWidth_id),
-//         HouseWidth = convert_mm2Inch(HouseWidth)
-//     );
-
-// echo
-//     (
-//         FoundationLength_od_inches = convert_mm2Inch(FoundationLength_od), 
-//         FoundationLength_id_inches = convert_mm2Inch(FoundationLength_id),
-//         HouseWidth = convert_mm2Inch(HouseWidth),
-//         HouseLength = convert_mm2Inch(HouseLength),
-//         entry_width_od = convert_mm2Inch(entry_width_od),
-//         entry_length_od = convert_mm2Inch(entry_length_od),
-//         FoundationWidth_od = convert_mm2Inch(FoundationWidth_od)
-//     );
 
 block_1 = 
 [
@@ -141,7 +108,8 @@ board_1A =
     ["length" , FoundationWidth_od],
     ["depth" , form_board_depth],
     ["move", [0, FoundationLength_od/2, 0]],
-    ["rotate", [0,0, 0]]
+    ["rotate", [0,0, 0]],
+    ["color", "BurlyWood"]
 ];
 
 board_1B = 
@@ -150,77 +118,115 @@ board_1B =
     ["length" , FoundationWidth_id],
     ["depth" , form_board_depth],
     ["move", [0, FoundationLength_id/2, 0]],
-    ["rotate", [0,0, 0]]
+    ["rotate", [0,0, 0]],
+    ["color", "Ivory"]
 ];
 
 board_2A = 
 [
     "board 2A",
-    ["length" , FoundationLength_od],
+    ["length" , FoundationLength_od - 1 * form_board_depth],
     ["depth" , form_board_depth],
-    ["move", [FoundationWidth_od/2, 0, 0]],
-    ["rotate", [0,0, 90]]    
+    ["move", [FoundationWidth_od/2 - form_board_depth/2, 0, 0]],
+    ["rotate", [0,0, 90]],
+    ["color", "MistyRose"]
 ];
 
 board_2B = 
 [
     "board 2B",
-    ["length" , FoundationLength_id],
+    ["length" , FoundationLength_id - 1 * form_board_depth],
     ["depth" , form_board_depth],
-    ["move", [FoundationWidth_id/2, 0, 0]],
-    ["rotate", [0,0, 90]]    
+    ["move", [FoundationWidth_id/2 - form_board_depth/2, 0, 0]],
+    ["rotate", [0,0, 90]],
+    ["color", "Sienna"]
 ];
 
 board_3A = 
 [
     "board 3A",
-    ["length" , FoundationLength_od],
+    ["length" , FoundationLength_od - 1 * form_board_depth],
     ["depth" , form_board_depth],
-    ["move", [-FoundationWidth_od/2, 0, 0]],
-    ["rotate", [0,0, 90]]    
+    ["move", [-(FoundationWidth_od/2 - form_board_depth/2), 0, 0]],
+    ["rotate", [0,0, 90]]    ,
+    ["color", "SandyBrown"]
 ];
 
 board_3B = 
 [
     "board 3B",
-    ["length" , FoundationLength_id],
+    ["length" , FoundationLength_id - 1 * form_board_depth],
     ["depth" , form_board_depth],
-    ["move", [-FoundationWidth_id/2, 0, 0]],
-    ["rotate", [0,0, 90]]    
+    ["move", [-FoundationWidth_id/2 + form_board_depth/2, 0, 0]],
+    ["rotate", [0,0, 90]]    ,
+    ["color", "Chocolate"]
 ];
 
 board_4A = 
 [
     "board 4A",
-    ["length" , special_entry_width],
+    ["length" , special_entry_width + form_board_depth/2],
     ["depth" , form_board_depth],
-    ["move", [FoundationWidth_od/2 - special_entry_width/2, - FoundationLength_od/2, 0]],
-    ["rotate", [0,0, 0]]    
+    [
+        "move", 
+        [
+            FoundationWidth_od/2 - special_entry_width/2 - form_board_depth/4, 
+            - FoundationLength_od/2, 
+            0
+        ]
+    ],
+    ["rotate", [0,0, 0]]    ,
+    ["color", "Maroon"]
 ];
 board_4B = 
 [
     "board 4B",
-    ["length" , special_entry_width],
+    ["length" , special_entry_width + form_board_depth/2],
     ["depth" , form_board_depth],
-    ["move", [FoundationWidth_id/2 - special_entry_width/2, - FoundationLength_id/2, 0]],
-    ["rotate", [0,0, 0]]    
+    // ["move", [FoundationWidth_id/2 - special_entry_width/2, - FoundationLength_id/2, 0]],
+    [
+        "move", 
+        [
+            FoundationWidth_id/2 - special_entry_width/2 - form_board_depth/4, 
+            - FoundationLength_id/2, 
+            0
+        ]
+    ],    
+    ["rotate", [0,0, 0]]    ,
+    ["color", "Brown"]
 ];
 
 board_5A = 
 [
     "board 5A",
-    ["length" , special_entry_width],
+    ["length" , special_entry_width + form_board_depth/2],
     ["depth" , form_board_depth],
-    ["move", [-FoundationWidth_od/2 + special_entry_width/2, - FoundationLength_od/2, 0]],
-    ["rotate", [0,0, 0]]    
+    [
+        "move", 
+        [
+            - (FoundationWidth_od/2 - special_entry_width/2 - form_board_depth/4), 
+            - FoundationLength_od/2, 
+            0
+        ]
+    ],
+    ["rotate", [0,0, 0]]    ,
+    ["color", "PowderBlue"]
 ];
 board_5B = 
 [
     "board 5B",
-    ["length" , special_entry_width],
+    ["length" , special_entry_width + form_board_depth/2],
     ["depth" , form_board_depth],
-    ["move", [-FoundationWidth_id/2 + special_entry_width/2, - FoundationLength_id/2, 0]],
-    ["rotate", [0,0, 0]]    
+        [
+        "move", 
+        [
+            - FoundationWidth_id/2 + special_entry_width/2 + form_board_depth/4, 
+            - FoundationLength_id/2, 
+            0
+        ]
+    ],
+    ["rotate", [0,0, 0]]    ,
+    ["color", "PowderBlue"]
 ];
 
 board_6A = 
@@ -231,11 +237,12 @@ board_6A =
     ["move", 
         [
             entry_width_od/2, 
-            - FoundationLength_od/2 - entry_length/2, 
+            - FoundationLength_od/2 - entry_length/2 - form_board_depth/2, 
             0
         ]
     ],
-    ["rotate", [0,0, 90]]    
+    ["rotate", [0,0, 90]]    ,
+    ["color", "CornflowerBlue"]
 ];
 board_6B = 
 [
@@ -245,11 +252,12 @@ board_6B =
     ["move", 
         [
             (entry_width_od/2 - footer_width), 
-            - FoundationLength_od/2 - entry_length/2 + footer_width, 
+            - FoundationLength_od/2 - entry_length/2 + footer_width - form_board_depth/2, 
             0
         ]
     ],
-    ["rotate", [0,0, 90]]    
+    ["rotate", [0,0, 90]]    ,
+    ["color", "PowderBlue"]
 ];
 
 board_7A = 
@@ -260,11 +268,12 @@ board_7A =
     ["move", 
         [
             - (entry_width_od/2), 
-            - FoundationLength_od/2 - entry_length/2, 
+            - FoundationLength_od/2 - entry_length/2 - form_board_depth/2, 
             0
         ]
     ],
-    ["rotate", [0,0, 90]]    
+    ["rotate", [0,0, 90]]    ,
+    ["color", "MediumOrchid"]
 ];
 board_7B = 
 [
@@ -274,17 +283,18 @@ board_7B =
     ["move", 
         [
             - (entry_width_od/2 - footer_width), 
-            - FoundationLength_od/2 - entry_length/2 + footer_width, 
+            - FoundationLength_od/2 - entry_length/2 + footer_width - form_board_depth/2, 
             0
         ]
     ],
-    ["rotate", [0,0, 90]]    
+    ["rotate", [0,0, 90]]    ,
+    ["color", "MediumPurple"]
 ];
 
 board_8A = 
 [
     "board 8A",
-    ["length" , entry_width_od],
+    ["length" , entry_width_od - form_board_depth],
     ["depth" , form_board_depth],
     ["move", 
         [
@@ -293,46 +303,35 @@ board_8A =
             0
         ]
     ],
-    ["rotate", [0,0, 0]]    
+    ["rotate", [0,0, 0]]    ,
+    ["color", "Red"]
 ];
 board_8B = 
 [
     "board 8B",
-    ["length" , entry_width_id],
+    ["length" , entry_width_id  - form_board_depth],
     ["depth" , form_board_depth],
     ["move", 
         [
             0, 
-            // - FoundationLength_id/2 - entry_length_od, 
             - (house_length_with_entry_od/2 - footer_width),
-            // - HouseLength/2 - entry_length,
             0
         ]
     ],
-    ["rotate", [0,0, 0]]    
+    ["rotate", [0,0, 0]]    ,
+    ["color", "FireBrick"]
 ];
 
 build();
-
-// echo(thevalue = convert_mm2Inch((FoundationWidth_od/2) - (entry_width_od/2)));
-
 
 
 module build(args) 
 {
     add_floor() ;
-    add_block(footing1);    
-    // // move(footing1) 
-    // // board_rotate(footing1) 
-    // translate([0, convert_in2mm(4)])
-    // translate([0, HouseLength/2])
-    // translate([0, -footer_width/2])
-    // board(footing1);
+    add_block(footing1);        
 
     add_block(block_1);
     add_block(block_2);
-
-
 
     add_board(board_1A);
     add_board(board_1B);
@@ -349,49 +348,58 @@ module build(args)
     add_board(board_5A);
     add_board(board_5B);
 
-    // #move(board_8A) board_rotate(board_8A) board(board_8A)
-    add_board(board_8A);
-    add_board(board_8B);
-
     add_board(board_6A);
     add_board(board_6B);
 
     add_board(board_7A);
     add_board(board_7B);
 
+    add_board(board_8A);
+    add_board(board_8B);
 }
 
 module add_floor() 
 {
-    %translate([-HouseWidth/2, -HouseLength/2])
+    color("AliceBlue", 0.2) 
+    translate([-HouseWidth/2, -HouseLength/2])
     square([HouseWidth, HouseLength]);
 
-    %translate([0, -1 * (HouseLength/2 + entry_length/2 )])
+    color("Seashell", 0.2) 
+    translate([0, -1 * (HouseLength/2 + entry_length/2 )])
     square([entry_width, entry_length], center = true);
 }
 
 module add_board(dimensions)
 {
-    move(dimensions) board_rotate(dimensions) board(dimensions);
+    color(gdv(dimensions, "color"))
+    move(dimensions) 
+    board_rotate(dimensions) 
+    board(dimensions);
 }
 
 module add_block(dimensions)
 {
-    color("LightGrey") move(dimensions) board_rotate(dimensions) board(dimensions);    
+    color("LightGrey") 
+    move(dimensions) 
+    board_rotate(dimensions) 
+    board(dimensions);    
 }
 
 module board(dimensions)
 {
     square(size=[gdv(dimensions, "length"), gdv(dimensions, "depth")], center=true);
+    translate([-440,20])
+    text(str(dimensions.x, " = ", convert_mm2Inch(gdv(dimensions, "length")),"''"), size = 72);
 }
 
 module board_rotate(dimensions)
 {
-    rotate(gdv(dimensions, "rotate")) children();
-    
+    rotate(gdv(dimensions, "rotate")) 
+    children();
 }
 
 module move(dimensions)
 {
-    translate(gdv(dimensions, "move")) children();
+    translate(gdv(dimensions, "move")) 
+    children();
 }

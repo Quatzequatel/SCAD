@@ -17,6 +17,21 @@ function BaseHeight() = layers2Height(6);
 function WallThickness(count) = count * NozzleWidth;
 
 BracketThickness = 3 * NozzleWidth;
+simple_corner_bracket = 
+[
+    "bracket",
+        ["bracketHeight", InchTomm(3.5)],
+        ["bracketDepth", InchTomm(1.5) + BracketThickness],
+        ["bracketThickness", 6 * NozzleWidth],
+        ["screwHoleCount", 3],
+        ["screwHoleRadius", 2],
+        ["screwHoleDepth", 2 * ( 6 * NozzleWidth)], 
+        ["screwHole first offset", -InchTomm(0.25)],
+        ["holes along axis", false],
+        ["include support", false],
+        ["support height", layers2Height(16)],
+        ["support length", InchTomm(3.5)]        
+];
 
 exterior_corner_bracket = 
 [
@@ -71,7 +86,7 @@ braced_inner_corner_4x4_bracket =
 //         ["support length", InchTomm(3.5)]        
 // ];
 
-BracketProperties = braced_inner_corner_4x4_bracket;
+BracketProperties = simple_corner_bracket;
 
 Build("BracketProperties");
 debugEcho("BracketProperties", BracketProperties, true);
@@ -181,27 +196,32 @@ module Bracket( properties = "")
             {
                 polygon(points = bracketPoints);        
             }
-            screwHoles(forXside = false, 
-                        parallel = parallel,
-                        screwHoleCount = screwHoleCount, 
-                        screwHoleRadius = screwHoleRadius,  
-                        screwHoleDepth = screwHoleDepth,
-                        moveX = moveX,
-                        moveY = moveY,
-                        moveZ = moveZ,
-                        startZ = startZ
-                        );
 
-            screwHoles(forXside = true,
-                        parallel = parallel,
-                        screwHoleCount = screwHoleCount, 
-                        screwHoleRadius = screwHoleRadius,  
-                        screwHoleDepth = screwHoleDepth,
-                        moveX = moveX,
-                        moveY = moveY,
-                        moveZ = moveZ,
-                        startZ = startZ
-                        );
+            #union()
+            {
+                screwHoles(forXside = false, 
+                            parallel = parallel,
+                            screwHoleCount = screwHoleCount, 
+                            screwHoleRadius = screwHoleRadius,  
+                            screwHoleDepth = screwHoleDepth,
+                            moveX = moveX,
+                            moveY = moveY,
+                            moveZ = moveZ,
+                            startZ = startZ
+                            );
+
+                screwHoles(forXside = true,
+                            parallel = parallel,
+                            screwHoleCount = screwHoleCount, 
+                            screwHoleRadius = screwHoleRadius,  
+                            screwHoleDepth = screwHoleDepth,
+                            moveX = moveX,
+                            moveY = moveY,
+                            moveZ = moveZ,
+                            startZ = startZ
+                            );                
+            }
+
         }
     }
 }

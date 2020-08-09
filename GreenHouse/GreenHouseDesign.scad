@@ -56,14 +56,14 @@ module Build(args)
     // SideView();
     // translate([Width/2,0,0])
     // rotate([0,0, 90])
-    simpleView(true, true, false);
+    simpleView(showentry = true, showRoof = true, showwalls = false);
 
     // HouseFrame();
     // EntryFrame();
     // RoofFrame();
 
     HouseFrame2();
-    EntryFrame2();
+    // EntryFrame2();
     // RoofFrame2();
     // EntryRoofFrame2();
 
@@ -289,11 +289,11 @@ module simpleView(showentry = true, showRoof = true, showwalls = true)
         sidePoints = housePoints(houseDi = HouseDimensions, roofDi = RoofProperties, p0 = [0,0]);
 
         echo(sidePoints = sidePoints);
-        echo(sidePoints = convertVPts_mm2Inch(sidePoints));
+        echo(sidePoints_inches = convertVPts_mm2Inch(sidePoints));
 
-        translate([0,getDictionaryValue(HouseDimensions, "wall height"),0])
+        translate([0,getDictionaryValue(HouseDimensions, "width"),0])
         rotate([90,0,0])
-        %linear_extrude(height = getDictionaryValue(HouseDimensions, "wall height"))
+        %linear_extrude(height = getDictionaryValue(HouseDimensions, "width"))
         polygon(points=sidePoints);
 
     }
@@ -305,8 +305,11 @@ module simpleView(showentry = true, showRoof = true, showwalls = true)
 
             translate(
                 [
-                    getDictionaryValue(HouseDimensions, "width") - (getDictionaryValue(EntryRoofDimensions, "length") - getDictionaryValue(EntryDimensions, "width")), 
-                    getDictionaryValue(HouseDimensions, "wall height")/2 - getDictionaryValue(EntryDimensions, "width")/2,
+                    getDictionaryValue(HouseDimensions, "width") 
+                        - (getDictionaryValue(EntryRoofDimensions, "length") 
+                        - getDictionaryValue(EntryDimensions, "width")), 
+                    getDictionaryValue(HouseDimensions, "wall height")/2 
+                        - getDictionaryValue(EntryDimensions, "width")/2,
                     0
                 ]
             )
@@ -359,9 +362,9 @@ module simpleView(showentry = true, showRoof = true, showwalls = true)
 function housePoints(houseDi, roofDi, p0) = 
 [
     p0,                             //p0
-    [getDictionaryValue(houseDi, "width"), p0.y],           //p1
-    [getDictionaryValue(houseDi, "width"), getDictionaryValue(houseDi, "wall height")],   //p2
-    [getDictionaryValue(houseDi, "width")/2, getDictionaryValue(houseDi, "peak height")],   //p3 
+    [getDictionaryValue(houseDi, "length"), p0.y],           //p1
+    [getDictionaryValue(houseDi, "length"), getDictionaryValue(houseDi, "wall height")],   //p2
+    [getDictionaryValue(houseDi, "length")/2, getDictionaryValue(houseDi, "peak height")],   //p3 
     [p0.x, getDictionaryValue(houseDi, "wall height")]           //p4
 ];
 

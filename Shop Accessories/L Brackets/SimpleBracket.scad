@@ -15,7 +15,7 @@ function WallThickness(count) = count * NozzleWidth;
 
 Height = InchTomm(3.5);
 BracketThickness = 6 * NozzleWidth;
-BracketWidth = InchTomm(1) + BracketThickness;
+BracketWidth = InchTomm(1.5) + BracketThickness;
 ScrewHoleRadius = 2;
 ScrewHoleCount = 3;
 
