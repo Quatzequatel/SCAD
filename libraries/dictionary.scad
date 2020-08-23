@@ -36,6 +36,8 @@ function privateGetKVPair(v, key, type = 1, i = 0,  result) = //echo(v=v, key=ke
     : result[type] //[0] returns key, [1] returns value and [2] returns booth
 );
 
+function gdv(obj, property) = getDictionaryValue(obj, property);
+
 function getDictionaryValue(v, key) = 
     assert(isVector(v), str("parameter v is not an array. For imported vectors, did you <include file>?"))
     assert(isString(v[0]), str("first element is not a key."))
