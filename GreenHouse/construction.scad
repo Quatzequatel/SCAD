@@ -369,6 +369,12 @@ module instanciate2D(dimensions, include_caption = false)
     if(include_caption) caption(dimensions);
 }
 
+module instanciate3D(dimensions, include_caption = false)
+{
+    linear_extrude(height = gdv(dimensions, "height"))
+    instanciate2D(dimensions, include_caption);
+}
+
 module caption(dimensions)
 {
     translate([-gdv(dimensions, "length")/4, 36])
