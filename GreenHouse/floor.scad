@@ -43,7 +43,7 @@ module add_block_layer_to_eastwest_wall(wall_properties, block)
         color(gdv(block, "color"))
         move_to_eastwest_wall_location(wall_properties, block, i) 
         rotate_object(block) 
-        instanciate2D(block, false);         
+        instanciate3D(block, false);         
     } 
 }
 
@@ -54,7 +54,7 @@ module add_block_layer_to_north_wall(wall, block)
         color(gdv(block, "color"))
         move_to_north_wall_location(wall, block, i) 
         rotate_object(block) 
-        instanciate2D(block, false);         
+        instanciate3D(block, false);         
     } 
 }
 
@@ -69,10 +69,12 @@ module move_to_eastwest_wall_location(wall, block, id)
     start = gdv(wall, "start location");
     ploc = 
     [
-        start.x + id * gdv(block, "length") + id * gdv(north_wall, "mortar gap"), 
+        start.x + id * gdv(block, "length") + id * gdv(wall, "mortar gap"), 
         start.y,
         0
     ];
+
+    // echo(ploc = ploc);
 
     translate(ploc)
     children();
@@ -84,7 +86,10 @@ module move_to_north_wall_location(wall, block, id)
     ploc = 
         [
             start.x, 
-            start.y - id * gdv(block, "length") - id * gdv(wall, "mortar gap"), 
+            start.y 
+                - gdv(wall, "mortar gap")
+                - id * gdv(block, "length") 
+                - id * gdv(wall, "mortar gap"), 
             0
         ];
 
@@ -95,6 +100,7 @@ module move_to_north_wall_location(wall, block, id)
 block_width = convert_in2mm(8);
 block_length = convert_in2mm(15.5);
 block_height = convert_in2mm(8);
+mortar_gap = convert_in2mm(0.5);
 
 east_wall_1 = 
 [
@@ -102,7 +108,7 @@ east_wall_1 =
     ["count", 3],
     ["start location", [-HouseWidth/2 + block_length/2, -HouseLength/2 + block_width/2]],
     ["end location", [HouseWidth/2, HouseLength/2]],
-    ["mortar gap", convert_in2mm(0.25)],
+    ["mortar gap", mortar_gap],
     ["rotate", [0,0, 0]],
     ["color", "LightGrey"]
 ];
@@ -113,7 +119,7 @@ east_wall_2 =
     ["count", 3],
     ["start location", [EntryWidth/2 + block_length/2, -HouseLength/2 + block_width/2]],
     ["end location", [HouseWidth/2, HouseLength/2]],
-    ["mortar gap", convert_in2mm(0.25)],
+    ["mortar gap", mortar_gap],
     ["rotate", [0,0, 0]],
     ["color", "LightGrey"]
 ];
@@ -124,7 +130,7 @@ east_wall_3 =
     ["count", 3],
     ["start location", [-HouseWidth/2 + block_length/2, -HouseLength/2 + block_width/2]],
     ["end location", [HouseWidth/2, HouseLength/2]],
-    ["mortar gap", convert_in2mm(0.25)],
+    ["mortar gap", mortar_gap],
     ["rotate", [0,0, 0]],
     ["color", "LightGrey"]
 ];
@@ -135,7 +141,7 @@ west_wall =
     ["count", 11],
     ["start location", [-HouseWidth/2 + block_length/2, HouseLength/2 - block_width/2]],
     ["end location", [HouseWidth/2, HouseLength/2]],
-    ["mortar gap", convert_in2mm(0.25)],
+    ["mortar gap", mortar_gap],
     ["rotate", [0,0, 0]],
     ["color", "LightGrey"]
 ];
@@ -151,7 +157,7 @@ north_wall =
         ]
     ],
     ["end location", [HouseWidth/2, HouseLength/2]],
-    ["mortar gap", convert_in2mm(0.25)],
+    ["mortar gap", mortar_gap],
     ["rotate", [0,0, 90]],
     ["color", "LightGrey"]
 ];
@@ -167,7 +173,7 @@ south_wall =
         ]
     ],
     ["end location", [HouseWidth/2, HouseLength/2]],
-    ["mortar gap", convert_in2mm(0.25)],
+    ["mortar gap", mortar_gap],
     ["rotate", [0,0, 90]],
     ["color", "LightGrey"]
 ];
