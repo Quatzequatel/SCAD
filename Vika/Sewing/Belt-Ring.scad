@@ -38,12 +38,13 @@ Belt_O_Ring_D_2_5 =
     ["color", "LightGrey"]
 ];
 
-// ring(ringD_2_5);
-ring2(Belt_O_Ring_D_5);
-ring2(Belt_O_Ring_D_2_5);
+ring(Belt_O_Ring_D_5);
+// ring2(Belt_O_Ring_D_5);
+// ring2(Belt_O_Ring_D_2_5);
 
 module ring(ring_d) 
 {
+    echo(str("file name = ", ring_d.x, "   "));
     linear_extrude(gdv(ring_d, "height"))
     difference()
     {
