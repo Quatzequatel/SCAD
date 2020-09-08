@@ -14,6 +14,7 @@ function convert_in2ft(in) = in * FeetInInch;
 function convert_in2mm(in) = in * mmPerInch;
 function convert_ft2mm(ft) = convert_ft2in(ft) * mmPerInch;
 // function convert_ft2in(ft) = ft*12;
+function convert_mm2in(mm) = convert_cm2Inch(mm);
 function convert_mm2Inch(mm) = mm/mmPerInch;
 function convertV_mm2Inch(mm) = 
     [
