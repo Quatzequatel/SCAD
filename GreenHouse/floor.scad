@@ -27,13 +27,13 @@ module build(args)
 
 module add_floor() 
 {
-    color("AliceBlue", 0.2) 
+    %color("AliceBlue", 0.5) 
     translate([-HouseWidth/2, -HouseLength/2])
     square([HouseWidth, HouseLength]);
 
-    color("Seashell", 0.2) 
-    translate([0, -1 * (HouseLength/2 + EntryLength/2 )])
-    square([EntryWidth, EntryLength], center = true);
+    // %color("AliceBlue", 0.5) 
+    // translate([0, -1 * (HouseLength/2 + EntryLength/2 )])
+    // square([EntryWidth, EntryLength], center = true);
 }
 
 module add_block_layer_to_eastwest_wall(wall_properties, block)
