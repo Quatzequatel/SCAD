@@ -21,7 +21,9 @@ use <transformations.scad>;
 //         ["easement", -1 * convert_ft2mm(12)],
 // ];
 
-build_Fence();
+// build_Fence();
+
+cut_board(angle = 42, width = 2, depth = 6, length = 8 * 12);
 
 module build_Fence(args) 
 {
@@ -52,3 +54,22 @@ module fence_properties_info()
     debugEcho("Fence_Properties", Fence_Properties, true);
     echo();
 }
+
+module cut_board(angle, width, depth, length)
+{
+    points = trapazoid(angle, depth, length);
+
+    linear_extrude(height = width)
+    polygon(points=points);
+    
+}
+
+function side_b(angle, depth) = depth/tan(angle);
+function trap_top(angle, depth, length) = length -  side_b(angle, depth);
+function trapazoid(angle, depth, length) = 
+    [
+        [0,0], 
+        [side_b(angle, depth), depth], 
+        [trap_top(angle, depth, length), depth], 
+        [length, 0]
+    ];
