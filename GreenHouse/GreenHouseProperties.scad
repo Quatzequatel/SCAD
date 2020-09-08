@@ -17,15 +17,21 @@ function setBoardProperty(board, thickness, width, length) =
 
 
 //board is in mm
-Board2x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 4), length = convert_ft2mm(ft = 8));
-Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 4), width = convert_in2mm(in = 4), length = convert_ft2mm(ft = 8));
-Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 2), width = convert_in2mm(in = 6), length = convert_ft2mm(ft = 8));
+Board2x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 1.5), width = convert_in2mm(in = 3.5), length = convert_ft2mm(ft = 8));
+Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 3.5), width = convert_in2mm(in = 3.5), length = convert_ft2mm(ft = 8));
+Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 1.5), width = convert_in2mm(in = 5.5), length = convert_ft2mm(ft = 8));
 
 BoardDimensions = [convert_in2mm(in = 2), convert_in2mm(in = 4), convert_ft2mm(ft = 8)];
 Stud = Board2x4;
 Rafter = Board2x6;
 Post = Board4x4;
 
+/*
+    Since i am always confusing myself.
+    Dimensions are listed [x, y, z] in english width by length by height.
+    The greenhouse door is the front of the house and therefore the width is 16'.
+    The length of the house is 11.25' plus the entry way.
+*/
 
 //all in mm
 HouseWidth = convert_ft2mm(ft = 16);
@@ -72,13 +78,85 @@ RoofProperties =
     "roof properties",
         ["angle", RoofAngle],
         ["width", HouseWidth],
-        ["length", HouseLength/2],
-        ["height", sideAaB(side_b = HouseWidth/2, aB = AngleOpposite(RoofAngle))],
+        ["length", HouseLength],
+        ["height", convert_in2mm(60.777)],
         ["overhang depth", RoofOverHangDepth],
         ["overhang height", sideAaB(side_b = RoofOverHangDepth, aB = AngleOpposite(RoofAngle))],
         ["overhang length", sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
-        ["rafter length", sideC_B(side_b = HouseWidth/2, aA = RoofAngle) + sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
+        ["rafter length", sideC_B(side_b = HouseLength/2, aA = RoofAngle) + sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
         ["spacing", StudSpacing]
+];
+
+CenterBeamProperties = 
+[
+    "CenterBeamProperties",
+        ["width", Board2x6.x],
+        ["depth", Board2x6.y],
+        ["length", HouseWidth],
+        ["location", [-Board2x6.x/2, -HouseWidth/2, gdv(RoofProperties, "height") - Board2x6.y]],
+        ["color", "red"]
+];
+
+Rafter_South = 
+[
+    "Rafter_North",
+        ["angle", RoofAngle],
+        ["width", Board2x4.x],
+        ["depth", Board2x4.y],
+        ["length", gdv(RoofProperties, "rafter length")] ,
+        ["location", [0, -convert_in2mm(in = 32.5), gdv(RoofProperties, "height")/2 - convert_in2mm(in = 2.5)]],
+        ["rotate", [RoofAngle, 0, 0]],
+        ["color", "blue"]
+];
+
+Rafter_North = 
+[
+    "Rafter_North",
+        ["angle", 90 - RoofAngle],
+        ["width", Board2x4.x],
+        ["depth", Board2x4.y],
+        ["length", convert_in2mm(in = 90.830209248)] ,
+        ["location", [0, convert_in2mm(in = 32), convert_in2mm(in = 55/2)]],
+        ["rotate", [-RoofAngle, 0, 0]],
+        ["color", "yellow"]
+];
+
+Rafter_Test = 
+[
+    "Rafter_Test",
+        ["angle", 42],
+        ["angle step", -10],
+        ["width", convert_in2mm(in = 1.5)],
+        ["depth", convert_in2mm(in = 3.5)],
+        ["length", convert_in2mm(in = 90.830209248)] ,
+        ["location", [0, -convert_in2mm(in = 32), convert_in2mm(in = 56/2)]],
+        ["rotate", [42, 0, 0]],
+        ["color", "green"],
+        ["brace color", "yellow"]
+];
+
+Brace_One = 
+[
+    "Brace_One",
+        ["angle", 32],
+        ["width", convert_in2mm(in = 0.75)],
+        ["depth", convert_in2mm(in = 3.5)],
+        ["length", convert_in2mm(in = 96)],
+        ["location", [0, -convert_in2mm(in = 26.75), convert_in2mm(in = 24)]],
+        ["rotate", [32, 0, 0]],
+        ["color", "yellow"]    
+];
+
+Brace_Two = 
+[
+    "Brace_Two",
+        ["angle", 25],
+        ["width", convert_in2mm(in = 0.75)],
+        ["depth", convert_in2mm(in = 3.5)],
+        ["length", convert_in2mm(in = 100)],
+        ["location", [0, -convert_in2mm(in = 20), convert_in2mm(in = 20)]],
+        ["rotate", [25, 0, 0]],
+        ["color", "Aqua"]    
 ];
 
 concrete_footing_properties = 
@@ -236,8 +314,12 @@ Fence_Properties =
         ["height", convert_in2mm(72)],
         ["easement", -1 * convert_ft2mm(12)],
 ];
+
 module Info()
 {
+    echo();
+    echo("*** GreenHouseProperties::Info()");
+    echo();
     debugEcho("Stud", StudProperties[1], true);
     echo();
     debugEcho("Rafter", RafterProperties[1], true);
