@@ -231,6 +231,9 @@ module rebar(height = 0, color = "NavajoWhite")
 
 module Info()
 {
+    echo();
+    echo("*** Foundation.scad::Info()");
+    echo();
     debugEcho("House Dimensions", HouseDimensions, true);
     echo();
     debugEcho("Entry Dimensions", EntryDimensions, true);
