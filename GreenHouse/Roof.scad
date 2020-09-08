@@ -12,6 +12,8 @@ use <dictionary.scad>;
 
 use <morphology.scad>;
 
+use <floor.scad>;
+
 build();
 
 module build(args) 
@@ -22,6 +24,9 @@ module build(args)
 
 module main_roof()
 {
+    echo();
+    echo("*** Roof.scad::main_roof()");
+    echo();
 
     roofValues = getDictionary(v = RoofProperties, key = "roof properties");
     studValues = getDictionary(v = StudProperties, key = "StudProperties");
@@ -33,69 +38,73 @@ module main_roof()
     echo(roof_height_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "height" )));
     echo(roof_width_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "width" )));
     echo(poly_sheet_count = convert_mm2ft(getDictionaryValue(RoofProperties, "length" ))/4);
+    echo(Rafter_North = Rafter_North);
 
-    %translate([ 0, 0, -convert_ft2mm(ft = 4)])
-    linear_extrude(convert_ft2mm(ft = 4))
-    translate([-getDictionaryValue(HouseDimensions, "width")/2,0,0])
-    square([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "length")]);
-
-    cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" ), center=false);
+    // %translate([ 0, 0, -convert_ft2mm(ft = 4)])
+    // linear_extrude(convert_ft2mm(ft = 4))
+    // translate([-getDictionaryValue(HouseDimensions, "width")/2,0,0])
+    // square([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "length")]);
+    add_floor();
+    translate([0,0,gdv(RoofProperties, "height" )/2])
+    cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" )/2, center=false);
 
     for (i=[0:getDictionaryValue(RoofProperties, "length" ) / getDictionaryValue(RoofProperties, "spacing" )-1]) 
     {
-        translate
-        (
-            [
-                0,
-                i * getDictionaryValue(RoofProperties, "spacing" ),
-                0
-            ]
-        )
-        union()
-        {
-            rafter_left(offset = 25);
-            rafter_right(offset = 25);            
-        }       
+        // translate
+        // (
+        //     [
+        //         0,
+        //         i * getDictionaryValue(RoofProperties, "spacing" ),
+        //         0
+        //     ]
+        // )
+        // union()
+        // {
+            // add_rafter(Rafter_North);
+            // add_rafter(Rafter_South);
+            // add_rafter(Rafter_Test);
+            // rafter_right(offset = 25);            
+        // }       
     }
-    //last one
-    translate
-    (
-        [
-            0,
-            getDictionaryValue(RoofProperties, "length" ) - getDictionaryValue(RafterProperties, "thickness" ),
-            0
-        ]
-    )
-    union()
-    {
-        rafter_left(offset = 25);
-        rafter_right(offset = 25);             
-    }    
+    // //last one
+    // translate
+    // (
+    //     [
+    //         0,
+    //         getDictionaryValue(RoofProperties, "length" ) - getDictionaryValue(RafterProperties, "thickness" ),
+    //         0
+    //     ]
+    // )
+    // union()
+    // {
+    //     rafter_left(offset = 25);
+    //     rafter_right(offset = 25);             
+    // }    
+    add_rafter(Rafter_Test);
     center_beam();
  }
 
 module center_beam()
 {
+    rotate([0, 0, 90]) 
     translate
     (
-        [
-            -getDictionaryValue(RafterProperties, "thickness" )/2,
-            0,
-            getDictionaryValue(RoofProperties, "height" )        
-        ]
+        gdv(CenterBeamProperties, "location" )
     )
-    color("green")
-        linear_extrude(getDictionaryValue(RafterProperties, "depth" ))
+    
+    color(gdv(CenterBeamProperties, "color" ), 0.5)
+        linear_extrude(gdv(CenterBeamProperties, "depth" ))
         {
             square(
                 size=
                 [
-                    getDictionaryValue(RafterProperties, "thickness" ) , 
-                    getDictionaryValue(RoofProperties, "length" )
+                    gdv(CenterBeamProperties, "width" ) , 
+                    gdv(CenterBeamProperties, "length" )
                 ], 
                 center=false);                     
         }
 }
+
 
 module rafter_left(offset = 25)
 {
@@ -295,6 +304,9 @@ let(h =  angle < 45 ? sideBaA(size.y, angle) : sideAaA(size.y, sideA) )
 
 module Info()
 {
+    echo();
+    echo("*** Roof.scad::Info()");
+    echo();
     // debugEcho("House Dimensions", HouseDimensions, true);
     // echo();
     // debugEcho("Entry Dimensions", EntryDimensions, true);
@@ -326,3 +338,80 @@ module Info()
     echo();
     echo(getTrianglePoints = getTrianglePoints(6, 42));
 }
+
+
+
+//// functions
+
+module add_rafter(properties)
+{
+    echo();
+    debugEcho(properties[0], properties, true);
+    echo();
+
+    color(gdv(properties, "color" ), 0.5) 
+    union()
+    {
+        mirror([0,1,0])
+        translate(gdv(properties, "location"))
+        rotate(gdv(properties, "rotate"))
+        cut_board_properties(properties);
+
+        translate(gdv(properties, "location"))
+        rotate(gdv(properties, "rotate"))
+        cut_board_properties(properties);
+    }
+
+    
+    add_brace(Brace_One);
+    add_brace(Brace_Two);
+
+}
+
+module add_brace(properties)
+{
+    color(gdv(properties, "color" ), 0.5) 
+    translate([gdv(properties, "width") + convert_in2mm(in = 0.75)/2, 0, 0])
+    translate(gdv(properties, "location"))
+    rotate(gdv(properties, "rotate"))
+    cut_board_properties(properties);
+
+    translate([-gdv(properties, "width") - convert_in2mm(in = 0.75)/2 ,0,0])
+    mirror([0,1,0])
+    color(gdv(properties, "color" ), 0.5) 
+    translate(gdv(properties, "location"))
+    rotate(gdv(properties, "rotate"))
+    cut_board_properties(properties);
+}
+
+module cut_board_properties(properties)
+{
+    translate([0,0, gdv(properties, "depth")])
+    rotate([270, 0, 90]) 
+    cut_board
+    (
+        angle = gdv(properties, "angle"),
+        width = gdv(properties, "width"),
+        depth = gdv(properties, "depth"),
+        length = gdv(properties, "length")
+    );
+}
+
+module cut_board(angle, width, depth, length)
+{
+    points = hypotenuse_cut(angle, depth, length);
+
+    linear_extrude(height = width,  center = true)
+    polygon(points=points);
+    
+}
+
+function side_b(angle, depth) = depth/tan(angle);
+// function trap_top(angle, depth, length) = length -  side_b(angle, depth);
+function hypotenuse_cut(angle, depth, length) = 
+    [
+        [-length/2,0], 
+        [side_b(angle, depth) - length/2, depth], 
+        [length/2 - side_b(90 - angle, depth), depth], 
+        [length/2, 0]
+    ];
