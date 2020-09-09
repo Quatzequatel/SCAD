@@ -46,7 +46,7 @@ EntryWidth = convert_ft2mm(ft = 5);
 EntryLength = convert_ft2mm(ft = 4);
 MaxHeight = convert_ft2mm(ft = 15);
 
-StudSpacing = convert_in2mm(24);
+StudSpacing = convert_in2mm(16);
 
 EntryColdFrame_width = (HouseWidth-EntryWidth)/2;
 EntryColdFrame_length = EntryLength;
@@ -84,7 +84,8 @@ RoofProperties =
         ["overhang height", sideAaB(side_b = RoofOverHangDepth, aB = AngleOpposite(RoofAngle))],
         ["overhang length", sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
         ["rafter length", sideC_B(side_b = HouseLength/2, aA = RoofAngle) + sideC_B(side_b = RoofOverHangDepth, aA = RoofAngle)],
-        ["spacing", StudSpacing]
+        ["spacing", StudSpacing],
+        ["truss count", HouseWidth/StudSpacing]
 ];
 
 CenterBeamProperties = 
@@ -129,7 +130,7 @@ Rafter_Test =
         ["width", convert_in2mm(in = 1.5)],
         ["depth", convert_in2mm(in = 3.5)],
         ["length", convert_in2mm(in = 90.830209248)] ,
-        ["location", [0, -convert_in2mm(in = 32), convert_in2mm(in = 56/2)]],
+        ["location", [0, -convert_in2mm(in = 31.39), convert_in2mm(in = 27.8)]],
         ["rotate", [42, 0, 0]],
         ["color", "green"],
         ["brace color", "yellow"]
@@ -139,11 +140,13 @@ Brace_One =
 [
     "Brace_One",
         ["angle", 32],
+        ["angle2", 106],
         ["width", convert_in2mm(in = 0.75)],
         ["depth", convert_in2mm(in = 3.5)],
-        ["length", convert_in2mm(in = 96)],
-        ["location", [0, -convert_in2mm(in = 26.75), convert_in2mm(in = 24)]],
+        ["length", convert_in2mm(in = 90.5)],
+        ["location", [0, -convert_in2mm(in = 27.35), convert_in2mm(in = 21)]],
         ["rotate", [32, 0, 0]],
+        ["lable length", convert_ft2mm(3.5)],
         ["color", "yellow"]    
 ];
 
@@ -151,12 +154,22 @@ Brace_Two =
 [
     "Brace_Two",
         ["angle", 25],
+        ["angle2", 113],
         ["width", convert_in2mm(in = 0.75)],
         ["depth", convert_in2mm(in = 3.5)],
-        ["length", convert_in2mm(in = 100)],
-        ["location", [0, -convert_in2mm(in = 20), convert_in2mm(in = 20)]],
+        ["length", convert_in2mm(in = 94.3)],
+        ["location", [0, -convert_in2mm(in = 23.2), convert_in2mm(in = 16.82)]],
         ["rotate", [25, 0, 0]],
+        ["lable length", convert_ft2mm(4)],
         ["color", "Aqua"]    
+];
+
+Angle_Lable = 
+[
+    "Angle_Lable",
+    ["length", convert_ft2mm(3)],
+    ["radius", 10],
+    ["font size", 29]
 ];
 
 concrete_footing_properties = 
