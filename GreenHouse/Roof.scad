@@ -14,12 +14,14 @@ use <morphology.scad>;
 
 use <floor.scad>;
 
+show_labels = false;
+
 build();
 
 module build(args) 
 {
     main_roof();
-    Info();
+    // Info();
 }
 
 module main_roof()
@@ -31,57 +33,37 @@ module main_roof()
     roofValues = getDictionary(v = RoofProperties, key = "roof properties");
     studValues = getDictionary(v = StudProperties, key = "StudProperties");
 
-    roofangle = getDictionaryValue(RoofProperties, "angle" );
-    echo(RoofProperties = RoofProperties);
-    echo(roofangle = roofangle);
-    echo(rafter_length_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "rafter length" )));
-    echo(roof_height_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "height" )));
-    echo(roof_width_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "width" )));
-    echo(poly_sheet_count = convert_mm2ft(getDictionaryValue(RoofProperties, "length" ))/4);
-    echo(Rafter_North = Rafter_North);
-
     // %translate([ 0, 0, -convert_ft2mm(ft = 4)])
     // linear_extrude(convert_ft2mm(ft = 4))
     // translate([-getDictionaryValue(HouseDimensions, "width")/2,0,0])
     // square([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "length")]);
-    add_floor();
-    translate([0,0,gdv(RoofProperties, "height" )/2])
-    cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" )/2, center=false);
+    // add_floor();
 
-    for (i=[0:getDictionaryValue(RoofProperties, "length" ) / getDictionaryValue(RoofProperties, "spacing" )-1]) 
+    translate([0,0, HouseWallHeight])
+    union()
     {
-        // translate
-        // (
-        //     [
-        //         0,
-        //         i * getDictionaryValue(RoofProperties, "spacing" ),
-        //         0
-        //     ]
-        // )
-        // union()
-        // {
-            // add_rafter(Rafter_North);
-            // add_rafter(Rafter_South);
-            // add_rafter(Rafter_Test);
-            // rafter_right(offset = 25);            
-        // }       
+        translate([0,0,gdv(RoofProperties, "height" )/2])
+        cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" )/2, center=false);
+
+        truss_count = gdv(RoofProperties, "truss count");
+
+        for (i=[truss_count/2 * -1 : truss_count/2 + 1]) 
+        {
+            translate
+            (
+                [
+                    i * getDictionaryValue(RoofProperties, "spacing" ),
+                    0,
+                    0
+                ]
+            )
+            add_rafter(Rafter_Test);       
+        }
+
+        // add_rafter(Rafter_Test);       
+        center_beam();
     }
-    // //last one
-    // translate
-    // (
-    //     [
-    //         0,
-    //         getDictionaryValue(RoofProperties, "length" ) - getDictionaryValue(RafterProperties, "thickness" ),
-    //         0
-    //     ]
-    // )
-    // union()
-    // {
-    //     rafter_left(offset = 25);
-    //     rafter_right(offset = 25);             
-    // }    
-    add_rafter(Rafter_Test);
-    center_beam();
+
  }
 
 module center_beam()
@@ -105,187 +87,6 @@ module center_beam()
         }
 }
 
-
-module rafter_left(offset = 25)
-{
-    // echo(offset = offset);
-    //
-    translate(
-        [
-            -getDictionaryValue(RoofProperties, "width" ) 
-            - getDictionaryValue(RoofProperties, "overhang depth" )
-            + getDictionaryValue(RafterProperties, "thickness" ) + offset
-            ,0, 
-            - getDictionaryValue(RoofProperties, "overhang height" ) + offset
-        ]
-        ) 
-    //rotate in place
-    rotate([0, -getDictionaryValue(RoofProperties, "angle" ), 0]) 
-    {
-        //rafter with end cuts
-        difference()
-        {
-            //create rafter
-            linear_extrude(getDictionaryValue(RafterProperties, "depth" ))
-            {
-                square(
-                    size=
-                    [
-                        getDictionaryValue(RoofProperties, "rafter length" ) , 
-                        getDictionaryValue(RafterProperties, "thickness" )
-                    ], 
-                    center=false);                     
-            }
-            
-            //cut right end to angle
-            translate(
-                [
-                    getDictionaryValue(RoofProperties, "rafter length" ) - 
-                        sideBaA
-                            (
-                                side_a =  getDictionaryValue(RafterProperties, "depth" ), 
-                                aA =  getDictionaryValue(RoofProperties, "angle" )
-                            ), 
-                    -1, 
-                    0
-                ])
-            angle_cut_rightside
-                (
-                    angle = getDictionaryValue(RoofProperties, "angle" ), 
-                    sideA = getDictionaryValue(RafterProperties, "depth" ),
-                    doMirror = false
-                );
-
-            //cut left end to angle
-            translate(
-                [
-                    - sideBaA
-                        (
-                            side_a =  getDictionaryValue(RafterProperties, "depth" ), 
-                            aA =  getDictionaryValue(RoofProperties, "angle" )
-                        ), 
-                    -1, 
-                    0
-                ])
-                
-            angle_cut_lefttside
-            (
-                angle = getDictionaryValue(RoofProperties, "angle" ), 
-                sideA = getDictionaryValue(RafterProperties, "depth" ),
-                doMirror = false
-            );                    
-        }
-    
-    }        
-}
-
-module rafter_right(offset=25)
-{
-    // echo(offset = offset);
-        mirror([1, 0, 0]) 
-        // translate(
-        //     [
-        //         -getDictionaryValue(RoofProperties, "width" ) - getDictionaryValue(RoofProperties, "overhang depth" ), 
-        //         0, 
-        //         - getDictionaryValue(RoofProperties, "overhang height" )
-        //     ]
-        //     ) 
-    translate(
-        [
-            -getDictionaryValue(RoofProperties, "width" ) 
-            - getDictionaryValue(RoofProperties, "overhang depth" )
-            + getDictionaryValue(RafterProperties, "thickness" ) + offset
-            ,0, 
-            - getDictionaryValue(RoofProperties, "overhang height" ) + offset
-        ]
-        ) 
-    rotate([0, -getDictionaryValue(RoofProperties, "angle" ), 0]) 
-    {
-        difference()
-        {
-            linear_extrude(getDictionaryValue(RafterProperties, "depth" ))
-            {
-                square(
-                    size=
-                    [
-                        getDictionaryValue(RoofProperties, "rafter length" ) , 
-                        getDictionaryValue(RafterProperties, "thickness" )
-                    ], 
-                    center=false);                     
-            }
-
-            translate(
-                [
-                    getDictionaryValue(RoofProperties, "rafter length" ) - sideBaA(side_a =  getDictionaryValue(RafterProperties, "depth" ), aA =  getDictionaryValue(RoofProperties, "angle" )), 
-                    0, 
-                    0
-                ])
-            angle_cut_rightside
-                (
-                    angle = getDictionaryValue(RoofProperties, "angle" ), 
-                    sideA = getDictionaryValue(RafterProperties, "depth" ),
-                    doMirror = false
-                );
-
-            translate(
-                [
-                    - sideBaA(side_a =  getDictionaryValue(RafterProperties, "depth" ), aA =  getDictionaryValue(RoofProperties, "angle" )), 
-                    0, 
-                    0
-                ])
-                
-            angle_cut_lefttside
-            (
-                angle = getDictionaryValue(RoofProperties, "angle" ), 
-                sideA = getDictionaryValue(RafterProperties, "depth" ),
-                doMirror = false
-            );                    
-        }
-    
-    }
-}
-
-module rafter()
-{
-    length = getDictionaryValue(RafterProperties, "rafter length");
-    height = getDictionaryValue(RafterProperties, "depth");
-    angleA = getDictionaryValue(RafterProperties, "angle");
-    angleB = 90 - angleA;
-}
-
-module angle_cut_rightside(angle, sideA, doMirror = false) 
-{
-    thickness = getDictionaryValue(RafterProperties, "thickness") + 2;
-    translate([sideBaA(side_a =  sideA, aA =  angle), thickness, 0])
-    mirror([1, 0, 0]) 
-    
-    do_cut(angle = angle, sideA = sideA);
-
-    module do_cut(angle , sideA)
-    {
-        rotate([90,0,0])
-        linear_extrude(thickness)
-        polygon(points=getTrianglePoints(sideA = sideA, angleA = angle));        
-    }
-}
-
-module angle_cut_lefttside(angle, sideA, doMirror = false) 
-{
-    thickness = getDictionaryValue(RafterProperties, "thickness") + 2;
-    translate([sideBaA(side_a =  sideA, aA =  angle), thickness, 0])
-    // mirror([1, 0, 0]) 
-    
-    do_cut(angle = angle, sideA = sideA);
-
-    module do_cut(angle , sideA)
-    {
-        rotate([90,0,0])
-        linear_extrude(thickness)
-        polygon(points=getTrianglePoints(sideA = sideA, angleA = angle));        
-    }
-}
-
-
 function getTrianglePoints(sideA, angleA) = 
 [
     [0,0], 
@@ -293,20 +94,21 @@ function getTrianglePoints(sideA, angleA) =
     [sideBaA(side_a =  sideA, aA =  angleA) , 0]    
 ];
 
-function getBoardEnd(size, angle) =
-let(h =  angle < 45 ? sideBaA(size.y, angle) : sideAaA(size.y, sideA) )
-[    
-    [0, 0],
-    [0, size.x],
-    [h, size.x],
-    [h, 0]
-];
-
 module Info()
 {
     echo();
     echo("*** Roof.scad::Info()");
     echo();
+
+    roofangle = getDictionaryValue(RoofProperties, "angle" );
+    echo(RoofProperties = RoofProperties);
+    echo(roofangle = roofangle);
+    echo(rafter_length_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "rafter length" )));
+    echo(roof_height_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "height" )));
+    echo(roof_width_ft = convert_mm2ft(getDictionaryValue(RoofProperties, "width" )));
+    echo(poly_sheet_count = convert_mm2ft(getDictionaryValue(RoofProperties, "length" ))/4);
+    echo(Rafter_North = Rafter_North);
+
     // debugEcho("House Dimensions", HouseDimensions, true);
     // echo();
     // debugEcho("Entry Dimensions", EntryDimensions, true);
@@ -345,9 +147,9 @@ module Info()
 
 module add_rafter(properties)
 {
-    echo();
-    debugEcho(properties[0], properties, true);
-    echo();
+    // echo();
+    // debugEcho(properties[0], properties, true);
+    // echo();
 
     color(gdv(properties, "color" ), 0.5) 
     union()
@@ -355,11 +157,15 @@ module add_rafter(properties)
         mirror([0,1,0])
         translate(gdv(properties, "location"))
         rotate(gdv(properties, "rotate"))
-        cut_board_properties(properties);
+        cut_rafter_properties(properties);
 
         translate(gdv(properties, "location"))
         rotate(gdv(properties, "rotate"))
-        cut_board_properties(properties);
+        cut_rafter_properties(properties);
+
+        translate([0, HouseLength/2 * -1,0])
+        rotate([90,0,90])
+        lable_angle(a = gdv(properties, "angle"), l = gdv(Angle_Lable, "length"), r = gdv(Angle_Lable, "radius"), size = gdv(Angle_Lable, "font size"));        
     }
 
     
@@ -368,27 +174,11 @@ module add_rafter(properties)
 
 }
 
-module add_brace(properties)
-{
-    color(gdv(properties, "color" ), 0.5) 
-    translate([gdv(properties, "width") + convert_in2mm(in = 0.75)/2, 0, 0])
-    translate(gdv(properties, "location"))
-    rotate(gdv(properties, "rotate"))
-    cut_board_properties(properties);
-
-    translate([-gdv(properties, "width") - convert_in2mm(in = 0.75)/2 ,0,0])
-    mirror([0,1,0])
-    color(gdv(properties, "color" ), 0.5) 
-    translate(gdv(properties, "location"))
-    rotate(gdv(properties, "rotate"))
-    cut_board_properties(properties);
-}
-
-module cut_board_properties(properties)
+module cut_rafter_properties(properties)
 {
     translate([0,0, gdv(properties, "depth")])
     rotate([270, 0, 90]) 
-    cut_board
+    cut_rafter
     (
         angle = gdv(properties, "angle"),
         width = gdv(properties, "width"),
@@ -397,7 +187,7 @@ module cut_board_properties(properties)
     );
 }
 
-module cut_board(angle, width, depth, length)
+module cut_rafter(angle, width, depth, length)
 {
     points = hypotenuse_cut(angle, depth, length);
 
@@ -406,7 +196,9 @@ module cut_board(angle, width, depth, length)
     
 }
 
-function side_b(angle, depth) = depth/tan(angle);
+function side_b(angle, depth) = //echo([angle, depth]) 
+depth/tan(angle);
+
 // function trap_top(angle, depth, length) = length -  side_b(angle, depth);
 function hypotenuse_cut(angle, depth, length) = 
     [
@@ -415,3 +207,85 @@ function hypotenuse_cut(angle, depth, length) =
         [length/2 - side_b(90 - angle, depth), depth], 
         [length/2, 0]
     ];
+
+module add_brace(properties)
+{
+    color(gdv(properties, "color" ), 0.5) 
+    union()
+    {
+        translate([gdv(properties, "width") - convert_in2mm(in = 0.75)/2, 0, 0])
+        translate(gdv(properties, "location"))
+        rotate(gdv(properties, "rotate"))
+        cut_brace_board_properties(properties);        
+
+        translate([0, HouseLength/2 * -1,0])
+        rotate([90,0,90])
+        lable_angle(a = gdv(properties, "angle"), l = gdv(properties, "lable length"), r = gdv(Angle_Lable, "radius"), size = gdv(Angle_Lable, "font size"));        
+
+        translate([-gdv(properties, "width") + convert_in2mm(in = 0.75)/2 ,0,0])
+        mirror([0,1,0])
+        // color(gdv(properties, "color" ), 0.5) 
+        translate(gdv(properties, "location"))
+        rotate(gdv(properties, "rotate"))
+        cut_brace_board_properties(properties);           
+    }
+}
+
+module cut_brace_board_properties(properties)
+{
+    translate([0,0, gdv(properties, "depth")])
+    rotate([270, 0, 90]) 
+    brace_board_cut
+    (
+        angle = gdv(properties, "angle"),
+        angle2 = gdv(properties, "angle2"),
+        width = gdv(properties, "width"),
+        depth = gdv(properties, "depth"),
+        length = gdv(properties, "length")
+    );
+}
+
+module brace_board_cut(angle, angle2, width, depth, length)
+{
+    points = brace_board_points(angle, angle2, depth, length);
+
+    // echo(points = points);
+
+    linear_extrude(height = width,  center = true)
+    polygon(points=points);
+    
+}
+
+function brace_board_points(angle, angle2, depth, length) = //echo([angle, angle2, depth, length])
+    [
+        [-length/2,0], 
+        [side_b(angle, depth) - length/2, depth], 
+        [length/2 - side_b(angle2, depth), depth], 
+        [length/2, 0]
+    ];
+
+
+module lable_angle(a = 30, l = 40, r = 1, size = 9, color = "blue") 
+{
+    if(show_labels)
+    {
+        color(color, 0.5) 
+        union()
+        {
+            rotate_extrude(angle = a, $fn=100)
+            translate([l, 0])
+            circle(r = r, $fn=100);
+
+            square([l,1]);
+
+            rotate([0,0,a])
+            square([l,1]);
+
+            rotate([0,0,a/2])
+            translate([l/3, -l/size])
+            text(text = str(a, "°"), size = size);
+        }        
+    }
+
+
+}    
