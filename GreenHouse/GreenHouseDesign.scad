@@ -19,6 +19,8 @@ use <trigHelpers.scad>;
 use <Construction.scad>;
 use <dictionary.scad>;
 use <roof.scad>;
+use <entry_roof.scad>;
+use <floor.scad>;
 
 use <box_extrude.scad>;
 
@@ -44,31 +46,31 @@ module info()
     echo(EntryRoofAngle = EntryRoofDimensions[3]);    
 }
 
-module scale()
-{
-    for (i=[-24:24]) 
-    {
-        translate([convert_ft2mm(i), 0, 0])
-        color("red")
-        union()
-        {
-            text(text = str(i), size = 72);
-            rotate([90,0])
-            cylinder(r=1, h=convert_ft2mm(1), center=true);
-        }
+// module scale()
+// {
+//     for (i=[-24:24]) 
+//     {
+//         translate([convert_ft2mm(i), 0, 0])
+//         color("red")
+//         union()
+//         {
+//             text(text = str(i), size = 72);
+//             rotate([90,0])
+//             cylinder(r=1, h=convert_ft2mm(1), center=true);
+//         }
 
-        translate([0, convert_ft2mm(i), 0])
-        color("green")
-        union()
-        {
-            text(text = str(i), size = 72);
-            rotate([0,90])
-            cylinder(r=1, h=convert_ft2mm(1), center=true);
-        }
+//         translate([0, convert_ft2mm(i), 0])
+//         color("green")
+//         union()
+//         {
+//             text(text = str(i), size = 72);
+//             rotate([0,90])
+//             cylinder(r=1, h=convert_ft2mm(1), center=true);
+//         }
         
-    }
+//     }
     
-}
+// }
 
 module Build(args) 
 {
@@ -77,14 +79,19 @@ module Build(args)
     info();
     scale();
 
-    simpleView(showentry = true, showRoof = false, showwalls = true);
+    // simpleView(showentry = true, showRoof = false, showwalls = true);
 
     translate([HouseLength/2, HouseWidth/2,0])
     rotate([0,0,90])
-    main_roof();
+    union()
+    {
+        main_roof();
+        add_floor();        
+    }
+    
+    add_entry_roof();
 
-
-    // HouseFrame2();
+    HouseFrame2();
 
 }
 
@@ -92,70 +99,15 @@ module HouseFrame2()
 {
     isFinished = true;
     //back wall
-    translate([0, 0, 0])
-    rotate([90, 0, 90]) 
-    {
-        color("aqua")
-        Wall(
-            wallOD = [gdv(HouseDimensions, "width"), gdv(HouseDimensions, "width"), gdv(HouseDimensions, "wall height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            finished = isFinished
-        );        
-        // drawFrame([0,0,0], gdv(HouseDimensions, "wall height"), gdv(HouseDimensions, "width"), Board2x4);
-    }
+    add_wall(West_Wall);
+    add_wall(North_Wall);
+    add_wall(South_Wall);
+    add_wall(East_Wall1);
+    add_wall(East_Wall2);
 
-    //right side wall
-    translate([Board2x4.y, gdv(HouseDimensions, "width"), 0])
-    rotate([90, 0, 0]) 
-    {
-        color("red")
-        Wall(
-            wallOD = [gdv(HouseDimensions, "width") - Board2x4.y, gdv(HouseDimensions, "width"), gdv(HouseDimensions, "wall height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            finished = isFinished
-        );        
-    }
-    
-    //left side wall
-    translate([Board2x4.y, Board2x4.y, 0])
-    rotate([90, 0, 0]) 
-    {
-        color("red")
-        Wall(
-            wallOD = [gdv(HouseDimensions, "width") - Board2x4.y, gdv(HouseDimensions, "width"), gdv(HouseDimensions, "wall height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            finished = isFinished
-        );        
-    }
+    add_wall(North_Entry_Wall);
+    add_wall(South_Entry_Wall);
 
-    //front wall  left side
-    translate([gdv(HouseDimensions, "width"), 0, 0])
-    rotate([90, 0, 90]) 
-    {
-        color("blue")
-        Wall(
-            wallOD = [gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2, gdv(HouseDimensions, "width"), gdv(HouseDimensions, "wall height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            finished = isFinished
-        );        
-    }
-
-    //front wall  right side
-    translate([gdv(HouseDimensions, "width"), gdv(HouseDimensions, "width") - (gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2), 0])
-    rotate([90, 0, 90]) 
-    {
-        color("blue")
-        Wall(
-            wallOD = [gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2, gdv(HouseDimensions, "width"), gdv(HouseDimensions, "wall height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            finished = isFinished
-        );        
-    }
 }
 
 module EntryFrame2()
@@ -267,6 +219,22 @@ module EntryRoofFrame2()
         includeStuds = true,
         finished = true
     );
+}
+
+module add_wall(properties)
+{
+    color(gdv(properties, "color"), 0.5)
+    translate(gdv(properties, "location"))
+    rotate(gdv(properties, "rotate"))
+    {
+        Wall
+        (
+            wallOD = gdv(properties, "wall dimension"),
+            board = Board2x4,
+            spacing = StudSpacing,
+            finished = true
+        );
+    }
 }
 
 module simpleView(showentry = true, showRoof = true, showwalls = true)
