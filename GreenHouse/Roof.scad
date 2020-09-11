@@ -20,8 +20,9 @@ build();
 
 module build(args) 
 {
-    main_roof();
+    // main_roof();
     // Info();
+    add_rafter(Rafter_Main);  
 }
 
 module main_roof()
@@ -37,7 +38,7 @@ module main_roof()
     // linear_extrude(convert_ft2mm(ft = 4))
     // translate([-getDictionaryValue(HouseDimensions, "width")/2,0,0])
     // square([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "length")]);
-    // add_floor();
+    add_floor();
 
     translate([0,0, HouseWallHeight])
     union()
@@ -45,22 +46,72 @@ module main_roof()
         translate([0,0,gdv(RoofProperties, "height" )/2])
         cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" )/2, center=false);
 
-        truss_count = gdv(RoofProperties, "truss count");
+        truss_count = floor(gdv(RoofProperties, "truss count")+1)/2;
 
-        for (i=[truss_count/2 * -1 : truss_count/2 + 1]) 
+        echo(truss_count = truss_count * 2, trussLength_in_ft = convert_mm2ft(gdv(Rafter_Main, "length")));
+
+        for (i=[truss_count * -1 : 1 : truss_count]) 
         {
-            translate
-            (
-                [
-                    i * getDictionaryValue(RoofProperties, "spacing" ),
-                    0,
-                    0
-                ]
-            )
-            add_rafter(Rafter_Test);       
+            if(i == -6 )
+            {
+                translate
+                (
+                    [
+                        i * getDictionaryValue(RoofProperties, "spacing" ) + convert_in2mm(4.25),
+                        0,
+                        0
+                    ]
+                )
+                add_rafter(Rafter_Main); 
+
+                translate
+                (
+                    [
+                        i * getDictionaryValue(RoofProperties, "spacing" ) + convert_in2mm(1.75),
+                        0,
+                        0
+                    ]
+                )              
+                add_rafter_beam(Rafter_EndCap);                
+            }
+            else if( i == 6)
+            {
+                translate
+                (
+                    [
+                        i * getDictionaryValue(RoofProperties, "spacing" ) - convert_in2mm(4.25),
+                        0,
+                        0
+                    ]
+                )
+                add_rafter(Rafter_Main);        
+
+                translate
+                (
+                    [
+                        i * getDictionaryValue(RoofProperties, "spacing" ) - convert_in2mm(1.75),
+                        0,
+                        0
+                    ]
+                )              
+                add_rafter_beam(Rafter_EndCap);
+            }
+            else
+            {
+                // echo(True_i = i);
+                translate
+                (
+                    [
+                        i * getDictionaryValue(RoofProperties, "spacing" ),
+                        0,
+                        0
+                    ]
+                )
+                add_rafter(Rafter_Main);                  
+            }     
         }
 
-        // add_rafter(Rafter_Test);       
+        // add_rafter(Rafter_Main);       
         center_beam();
     }
 
@@ -151,6 +202,15 @@ module add_rafter(properties)
     // debugEcho(properties[0], properties, true);
     // echo();
 
+    add_rafter_beam(properties);
+    
+    // add_brace(Brace_One);
+    // add_brace(Brace_Two);
+
+}
+
+module add_rafter_beam(properties)
+{
     color(gdv(properties, "color" ), 0.5) 
     union()
     {
@@ -167,11 +227,6 @@ module add_rafter(properties)
         rotate([90,0,90])
         lable_angle(a = gdv(properties, "angle"), l = gdv(Angle_Lable, "length"), r = gdv(Angle_Lable, "radius"), size = gdv(Angle_Lable, "font size"));        
     }
-
-    
-    add_brace(Brace_One);
-    add_brace(Brace_Two);
-
 }
 
 module cut_rafter_properties(properties)
