@@ -20,9 +20,10 @@ build();
 
 module build(args) 
 {
-    // main_roof();
+    main_roof();
     // Info();
-    add_rafter(Rafter_Main);  
+    // add_rafter(Rafter_Main);  
+    // add_rafter_beam(Rafter_EndCap);
 }
 
 module main_roof()
@@ -204,28 +205,31 @@ module add_rafter(properties)
 
     add_rafter_beam(properties);
     
-    // add_brace(Brace_One);
-    // add_brace(Brace_Two);
+    add_brace(Brace_One);
+    add_brace(Brace_Two);
 
 }
 
 module add_rafter_beam(properties)
 {
+    // translate(gdv(properties, "location"))
     color(gdv(properties, "color" ), 0.5) 
     union()
     {
         mirror([0,1,0])
-        translate(gdv(properties, "location"))
+        translate(gdv(properties, "pre-translate"))
         rotate(gdv(properties, "rotate"))
+        translate([0, gdv(properties, "length")/2, -gdv(properties, "depth")])
         cut_rafter_properties(properties);
 
-        translate(gdv(properties, "location"))
+        translate(gdv(properties, "pre-translate"))
         rotate(gdv(properties, "rotate"))
+        translate([0, gdv(properties, "length")/2, -gdv(properties, "depth")])
         cut_rafter_properties(properties);
 
-        translate([0, HouseLength/2 * -1,0])
-        rotate([90,0,90])
-        lable_angle(a = gdv(properties, "angle"), l = gdv(Angle_Lable, "length"), r = gdv(Angle_Lable, "radius"), size = gdv(Angle_Lable, "font size"));        
+        // translate([0, HouseLength/2 * -1,0])
+        // rotate([90,0,90])
+        // lable_angle(a = gdv(properties, "angle"), l = gdv(Angle_Lable, "length"), r = gdv(Angle_Lable, "radius"), size = gdv(Angle_Lable, "font size"));        
     }
 }
 
@@ -267,22 +271,22 @@ module add_brace(properties)
 {
     color(gdv(properties, "color" ), 0.5) 
     union()
-    {
-        translate([gdv(properties, "width") - convert_in2mm(in = 0.75)/2, 0, 0])
-        translate(gdv(properties, "location"))
+    {  
+        translate(gdv(properties, "pre-translate"))
         rotate(gdv(properties, "rotate"))
-        cut_brace_board_properties(properties);        
+        translate([gdv(properties, "width")/2, gdv(properties, "length")/2, -gdv(properties, "depth")])
+        cut_brace_board_properties(properties); 
 
         translate([0, HouseLength/2 * -1,0])
         rotate([90,0,90])
         lable_angle(a = gdv(properties, "angle"), l = gdv(properties, "lable length"), r = gdv(Angle_Lable, "radius"), size = gdv(Angle_Lable, "font size"));        
 
-        translate([-gdv(properties, "width") + convert_in2mm(in = 0.75)/2 ,0,0])
+        // translate([-gdv(properties, "width") + convert_in2mm(in = 0.75)/2 ,0,0])
         mirror([0,1,0])
-        // color(gdv(properties, "color" ), 0.5) 
-        translate(gdv(properties, "location"))
+        translate(gdv(properties, "pre-translate"))
         rotate(gdv(properties, "rotate"))
-        cut_brace_board_properties(properties);           
+        translate([-gdv(properties, "width")/2, gdv(properties, "length")/2, -gdv(properties, "depth")])
+        cut_brace_board_properties(properties);          
     }
 }
 
