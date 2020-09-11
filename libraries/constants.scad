@@ -14,6 +14,41 @@ IS_DEBUG_DEBUG = false;
 //  echo(LayersToHeight = LayersToHeight(16));
 // }
 
+//puts a foot scale on X and Y axis for point of reference.
+module scale(size = 24, increment = convert_in2mm(1), fontsize = 12)
+{
+  if($preview)
+  {
+    for (i=[-size:size]) 
+    {
+        translate([f(i, increment), 0, 0])
+        color("red")
+        union()
+        {
+            text(text = str(i), size = fontsize);
+            rotate([90,0])
+            cylinder(r=1, h=f(1, increment), center=true);
+        }
+
+        translate([0, f(i, increment), 0])
+        color("green")
+        union()
+        {
+            text(text = str(i), size = fontsize);
+            rotate([0,90])
+            cylinder(r=1, h=f(1, increment), center=true);
+        }   
+    }     
+  }
+}
+
+module properties_echo(property)
+{
+  debugEcho(property.x,property, true);
+}
+
+function f(i, increment) = i * increment;
+
 function LayersToHeight(layers) = 
   // echo(NozzleWidth = NozzleWidth, InitialLayerHeight = InitialLayerHeight, LayerHeight = LayerHeight) 
   InitialLayerHeight + (LayerHeight * (layers - 1));

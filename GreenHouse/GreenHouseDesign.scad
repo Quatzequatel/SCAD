@@ -46,38 +46,12 @@ module info()
     echo(EntryRoofAngle = EntryRoofDimensions[3]);    
 }
 
-// module scale()
-// {
-//     for (i=[-24:24]) 
-//     {
-//         translate([convert_ft2mm(i), 0, 0])
-//         color("red")
-//         union()
-//         {
-//             text(text = str(i), size = 72);
-//             rotate([90,0])
-//             cylinder(r=1, h=convert_ft2mm(1), center=true);
-//         }
-
-//         translate([0, convert_ft2mm(i), 0])
-//         color("green")
-//         union()
-//         {
-//             text(text = str(i), size = 72);
-//             rotate([0,90])
-//             cylinder(r=1, h=convert_ft2mm(1), center=true);
-//         }
-        
-//     }
-    
-// }
-
 module Build(args) 
 {
 
     // echo(sin45 = sin(45));
     info();
-    scale();
+    scale(size = 16, increment = convert_in2mm(12), fontsize = 72);
 
     // simpleView(showentry = true, showRoof = false, showwalls = true);
 

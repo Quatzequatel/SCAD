@@ -33,29 +33,29 @@ Post = Board4x4;
     The length of the house is 11.25' plus the entry way.
 */
 //puts a foot scale on X and Y axis for point of reference.
-module scale()
-{
-    for (i=[-24:24]) 
-    {
-        translate([convert_ft2mm(i), 0, 0])
-        color("red")
-        union()
-        {
-            text(text = str(i), size = 72);
-            rotate([90,0])
-            cylinder(r=1, h=convert_ft2mm(1), center=true);
-        }
+// module scale()
+// {
+//     for (i=[-24:24]) 
+//     {
+//         translate([convert_ft2mm(i), 0, 0])
+//         color("red")
+//         union()
+//         {
+//             text(text = str(i), size = 72);
+//             rotate([90,0])
+//             cylinder(r=1, h=convert_ft2mm(1), center=true);
+//         }
 
-        translate([0, convert_ft2mm(i), 0])
-        color("green")
-        union()
-        {
-            text(text = str(i), size = 72);
-            rotate([0,90])
-            cylinder(r=1, h=convert_ft2mm(1), center=true);
-        }   
-    }   
-}
+//         translate([0, convert_ft2mm(i), 0])
+//         color("green")
+//         union()
+//         {
+//             text(text = str(i), size = 72);
+//             rotate([0,90])
+//             cylinder(r=1, h=convert_ft2mm(1), center=true);
+//         }   
+//     }   
+// }
 
 //all in mm
 HouseWidth = convert_ft2mm(ft = 16);

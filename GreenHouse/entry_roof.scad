@@ -22,7 +22,7 @@ module build(args)
 
 module add_entry_roof()
 {
-    scale();
+    scale(size = 16, increment = convert_in2mm(12), fontsize = 72);
 
     translate([HouseLength/2, HouseWidth/2,0])
     rotate([0,0,90])    
