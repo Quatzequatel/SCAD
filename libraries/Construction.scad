@@ -76,7 +76,7 @@ result;
 Board2x4 = newVector(v = [], p1 = convert_in2mm(1.5), p2 = convert_in2mm(3.5), p3 = convert_ft2mm(8));
 angle = 44.3;
 
-Build();
+// Build();
 isDebugMode = false;
 
 module Build()

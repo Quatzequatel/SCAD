@@ -32,6 +32,30 @@ Post = Board4x4;
     The greenhouse door is the front of the house and therefore the width is 16'.
     The length of the house is 11.25' plus the entry way.
 */
+//puts a foot scale on X and Y axis for point of reference.
+module scale()
+{
+    for (i=[-24:24]) 
+    {
+        translate([convert_ft2mm(i), 0, 0])
+        color("red")
+        union()
+        {
+            text(text = str(i), size = 72);
+            rotate([90,0])
+            cylinder(r=1, h=convert_ft2mm(1), center=true);
+        }
+
+        translate([0, convert_ft2mm(i), 0])
+        color("green")
+        union()
+        {
+            text(text = str(i), size = 72);
+            rotate([0,90])
+            cylinder(r=1, h=convert_ft2mm(1), center=true);
+        }   
+    }   
+}
 
 //all in mm
 HouseWidth = convert_ft2mm(ft = 16);
@@ -56,6 +80,158 @@ frost_line = convert_in2mm(14);
 RoofWidth = HouseLength/2; //((Width - in2ft(Board2x4.x))/2);
 RoofHeight = RoofWidth * sin(RoofAngle);
 RoofLength = hypotenuse(RoofHeight, RoofWidth);
+
+/*
+    locations
+*/
+location_corner_SW = [0,0,0];
+location_corner_NW = [HouseLength,0,0];
+location_corner_NE = [HouseLength,HouseWidth,0];
+location_corner_SE = [0,HouseWidth,0];
+
+location_entry_corner_SW = [HouseLength, (HouseWidth-EntryWidth)/2, 0];
+location_entry_corner_NW = [HouseLength, HouseWidth - (HouseWidth-EntryWidth)/2, 0];
+location_entry_corner_NE = [HouseLength + EntryLength, location_entry_corner_NW.y, 0];
+location_entry_corner_SE = [HouseLength + EntryLength, (HouseWidth-EntryWidth)/2, 0];
+HouseWidthCenter = HouseWidth/2 - Board2x4.x/2;
+location_entry_center = [HouseLength, HouseWidthCenter, HouseWallHeight + (EntryWidth/2)];
+// location_entry_center = [ 0, HouseWidthCenter, convert_in2mm(in = 24.75)];
+
+/*
+    Walls
+*/
+West_Wall = 
+[
+    "West_Wall",
+        ["width", HouseWidth],
+        ["length", Board2x4.y] ,
+        ["height", HouseWallHeight],
+        [
+            "wall dimension",
+            [
+                HouseWidth,
+                HouseLength,
+                HouseWallHeight - Board2x4.x
+            ]
+        ],
+        ["location", [0, 0, 0]],
+        ["rotate", [90, 0, 90]],
+        ["color", "aqua"]
+];
+
+South_Wall = 
+[
+    "South_Wall",
+        ["width", HouseLength],
+        ["length", Board2x4.y] ,
+        ["height", HouseWallHeight],
+        [
+            "wall dimension",
+            [
+                HouseLength - convert_in2mm(7.01),
+                HouseLength,
+                HouseWallHeight - Board2x4.x
+            ]
+        ],        
+        ["location", [Board2x4.y, Board2x4.y, 0]],
+        ["rotate", [90, 0, 0]],
+        ["color", "pink"]
+];
+
+North_Wall = 
+[
+    "North_Wall",
+        ["width", HouseLength],
+        ["length", Board2x4.y] ,
+        ["height", HouseWallHeight],
+        [
+            "wall dimension",
+            [
+                HouseLength - convert_in2mm(7.02),
+                HouseLength,
+                HouseWallHeight - Board2x4.x
+            ]
+        ],        
+        ["location", [Board2x4.y, HouseWidth, 0]],
+        ["rotate", [90, 0, 0]],
+        ["color", "yellow"]
+];
+
+East_Wall1 = 
+[
+    "East_Wall1",
+        ["width", HouseLength],
+        ["length", Board2x4.y] ,
+        ["height", HouseWallHeight],
+        [
+            "wall dimension",
+            [
+                HouseWidth/2 - EntryWidth/2,
+                HouseLength,
+                HouseWallHeight - Board2x4.x
+            ]
+        ],        
+        ["location", [HouseLength - Board2x4.y, 0, 0]],
+        ["rotate", [90, 0, 90]],
+        ["color", "blue"]
+];
+
+East_Wall2 = 
+[
+    "East_Wall2",
+        ["width", HouseLength],
+        ["length", Board2x4.y] ,
+        ["height", HouseWallHeight],
+        [
+            "wall dimension",
+            [
+                HouseWidth/2 - EntryWidth/2,
+                HouseLength,
+                HouseWallHeight - Board2x4.x
+            ]
+        ],        
+        ["location", [HouseLength - Board2x4.y, HouseWidth - (HouseWidth/2 - EntryWidth/2), 0]],
+        ["rotate", [90, 0, 90]],
+        ["color", "green"]
+];
+
+North_Entry_Wall = 
+[
+    "North_Entry_Wall",
+        ["width", HouseLength],
+        ["length", Board2x4.y] ,
+        ["height", HouseWallHeight],
+        [
+            "wall dimension",
+            [
+                EntryLength + Board2x4.y,
+                HouseLength,
+                HouseWallHeight - Board2x4.x
+            ]
+        ],        
+        ["location", [HouseLength - Board2x4.y , HouseWidth - (HouseWidth/2 - EntryWidth/2), 0]],
+        ["rotate", [90, 0, 0]],
+        ["color", "Salmon"]
+];
+
+South_Entry_Wall = 
+[
+    "South_Entry_Wall",
+        ["width", HouseLength],
+        ["length", Board2x4.y] ,
+        ["height", HouseWallHeight],
+        [
+            "wall dimension",
+            [
+                EntryLength + Board2x4.y,
+                HouseLength,
+                HouseWallHeight - Board2x4.x
+            ]
+        ],        
+        ["location", [HouseLength - Board2x4.y , (HouseWidth/2 - EntryWidth/2) + Board2x4.y, 0]],
+        ["rotate", [90, 0, 0]],
+        ["color", "red"]
+];
 
 StudProperties = 
 [
@@ -98,33 +274,10 @@ CenterBeamProperties =
         ["color", "red"]
 ];
 
-Rafter_South = 
-[
-    "Rafter_North",
-        ["angle", RoofAngle],
-        ["width", Board2x4.x],
-        ["depth", Board2x4.y],
-        ["length", gdv(RoofProperties, "rafter length")] ,
-        ["location", [0, -convert_in2mm(in = 32.5), gdv(RoofProperties, "height")/2 - convert_in2mm(in = 2.5)]],
-        ["rotate", [RoofAngle, 0, 0]],
-        ["color", "blue"]
-];
 
-Rafter_North = 
+Rafter_Main = 
 [
-    "Rafter_North",
-        ["angle", 90 - RoofAngle],
-        ["width", Board2x4.x],
-        ["depth", Board2x4.y],
-        ["length", convert_in2mm(in = 90.830209248)] ,
-        ["location", [0, convert_in2mm(in = 32), convert_in2mm(in = 55/2)]],
-        ["rotate", [-RoofAngle, 0, 0]],
-        ["color", "yellow"]
-];
-
-Rafter_Test = 
-[
-    "Rafter_Test",
+    "Rafter_Main",
         ["angle", 42],
         ["angle step", -10],
         ["width", convert_in2mm(in = 1.5)],
@@ -133,6 +286,44 @@ Rafter_Test =
         ["location", [0, -convert_in2mm(in = 31.39), convert_in2mm(in = 27.8)]],
         ["rotate", [42, 0, 0]],
         ["color", "green"],
+        ["brace color", "yellow"]
+];
+
+EntryBeamProperties = 
+[
+    "EntryBeamProperties",
+    ["width", Board2x6.x],
+    ["depth", Board2x6.y],
+    ["length", EntryLength + convert_in2mm(33.25)],
+    ["location", [HouseLength - convert_in2mm(33.25), HouseWidthCenter, HouseWallHeight + (EntryWidth/2) - Board2x6.y]],
+    ["rotate", [0, 0, 0]],
+    ["color", "red"]
+];
+
+Entryway_Rafter = 
+[
+    "Entryway_Rafter",
+    ["angle", 45],
+    ["width", convert_in2mm(in = 1.75)],
+    ["depth", convert_in2mm(in = 3.5)],
+    ["length", convert_in2mm(in = 42.43)] ,
+    ["location", [HouseLength + EntryLength - Board2x4.x/2, HouseWidth/2, HouseWallHeight]],
+    ["pre-translate", [0, -convert_in2mm(in = 30.75),0] ],
+    ["rotate", [45, 0, 0]] ,
+    ["color", "lightblue"]
+];
+
+Rafter_EndCap = 
+[
+    "Rafter_EndCap",
+        ["angle", 42],
+        ["angle step", -10],
+        ["width", convert_in2mm(in = 3.5)],
+        ["depth", convert_in2mm(in = 1.75)],
+        ["length", convert_in2mm(in = 90.830209248)] ,
+        ["location", [0, -convert_in2mm(in = 33), convert_in2mm(in = 28.8)]],
+        ["rotate", [42, 0, 0]],
+        ["color", "lightblue"],
         ["brace color", "yellow"]
 ];
 
@@ -197,8 +388,8 @@ house_foundation_properties =
         ["width", convert_in2mm(8)],  
         ["height", convert_in2mm(8)],  
         ["start", 
-            getDictionaryValue(concrete_footing_properties, "start") + 
-            getDictionaryValue(concrete_footing_properties, "height")
+            gdv(concrete_footing_properties, "start") + 
+            gdv(concrete_footing_properties, "height")
         ],
         ["layers", 4]
 ];
@@ -206,9 +397,9 @@ house_foundation_properties =
 crushed_rock_properties = 
 [
     "crushed rock properties",
-        ["width", getDictionaryValue(concrete_footing_properties, "width") + convert_in2mm(4)],
+        ["width", gdv(concrete_footing_properties, "width") + convert_in2mm(4)],
         ["height", convert_in2mm(4)],
-        ["start", (getDictionaryValue(concrete_footing_properties, "start") - convert_in2mm(4))],
+        ["start", (gdv(concrete_footing_properties, "start") - convert_in2mm(4))],
 ];
 
 
@@ -219,8 +410,8 @@ drainage_properties =
     ["diameter", convert_in2mm(4)],
     ["radius", convert_in2mm(2)],
     ["corner_r", convert_in2mm(8)],
-    ["distance from wall", (getDictionaryValue(crushed_rock_properties, "width") - convert_in2mm(8))],
-    ["vertical start", getDictionaryValue(crushed_rock_properties, "start")],
+    ["distance from wall", (gdv(crushed_rock_properties, "width") - convert_in2mm(8))],
+    ["vertical start", gdv(crushed_rock_properties, "start")],
 ];
 
 electric_conduit = 
@@ -233,7 +424,7 @@ electric_conduit =
         [ 
             -1 * (HouseWidth/2 - convert_in2mm(3)), 
             1 * (HouseLength/2 - convert_in2mm(36)), 
-            getDictionaryValue(concrete_footing_properties, "start")
+            gdv(concrete_footing_properties, "start")
         ] 
     ] 
 ];
@@ -248,7 +439,7 @@ water_conduit =
         [ 
             -1 * (HouseWidth/2 - convert_in2mm(3)), 
             -1 * (HouseLength/2 - convert_in2mm(36)), 
-            getDictionaryValue(concrete_footing_properties, "start")
+            gdv(concrete_footing_properties, "start")
         ] 
     ]
 ];
@@ -266,9 +457,9 @@ EntryDimensions =
 EntryRoofDimensions = 
 [
     "entry roof dimensions",
-        ["width", getDictionaryValue(EntryDimensions, "width")],    
-        ["length", getDictionaryValue(EntryDimensions, "length")],  
-        ["height", getDictionaryValue(EntryDimensions, "height")], 
+        ["width", gdv(EntryDimensions, "width")],    
+        ["length", gdv(EntryDimensions, "length")],  
+        ["height", gdv(EntryDimensions, "height")], 
         ["rafter length", sideC_B(side_b = EntryWidth/2, aA = EntryRoofAngle)],
         ["angle", EntryRoofAngle ]
 ];
@@ -278,7 +469,7 @@ EntryColdFrame =
     "entry cold frame",
         ["width", EntryColdFrame_width],    
         ["length", EntryColdFrame_length],  
-        ["height", getDictionaryValue(EntryDimensions, "height")],
+        ["height", gdv(EntryDimensions, "height")],
         ["wall thickness", convert_in2mm(4)],  
         ["foundation height", convert_in2mm(4)],  
 ];
@@ -288,7 +479,7 @@ SouthColdFrame =
     "south cold frame",
         ["width", EntryLength],    
         ["length", HouseLength + EntryLength],  
-        ["height", getDictionaryValue(EntryDimensions, "height")],
+        ["height", gdv(EntryDimensions, "height")],
         ["wall thickness", convert_in2mm(4)],  
         ["foundation height", convert_in2mm(4)],  
 ];
@@ -296,8 +487,8 @@ SouthColdFrame =
 foundationProperties = 
 [
     "foundation properties",
-        ["width", HouseWidth + getDictionaryValue(SouthColdFrame, "width") + getDictionaryValue(crushed_rock_properties, "width")/2],    
-        ["length", HouseLength + EntryLength + getDictionaryValue(crushed_rock_properties, "width")/2],  
+        ["width", HouseWidth + gdv(SouthColdFrame, "width") + gdv(crushed_rock_properties, "width")/2],    
+        ["length", HouseLength + EntryLength + gdv(crushed_rock_properties, "width")/2],  
         ["frost line", frost_line],
 ];
 
