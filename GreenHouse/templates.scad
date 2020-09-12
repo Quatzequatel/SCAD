@@ -1,0 +1,161 @@
+/*
+    
+*/
+
+include <constants.scad>;
+
+use <convert.scad>;
+use <trigHelpers.scad>;
+use <ObjectHelpers.scad>;
+use <dictionary.scad>;
+use <Roof.scad>;
+
+build();
+
+module build(args) 
+{
+    rotate([180,0,0])
+    // rafter_template(Main_Rafter_template);
+    // rafter_template(Brace_One_template);
+    // rafter_template(Brace_Two_template);
+    rafter_template(Entry_Rafter_template);
+}
+
+module rafter_template(properties)
+{
+    points = brace_board_points
+                (
+                    angle = gdv(properties, "angle"),
+                    angle2 = gdv(properties, "angle2"),
+                    depth = gdv(properties, "depth"),
+                    length = gdv(properties, "length")                    
+                );
+
+    echo(points = points);
+    difference()
+    {
+        translate([0, 0, gdv(properties, "tool thickness")/2])
+        brace_board_cut
+        (
+            angle = gdv(properties, "angle"),
+            angle2 = gdv(properties, "angle2"),
+            width = gdv(properties, "tool thickness"),
+            depth = gdv(properties, "depth"),
+            length = gdv(properties, "length")
+        );
+
+        cut_text(gdv(properties, "lable text"), properties, convert_in2mm(-1), points[1].y/2);
+
+        cut_text(str(gdv(properties, "angle"), "°"), properties, points.x.x + 25, 2);
+
+        cut_text(str(90 - gdv(properties, "angle"), "°"), properties, points[2].x - 20, points[2].y - 10);
+
+        cut_text(str(gdv(properties, "angle2"), "°"), properties, points[3].x - 40, 2);
+
+    }
+
+    // lable_angle(a = gdv(properties, "angle"), l = 20, r = 0.5, size = 2, color = "blue", show_labels = true);
+    // text(text = str(gdv(properties, "angle"), "°"), size = 10);
+
+    translate([0, 0, - 2 * gdv(properties, "tool thickness")])
+    union()
+    {
+        linear_extrude(3 * gdv(properties, "tool thickness"))
+        polygon(points = bottom_bracket(points, properties));
+
+        linear_extrude(3 * gdv(properties, "tool thickness"))
+        polygon(points = top_bracket(points, properties));        
+    }
+}
+
+module cut_text(lable, properties, dx, dy)
+{
+        color("white", 0.5)
+        translate([dx, dy, -gdv(properties, "tool thickness")])
+        linear_extrude(gdv(properties, "tool thickness") * 3)
+        text(lable, size = 8);
+}
+
+function bottom_bracket(pts, properties) = 
+[
+    [pts[0].x, pts[0].y],
+    [pts[0].x, - gdv(properties, "tool thickness")],
+    [pts[3].x, - gdv(properties, "tool thickness")],
+    [pts[3].x, pts[3].y],
+];
+
+function top_bracket(pts, properties) = 
+[
+    [pts[1].x, pts[1].y],
+    [pts[1].x, pts[1].y + gdv(properties, "tool thickness")],
+    [pts[2].x, pts[2].y + gdv(properties, "tool thickness")],
+    [pts[2].x, pts[2].y],
+];
+
+Main_Rafter_template = 
+[
+    "Main Rafter",
+        ["angle", 42],
+        ["angle2", 48],
+        ["width", convert_in2mm(in = 0.75)],
+        ["depth", convert_in2mm(in = 3.5)],
+        ["length", convert_in2mm(in = 9.5)],
+        ["tool thickness", LayersToHeight(10)],
+        // ["pre-translate", [0, -convert_in2mm(in = 68.25),0] ],              
+        // ["location", [0, -convert_in2mm(in = 27.35), convert_in2mm(in = 21)]],
+        // ["rotate", [32, 0, 0]],
+        ["lable length", convert_ft2mm(3.5)],
+        ["lable text", "Main Rafter"],
+        ["color", "yellow"]    
+];
+
+Brace_One_template = 
+[
+    "Brace_One",
+        ["angle", 32],
+        ["angle2", 106],
+        ["width", convert_in2mm(in = 0.75)],
+        ["depth", convert_in2mm(in = 3.5)],
+        ["length", convert_in2mm(in = 5.5)],
+        ["tool thickness", LayersToHeight(10)],
+        // ["pre-translate", [0, -convert_in2mm(in = 68.25),0] ],              
+        // ["location", [0, -convert_in2mm(in = 27.35), convert_in2mm(in = 21)]],
+        // ["rotate", [32, 0, 0]],
+        ["lable length", convert_ft2mm(3.5)],
+        ["lable text", "Brace 1"],
+        ["color", "yellow"]    
+];
+
+Brace_Two_template = 
+[
+    "Brace_One",
+        ["angle", 25],
+        ["angle2", 113],
+        ["width", convert_in2mm(in = 0.75)],
+        ["depth", convert_in2mm(in = 3.5)],
+        ["length", convert_in2mm(in = 7.5)],
+        ["tool thickness", LayersToHeight(10)],
+        // ["pre-translate", [0, -convert_in2mm(in = 68.25),0] ],              
+        // ["location", [0, -convert_in2mm(in = 27.35), convert_in2mm(in = 21)]],
+        // ["rotate", [32, 0, 0]],
+        ["lable length", convert_ft2mm(3.5)],
+        ["lable text", "Brace 2"],
+        ["color", "yellow"]    
+];
+
+Entry_Rafter_template = 
+[
+    "Entry_Rafter",
+        ["angle", 45],
+        ["angle2", 45],
+        ["width", convert_in2mm(in = 0.75)],
+        ["depth", convert_in2mm(in = 3.5)],
+        ["length", convert_in2mm(in = 8.5)],
+        ["tool thickness", LayersToHeight(10)],
+        // ["pre-translate", [0, -convert_in2mm(in = 68.25),0] ],              
+        ["lable location", [0, -convert_in2mm(in = 27.35), convert_in2mm(in = 21)]],
+        // ["rotate", [32, 0, 0]],
+        ["lable length", convert_ft2mm(3.5)],
+        ["lable text", "Entry Rafter"],
+        ["color", "yellow"]    
+];
