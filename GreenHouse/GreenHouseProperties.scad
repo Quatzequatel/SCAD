@@ -7,8 +7,15 @@ use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 
-module info() {
-    debugEcho()
+
+module GreenHouseProperties_Info() 
+{
+    properties_echo(Rafter_Main);
+    properties_echo(EntryBeamProperties);
+    properties_echo(Rafter_EndCap);
+    properties_echo(Brace_One);
+    properties_echo(Brace_Two);
+    properties_echo(HouseDimensions);
 }
 
 function getBoardProperty(board, enum) = getValue(v = board, enum = enum);
