@@ -324,7 +324,7 @@ function brace_board_points(angle, angle2, depth, length) = //echo([angle, angle
     ];
 
 
-module lable_angle(a = 30, l = 40, r = 1, size = 9, color = "blue") 
+module lable_angle(a = 30, l = 40, r = 1, size = 9, color = "blue", show_labels = false) 
 {
     if(show_labels)
     {
@@ -335,10 +335,10 @@ module lable_angle(a = 30, l = 40, r = 1, size = 9, color = "blue")
             translate([l, 0])
             circle(r = r, $fn=100);
 
-            square([l,1]);
+            square([l,r]);
 
             rotate([0,0,a])
-            square([l,1]);
+            square([l,r]);
 
             rotate([0,0,a/2])
             translate([l/3, -l/size])
