@@ -45,6 +45,7 @@ module scale(size = 24, increment = convert_in2mm(1), fontsize = 12)
 module properties_echo(property)
 {
   debugEcho(property.x,property, true);
+  echo();
 }
 
 function f(i, increment) = i * increment;
