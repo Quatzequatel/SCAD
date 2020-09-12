@@ -44,6 +44,8 @@ module info()
     echo(RoofLength = convert_mm2ft(mm = gdv(RoofProperties, "length")));
     echo(EntryRoofDimensions_inches = convertV_mm2Inch(mm = EntryRoofDimensions));
     echo(EntryRoofAngle = EntryRoofDimensions[3]);    
+
+    GreenHouseProperties_Info();
 }
 
 module Build(args) 
