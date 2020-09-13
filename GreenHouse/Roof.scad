@@ -44,8 +44,8 @@ module main_roof()
     translate([0,0, HouseWallHeight])
     union()
     {
-        translate([0,0,gdv(RoofProperties, "height" )/2])
-        cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" )/2, center=false);
+        // translate([0,0,gdv(RoofProperties, "height" )/2])
+        // cylinder(r=10, h=getDictionaryValue(RoofProperties, "height" )/2, center=false);
 
         truss_count = floor(gdv(RoofProperties, "truss count")+1)/2;
 

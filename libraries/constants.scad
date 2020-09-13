@@ -55,6 +55,9 @@ function LayersToHeight(layers) =
   InitialLayerHeight + (LayerHeight * (layers - 1));
 function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 
+// returns mm for requested wall count based on NozzelWidth.
+function WallThickness(wall_line_count = 1) = wall_line_count * NozzleWidth;
+
 function isVector(args) = args.x != undef;
 function isString(x) = 
   x == undef      ? false 

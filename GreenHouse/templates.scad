@@ -8,6 +8,7 @@ use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
+use <morphology.scad>;
 use <Roof.scad>;
 
 build();
@@ -18,7 +19,81 @@ module build(args)
     // rafter_template(Main_Rafter_template);
     // rafter_template(Brace_One_template);
     // rafter_template(Brace_Two_template);
-    rafter_template(Entry_Rafter_template);
+    // rafter_template(Entry_Rafter_template);
+
+    // add_Block_jBolt_template(Block_jBolt_template);
+    add_center_beam_spacer(Center_beam_spacer);
+
+}
+
+module add_center_beam_spacer(properties) 
+{
+    scale(size = 9, increment = convert_in2mm(1), fontsize = 6);
+    properties_echo(properties);
+
+    points = 
+    [
+        gdv(properties, "p1"),
+        gdv(properties, "p2"),
+        gdv(properties, "p3"),
+        gdv(properties, "p4"),
+    ];
+
+    rotate([-90,0,0])
+    difference()
+    {
+        union()
+        {
+            linear_extrude(height=gdv(properties, "brace width"), center=true) 
+            shell(d = gdv(properties, "spacer thickness"),center=true)
+            polygon(points);
+
+            linear_extrude(height = gdv(properties, "spacer thickness"), center=true) 
+            polygon(points);  
+        }
+
+        translate([0, points[1].y - gdv(properties, "beam depth")/2 + gdv(properties, "spacer thickness"), 0])
+        color("yellow", 0.5) 
+        linear_extrude(height=gdv(properties, "brace width"), center=true, convexity=10, twist=0) 
+        square([gdv(properties, "beam width"), gdv(properties, "beam depth")], center = true);
+    }
+
+  
+}
+
+module add_Block_jBolt_template(properties)
+{
+    scale(size = 9, increment = convert_in2mm(1), fontsize = 6);
+
+    rotate([90, 0, 0])
+    union()
+    {
+        difference()
+        {
+            linear_extrude(gdv(properties, "template thickness"))
+            square([gdv(properties, "block width"), gdv(properties, "template width")]);
+
+            translate([gdv(properties, "block width")/2, gdv(properties, "template width")/2, -2])
+            linear_extrude(2 * gdv(properties, "template thickness"))
+            // circle(gdv(properties, "template thickness"), $fn=100);        
+            circle(d = convert_in2mm(5/8), $fn=100);    
+        }        
+
+
+
+        color("yellow", 0.5)
+        translate([ gdv(properties, "block width") + gdv(properties, "template tab thickness"), 0, 0])
+        rotate([0,0, 90])
+        linear_extrude(gdv(properties, "template tab depth"))
+        square([gdv(properties, "template width"), gdv(properties, "template tab thickness")]);
+
+        color("aqua", 0.5)
+        rotate([0,0, 90])
+        // translate([gdv(properties, "block width"), 0, 0])
+        linear_extrude(gdv(properties, "template tab depth"))
+        square([gdv(properties, "template width"), gdv(properties, "template tab thickness")]);        
+    }
+
 }
 
 module rafter_template(properties)
@@ -158,4 +233,31 @@ Entry_Rafter_template =
         ["lable length", convert_ft2mm(3.5)],
         ["lable text", "Entry Rafter"],
         ["color", "yellow"]    
+];
+
+Block_jBolt_template = 
+[
+    "block j bolt placement template",
+    ["block width", 195],
+    ["bolt diameter", 15],
+    ["template width" , convert_in2mm(2)],
+    ["template thickness", WallThickness(6)],
+    ["template tab depth", convert_in2mm(1)],
+    ["template tab thickness", WallThickness(6)]
+];
+
+Center_beam_spacer = 
+[
+    "center beam spacer",
+    ["angle", 42],
+    ["beam width", 37.75],
+    ["beam depth", convert_in2mm(5.5 - 4.7)],
+    ["beam location", [0, convert_in2mm(4.7), 0]],
+    ["brace length", convert_in2mm(3)],
+    ["brace width", convert_in2mm(1.5)],
+    ["spacer thickness", WallThickness(4)],
+    ["p1", [-75.5026, 0]],
+    ["p2", [-18.875, 50.9878]],
+    ["p3", [18.875, 50.9878]],
+    ["p4", [75.5026, 0]]
 ];
