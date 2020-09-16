@@ -30,7 +30,8 @@ function setBoardProperty(board, thickness, width, length) =
 //board is in mm
 Board2x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 1.5), width = convert_in2mm(in = 3.5), length = convert_ft2mm(ft = 8));
 Board4x4 = setBoardProperty(board = [], thickness = convert_in2mm(in = 3.5), width = convert_in2mm(in = 3.5), length = convert_ft2mm(ft = 8));
-Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 1.5), width = convert_in2mm(in = 5.5), length = convert_ft2mm(ft = 8));
+Board2x6 = setBoardProperty(board = [], thickness = convert_in2mm(in = 1.5), width = convert_in2mm(in = 5.25), length = convert_ft2mm(ft = 8));
+Board2x8 = setBoardProperty(board = [], thickness = convert_in2mm(in = 1.5), width = convert_in2mm(in = 7.25), length = convert_ft2mm(ft = 8));
 
 BoardDimensions = [convert_in2mm(in = 2), convert_in2mm(in = 4), convert_ft2mm(ft = 8)];
 Stud = Board2x4;
@@ -97,14 +98,27 @@ West_Wall =
         [
             "wall dimension",
             [
-                HouseWidth,
+                HouseWidth - Board2x4.y,
                 HouseLength,
                 HouseWallHeight - Board2x4.x
             ]
         ],
         ["location", [0, 0, 0]],
         ["rotate", [90, 0, 90]],
-        ["color", "aqua"]
+        ["color", "aqua"],
+        ["foundation plate color", "Aquamarine"],
+        [
+            "plate dimension",
+            [
+                HouseWidth - Board2x8.y,
+                HouseLength,
+                0               //not used
+            ]
+        ],        
+        ["start plate flush", true],
+        ["foundation board", Board2x8],
+        ["foundation rotate", [0, 0, 90]],        
+        ["foundation location", [Board2x8.y, 0, 0]],
 ];
 
 South_Wall = 
@@ -116,14 +130,27 @@ South_Wall =
         [
             "wall dimension",
             [
-                HouseLength - convert_in2mm(7.01),
+                HouseLength - Board2x4.y,
                 HouseLength,
                 HouseWallHeight - Board2x4.x
             ]
         ],        
         ["location", [Board2x4.y, Board2x4.y, 0]],
         ["rotate", [90, 0, 0]],
-        ["color", "pink"]
+        ["color", "pink"],
+        ["foundation plate color", "Salmon"],        
+        [
+            "plate dimension",
+            [
+                HouseLength - Board2x8.y,
+                HouseLength,
+                0               //not used
+            ]
+        ],        
+        ["start plate flush", false],
+        ["foundation board", Board2x8],
+        ["foundation rotate", [0, 0, 0]],        
+        ["foundation location", [0, 0, 0]],
 ];
 
 North_Wall = 
@@ -135,14 +162,27 @@ North_Wall =
         [
             "wall dimension",
             [
-                HouseLength - convert_in2mm(7.02),
+                HouseLength - Board2x4.y,
                 HouseLength,
                 HouseWallHeight - Board2x4.x
             ]
         ],        
-        ["location", [Board2x4.y, HouseWidth, 0]],
+        ["location", [0, HouseWidth, 0]],
         ["rotate", [90, 0, 0]],
-        ["color", "yellow"]
+        ["color", "yellow"],
+        ["foundation plate color", "Salmon"],        
+        [
+            "plate dimension",
+            [
+                HouseLength - Board2x8.y,
+                HouseLength,
+                0               //not used
+            ]
+        ],        
+        ["start plate flush", true],
+        ["foundation board", Board2x8],
+        ["foundation rotate", [0, 0, 0]],
+        ["foundation location", [0, HouseWidth - Board2x8.y, 0]],        
 ];
 
 East_Wall1 = 
@@ -154,14 +194,27 @@ East_Wall1 =
         [
             "wall dimension",
             [
-                HouseWidth/2 - EntryWidth/2,
+                HouseWidth/2 - EntryWidth/2 ,
                 HouseLength,
                 HouseWallHeight - Board2x4.x
             ]
         ],        
-        ["location", [HouseLength - Board2x4.y, 0, 0]],
+        ["location", [HouseLength - Board2x4.y, Board2x4.y, 0]],
         ["rotate", [90, 0, 90]],
-        ["color", "blue"]
+        ["color", "blue"],
+        ["foundation plate color", "Aquamarine"],
+        [
+            "plate dimension",
+            [
+                HouseWidth/2 - EntryWidth/2, 
+                HouseLength,
+                0               //not used
+            ]
+        ],        
+        ["start plate flush", false],
+        ["foundation board", Board2x8],
+        ["foundation rotate", [0, 0, 90]],        
+        ["foundation location", [HouseLength , 0, 0]],        
 ];
 
 East_Wall2 = 
@@ -173,14 +226,29 @@ East_Wall2 =
         [
             "wall dimension",
             [
-                HouseWidth/2 - EntryWidth/2,
+                Board2x4.y + HouseWidth/2 - EntryWidth/2,
                 HouseLength,
                 HouseWallHeight - Board2x4.x
             ]
         ],        
-        ["location", [HouseLength - Board2x4.y, HouseWidth - (HouseWidth/2 - EntryWidth/2), 0]],
-        ["rotate", [90, 0, 90]],
-        ["color", "green"]
+        // ["location", [HouseLength - Board2x4.y, HouseWidth - (HouseWidth/2 - EntryWidth/2) - Board2x4.y, 0]],
+        // ["rotate", [90, 0, 90]],
+        ["location", [HouseLength , HouseWidth , 0]],
+        ["rotate", [90, 0, 270]],
+        ["color", "green"],
+        ["foundation plate color", "Aquamarine"],
+        [
+            "plate dimension",
+            [
+                HouseWidth/2 - EntryWidth/2 ,
+                HouseLength,
+                0               //not used
+            ]
+        ],        
+        ["start plate flush", false],
+        ["foundation board", Board2x8],
+        ["foundation rotate", [0, 0, 90]],        
+        ["foundation location", [HouseLength  , HouseWidth - (HouseWidth/2 - EntryWidth/2)- Board2x8.y, 0]],         
 ];
 
 North_Entry_Wall = 
@@ -192,14 +260,29 @@ North_Entry_Wall =
         [
             "wall dimension",
             [
-                EntryLength + Board2x4.y,
+                EntryLength ,
                 HouseLength,
                 HouseWallHeight - Board2x4.x
             ]
         ],        
-        ["location", [HouseLength - Board2x4.y , HouseWidth - (HouseWidth/2 - EntryWidth/2), 0]],
+        ["location", [HouseLength, HouseWidth - (HouseWidth/2 - EntryWidth/2), 0]],
         ["rotate", [90, 0, 0]],
-        ["color", "Salmon"]
+        ["color", "Salmon"],
+        ["foundation plate color", "Salmon"],
+        [
+            "plate dimension",
+            [
+                EntryLength + Board2x8.y,
+                HouseLength,
+                0               //not used
+            ]
+        ],        
+        ["start plate flush", true],
+        ["foundation board", Board2x8],
+        ["foundation rotate", [0, 0, 0]],        
+        // ["foundation location", [HouseLength - Board2x8.y, HouseWidth - (HouseWidth/2 - EntryWidth/2), 0]],  
+        ["foundation location", [HouseLength - Board2x8.y, convert_in2mm(119), 0]],  //actual
+        ["foundation isEnd" , true]
 ];
 
 South_Entry_Wall = 
@@ -211,14 +294,29 @@ South_Entry_Wall =
         [
             "wall dimension",
             [
-                EntryLength + Board2x4.y,
+                EntryLength ,
                 HouseLength,
                 HouseWallHeight - Board2x4.x
             ]
         ],        
-        ["location", [HouseLength - Board2x4.y , (HouseWidth/2 - EntryWidth/2) + Board2x4.y, 0]],
+        ["location", [HouseLength  , (HouseWidth/2 - EntryWidth/2) + Board2x4.y, 0]],
         ["rotate", [90, 0, 0]],
-        ["color", "red"]
+        ["color", "red"],
+        ["foundation plate color", "Salmon"],
+        [
+            "plate dimension",
+            [
+                EntryLength + Board2x8.y,
+                HouseLength,
+                0               //not used
+            ]
+        ],        
+        ["start plate flush", false],
+        ["foundation board", Board2x8],
+        ["foundation rotate", [0, 0, 0]],        
+        // ["foundation location", [HouseLength - Board2x8.y , (HouseWidth/2 - EntryWidth/2) - Board2x8.y, 0]],  
+        ["foundation location", [HouseLength - Board2x8.y , convert_in2mm(66), 0]],  //this is actual
+        ["foundation isEnd" , true]
 ];
 
 StudProperties = 

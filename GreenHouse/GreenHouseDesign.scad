@@ -52,7 +52,7 @@ module Build(args)
 {
 
     // echo(sin45 = sin(45));
-    info();
+    // info();
     scale(size = 16, increment = convert_in2mm(12), fontsize = 72);
 
     // simpleView(showentry = true, showRoof = false, showwalls = true);
@@ -61,13 +61,20 @@ module Build(args)
     rotate([0,0,90])
     union()
     {
+        translate([0, 0, 2 * Board2x4.x])
         main_roof();
-        add_floor();        
     }
     
+    translate([0, 0, 2 * Board2x4.x])
     add_entry_roof();
 
+    foundation_plates();
+    translate([0, 0, 2 * Board2x4.x])
     HouseFrame2();
+
+    translate([HouseLength/2, HouseWidth/2,0])
+    rotate([0,0,90])
+    add_floor();  
 
 }
 
@@ -84,6 +91,17 @@ module HouseFrame2()
     add_wall(North_Entry_Wall);
     add_wall(South_Entry_Wall);
 
+}
+
+module foundation_plates() 
+{
+    add_foundation_plate(West_Wall);
+    add_foundation_plate(South_Wall);
+    add_foundation_plate(North_Wall);
+    add_foundation_plate(East_Wall1);
+    add_foundation_plate(East_Wall2);
+    add_foundation_plate(North_Entry_Wall);
+    add_foundation_plate(South_Entry_Wall);
 }
 
 module EntryFrame2()
@@ -211,6 +229,32 @@ module add_wall(properties)
             finished = true
         );
     }
+}
+
+module add_foundation_plate(properties)
+{
+    echo(Wall = properties.x);
+    color(gdv(properties, "foundation plate color"), 0.5)
+    translate(gdv(properties, "foundation location"))
+    rotate(gdv(properties, "foundation rotate"))
+    {
+        Plate
+        (
+            wallOD = gdv(properties, "plate dimension"),
+            board = gdv(properties, "foundation board"),
+            isOverlap = !gdv(properties, "start plate flush"), 
+            isEnd = gdv(properties, "foundation isEnd")
+        );
+
+        translate([0, 0, gdv(properties, "foundation board").x])
+        Plate
+        (
+            wallOD = gdv(properties, "plate dimension"),
+            board =  gdv(properties, "foundation board"),
+            isOverlap = gdv(properties, "start plate flush"),
+            isEnd = gdv(properties, "foundation isEnd")
+        );
+    }    
 }
 
 module simpleView(showentry = true, showRoof = true, showwalls = true)
