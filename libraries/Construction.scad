@@ -250,6 +250,39 @@ module Wall(wallOD, board, spacing, includeStuds = true, finished = false, ascen
     }
 }
 
+module Plate(wallOD, board, isOverlap = false, isEnd = false) 
+{
+    // properties_echo(wallOD);
+    echo(caller = parent_module(1), wallOD = wallOD, board = board, isOverlap = isOverlap, isEnd = false);
+    plate_length = wallOD.x;
+    // rotate([90, 0, 0])
+    if (!isOverlap) 
+    {
+        // xyHorizontalBoard(board = vSetValue(board, 2, plate_length), startlocation = [0, 0, 0]);
+        add_horizontal_board(board = vSetValue(board, 2, plate_length));
+    } 
+    else 
+    {
+        // xyHorizontalBoard(board = vSetValue(board, 2, plate_length), startlocation = [board.y, board.x, 0]);
+        if(!isEnd)
+        {
+            translate([board.y, 0, 0])
+            add_horizontal_board(board = vSetValue(board, 2, plate_length));
+        }
+        else
+        {
+            add_horizontal_board(board = vSetValue(board, 2, plate_length));
+        }
+
+    }
+}
+
+module add_horizontal_board(board) 
+{
+    linear_extrude(board.x)
+    square([board.z, board.y], center = false);
+}
+
 module Roof(roofOD, board, spacing, includeHeader = true, includeFacet = true, includeStuds = true, finished = false, ascending = true)
 {
     finishedColor = "slategray" ;

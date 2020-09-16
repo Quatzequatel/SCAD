@@ -22,21 +22,21 @@ module scale(size = 24, increment = convert_in2mm(1), fontsize = 12)
     for (i=[-size:size]) 
     {
         translate([f(i, increment), 0, 0])
-        color("red")
+        color("red", 0.5)
         union()
         {
             text(text = str(i), size = fontsize);
             rotate([90,0])
-            cylinder(r=1, h=f(1, increment), center=true);
+            cylinder(r=0.5, h=f(1, increment), center=true);
         }
 
         translate([0, f(i, increment), 0])
-        color("green")
+        color("green", 0.5)
         union()
         {
             text(text = str(i), size = fontsize);
             rotate([0,90])
-            cylinder(r=1, h=f(1, increment), center=true);
+            cylinder(r=0.5, h=f(1, increment), center=true);
         }   
     }     
   }
@@ -44,7 +44,8 @@ module scale(size = 24, increment = convert_in2mm(1), fontsize = 12)
 
 module properties_echo(property)
 {
-  debugEcho(property.x,property, true);
+  echo(parent_module(1));
+  debugEcho(property.x, property, true);
   echo();
 }
 

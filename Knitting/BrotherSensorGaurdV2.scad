@@ -1,4 +1,15 @@
 /*
+    
+*/
+
+include <constants.scad>;
+
+use <convert.scad>;
+use <trigHelpers.scad>;
+use <ObjectHelpers.scad>;
+use <dictionary.scad>;
+
+/*
 Orientation: looking at back of knitting head is Y axis.
 X-> width
 Y-> depth
@@ -40,7 +51,7 @@ GB_depth = TI_depth - 1.4;
 
 function TabTransitionDepth(args) = args - TI_Gap;
 
-Build(buildBar=true, buildTabs = true);
+Build(buildBar=true, buildTabs = false);
 // trangle(10,10);
 module Build(buildBar=false, buildTabs = false) {
     echo("");
@@ -58,18 +69,37 @@ module Build(buildBar=false, buildTabs = false) {
         if(buildBar)
         {
             // Gaurd Bar
-            GauradBarX =  -Cavety1Width;
-            GauradBarY = 0;
-            GauradBarZ = 2 * TI_depth - TabTransitionDepth(TI_depth);
-            // echo(GauradBarWidth =GauradBarWidth, GauradBarZ=GauradBarZ);
-            GauradBar(  GB_width,
-                        GB_height,
-                        GB_depth,
-                        GauradBarX,
-                        GauradBarY,
-                        GauradBarZ ); 
+            // GauradBarX =  -Cavety1Width;
+            // GauradBarY = 0;
+            // GauradBarZ = 2 * TI_depth - TabTransitionDepth(TI_depth);
+            // echo(GB_width =GB_width, GB_height=GB_height, GB_depth = GB_depth);
+            // %GauradBar(  GB_width,
+            //             GB_height,
+            //             GB_depth,
+            //             GauradBarX,
+            //             GauradBarY,
+            //             - GB_depth ); 
+
+            bare_gaurd_bar();
         }
     }
+}
+
+module bare_gaurd_bar()
+{
+                // pts = trapazoid(42, 42, 50, 30, GB_width);
+            angle = 2;
+            
+            // translate([0, 0, -1])
+            rotate([-90,0,0])
+            translate([-Cavety1Width, 0, 0])
+            color("red", 0.5)
+            linear_extrude(2 * GB_height)
+            minkowski()     
+            {
+                polygon(trapazoid(angle, angle, 20, GB_depth, GB_width-20));
+                // circle(r=1);        
+            }
 }
 
 module GauradBar(width, height, depth, x, y, z)

@@ -27,11 +27,11 @@ module build(args)
 
 module add_floor() 
 {
-    %color("AliceBlue", 0.5) 
+    %color("brown", 0.5) 
     translate([-HouseWidth/2, -HouseLength/2])
     square([HouseWidth, HouseLength]);
 
-    %color("AliceBlue", 0.5) 
+    %color("brown", 0.5) 
     translate([0, -1 * (HouseLength/2 + EntryLength/2 )])
     square([EntryWidth, EntryLength], center = true);
 }

@@ -46,11 +46,43 @@ let
 )
 result;
 
+/*
+    Shape functions:
+        isosceles_triangle(s) returns points[] where s is the hypotenuse.
+        getTrianglePoints(sideA, angleA) retuns points for right triangle with sideA and angleA are given.
+*/
+
+//  returns points[] where s is the hypotenuse.
 function isosceles_triangle(s) = 
 [
     [0,0],
     [s,0],
     [s/2, s]
+];
+
+//retuns points for right triangle with sideA and angleA are given.
+function getTrianglePoints(sideA, angleA) = 
+[
+    [0,0], 
+    [0, sideA], 
+    [sideBaA(side_a =  sideA, aA =  angleA) , 0]    
+];
+
+// function trap_top(angle, depth, length) = length -  side_b(angle, depth);
+function hypotenuse_cut(angle, depth, length) = 
+    [
+        [-length/2,0], 
+        [sideBaA(angle, depth) - length/2, depth], 
+        [length/2 - sideBaA(90 - angle, depth), depth], 
+        [length/2, 0]
+    ];
+
+function trapazoid(angle1, angle2, width, height, extension = 0) = 
+[
+    [0, 0],
+    [sideBaA(angle1, height), height],
+    [width + extension - sideBaA(angle2, height), height],
+    [width + extension, 0]
 ];
 
 function AddPoints(p1, p2) = [p1.x + p2.x, p2.y + p2.y, p1.z + p2.z];
@@ -176,7 +208,7 @@ module Test()
     //     // assert(3.9 < result && result < 4);
     // }
     // assert(testPass("lengthAdjacent([3657.6, 42)", [3657.6, 42], Height(x=3657.6 , angle=45 ))[1] == 1);
-    assert(testPass("lengthOpposite(side_a = 6, angleA = 42 )", [6,42], sideB(side_a=6, aA=42 ))[1] < 6.67);
+    assert(testPass("lengthOpposite(side_a = 6, angleA = 42 )", [6,42], sideBaA(side_a=6, aA=42 ))[1] < 6.67);
     assert(testPass("sideC(side_a = 6, aA = 42 )", [6,42], sideC(side_a=6, aA=42 ))[1] <  8.97);
     assert(testPass("angleA(side_a = 6, side_b = 6.6638)", [6,42], angleA(side_a = 6, side_b = 6.6638 ))[1] <  42.1);
     assert(testPass("angleB(side_a = 6, side_b = 6.6638 )", [6,42], angleB(side_a = 6, side_b = 6.6638 ))[1] < 48.1);

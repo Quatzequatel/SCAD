@@ -24,26 +24,26 @@ module add_entry_roof()
 {
     scale(size = 16, increment = convert_in2mm(12), fontsize = 72);
 
-    translate([HouseLength/2, HouseWidth/2,0])
-    rotate([0,0,90])    
-    add_floor();
-
-    add_beam();
-
-    for (i=[0:4]) 
+    // translate([HouseLength/2, HouseWidth/2,0])
+    // rotate([0,0,90])    
+    // add_floor();
+    union()
     {
-        translate
-        (
-            [
-                -i * getDictionaryValue(RoofProperties, "spacing" ),
-                0,
-                0
-            ]
-        )
-        add_entry_rafter(Entryway_Rafter);    
-    }
-    
+        add_beam();
 
+        for (i=[0:4]) 
+        {
+            translate
+            (
+                [
+                    -i * getDictionaryValue(RoofProperties, "spacing" ),
+                    0,
+                    0
+                ]
+            )
+            add_entry_rafter(Entryway_Rafter);    
+        }        
+    }
 }
 
 module add_beam()

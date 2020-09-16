@@ -39,7 +39,7 @@ module main_roof()
     // linear_extrude(convert_ft2mm(ft = 4))
     // translate([-getDictionaryValue(HouseDimensions, "width")/2,0,0])
     // square([getDictionaryValue(HouseDimensions, "width"), getDictionaryValue(HouseDimensions, "length")]);
-    add_floor();
+    // add_floor();
 
     translate([0,0, HouseWallHeight])
     union()
@@ -139,12 +139,12 @@ module center_beam()
         }
 }
 
-function getTrianglePoints(sideA, angleA) = 
-[
-    [0,0], 
-    [0, sideA], 
-    [sideBaA(side_a =  sideA, aA =  angleA) , 0]    
-];
+// function getTrianglePoints(sideA, angleA) = 
+// [
+//     [0,0], 
+//     [0, sideA], 
+//     [sideBaA(side_a =  sideA, aA =  angleA) , 0]    
+// ];
 
 module Info()
 {
@@ -255,8 +255,8 @@ module cut_rafter(angle, width, depth, length)
     
 }
 
-function side_b(angle, depth) = //echo([angle, depth]) 
-depth/tan(angle);
+function side_b(angleA, sideA) = //echo([angle, depth]) 
+sideA/tan(angleA);
 
 // function trap_top(angle, depth, length) = length -  side_b(angle, depth);
 function hypotenuse_cut(angle, depth, length) = 
