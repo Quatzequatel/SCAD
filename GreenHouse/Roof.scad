@@ -63,7 +63,7 @@ module main_roof()
                         0
                     ]
                 )
-                add_rafter(Rafter_Main); 
+                add_rafter(Rafter_Main, include_braces = true); 
 
                 translate
                 (
@@ -85,7 +85,7 @@ module main_roof()
                         0
                     ]
                 )
-                add_rafter(Rafter_Main);        
+                add_rafter(Rafter_Main, include_braces = true);        
 
                 translate
                 (
@@ -100,6 +100,8 @@ module main_roof()
             else
             {
                 // echo(True_i = i);
+                // if(i % 2)
+                // {
                 translate
                 (
                     [
@@ -108,12 +110,14 @@ module main_roof()
                         0
                     ]
                 )
-                add_rafter(Rafter_Main);                  
+                    add_rafter(Rafter_Main, include_braces = i % 2 == 0);                      
+                // }
+                
             }     
         }
 
         // add_rafter(Rafter_Main);       
-        center_beam();
+        // center_beam();
     }
 
  }
@@ -197,7 +201,7 @@ module Info()
 
 //// functions
 
-module add_rafter(properties)
+module add_rafter(properties, include_braces = true)
 {
     // echo();
     // debugEcho(properties[0], properties, true);
@@ -205,8 +209,12 @@ module add_rafter(properties)
 
     add_rafter_beam(properties);
     
+    if(include_braces)
+    {
     add_brace(Brace_One);
     add_brace(Brace_Two);
+    }
+
 
 }
 
