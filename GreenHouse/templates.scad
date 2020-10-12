@@ -10,20 +10,34 @@ use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 use <morphology.scad>;
 use <Roof.scad>;
+$fn = 100;
 
 build();
 
 module build(args) 
 {
-    rotate([180,0,0])
+    // rotate([180,0,0])
     // rafter_template(Main_Rafter_template);
-    // rafter_template(Brace_One_template);
+    rafter_template(Brace_One_template);
     // rafter_template(Brace_Two_template);
     // rafter_template(Entry_Rafter_template);
 
     // add_Block_jBolt_template(Block_jBolt_template);
-    add_center_beam_spacer(Center_beam_spacer);
+    // add_center_beam_spacer(Center_beam_spacer);
 
+    // // pts = trapazoid(42, 42, 50, 30, 200);
+
+    // // translate([-151.0052/2, -50.9878/2])
+    // color("red", 0.5)
+    // minkowski()     
+    // {
+    //     // linear_extrude(10)
+    //     polygon(pts);
+    //     circle(r=2);        
+    // }
+
+
+    // echo(pts = pts);
 }
 
 module add_center_beam_spacer(properties) 
@@ -39,7 +53,7 @@ module add_center_beam_spacer(properties)
         gdv(properties, "p4"),
     ];
 
-    rotate([-90,0,0])
+    rotate([90,0,0])
     difference()
     {
         union()
@@ -48,17 +62,59 @@ module add_center_beam_spacer(properties)
             shell(d = gdv(properties, "spacer thickness"),center=true)
             polygon(points);
 
+            //brace 
+            translate([0, 0, 16])
             linear_extrude(height = gdv(properties, "spacer thickness"), center=true) 
             polygon(points);  
+
+            //brace 
+            translate([0, 0, -16])
+            linear_extrude(height = gdv(properties, "spacer thickness"), center=true) 
+            polygon(points);              
         }
 
+        //void for beam
         translate([0, points[1].y - gdv(properties, "beam depth")/2 + gdv(properties, "spacer thickness"), 0])
         color("yellow", 0.5) 
         linear_extrude(height=gdv(properties, "brace width"), center=true, convexity=10, twist=0) 
         square([gdv(properties, "beam width"), gdv(properties, "beam depth")], center = true);
-    }
 
-  
+        //screw holes
+        add_screw_holes(screw_hole_properties);
+        
+        mirror([1, 0, 0]) 
+            add_screw_holes(screw_hole_properties);
+        
+        
+        // %color("grey", 0.5)
+        // translate([-45, 10, 0])
+        // rotate([90, 0, 48])         
+        // cylinder(d = woodScrewShankDiaN_8, h=50, center=true);
+    }
+}
+
+module add_screw_holes(properties, count = 1, space = -45)
+{
+    for (i=[0:count]) 
+    {
+        add_screw_hole(properties, addspace = i * space);
+    }
+    
+}
+
+module add_screw_hole(properties, addspace = -20)
+{
+    //shank
+    color(gdv(properties, "shank color"), 0.5)
+    translate(Add2X(gdv(properties, "shank move"), addspace))
+    rotate(gdv(properties, "shank rotate"))         
+    cylinder(d = gdv(properties, "shank diameter"), h=gdv(properties, "shank length"), center=true);    
+    
+    //head
+    color(gdv(properties, "head color"), 0.5)
+    translate(Add2X(gdv(properties, "head move"), addspace) )
+    rotate(gdv(properties, "head rotate"))         
+    cylinder(d = gdv(properties, "head diameter"), h=gdv(properties, "head length"), center=true);  
 }
 
 module add_Block_jBolt_template(properties)
@@ -119,7 +175,7 @@ module rafter_template(properties)
             length = gdv(properties, "length")
         );
 
-        cut_text(gdv(properties, "lable text"), properties, convert_in2mm(-1), points[1].y/2);
+        cut_text(gdv(properties, "lable text"), properties, convert_in2mm(1), points[1].y/2);
 
         cut_text(str(gdv(properties, "angle"), "°"), properties, points.x.x + 25, 2);
 
@@ -132,7 +188,21 @@ module rafter_template(properties)
     // lable_angle(a = gdv(properties, "angle"), l = 20, r = 0.5, size = 2, color = "blue", show_labels = true);
     // text(text = str(gdv(properties, "angle"), "°"), size = 10);
 
-    translate([0, 0, - 2 * gdv(properties, "tool thickness")])
+    if(gdv(properties, "left handed"))
+    {
+        translate([0, 0, - 2 * gdv(properties, "tool thickness")])    
+        add_tabs(points, properties);
+    }
+    else
+    {
+        add_tabs(points, properties);
+    }
+
+
+}
+
+module add_tabs(points, properties)
+{
     union()
     {
         linear_extrude(3 * gdv(properties, "tool thickness"))
@@ -140,7 +210,7 @@ module rafter_template(properties)
 
         linear_extrude(3 * gdv(properties, "tool thickness"))
         polygon(points = top_bracket(points, properties));        
-    }
+    }    
 }
 
 module cut_text(lable, properties, dx, dy)
@@ -161,10 +231,10 @@ function bottom_bracket(pts, properties) =
 
 function top_bracket(pts, properties) = 
 [
-    [pts[1].x, pts[1].y],
-    [pts[1].x, pts[1].y + gdv(properties, "tool thickness")],
-    [pts[2].x, pts[2].y + gdv(properties, "tool thickness")],
-    [pts[2].x, pts[2].y],
+    [pts[1].x + gdv(properties, "tool thickness"), pts[1].y],
+    [pts[1].x + gdv(properties, "tool thickness"), pts[1].y + gdv(properties, "tool thickness")],
+    [pts[2].x - gdv(properties, "tool thickness"), pts[2].y + gdv(properties, "tool thickness")],
+    [pts[2].x - gdv(properties, "tool thickness"), pts[2].y],
 ];
 
 Main_Rafter_template = 
@@ -180,6 +250,7 @@ Main_Rafter_template =
         // ["location", [0, -convert_in2mm(in = 27.35), convert_in2mm(in = 21)]],
         // ["rotate", [32, 0, 0]],
         ["lable length", convert_ft2mm(3.5)],
+        ["left handed", false],        
         ["lable text", "Main Rafter"],
         ["color", "yellow"]    
 ];
@@ -198,12 +269,13 @@ Brace_One_template =
         // ["rotate", [32, 0, 0]],
         ["lable length", convert_ft2mm(3.5)],
         ["lable text", "Brace 1"],
+        ["left handed", false], 
         ["color", "yellow"]    
 ];
 
 Brace_Two_template = 
 [
-    "Brace_One",
+    "Brace_Two",
         ["angle", 25],
         ["angle2", 113],
         ["width", convert_in2mm(in = 0.75)],
@@ -215,6 +287,7 @@ Brace_Two_template =
         // ["rotate", [32, 0, 0]],
         ["lable length", convert_ft2mm(3.5)],
         ["lable text", "Brace 2"],
+        ["left handed", false], 
         ["color", "yellow"]    
 ];
 
@@ -251,13 +324,29 @@ Center_beam_spacer =
     "center beam spacer",
     ["angle", 42],
     ["beam width", 37.75],
-    ["beam depth", convert_in2mm(5.5 - 4.7)],
+    ["beam depth", convert_in2mm(5.25 - 4.7)],
     ["beam location", [0, convert_in2mm(4.7), 0]],
     ["brace length", convert_in2mm(3)],
     ["brace width", convert_in2mm(1.5)],
-    ["spacer thickness", WallThickness(4)],
+    ["spacer thickness", WallThickness(6)],
     ["p1", [-75.5026, 0]],
     ["p2", [-18.875, 50.9878]],
     ["p3", [18.875, 50.9878]],
     ["p4", [75.5026, 0]]
+];
+
+screw_hole_properties = 
+[
+    "screw hole properties",
+    ["angle", 48],
+    ["shank color", "grey"],
+    ["head color", "yellow"],
+    ["shank diameter", woodScrewShankDiaN_8],
+    ["shank length", 150],
+    ["shank rotate", [90, 0, 48]],
+    ["shank move", [-12.7, 10, 0]],
+    ["head diameter", convert_in2mm(0.5)],
+    ["head length", 25],
+    ["head rotate", [90, 0, 48]],    
+    ["head move", [-(12.7 - convert_in2mm(0.5)), 0, 0]],
 ];
