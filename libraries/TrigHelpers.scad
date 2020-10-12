@@ -164,7 +164,7 @@ result;
   side_b is the shorter leg (ex: 3) and angleA is the larger (ex: 53.13) of the two
 */
 function lengthOpposite(side_a, angleA) = 
-let( do_echo = ISDEBUGEMODE ? fargsEcho("lengthOpposite([0]=side_b, [1]=angleA )", [side_b, angleA]) : 0)
+let( do_echo = ISDEBUGEMODE ? fargsEcho("lengthOpposite([0]=side_a, [1]=angleA )", [side_a, angleA]) : 0)
 let( angle = max(angleA, AngleOpposite(angleA)))
 let
     (

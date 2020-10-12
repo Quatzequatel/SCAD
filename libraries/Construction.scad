@@ -15,8 +15,8 @@ function sq(value) = value * value;
 function hypotenuse(side1, side2) = sqrt(sq(side1) + sq(side2));
 function insideHypotenuse(side1, side2, board) = sqrt(sq(side1 - getValue(board, enThickness)) + sq(side2 - getValue(board, enThickness)));
 CONSTRUCTION_DEBUG_ECHO = false;
-polyBoardAngle_DEBUG = true;
-ROOF_DEBUG = true;
+polyBoardAngle_DEBUG = false;
+ROOF_DEBUG = false;
 //orientation  origin i
 
 function frame(p0, h, l, board) = 
@@ -220,7 +220,7 @@ module Wall(wallOD, board, spacing, includeStuds = true, finished = false, ascen
             if(ascending)
             {
                 // xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [wallOD.x - board.x ,board.x, 0], color = finishedColor);
-                xyVerticalBoard(board = board, startlocation = [wallOD.x - 2*board.x , board.x, 0], color = "yellow");
+                xyVerticalBoard(board = board, startlocation = [wallOD.x - 2 * board.x , board.x, 0], color = "yellow");
             }
             else
             {
@@ -234,7 +234,18 @@ module Wall(wallOD, board, spacing, includeStuds = true, finished = false, ascen
             for(i = ascending == true ? [0 : 1 : wallOD.x/spacing] : [wallOD.x/spacing - 1 : -1 : 0] )
             {
                 debugEcho(str(i = i ));
-                xyVerticalBoard(board = vSetValue(board, 2, wallOD.z - board.x), startlocation = [i * spacing ,board.x, 0], color = ascending ? finishedColor : "skyblue");
+                xyVerticalBoard
+                    (
+                        board = vSetValue(board, 2, wallOD.z - board.x), 
+                        startlocation = 
+                            [
+                                // i * spacing,
+                                // i * spacing  - (i == 0 ? 0 : board.x/2),
+                                board_spacing(i, spacing, board),
+                                board.x, 
+                                0
+                                ], 
+                        color = ascending ? finishedColor : "skyblue");
             }
             if(ascending)
             {
@@ -250,10 +261,12 @@ module Wall(wallOD, board, spacing, includeStuds = true, finished = false, ascen
     }
 }
 
+function board_spacing(x, spacing, board) = x < 1 ? 0 : x * spacing - (board.x / 2);
+
 module Plate(wallOD, board, isOverlap = false, isEnd = false) 
 {
     // properties_echo(wallOD);
-    echo(caller = parent_module(1), wallOD = wallOD, board = board, isOverlap = isOverlap, isEnd = false);
+    // echo(caller = parent_module(1), wallOD = wallOD, board = board, isOverlap = isOverlap, isEnd = false);
     plate_length = wallOD.x;
     // rotate([90, 0, 0])
     if (!isOverlap) 
