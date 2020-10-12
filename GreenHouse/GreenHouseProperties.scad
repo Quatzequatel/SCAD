@@ -86,6 +86,18 @@ HouseWidthCenter = HouseWidth/2 - Board2x4.x/2;
 location_entry_center = [HouseLength, HouseWidthCenter, HouseWallHeight + (EntryWidth/2)];
 // location_entry_center = [ 0, HouseWidthCenter, convert_in2mm(in = 24.75)];
 
+Polycarbonate_sheet = 
+[
+    "polycarbonate sheet",
+    ["width", convert_in2mm(47.25)],
+    ["height", convert_in2mm(96)],
+    ["thickness", 6],
+    ["color", "WhiteSmoke"],
+    ["alpha value", 0.5],
+    ["location", [0, 0, - 2 * Board2x4.y]],
+    ["spacing", convert_in2mm(0.25)]
+];
+
 /*
     Walls
 */
@@ -126,13 +138,13 @@ South_Wall =
     "South_Wall",
         ["width", HouseLength],
         ["length", Board2x4.y] ,
-        ["height", HouseWallHeight],
+        ["height", HouseWallHeight -convert_in2mm(3.5)],
         [
             "wall dimension",
             [
                 HouseLength - Board2x4.y,
                 HouseLength,
-                HouseWallHeight - Board2x4.x
+                HouseWallHeight - 5 * Board2x4.x
             ]
         ],        
         ["location", [Board2x4.y, Board2x4.y, 0]],
