@@ -49,6 +49,11 @@ module properties_echo(property)
   echo();
 }
 
+module debug_callstack()
+{
+  echo(parent = parent_module(2), child = parent_module(1));
+}
+
 function f(i, increment) = i * increment;
 
 function LayersToHeight(layers) = 
@@ -76,7 +81,7 @@ module debugEcho(lable, args, mode)
 
 function debugDebug(lable, args, mode) = IS_DEBUG_DEBUG ? echo(debugEcho=lable, args, mode) : "";
 
-function fargsEcho(lable, args) = 
+function fargsEcho(lable, args) = echo(parent = parent_module(2), child = parent_module(1))
 let
 (
   doOnce = 
