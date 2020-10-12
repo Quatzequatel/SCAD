@@ -44,29 +44,20 @@ module info()
     echo(RoofLength = convert_mm2ft(mm = gdv(RoofProperties, "length")));
     echo(EntryRoofDimensions_inches = convertV_mm2Inch(mm = EntryRoofDimensions));
     echo(EntryRoofAngle = EntryRoofDimensions[3]);    
+    properties_echo(Polycarbonate_sheet);
 
     GreenHouseProperties_Info();
 }
 
 module Build(args) 
 {
-
-    // echo(sin45 = sin(45));
+    // debug_callstack();
     // info();
     scale(size = 16, increment = convert_in2mm(12), fontsize = 72);
 
-    // simpleView(showentry = true, showRoof = false, showwalls = true);
+    // simpleView(showentry = true, showRoof = true, showwalls = true);
 
-    translate([HouseLength/2, HouseWidth/2,0])
-    rotate([0,0,90])
-    union()
-    {
-        translate([0, 0, 2 * Board2x4.x])
-        main_roof();
-    }
-    
-    translate([0, 0, 2 * Board2x4.x])
-    add_entry_roof();
+    add_roof();
 
     foundation_plates();
     translate([0, 0, 2 * Board2x4.x])
@@ -76,147 +67,113 @@ module Build(args)
     rotate([0,0,90])
     add_floor();  
 
+    // add_polycarbonate_sheet();
+
+}
+
+module add_roof()
+{
+    translate([HouseLength/2, HouseWidth/2,0])
+    rotate([0,0,90])
+    union()
+    {
+        translate([0, 0, 2 * Board2x4.x])
+        main_roof();  //in use <roof.scad>;
+    }
+    
+    translate([0, 0, 2 * Board2x4.x])
+    add_entry_roof(); //in use <roof.scad>;
 }
 
 module HouseFrame2()
 {
+    debug_callstack();
+
     isFinished = true;
     //back wall
     add_wall(West_Wall);
     add_wall(North_Wall);
     add_wall(South_Wall);
+    // add_glazing_to_wall(South_Wall);
+
     add_wall(East_Wall1);
     add_wall(East_Wall2);
 
     add_wall(North_Entry_Wall);
-    add_wall(South_Entry_Wall);
+    // add_wall(South_Entry_Wall);
 
 }
 
 module foundation_plates() 
 {
-    add_foundation_plate(West_Wall);
-    add_foundation_plate(South_Wall);
-    add_foundation_plate(North_Wall);
+    debug_callstack();
+    add_foundation_plate(South_Entry_Wall);
+    add_foundation_plate(North_Entry_Wall);
     add_foundation_plate(East_Wall1);
     add_foundation_plate(East_Wall2);
-    add_foundation_plate(North_Entry_Wall);
-    add_foundation_plate(South_Entry_Wall);
+    add_foundation_plate(South_Wall);
+    add_foundation_plate(North_Wall);
+    add_foundation_plate(West_Wall);
 }
 
-module EntryFrame2()
+module add_roof_plate()
 {
-    isFinished = true;
-    //left side wall
-    translate
-    (
-        [
-            gdv(HouseDimensions, "width") + Board2x4.y, 
-            gdv(HouseDimensions, "width") - (gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2) + Board2x4.y, 
-            0
-        ]
-    )
-    rotate([90, 0, 0]) 
-    {
-        color("yellow")
-        Wall(
-            wallOD = [gdv(EntryDimensions, "width") - Board2x4.y, EntryDimensions.y, gdv(EntryDimensions, "height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            finished = isFinished
-        );        
-    }
 
-    //right side wall
-    translate
-    (
-        [
-            gdv(HouseDimensions, "width") + Board2x4.y, 
-            (gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2), 
-            0
-        ]
-    )
-    rotate([90, 0, 0]) 
-    {
-        color("yellow")
-        Wall(
-            wallOD = [gdv(EntryDimensions, "width") - Board2x4.y, EntryDimensions.y, gdv(EntryDimensions, "height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            finished = isFinished
-        );        
-    }
-
-    //Doorway
-    translate
-    (
-        [
-            gdv(HouseDimensions, "width") + gdv(EntryDimensions, "width") - Board2x4.y, 
-            (gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2), 
-            0
-        ]
-    )
-    rotate([90, 0, 90]) 
-    {
-        color("yellow")
-        Wall(
-            wallOD = [gdv(EntryDimensions, "width"), EntryDimensions.y, gdv(EntryDimensions, "height")], 
-            board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-            spacing = StudSpacing,
-            includeStuds = false,
-            finished = isFinished
-        );        
-    }    
 }
 
-module EntryRoofFrame2()
+module add_glazing_to_wall(properties)
 {
-    echo(EntryRoofFrame2 = 1, EntryRoofDimensions=EntryRoofDimensions);
-    //left
-    // translate([0, 0, gdv(HouseDimensions, "wall height") + Board2x4.y])
-    // rotate([90, 0, 90]) 
-    translate
-    (
-        [
-            gdv(HouseDimensions, "width") + Board2x4.y, 
-            gdv(HouseDimensions, "width") - (gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2) + Board2x4.y, 
-            gdv(HouseDimensions, "wall height") + Board2x4.y
-        ]
-    )
-    rotate([90, 0, 0])    
-    Roof
-    (
-        roofOD = EntryRoofDimensions, //[x,y,z,angle]
-        board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-        spacing = StudSpacing,
-        includeHeader = true,
-        includeStuds = true,
-        finished = true
-    );
+     debug_callstack();
+     echo(
+         panel_count = round(ceil(gdv(properties, "wall dimension").x / gdv(Polycarbonate_sheet, "width"))),
+         width = gdv(Polycarbonate_sheet, "width"),
+         spacing = gdv(Polycarbonate_sheet, "spacing")
+         );
 
-    translate
-    (
-        [
-            gdv(HouseDimensions, "width") + Board2x4.y, 
-            (gdv(HouseDimensions, "width")/2 - gdv(EntryDimensions, "width")/2) - Board2x4.y , 
-            gdv(HouseDimensions, "wall height") + Board2x4.y
-        ]
-    )
-    mirror([0,1,0])
-    rotate([90, 0, 0])    
-    Roof
-    (
-        roofOD = EntryRoofDimensions, //[x,y,z,angle]
-        board = Board2x4, //vSetValue(Board2x4, 2, convert_in2mm(72)-Board2x4.x), 
-        spacing = StudSpacing,
-        includeHeader = true,
-        includeStuds = true,
-        finished = true
-    );
+    for (i=[0: round(floor(gdv(properties, "wall dimension").x / gdv(Polycarbonate_sheet, "width")))]) 
+    {
+        translate
+        (
+            [
+                panel_x
+                (
+                    i = i, 
+                    panel_width = gdv(Polycarbonate_sheet, "width"), 
+                    spacing = gdv(Polycarbonate_sheet, "spacing")
+                ), 
+                0, 
+                0
+            ]
+        )
+        {
+            // translate([gdv(Polycarbonate_sheet, "spacing"), 0 ,0])
+            add_polycarbonate_sheet();            
+        }
+    }
+    
 }
+
+function panel_x(i, panel_width, spacing) = (i * panel_width) + (i * spacing);
+
+module add_polycarbonate_sheet()
+{
+    color(gdv(Polycarbonate_sheet, "color"), gdv(Polycarbonate_sheet, "alpha value"))
+    linear_extrude(height = gdv(Polycarbonate_sheet, "height"))
+    // translate(gdv(Polycarbonate_sheet, "location"))
+     // put left bottom corner of sheet at [0, 0, 0,]
+     
+    // translate([gdv(Polycarbonate_sheet, "width")/2, 0, 0])   
+    translate([Board2x4.y, 0, 100])
+    translate([1219.2/2, 0, 0])
+    square(size=[gdv(Polycarbonate_sheet, "width"), gdv(Polycarbonate_sheet, "thickness")], center=true);
+}
+
 
 module add_wall(properties)
 {
+    echo(properties = properties);
+    echo(Width_in = convertV_mm2Inch(properties[4]));
+    debug_callstack();
     color(gdv(properties, "color"), 0.5)
     translate(gdv(properties, "location"))
     rotate(gdv(properties, "rotate"))
@@ -328,11 +285,6 @@ module simpleView(showentry = true, showRoof = true, showwalls = true)
     }
 
 }
-
-// module EntryRoofFrame2()
-// {
-
-// }
 
 function housePoints(houseDi, roofDi, p0) = 
 [
