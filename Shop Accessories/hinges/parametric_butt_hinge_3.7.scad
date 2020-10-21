@@ -163,6 +163,9 @@ C_MIN_PIN_SHAFT_COUNTERBORE_DEPTH          = C_CONSTANT + 0.0;
 
 /* [Assembly Options] */
 
+enable_seperate_leaf         = 1;     // [ 0:No, 1:Yes ]
+seperation_location          = [-12,0,0]; //[transition parameters in x,y,z]
+
 enable_male_leaf             = 1;     // [ 0:No, 1:Yes ]
 enable_female_leaf           = 1;     // [ 0:No, 1:Yes ]
 enable_fillet                = 1;     // [ 0:No, 1:Yes ]
@@ -170,7 +173,7 @@ enable_fillet                = 1;     // [ 0:No, 1:Yes ]
 enable_pin                   = 0;     // [ 0:No, 1:Yes ]
 // Turn this off to set a custom pin diameter. Auto pin size is equal to the leaf gauge.
 enable_auto_pin_size         = 1;     // [ 0:No, 1:Yes ]
-enable_pin_shaft_counterbore = 0;     // [ 0:No, 1:Yes ]
+enable_pin_shaft_counterbore = 1;     // [ 0:No, 1:Yes ]
 enable_fasteners             = 1;     // [ 0:No, 1:Yes ]
 knuckle_gusset_type          = 3;     // [ 0:None, 1:Linear, 2:Circular, 3:Parabolic ]
 // From +180 degrees fully closed, to -90 degrees fully opened. Default = 0 (ie. Opened flat).
@@ -188,7 +191,7 @@ leaf_height                           = 60.0;
 // Leaf and knuckle thickness. Values greater than 3mm recommended.
 leaf_gauge                            = 5.0;
 // Recomended values between 0.3 and 4.0. Better quality below 3.0, tough to loosen.
-component_clearance                   = 0.6;
+component_clearance                   = 0.3;
 // Knuckle count must be an odd number, so that the pin is supported on both ends.
 knuckle_count                         = 7;               // [3:2:31]
 // Manual pin diameter setting. Only has effect, if "Enable Auto Pin Size" is set to "No".
@@ -238,6 +241,7 @@ fastener_margin                  = 3;
 // -------------------------------------+---------------------------------------+---------------------------------------+---------------------------------------
 
 // Assembly Options.
+m_seperate_leaft_enabled             = ( enable_seperate_leaf              == 1 ) ? true : false;
 
 m_male_leaf_enabled             = ( enable_male_leaf              == 1 ) ? true : false;
 m_female_leaf_enabled           = ( enable_female_leaf            == 1 ) ? true : false;
@@ -340,6 +344,7 @@ module main ()
     rotate ( [ 0.0, 0.0, ( m_flip_model ) ? 180.0 : 0.0 ] )
     {
         if ( m_female_leaf_enabled ) rotate ( [ 0.0, -m_throw_angle, 0.0 ] ) leaf ( C_FEMALE );
+        if ( m_seperate_leaft_enabled ) translate(seperation_location) 
         if ( m_male_leaf_enabled )   leaf ( C_MALE );     
     }
 }
