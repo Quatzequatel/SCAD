@@ -26,6 +26,11 @@ module build(args)
     // add_rafter_beam(Rafter_EndCap);
 }
 
+module rafter_only()
+{
+    add_rafter(Rafter_Main);  
+}
+
 module main_roof()
 {
     echo();
