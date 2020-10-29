@@ -22,7 +22,7 @@ module build(args)
 
 module roof_cap()
 {
-    rotate([-90, 90, 0]) 
+    // rotate([-90, 90, 0]) 
     // add_rafter(Rafter_Main);  
     add_rafter_beam(Rafter_EndCap);
 
@@ -35,7 +35,14 @@ module L_Flashing(properties)
         translate(gdv(properties, "location"))
         rotate(gdv(properties, "rotate"))
         linear_extrude(gdv(properties, "height"))
-        polygon(points=L_Flashing_points(w = gdv(properties, "width"), l = gdv(properties, "length"), t = gdv(properties, "thickness")));
+        polygon(
+            points = 
+                L_Flashing_points(
+                    w = gdv(properties, "width"), 
+                    l = gdv(properties, "length"), 
+                    t = gdv(properties, "thickness")
+            )
+        );
 }
 
 flashing_width = convert_in2mm(6);
