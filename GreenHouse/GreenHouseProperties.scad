@@ -10,11 +10,15 @@ use <ObjectHelpers.scad>;
 
 module GreenHouseProperties_Info() 
 {
+    echo();
+    properties_echo(Entryway_Rafter);
+    echo();
+
     properties_echo(Rafter_Main);
     properties_echo(EntryBeamProperties);
     properties_echo(Rafter_EndCap);
-    properties_echo(Brace_One);
-    properties_echo(Brace_Two);
+    // properties_echo(Brace_One);
+    // properties_echo(Brace_Two);
     properties_echo(HouseDimensions);
 }
 
@@ -394,8 +398,10 @@ EntryBeamProperties =
     "EntryBeamProperties",
     ["width", Board2x6.x],
     ["depth", Board2x6.y],
-    ["length", EntryLength + convert_in2mm(33.25)],
-    ["location", [HouseLength - convert_in2mm(33.25), HouseWidthCenter, HouseWallHeight + (EntryWidth/2) - Board2x6.y]],
+    // ["length", EntryLength + convert_in2mm(32.7)],
+    ["length", convert_in2mm(85.94)],
+    // ["location", [HouseLength - convert_in2mm(32.57), HouseWidthCenter, HouseWallHeight + (EntryWidth/2) - Board2x6.y]],
+    ["location", [HouseLength - convert_in2mm(37.8), HouseWidthCenter, HouseWallHeight + (EntryWidth/2) - Board2x6.y]],
     ["rotate", [0, 0, 0]],
     ["color", "red"]
 ];
@@ -637,6 +643,8 @@ module Info()
     // debugEcho("Roof", RoofDimensions[1], true);
     echo();
     debugEcho("Entry Roof", EntryRoofDimensions[1], true);
+    echo();
+    debugEcho("Entryway_Rafter", Entryway_Rafter[1], true);
     echo();
     debugEcho("Roof Properties", RoofProperties[1], true);
 }
