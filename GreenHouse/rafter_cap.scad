@@ -14,7 +14,48 @@ build(cap_gap_spacer);
 
 module build(properties) 
 {
-    // cap_gap_spacer_v1(properties);
+    cap_gap_spacer_v2(properties);
+}
+
+module cap_gap_spacer_v2(properties)
+{
+    difference()
+    {
+        linear_extrude(gdv(properties, "spacer_height"))
+        union()
+        {
+            //walls
+            cap_gap_wall(properties);
+            
+            translate([0,gdv(properties, "spacer_width") + gdv(properties, "plate_thickness"),0])
+            cap_gap_wall(properties);
+            //spacer
+            translate([0, gdv(properties, "spacer_width")/2, 0])
+            difference()
+            {
+                square(size=[gdv(properties, "spacer_width"), gdv(properties, "spacer_width")], center=true); 
+
+                square(
+                    size=[
+                        gdv(properties, "spacer_width") - gdv(properties, "spacer_wall_thickness"), 
+                        gdv(properties, "spacer_width") - gdv(properties, "spacer_wall_thickness2")
+                    ], 
+                    center=true
+                );          
+            }        
+        }    
+
+        plate_screwhole_v2(properties);    
+    }
+
+
+
+}
+
+module cap_gap_wall(properties)
+{
+    translate([0,-gdv(properties, "plate_thickness")/2,0])    
+    square(size=[gdv(properties, "plate_width"), gdv(properties, "plate_thickness")], center=true);  
 }
 
 module cap_gap_spacer_v1(properties)
@@ -34,7 +75,7 @@ module cap_gap_plate(properties)
         linear_extrude(gdv(properties, "plate_thickness"))
         square(size=[gdv(properties, "plate_width"), gdv(properties, "plate_length")], center=true);   
 
-        plate_screwhole(properties);
+        
     }
 }
 
@@ -87,6 +128,38 @@ module plate_screwhole(properties)
     {
         translate( locations[i])
         cylinder(d=gdv(properties, "plate_screw_diameter"), h=10, center=true, $fn=100); 
+    }
+}
+
+module plate_screwhole_v2(properties)
+{
+    locations = [
+        [
+            -1 * gdv(properties, "plate_width")/2 + convert_in2mm(in = 0.5),
+            convert_in2mm(in = 0.5) + gdv(properties, "spacer_height")/2,
+            0
+        ],
+        [
+            gdv(properties, "plate_width")/2 - convert_in2mm(in = 0.5),
+            convert_in2mm(in = 0.5) + gdv(properties, "spacer_height")/2,
+            0
+        ],
+        [
+            gdv(properties, "plate_width")/2 - convert_in2mm(in = 0.5),
+            convert_in2mm(in = 0.5) * -1 + gdv(properties, "spacer_height")/2,
+            0
+        ],
+        [
+            -1 * gdv(properties, "plate_width")/2 + convert_in2mm(in = 0.5),
+            convert_in2mm(in = 0.5) * -1 + gdv(properties, "spacer_height")/2,
+            0
+        ]
+    ];
+    for (i=[0:3]) 
+    {
+        rotate([90,0,0])
+        translate( locations[i])
+        cylinder(d=gdv(properties, "plate_screw_diameter"), h=gdv(properties, "plate_width"), center=true, $fn=100); 
     }
 }
 
