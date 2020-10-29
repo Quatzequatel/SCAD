@@ -4,7 +4,7 @@ i.e. enums
 */
 //machine values
 NozzleWidth = 0.8;
-LayerHeight = 0.24;
+LayerHeight = 0.2;
 InitialLayerHeight = 0.4;
 ISDEBUGEMODE = false;
 IS_DEBUG_DEBUG = false;
@@ -62,7 +62,7 @@ function LayersToHeight(layers) =
 function HeightToLayers(height) = (height - InitialLayerHeight)/LayerHeight;
 
 // returns mm for requested wall count based on NozzelWidth.
-function WallThickness(wall_line_count = 1) = wall_line_count * NozzleWidth;
+function WallThickness(wall_line_count = 1) = wall_line_count > 0 ? wall_line_count * NozzleWidth : wall_line_count;
 
 function isVector(args) = args.x != undef;
 function isString(x) = 
