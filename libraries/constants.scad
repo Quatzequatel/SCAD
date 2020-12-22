@@ -4,7 +4,7 @@ i.e. enums
 */
 //machine values
 NozzleWidth = 0.8;
-LayerHeight = 0.2;
+LayerHeight = 0.24;
 InitialLayerHeight = 0.4;
 ISDEBUGEMODE = false;
 IS_DEBUG_DEBUG = false;

@@ -25,7 +25,7 @@ module cap_gap_spacer_v2(properties)
         union()
         {
             //walls
-            cap_gap_wall(properties);
+            if(!gdv(properties, "is end cap")) cap_gap_wall(properties);
             
             translate([0,gdv(properties, "spacer_width") + gdv(properties, "plate_thickness"),0])
             cap_gap_wall(properties);
@@ -169,16 +169,18 @@ cap_gap_spacer =
         ["spacer_width", 40],
         // ["spacer_thickness", LayersToHeight(10)],
         ["spacer_wall_thickness", WallThickness(8)] ,
-        ["spacer_wall_thickness2", LayersToHeight(13)] ,
+        // ["spacer_wall_thickness2", LayersToHeight(13)] ,
+        ["spacer_wall_thickness2", WallThickness(8)] ,
         ["spacer_height", convert_in2mm(1.5)] ,
         ["spacer_rotation", [90,0,0]] ,
         ["plate_width", 90] ,
-        ["plate_length", 40] ,
+        ["plate_length", 38] ,
         ["plate_thickness", WallThickness(4)],
         ["plate_screw_diameter", woodScrewShankDiaN_8],
         //11.25 * 12 = 135 / 2 =>  67.5 + board2x6.x / 2 => 68.25
         ["pre-translate", [0, -convert_in2mm(in = 68.25),0] ],        
         ["location", [0, -convert_in2mm(in = 31.39), convert_in2mm(in = 27.8)]],
         ["color", "green"],
+        ["is end cap", true],
         ["brace color", "yellow"]
 ];

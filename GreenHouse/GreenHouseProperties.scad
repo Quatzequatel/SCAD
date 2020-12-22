@@ -613,10 +613,13 @@ insulation_properties =
 thermo_column_properties =
 [
     "thermal column properties",
-    ["radius", convert_in2mm(12)],
-    ["height per turn", convert_in2mm(2)],
-    ["turns", 30],
-    ["height", convert_in2mm(60)],
+    ["radius-01", convert_in2mm(0.75)/2],
+    ["radius-02", convert_in2mm(12)],
+    ["radius-03", convert_in2mm(18)],
+    ["radius-04", convert_in2mm(24)],
+    ["height per turn", convert_in2mm(4)],
+    ["turns", 66/4],
+    ["height", convert_in2mm(66)],
     ["pipe diameter", convert_in2mm(0.75)],
 ];
 
