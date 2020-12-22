@@ -10,6 +10,7 @@ use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 use <construction.scad>;
+use <block_construction.scad>;
 
 build();
 
