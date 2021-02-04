@@ -90,6 +90,17 @@ HouseWidthCenter = HouseWidth/2 - Board2x4.x/2;
 location_entry_center = [HouseLength, HouseWidthCenter, HouseWallHeight + (EntryWidth/2)];
 // location_entry_center = [ 0, HouseWidthCenter, convert_in2mm(in = 24.75)];
 
+HouseDimensions = 
+[
+    "house dimensions",
+        ["width", HouseWidth],    
+        ["length", HouseLength],  
+        ["wall height", HouseWallHeight],  
+        ["peak height", HouseWallHeight + Height(x= HouseWidth/2, angle = RoofAngle)], 
+        ["angle", RoofAngle ],
+        ["wall thickness", convert_in2mm(4)],  
+];
+
 Polycarbonate_sheet = 
 [
     "polycarbonate sheet",
@@ -481,16 +492,7 @@ concrete_footing_properties =
         ["start", -1 * (frost_line + convert_in2mm(2))],
 ];
 
-HouseDimensions = 
-[
-    "house dimensions",
-        ["width", HouseWidth],    
-        ["length", HouseLength],  
-        ["wall height", HouseWallHeight],  
-        ["peak height", HouseWallHeight + Height(x= HouseWidth/2, angle = RoofAngle)], 
-        ["angle", RoofAngle ],
-        ["wall thickness", convert_in2mm(4)],  
-];
+
 
 house_foundation_properties = 
 [

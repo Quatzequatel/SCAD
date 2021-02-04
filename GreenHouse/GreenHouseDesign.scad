@@ -21,6 +21,7 @@ use <dictionary.scad>;
 use <roof.scad>;
 use <entry_roof.scad>;
 use <floor.scad>;
+use <geoThermal.scad>;
 
 use <box_extrude.scad>;
 
@@ -57,19 +58,20 @@ module Build(args)
 
     // simpleView(showentry = true, showRoof = true, showwalls = true);
 
-    add_roof();
+    // add_roof();
 
     foundation_plates();
-    translate([0, 0, 2 * Board2x4.x])
-    HouseFrame2();
+    // translate([0, 0, 2 * Board2x4.x])
+    // HouseFrame2();
 
     translate([HouseLength/2, HouseWidth/2,0])
     rotate([0,0,90])
     add_floor();  
+    add_geo_thermal();
 
     // add_polycarbonate_sheet();
 
-    GreenHouseProperties_Info();
+    // GreenHouseProperties_Info();
 
 }
 

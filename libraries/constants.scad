@@ -133,6 +133,12 @@ woodscrewHeadRad = 4.6228;  //Number 8 wood screw head radius
 woodscrewThreadRad = 2.1336;    //Number 8 wood screw thread radius
 woodscrewHeadHeight = 2.8448;  //Number 8 wood screw head height
 
+GRK_cabinet_screw_head_dia = 11;
+GRK_cabinet_screw_shank_dia = 4.1656;
+
+ziptie_width = 5;
+ziptie_thickness = 1.38;
+
 woodScrewShankDiaN_4 = 0.112 * mmPerInch;
 woodScrewShankDiaN_5 = 0.125 * mmPerInch;
 woodScrewShankDiaN_6 = 0.138 * mmPerInch;

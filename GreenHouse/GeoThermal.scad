@@ -28,20 +28,60 @@ build();
 module build(args) 
 {
  
-    move_to_cold_frame_to_left_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
-    build_multi_helix_column();
-
-    move_to_cold_frame_to_right_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
-    build_multi_helix_column();
+    add_geo_thermal();
 }
 
 module add_geo_thermal() 
 {
-    move_to_cold_frame_to_left_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
+    move_to_south_east_corner(
+        height = -convert_in2mm(72), 
+        length = gdv(thermo_column_properties, "radius-04") * 2,
+        width = gdv(thermo_column_properties, "radius-04") * 2
+        )
     build_multi_helix_column();
 
-    move_to_cold_frame_to_right_of_entry(height = -getDictionaryValue(thermo_column_properties, "height"))
+    move_to_south_west_corner(
+        height = -convert_in2mm(72), 
+        length = gdv(thermo_column_properties, "radius-04") * 2,
+        width = gdv(thermo_column_properties, "radius-04") * 2
+        )
     build_multi_helix_column();
+
+    move_to_north_west_corner(
+        height = -convert_in2mm(72), 
+        length = gdv(thermo_column_properties, "radius-04") * 2,
+        width = gdv(thermo_column_properties, "radius-04") * 2
+        )
+    build_multi_helix_column();   
+
+    move_to_north_east_corner(
+        height = -convert_in2mm(72), 
+        length = gdv(thermo_column_properties, "radius-04") * 2,
+        width = gdv(thermo_column_properties, "radius-04") * 2
+        )
+    build_multi_helix_column();      
+    
+    move_to_center_east(
+        height = -convert_in2mm(72), 
+        length = gdv(thermo_column_properties, "radius-04") * 2,
+        width = gdv(thermo_column_properties, "radius-04") * 2
+        )
+    build_multi_helix_column(); 
+
+    move_to_center_west(
+        height = -convert_in2mm(72), 
+        length = gdv(thermo_column_properties, "radius-04") * 2,
+        width = gdv(thermo_column_properties, "radius-04") * 2
+        )
+    build_multi_helix_column(); 
+
+    move_to_center_entry(
+        height = -convert_in2mm(72), 
+        length = gdv(thermo_column_properties, "radius-04") * 2,
+        width = gdv(thermo_column_properties, "radius-04") * 2
+        )
+    build_multi_helix_column(); 
+
 }
 
 module build_multi_helix_column()

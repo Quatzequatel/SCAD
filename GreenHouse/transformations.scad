@@ -75,6 +75,102 @@ module move_to_center_of_foundation(height = 0)
     children();
 }
 
+module move_to_center_of_house(height = 0)
+{
+    translate(
+        [
+            getDictionaryValue(HouseDimensions, "length")/2,
+            getDictionaryValue(HouseDimensions, "width")/2,
+            height
+        ]
+    )    
+    children();
+}
+
+module move_to_south_east_corner(height = 0, length = 0, width = 0, inset = convert_ft2mm(1))
+{
+    translate(
+        [
+            getDictionaryValue(HouseDimensions, "length") - length/2 - inset,
+            length/2 + inset ,
+            height            
+        ]
+    )
+    children();
+}
+
+module move_to_south_west_corner(height = 0, length = 0, width = 0, inset = convert_ft2mm(1))
+{
+    translate(
+        [
+            length/2 + inset,
+            length/2 + inset ,
+            height            
+        ]
+    )
+    children();
+}
+
+module move_to_north_west_corner(height = 0, length = 0, width = 0, inset = convert_ft2mm(1))
+{
+    translate(
+        [
+            length/2 + inset,
+            getDictionaryValue(HouseDimensions, "width") - length/2 - inset ,
+            height            
+        ]
+    )
+    children();
+}
+
+module move_to_north_east_corner(height = 0, length = 0, width = 0, inset = convert_ft2mm(1))
+{
+    translate(
+        [
+            getDictionaryValue(HouseDimensions, "length") - length/2 - inset,
+            getDictionaryValue(HouseDimensions, "width") - length/2 - inset ,
+            height            
+        ]
+    )
+    children();
+}
+
+module move_to_center_east(height = 0, length = 0, width = 0, inset = convert_ft2mm(1))
+{
+    translate(
+        [
+            length/2 + inset,
+            getDictionaryValue(HouseDimensions, "width")/2,
+            height            
+        ]
+    )
+    children();
+}
+
+module move_to_center_west(height = 0, length = 0, width = 0, inset = convert_ft2mm(1))
+{
+    translate(
+        [
+            getDictionaryValue(HouseDimensions, "length") - length/2 - inset,
+            getDictionaryValue(HouseDimensions, "width")/2  ,
+            height            
+        ]
+    )
+    children();
+}
+
+module move_to_center_entry(height = 0, length = 0, width = 0, inset = convert_ft2mm(1))
+{
+    translate(
+        [
+            getDictionaryValue(HouseDimensions, "length") + length/2- inset/2,
+            getDictionaryValue(HouseDimensions, "width")/2,
+            height            
+        ]
+    )
+    children();
+}
+
 module move_to_fence_line(fence_properties = undef)
 {
     // echo(easement = getDictionaryValue(fence_properties, "easement"));

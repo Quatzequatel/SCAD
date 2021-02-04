@@ -11,6 +11,7 @@ use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 use <construction.scad>;
 use <block_construction.scad>;
+use <geoThermal.scad>;
 
 build();
 
@@ -24,15 +25,17 @@ module build(args)
     add_block_layer_to_north_wall(north_wall, block_NS);
     add_block_layer_to_north_wall(south_wall, block_NS);
 
+    add_geo_thermal();
+
 }
 
 module add_floor() 
 {
-    %color("brown", 0.5) 
+    %color("brown", 0.2) 
     translate([-HouseWidth/2, -HouseLength/2])
     square([HouseWidth, HouseLength]);
 
-    %color("brown", 0.5) 
+    %color("brown", 0.2) 
     translate([0, -1 * (HouseLength/2 + EntryLength/2 )])
     square([EntryWidth, EntryLength], center = true);
 }
