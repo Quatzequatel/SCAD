@@ -21,16 +21,30 @@ spacer =
         ["depth", convert_in2mm(0.75)],  
         ["height", convert_in2mm(0.75)],
         ["wall_thickness", NozzleWidth * 8],
-        ["additional_height", convert_in2mm(0)],
+        ["additional_height",  convert_in2mm(0.25)],
         ["pipe_height", convert_in2mm(0.5)],
         ["location", [0, 0, 0] ],  
         ["color", "Aqua"], 
 ];
 
-pipe =
+pipe_theequarter_inch =
 [
     "3/4 inch pipe",
     ["diameter", convert_in2mm(0.85)],
+    ["length", convert_in2mm(4)]
+];
+
+pipe_half_inch =
+[
+    "1/2 inch pipe",
+    ["diameter", convert_in2mm(0.65)],
+    ["length", convert_in2mm(4)]
+];
+
+pipe_one_inch =
+[
+    "1/2 inch pipe",
+    ["diameter", convert_in2mm(1.1)],
     ["length", convert_in2mm(4)]
 ];
 
@@ -54,7 +68,7 @@ build();
 
 module build(args) 
 {
-    make_pipe_achor(spacer, pipe, screw_hole, ziptie);
+    make_pipe_achor(spacer, pipe_theequarter_inch, screw_hole, ziptie);
 }
 
 module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties, ziptie_properties)
