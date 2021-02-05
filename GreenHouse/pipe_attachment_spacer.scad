@@ -1,5 +1,7 @@
 /*
-    
+    copywrite 2/1/2021 Steven H. Mitchell
+    zip-tie pipe anchor
+    to modify the anchor, modify corrisponding dictionary value below.
 */
 
 include <constants.scad>;
@@ -10,13 +12,9 @@ use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 $fn = 100;
 
-spacer_height = convert_in2mm(0.75);
-spacer_width = convert_in2mm(2);
-spacer_depth = convert_in2mm(0.75);
-
-spacer = 
+anchor = 
 [
-    "0.75 in spacer",
+    "0.75 in anchor",
         ["width", convert_in2mm(2)],    
         ["depth", convert_in2mm(0.75)],  
         ["height", convert_in2mm(0.75)],
@@ -68,7 +66,7 @@ build();
 
 module build(args) 
 {
-    make_pipe_achor(spacer, pipe_theequarter_inch, screw_hole, ziptie);
+    make_pipe_achor(anchor, pipe_theequarter_inch, screw_hole, ziptie);
 }
 
 module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties, ziptie_properties)
