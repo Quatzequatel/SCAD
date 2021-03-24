@@ -159,7 +159,7 @@ South_Wall =
             [
                 HouseLength - Board2x4.y,
                 HouseLength,
-                HouseWallHeight - 5 * Board2x4.x
+                HouseWallHeight - Board2x4.x
             ]
         ],        
         ["location", [Board2x4.y, Board2x4.y, 0]],

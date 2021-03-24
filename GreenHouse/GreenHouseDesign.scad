@@ -22,6 +22,7 @@ use <roof.scad>;
 use <entry_roof.scad>;
 use <floor.scad>;
 use <geoThermal.scad>;
+use <doorway.scad>;
 
 use <box_extrude.scad>;
 
@@ -57,19 +58,28 @@ module Build(args)
     scale(size = 16, increment = convert_in2mm(12), fontsize = 72);
 
     // simpleView(showentry = true, showRoof = true, showwalls = true);
+    standardColor = "AliceBlue";
 
-    // add_roof();
+    color(standardColor)
+    add_roof();
 
+    color(standardColor)
     foundation_plates();
-    // translate([0, 0, 2 * Board2x4.x])
-    // HouseFrame2();
+
+    color(standardColor)
+    translate([0, 0, 2 * Board2x4.x])
+    HouseFrame2();
 
     translate([HouseLength/2, HouseWidth/2,0])
     rotate([0,0,90])
     add_floor();  
-    add_geo_thermal();
+    // add_geo_thermal();
 
     // add_polycarbonate_sheet();
+
+    translate([HouseLength + EntryLength , HouseWidth/2 - EntryWidth/2,0])
+    rotate([0,0,90])
+    add_doorway();
 
     // GreenHouseProperties_Info();
 
@@ -104,7 +114,7 @@ module HouseFrame2()
     add_wall(East_Wall2);
 
     add_wall(North_Entry_Wall);
-    // add_wall(South_Entry_Wall);
+    add_wall(South_Entry_Wall);
 
 }
 
