@@ -17,10 +17,10 @@ anchor =
     "0.75 in anchor",
         ["width", convert_in2mm(2)],    
         ["depth", convert_in2mm(0.75)],  
-        ["height", convert_in2mm(0.75)],
+        ["height", convert_in2mm(0.75)],  //base model height, for ziptie holes
         ["wall_thickness", NozzleWidth * 8],
-        ["additional_height",  convert_in2mm(0.25)],
-        ["pipe_height", convert_in2mm(0.5)],
+        ["additional_height",  convert_in2mm(0.0)], //use this to increase height of spacer.
+        ["pipe_height", convert_in2mm(0.3)],
         ["location", [0, 0, 0] ],  
         ["color", "Aqua"], 
 ];
@@ -41,7 +41,7 @@ pipe_half_inch =
 
 pipe_one_inch =
 [
-    "1/2 inch pipe",
+    "inch pipe",
     ["diameter", convert_in2mm(1.1)],
     ["length", convert_in2mm(4)]
 ];
