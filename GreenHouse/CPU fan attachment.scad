@@ -1,5 +1,5 @@
 /*
-    
+This is a bracket to attach CPU fan to the roof peak.
 */
 
 include <constants.scad>;
