@@ -423,12 +423,28 @@ Entryway_Rafter =
     ["angle", 45],
     ["width", convert_in2mm(in = 1.75)],
     ["depth", convert_in2mm(in = 3.5)],
-    // ["length", convert_in2mm(in = 42.43)] ,
-    ["length", convert_in2mm(in = 41.37)] ,
+    ["length", convert_in2mm(in = 42.43)] ,
+    // ["length", convert_in2mm(in = 41.37)] ,
     ["location", [HouseLength + EntryLength - Board2x4.x/2, HouseWidth/2, HouseWallHeight]],
     ["pre-translate", [0, -convert_in2mm(in = 30),0] ],
     ["rotate", [45, 0, 0]] ,
     ["color", "lightblue"]
+];
+
+Entryway_FlyRafter = 
+[
+    "Entryway_FlyRafter",
+    ["angle", 45],
+    ["width", convert_in2mm(in = 1.75)],
+    ["depth", convert_in2mm(in = 3.5)],
+    ["length", convert_in2mm(in = 42.43)] ,
+    // ["length", convert_in2mm(in = 41.37)] ,
+    //["location", [HouseLength + EntryLength - Board2x4.x/2, HouseWidth/2, HouseWallHeight]],
+    ["location", [ - Board2x4.x/2, -convert_in2mm(in = 30), HouseWallHeight + 2 * Board2x4.x]],
+    ["pre-translate", [0, -convert_in2mm(in = 30),0] ],
+    ["rotate", [45, 0, 0]] ,
+    ["rotate 2", [0, 0, 90]] ,
+    ["color", "PeachPuff"]
 ];
 
 Rafter_EndCap = 
