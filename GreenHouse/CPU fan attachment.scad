@@ -1,5 +1,8 @@
 /*
 This is a bracket to attach CPU fan to the roof peak.
+Edit from the orginal. I had to cut angle brackets from one
+side to get these to fit. i have edited the code to eliminate that
+cut.
 */
 
 include <constants.scad>;
@@ -50,7 +53,7 @@ module build(args)
             make_right_fan_bracket();         
         }     
 
-        translate([0,0,WallThickness(walls)])
+        translate([0,WallThickness(walls),WallThickness(walls)])
         make_fan();     
         #make_right_screw_hole();     
         #make_left_screw_hole();  
@@ -60,8 +63,9 @@ module build(args)
 module make_fan()
 {
     translate([-gdv(fan, "width")/2, gdv(fan, "depth")/2, 0])
+    // translate([-gdv(fan, "width")/2, 2 * WallThickness(walls), 0])
     rotate(gdv(fan, "orientation"))
-    linear_extrude(gdv(fan, "depth"))
+    linear_extrude(gdv(fan, "depth") + WallThickness(walls))
     square( size = [gdv(fan, "width"), gdv(fan, "height")], center=false);
 }
 
