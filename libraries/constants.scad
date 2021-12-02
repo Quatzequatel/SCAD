@@ -3,9 +3,9 @@ lib for common constants;
 i.e. enums
 */
 //machine values
-NozzleWidth = 0.8;
+NozzleWidth = 0.6;
 LayerHeight = 0.24;
-InitialLayerHeight = 0.4;
+InitialLayerHeight = 0.5;
 ISDEBUGEMODE = false;
 IS_DEBUG_DEBUG = false;
 
@@ -132,6 +132,7 @@ FeetInInch = 1/inchesInFoot;
 woodscrewHeadRad = 4.6228;  //Number 8 wood screw head radius
 woodscrewThreadRad = 2.1336;    //Number 8 wood screw thread radius
 woodscrewHeadHeight = 2.8448;  //Number 8 wood screw head height
+HexBitHoleDia = 7.8;            //standard hex bit diameter.
 
 GRK_cabinet_screw_head_dia = 11;
 GRK_cabinet_screw_shank_dia = 4.1656;
