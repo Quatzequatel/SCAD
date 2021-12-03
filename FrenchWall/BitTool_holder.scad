@@ -4,125 +4,138 @@
 */
 
 include <constants.scad>;
+include <ToolHolders_Library.scad>;
 
 use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 
-tray = 
-["tray", 
-    ["x", convert_in2mm(5)],
-    ["y", convert_in2mm(3)],
-    ["z", convert_in2mm(0.5)],
-    ["move", [0, 0, 0]],
-    ["rotate", [0,0, 0]],
-    ["color", "LightGrey"]
-];
 
-backwall = 
-["backwall", 
-    ["x", gdv(tray, "x")],
-    ["y", NozzleWidth * 8],
-    ["z", convert_in2mm(2.5)],
-    ["move", [0, convert_in2mm(3)/2, 0]],
-    ["from edge", (gdv(tray, "x")-convert_in2mm(0.75))/2],
-    ["rotate", [0,0, 0]],
-    ["color", "LightGrey"]
-];
+//un comment to show ruler in drawing.
+// scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
+completeBitTray();
+// drawHammerHandle();
+// drawPeggedHandle();
+// drawDrillPeggedHandle();
 
-bit = 
-["bit dimension",
-    ["x", HexBitHoleDia],
-    ["y", HexBitHoleDia],
-    ["z", gdv(tray, "z")],
-    ["fragments", 6],
-    ["move", [0,0,LayersToHeight(6)]],
-    ["rotate", [0,0, 0]],
-    ["color", "LightBlue"]
-];
+module drawDrillPeggedHandle()
+{
+    
+    difference()
+    {
+        union()
+        {
+            drawSquareShape(HammerBackwall);
+            translate([gdv(DrillPeg, "from edge"),0,0])
+            drawCircleShape(DrillPeg);
+            
+            translate([-gdv(DrillPeg, "from edge"),0,0])
+            drawCircleShape(DrillPeg);
+        }
+        
+        translate([gdv(HammerBackwall, "from edge"),-10,-10])
+        drawCircleShape(screwhole);
+        translate([-gdv(HammerBackwall, "from edge"),-10,-10])
+        drawCircleShape(screwhole);
+    }
+              
+}
 
-screwhole = 
-["screwhole dimension",
-    ["x", GRK_cabinet_screw_shank_dia],
-    ["y", GRK_cabinet_screw_shank_dia],
-    ["z", gdv(tray, "z")],
-    ["fragments", 30],
-    ["move", [0,convert_in2mm(1.7),convert_in2mm(2)]],
-    ["rotate", [90,0, 0]],
-    ["color", "red"]
-];
+module drawPeggedHandle()
+{
+    
+    difference()
+    {
+        union()
+        {
+            drawSquareShape(HammerBackwall);
+            translate([gdv(Peg, "from edge"),0,0])
+            drawCircleShape(Peg);
+            
+            translate([-gdv(Peg, "from edge"),0,0])
+            drawCircleShape(Peg);
+        }
+        
+        translate([gdv(HammerBackwall, "from edge"),-10,-10])
+        drawCircleShape(screwhole);
+        translate([-gdv(HammerBackwall, "from edge"),-10,-10])
+        drawCircleShape(screwhole);
+    }
+              
+}
 
-tool_bit_array = 
-["tool_bit_array",
-    ["x", HexBitHoleDia * 1.25],
-    ["y", HexBitHoleDia * 1.25],
-    ["z", gdv(tray, "z")],
-    ["xCount", 11],
-    ["yCount", 6],
-    ["move", [-7 * HexBitHoleDia, -4 * HexBitHoleDia, 0]],
-    ["rotate", [0,0, 0]],
-    ["color", "yellow"]
-];
-
-build();
-
-module build(args) 
+module completeBitTray()
 {
     difference()
     {
         union()
         {
-        drawSquareShape(tray);
-        drawSquareShape(backwall);            
+            drawSquareShape(tray);
+            drawSquareShape(backwall);            
         }
+
         translate(gdv(tool_bit_array,"move"))
-        drawToolBitArray(tool_bit_array, bit);
+        drawArrayOfCircleShapes(tool_bit_array, bit);
         drawCircleShape(screwhole);
         translate([gdv(backwall, "from edge"),0,0])
         drawCircleShape(screwhole);
         translate([-gdv(backwall, "from edge"),0,0])
         drawCircleShape(screwhole);
     }
-    
 }
 
-module drawToolBitArray(array, bitInfo)
+module drawHammerHandle()
 {
-    rows = gdv(array, "xCount");
-    columns = gdv(array, "yCount");
-    xDistance = gdv(array, "x");
-    yDistance = gdv(array, "y");
-    for (row=[0:rows]) 
+    difference()
     {
-        for (col=[0:columns]) 
+        union()
         {
-            translate([row * xDistance, col * yDistance, 0])
-            drawCircleShape(bitInfo);
-        }
-        
+            drawSquareShape(HammerTray);
+            drawSquareShape(HammerBackwall);            
+        }        
+
+        translate([0,-5,0])
+        union()
+        {
+            drawCircleShape(HammerHead);
+            hull() 
+            {
+                translate([0,-(gdv(HammerHead, "y")*2),0])
+                drawCircleShape(HammerShaft);    
+                drawCircleShape(HammerShaft);    
+            }            
+        }      
+        translate([gdv(HammerBackwall, "from edge"),-10,-10])
+        drawCircleShape(screwhole);
+        translate([-gdv(HammerBackwall, "from edge"),-10,-10])
+        drawCircleShape(screwhole);
+
+        translate([29,-14,0])
+        difference()
+        {
+            drawSquareShape(HammerShapperTray); 
+            hull()
+            {
+                drawCircleShape(HammerShaper);
+                translate([0,20,0])
+                drawCircleShape(HammerShaper);
+            }
+            
+        }      
+
+        translate([-29,-14,0])
+        difference()
+        {
+            drawSquareShape(HammerShapperTray); 
+            hull()
+            {
+                drawCircleShape(HammerShaper);
+                translate([0,20,0])
+                drawCircleShape(HammerShaper);
+            }
+            
+        }  
     }
-    
-}
 
-module drawSquareShape(properties)
-{
-    // echo(properties = properties);
-
-    color(gdv(properties, "color"), 0.5)
-    rotate(gdv(properties, "rotate"))
-    translate(gdv(properties, "move"))
-    linear_extrude(gdv(properties, "z"))
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=true);
-}
-
-module drawCircleShape(properties)
-{
-    // echo(properties = properties);
-
-    color(gdv(properties, "color"), 0.5)
-    translate(gdv(properties, "move"))
-    rotate(gdv(properties, "rotate"))
-    linear_extrude(gdv(properties, "z"))
-    circle(d=gdv(properties, "x"), $fn = gdv(properties, "fragments"));
 }
