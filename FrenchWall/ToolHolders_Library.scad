@@ -41,6 +41,17 @@ bit =
     ["color", "LightBlue"]
 ];
 
+screwDriverShaft = 
+["bit dimension",
+    ["x", convert_in2mm(0.5)],
+    ["y", convert_in2mm(0.75)],
+    ["z", gdv(tray, "z") * 1.25],
+    ["fragments", 60],
+    ["move", [0,0,LayersToHeight(-2)]],
+    ["rotate", [0,0, 0]],
+    ["color", "lightYellow"]
+];
+
 
 HammerTray = 
 ["HammerTray", 
@@ -148,6 +159,18 @@ tool_bit_array =
     ["xCount", 11],
     ["yCount", 6],
     ["move", [-7 * HexBitHoleDia, -4 * HexBitHoleDia, 0]],
+    ["rotate", [0,0, 0]],
+    ["color", "yellow"]
+];
+
+screwDriver_array = 
+["screwDriver_array",
+    ["x", gdv(screwDriverShaft, "x") * 1.95],
+    ["y", gdv(screwDriverShaft, "y") * 1.25],
+    ["z", gdv(tray, "z")*2],
+    ["xCount", 4],
+    ["yCount", 2],
+    ["move", [-4 * gdv(screwDriverShaft, "x"), -1.4 * gdv(screwDriverShaft, "y"), 0]],
     ["rotate", [0,0, 0]],
     ["color", "yellow"]
 ];

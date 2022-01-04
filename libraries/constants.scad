@@ -132,7 +132,7 @@ FeetInInch = 1/inchesInFoot;
 woodscrewHeadRad = 4.6228;  //Number 8 wood screw head radius
 woodscrewThreadRad = 2.1336;    //Number 8 wood screw thread radius
 woodscrewHeadHeight = 2.8448;  //Number 8 wood screw head height
-HexBitHoleDia = 7.9;            //standard hex bit diameter.
+HexBitHoleDia = 8;            //standard hex bit diameter.
 
 GRK_cabinet_screw_head_dia = 11;
 GRK_cabinet_screw_shank_dia = 4.1656;

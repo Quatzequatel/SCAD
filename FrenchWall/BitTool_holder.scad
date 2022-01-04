@@ -14,7 +14,8 @@ use <dictionary.scad>;
 
 //un comment to show ruler in drawing.
 // scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
-completeBitTray();
+screwDriverTray();
+// completeBitTray();
 // drawHammerHandle();
 // drawPeggedHandle();
 // drawDrillPeggedHandle();
@@ -77,6 +78,27 @@ module completeBitTray()
 
         translate(gdv(tool_bit_array,"move"))
         drawArrayOfCircleShapes(tool_bit_array, bit);
+        drawCircleShape(screwhole);
+        translate([gdv(backwall, "from edge"),0,0])
+        drawCircleShape(screwhole);
+        translate([-gdv(backwall, "from edge"),0,0])
+        drawCircleShape(screwhole);
+    }
+}
+
+module screwDriverTray()
+{
+    difference()
+    {
+        union()
+        {
+            drawSquareShape(tray);
+            drawSquareShape(backwall);            
+        }
+
+        translate(gdv(screwDriver_array,"move"))
+        drawArrayOfCircleShapes(screwDriver_array, screwDriverShaft);
+
         drawCircleShape(screwhole);
         translate([gdv(backwall, "from edge"),0,0])
         drawCircleShape(screwhole);
