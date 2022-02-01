@@ -14,23 +14,31 @@ use <dictionary.scad>;
 
 //un comment to show ruler in drawing.
 // scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
-// screwDriverTray();
+screwDriverTray();
 // completeBitTray();
 // drawHammerHandle();
 // drawPeggedHandle();
-drawDrillPeggedHandle();
+// drawDrillPeggedHandle();
+// drawTriSquareHolder();
 
-//draw_Cleated_Back_Wall();
+// draw_Cleated_Back_Wall();
 // scale();
 
-module draw_Cleated_Back_Wall()
+module draw_Cleated_Back_Wall(backwall)
 {
-
-    drawSquareShape(backwall);
-    
-    translate([0, gdv(backwall,"y"), gdv(backwall,"z")])
-    draw_parallelogram(gdv(backwall, "cleat"));
-
+    //now wall and cleat is at [0,0]
+    //move to positive 0 x-axis.
+    translate([gdv(backwall,"x"),0,0])
+    //rotate so cleat is external and wall is located at 0 y-axis
+    rotate([0,0,180])
+    union()
+    {
+        //draw wall
+        drawSquareShape(backwall);    
+        //draw cleat
+        translate([0, gdv(backwall,"y"), gdv(backwall,"z")])
+        draw_parallelogram(gdv(backwall, "cleat"));
+    }
 }
 
 module drawDrillPeggedHandle()
@@ -54,6 +62,46 @@ module drawDrillPeggedHandle()
             translate([2*spacing - radius,0,0])
             drawCircleShape(DrillPeg);
         }
+
+         screw_hole_counter_sink(screwholes, backwall);
+    }
+              
+}
+
+module drawTriSquareHolder()
+{
+    
+    difference()
+    {
+        union()
+        {
+            rotate([7,0,0])
+            drawSquareShape(backwall);
+            // translate([-5,0,-6])
+            // drawPegs(DrillPeg, HammerBackwall);
+            // translate([gdv(DrillPeg, "from edge"),0,0])
+            radius = gdv(DrillPeg,"x")/2;
+            spacing = (gdv(backwall, "x") - (2*gdv(DrillPeg,"x")))/5;
+            start = gdv(DrillPeg,"x");
+
+            echo(start = start, radius = radius, spacing = spacing);
+            
+            drawSquareShape(DrillPeg);
+
+            translate([start + spacing - radius,0,0])
+            drawSquareShape(DrillPeg);
+            
+            translate([start + 2*spacing - radius,0,0])
+            drawSquareShape(DrillPeg);
+
+            translate([start + 3*spacing - radius,0,0])
+            drawSquareShape(DrillPeg);
+
+            translate([start + 4*spacing - radius,0,0])
+            drawSquareShape(DrillPeg);
+
+            translate([gdv(backwall, "x") - gdv(DrillPeg,"x") ,0,0])
+            drawSquareShape(DrillPeg);        }
 
          screw_hole_counter_sink(screwholes, backwall);
     }
@@ -98,15 +146,81 @@ module completeBitTray()
 
 module screwDriverTray()
 {
+    tray = 
+    ["tray", 
+        ["x", convert_in2mm(7)],
+        ["y", convert_in2mm(3)],
+        ["z", convert_in2mm(0.5)],
+        ["move", [0, 0, 0]],
+        ["rotate", [0,0, 0]],
+        ["color", "LightGrey"]
+    ];
+    cleat = 
+    ["cleat properties", 
+        ["x", gdv(tray, "x")],
+        ["y", NozzleWidth * 8],
+        ["z", convert_in2mm(0.75)],
+        ["cleat length", convert_in2mm(0.75) ],
+        ["cleat thickness", NozzleWidth * 8],
+        ["angle", 135],
+        ["extrude height", gdv(tray, "x")],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0, 0, 0]],
+        ["color", "LightGrey"]
+    ];
+
+    backwall = 
+    ["backwall", 
+        ["x", gdv(tray, "x")],
+        ["y", NozzleWidth * 8],
+        ["z", convert_in2mm(2.5)],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0,0, 0]],
+        ["include cleat", false],
+        ["cleat", cleat],
+        ["color", "LightGrey"]
+    ];
+
+
+    shaft = 
+    ["bit dimension",
+        ["x", convert_in2mm(0.75)],
+        ["y", convert_in2mm(1)],
+        ["z", gdv(tray, "z") * 1.25],
+        ["fragments", 60],
+        ["move", [0,0,LayersToHeight(-2)]],
+        ["rotate", [0,0, 0]],
+        ["color", "lightYellow"]
+    ];
+
+    shaft_array = 
+    ["tool_bit_array",
+        ["x", gdv(tray, "x")],
+        ["y", gdv(tray, "y")],
+        ["z", gdv(tray, "z")],
+        ["columns", 3],
+        ["rows", 7],
+        ["spacing", 0],
+        //move is a final adjustment
+        ["move", [gdv(shaft, "x")/6, 0, 0]],
+        ["rotate", [0,0, 0]],
+        ["color", "yellow"]
+    ];
+
+    //rotate for printing
+    rotate([0,90,0])
     difference()
     {
         union()
         {
             drawSquareShape(tray);
-            drawSquareShape(backwall);            
+            // drawSquareShape(backwall);      
+            draw_Cleated_Back_Wall(backwall);      
         }
 
-        drawArrayOfCircleShapes(screwDriver_array, screwDriverShaft);
+        drawArrayOfCircleShapes(shaft_array, shaft);
         screw_hole_counter_sink(screwholes, backwall);
 
     }

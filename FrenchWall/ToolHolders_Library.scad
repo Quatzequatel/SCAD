@@ -9,8 +9,8 @@ use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 
-tray = 
-["tray", 
+Tray = 
+["Tray", 
     ["x", convert_in2mm(5)],
     ["y", convert_in2mm(3)],
     ["z", convert_in2mm(0.5)],
@@ -21,22 +21,22 @@ tray =
 
 cleat = 
 ["cleat properties", 
-    ["x", gdv(tray, "x")],
+    ["x", gdv(Tray, "x")],
     ["y", NozzleWidth * 8],
     ["z", convert_in2mm(0.75)],
     ["cleat length", convert_in2mm(0.75) ],
     ["cleat thickness", NozzleWidth * 8],
     ["angle", 135],
-    ["extrude height", gdv(tray, "x")],
+    ["extrude height", gdv(Tray, "x")],
     ["move", [0, 0, 0]],
     ["from edge", 0],
     ["rotate", [0, 0, 0]],
     ["color", "LightGrey"]
 ];
 
-backwall = 
-["backwall", 
-    ["x", gdv(tray, "x")],
+Backwall = 
+["Backwall", 
+    ["x", gdv(Tray, "x")],
     ["y", NozzleWidth * 8],
     ["z", convert_in2mm(2.5)],
     ["move", [0, 0, 0]],
@@ -53,7 +53,7 @@ bit =
 ["bit dimension",
     ["x", HexBitHoleDia],
     ["y", HexBitHoleDia],
-    ["z", gdv(tray, "z")],
+    ["z", gdv(Tray, "z")],
     ["fragments", 6],
     ["move", [0,0,LayersToHeight(6)]],
     ["rotate", [0,0, 0]],
@@ -115,7 +115,7 @@ HammerShapperTray =
 ];
 
 HammerBackwall = 
-["backwall", 
+["HammerBackwall", 
     ["x", gdv(HammerTray, "x")],
     ["y", NozzleWidth * 8],
     ["z", convert_in2mm(2)],
@@ -154,19 +154,19 @@ screwholes =
 ["screwhole dimension",
     ["x", GRK_cabinet_screw_shank_dia],
     ["y", GRK_cabinet_screw_shank_dia],
-    ["z", gdv(tray, "z")],
+    ["z", gdv(Tray, "z")],
     ["count", 2],
     ["fragments", 60],
-    ["move", [0, gdv(backwall, "y") + 1 ,convert_in2mm(2)]],
+    ["move", [0, gdv(Backwall, "y") + 1 ,convert_in2mm(2)]],
     ["rotate", [90,0, 0]],
     ["color", "red"]
 ];
 
 tool_bit_array = 
 ["tool_bit_array",
-    ["x", gdv(tray, "x")],
-    ["y", gdv(tray, "y")],
-    ["z", gdv(tray, "z")],
+    ["x", gdv(Tray, "x")],
+    ["y", gdv(Tray, "y")],
+    ["z", gdv(Tray, "z")],
     ["columns", 5],
     ["rows", 6],
     ["spacing", 0],
@@ -179,7 +179,7 @@ screwDriverShaft =
 ["bit dimension",
     ["x", convert_in2mm(0.5)],
     ["y", convert_in2mm(0.75)],
-    ["z", gdv(tray, "z") * 1.25],
+    ["z", gdv(Tray, "z") * 1.25],
     ["fragments", 60],
     ["move", [0,0,LayersToHeight(-2)]],
     ["rotate", [0,0, 0]],
@@ -193,7 +193,7 @@ screwDriver_array =
     // ["y", gdv(screwDriverShaft, "y") * 1.25],
     ["x", gdv(screwDriverShaft, "x") * 1.95],
     ["y", gdv(screwDriverShaft, "y") * 1.25],
-    ["z", gdv(tray, "z")*2],
+    ["z", gdv(Tray, "z")*2],
     ["xCount", 4],
     ["yCount", 2],
     ["move", [gdv(screwDriverShaft, "x")/2, gdv(screwDriverShaft, "y")/4, 0] ],
@@ -201,7 +201,7 @@ screwDriver_array =
     ["color", "yellow"]
 ];
 
-function GetTrayCellLength(v, rows) = ( gdv(v, "x") - gdv(v, "rows") * gdv(v, "spacing") ) / gdv(v, "rows") ;
+function GetTrayCellLength(v) = ( gdv(v, "x") - gdv(v, "rows") * gdv(v, "spacing") ) / gdv(v, "rows") ;
 function GetTrayCellWidth(v, columns) = ( gdv(v, "y") - gdv(v, "columns") * gdv(v, "spacing") )  / gdv(v, "columns") ;
 
 module drawArrayOfCircleShapes(array, bitInfo)
@@ -223,7 +223,7 @@ module drawArrayOfCircleShapes(array, bitInfo)
                 {
                     echo(ponits =[row * xDistance, col * yDistance, 0]);
                     translate([row * xDistance, col * yDistance, 0])
-                    # drawCircleShape(bitInfo);
+                    drawCircleShape(bitInfo);
                 }        
             }          
         }        
