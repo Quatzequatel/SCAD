@@ -49,6 +49,8 @@ Backwall =
 
 
 
+
+
 bit = 
 ["bit dimension",
     ["x", HexBitHoleDia],
@@ -201,54 +203,4 @@ screwDriver_array =
     ["color", "yellow"]
 ];
 
-function GetTrayCellLength(v) = ( gdv(v, "x") - gdv(v, "rows") * gdv(v, "spacing") ) / gdv(v, "rows") ;
-function GetTrayCellWidth(v, columns) = ( gdv(v, "y") - gdv(v, "columns") * gdv(v, "spacing") )  / gdv(v, "columns") ;
 
-module drawArrayOfCircleShapes(array, bitInfo)
-{
-    properties_echo(array);
-    properties_echo(bitInfo);
-    rows = gdv(array, "rows");
-    columns = gdv(array, "columns");
-    xDistance = GetTrayCellLength(array);
-    yDistance = GetTrayCellWidth(array);
-    echo(xDistance=xDistance, yDistance=yDistance);
-    translate(gdv(array,"move"))
-    {
-        union()
-        {
-            for (row=[0:rows-1]) 
-            {
-                for (col=[0:columns-1]) 
-                {
-                    echo(ponits =[row * xDistance, col * yDistance, 0]);
-                    translate([row * xDistance, col * yDistance, 0])
-                    drawCircleShape(bitInfo);
-                }        
-            }          
-        }        
-    }
-
-  
-}
-
-module drawSquareShape(properties)
-{
-    color(gdv(properties, "color"), 0.5)
-    rotate(gdv(properties, "rotate"))
-    translate(gdv(properties, "move"))
-    //move to xy location
-    // translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
-    linear_extrude(gdv(properties, "z"))
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);
-}
-
-module drawCircleShape(properties)
-{
-    color(gdv(properties, "color"), 0.5)
-    translate(gdv(properties, "move"))
-    rotate(gdv(properties, "rotate"))
-    translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
-    linear_extrude(gdv(properties, "z"))
-    circle(d=gdv(properties, "x"), $fn = gdv(properties, "fragments"));
-}
