@@ -4,7 +4,8 @@
 */
 
 include <constants.scad>;
-include <ToolHolders_Library.scad>;
+include <../FrenchWall/ToolHolders_Library.scad>;
+use <../FrenchWall/ToolHolders_Modules_Library.scad>;
 
 use <convert.scad>;
 use <trigHelpers.scad>;
@@ -14,30 +15,31 @@ use <dictionary.scad>;
 
 //un comment to show ruler in drawing.
 // scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
-screwDriverTray();
+// screwDriverTray();
 // completeBitTray();
 // drawHammerHandle();
 // drawPeggedHandle();
-// drawDrillPeggedHandle();
+drawDrillPeggedHandle();
 // drawTriSquareHolder();
 
 // draw_Cleated_Back_Wall();
 // scale();
 
-module draw_Cleated_Back_Wall(backwall)
+module draw_Cleated_Back_Wall(properties)
 {
+    properties_echo(properties);
     //now wall and cleat is at [0,0]
     //move to positive 0 x-axis.
-    translate([gdv(backwall,"x"),0,0])
+    translate([gdv(properties,"x"),0,0])
     //rotate so cleat is external and wall is located at 0 y-axis
     rotate([0,0,180])
     union()
     {
         //draw wall
-        drawSquareShape(backwall);    
+        drawSquareShape(properties);    
         //draw cleat
-        translate([0, gdv(backwall,"y"), gdv(backwall,"z")])
-        draw_parallelogram(gdv(backwall, "cleat"));
+        translate([0, gdv(properties,"y"), gdv(properties,"z")])
+        draw_parallelogram(gdv(properties, "cleat"));
     }
 }
 
@@ -49,12 +51,12 @@ module drawDrillPeggedHandle()
         union()
         {
             rotate([7,0,0])
-            drawSquareShape(backwall);
+            drawSquareShape(Backwall);
             // translate([-5,0,-6])
             // drawPegs(DrillPeg, HammerBackwall);
             // translate([gdv(DrillPeg, "from edge"),0,0])
             radius = gdv(DrillPeg,"x")/2;
-            spacing = gdv(backwall, "x")/3;
+            spacing = gdv(Backwall, "x")/3;
             
             translate([spacing - radius,0,0])
             drawCircleShape(DrillPeg);
@@ -63,7 +65,10 @@ module drawDrillPeggedHandle()
             drawCircleShape(DrillPeg);
         }
 
-         screw_hole_counter_sink(screwholes, backwall);
+         screw_hole_counter_sink(screwholes, Backwall);
+
+        translate([0, 0, -gdv(Backwall, "z") + convert_in2mm(0.75)])
+         screw_hole_counter_sink(screwholes, Backwall);
     }
               
 }
@@ -160,8 +165,8 @@ module screwDriverTray()
         ["x", gdv(tray, "x")],
         ["y", NozzleWidth * 8],
         ["z", convert_in2mm(0.75)],
-        ["cleat length", convert_in2mm(0.75) ],
-        ["cleat thickness", NozzleWidth * 8],
+        ["parallelogram length", convert_in2mm(0.75) ],
+        ["parallelogram thickness", NozzleWidth * 8],
         ["angle", 135],
         ["extrude height", gdv(tray, "x")],
         ["move", [0, 0, 0]],
@@ -216,7 +221,6 @@ module screwDriverTray()
         union()
         {
             drawSquareShape(tray);
-            // drawSquareShape(backwall);      
             draw_Cleated_Back_Wall(backwall);      
         }
 
@@ -255,84 +259,6 @@ module drawPegs(properties, backwall)
         drawCircleShape(properties);
     }
 }
-
-/*
-    draws a parallelogram
-*/
-module draw_parallelogram(properties)
-{
-    /* visual
-    
-       D----------C
-    A----------B
-
-    height distance between lines AB and CD
-    angle is angle of AB and AD
-    baselength is where point D intersects line AB.
-    */
-    // properties_echo(properties);
-    length = gdv(properties, "cleat length");
-    height = gdv(properties, "cleat thickness");
-    angle = gdv(cleat, "angle");    
-    base_length = height/tan(angle);
-    hypoten = sqrt(pow(height, 2) + pow(base_length, 2));
-
-    A = [ 0, 0 ];
-    B = [ length, 0 ];
-    C = [ length + base_length, height];
-    D = [ base_length, height];
-
-    points = [A, B, C, D];
-    echo(points = points);
-    color(gdv(properties, "color"), 0.5)
-
-    translate([0, 0, -hypoten])
-    rotate([angle - 90, 0, 0])
-    rotate([0,90,0])
-    linear_extrude(height = gdv(properties, "extrude height"), center=false)
-    polygon(points=points); 
-}
-
-module draw_trapizoid(cleat_properties)
-{
-    /*
-    A is point origin point [0,0]
-    B is point length of bottom from origin [length, 0]
-    x is length of triangle side at the bottom of trapizoid. Where
-    2x + length of top = length of bottom
-    C is point of top [x, h]
-    D is last point [length - x, h]
-    points visually:
-                C   D
-              A       B
-    */
-    properties_echo(cleat_properties);
-    inverted_trapizoid = gdv(cleat_properties, "inverted trapizoid");
-    length = gdv(cleat_properties, "bottom length");
-    height = gdv(cleat_properties, "height");
-    angle = gdv(cleat, "angle");    
-    base_length = height/tan(angle);
-
-    points = trapizoid_points(length, height, base_length, inverted_trapizoid);
-
-    echo(points = points);
-
-    color(gdv(cleat_properties, "color"), 0.5)
-
-    rotate([0, 90, 0])
-    rotate([0, 0, angle])
-    translate([0, -height,0])
-    linear_extrude(height = gdv(cleat_properties, "extrude height"), center=false)
-    polygon(points=points);    
-}
-
-//parameters are
-function trapizoid_points(length, height, base_length, inverted = false) = 
-    inverted==false ? 
-        //[A, B, D, C]
-        [ [ 0, 0 ], [ length, 0 ], [ length - base_length, height ], [ base_length, height ]  ] : 
-        //for inverted [A, B, C, D]
-        [ [ base_length, 0 ], [ length - base_length, 0 ], [ length, height ], [ 0, height ] ];
 
 
 module drawPegs2(pegs, wall)
