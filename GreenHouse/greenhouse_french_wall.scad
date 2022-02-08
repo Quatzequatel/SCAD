@@ -68,8 +68,8 @@ build();
 
 module build(args) 
 {
-    draw_Cleated_Back_Wall(backwall);
-    draw_tray();
+    draw_Cleat_for_Back_Wall(backwall);
+    // draw_tray();
 
     // draw_bracket_for_support_cleat();
 
@@ -82,22 +82,22 @@ module build(args)
     drawing methods.
 */
 
-module draw_Cleated_Back_Wall(properties)
-{
-    //now wall and cleat is at [0,0]
-    //move to positive 0 x-axis.
-    translate([gdv(properties,"x"),0,0])
-    //rotate so cleat is external and wall is located at 0 y-axis
-    rotate([0,0,180])
-    union()
-    {
-        //draw wall
-        drawSquareShape(properties);    
-        //draw cleat
-        translate([0, gdv(properties,"y"), gdv(properties,"z")])
-        draw_parallelogram(gdv(properties, "cleat"));
-    }
-}
+// module draw_Cleated_Back_Wall(properties)
+// {
+//     //now wall and cleat is at [0,0]
+//     //move to positive 0 x-axis.
+//     translate([gdv(properties,"x"),0,0])
+//     //rotate so cleat is external and wall is located at 0 y-axis
+//     rotate([0,0,180])
+//     union()
+//     {
+//         //draw wall
+//         drawSquareShape(properties);    
+//         //draw cleat
+//         translate([0, gdv(properties,"y"), gdv(properties,"z")])
+//         draw_parallelogram(gdv(properties, "cleat"));
+//     }
+// }
 
 module draw_tray()
 {
