@@ -24,8 +24,8 @@ cleat =
     ["x", gdv(Tray, "x")],
     ["y", NozzleWidth * 8],
     ["z", convert_in2mm(0.75)],
-    ["cleat length", convert_in2mm(0.75) ],
-    ["cleat thickness", NozzleWidth * 8],
+    ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
+    ["parallelogram thickness", NozzleWidth * 8],
     ["angle", 135],
     ["extrude height", gdv(Tray, "x")],
     ["move", [0, 0, 0]],
@@ -38,7 +38,7 @@ Backwall =
 ["Backwall", 
     ["x", gdv(Tray, "x")],
     ["y", NozzleWidth * 8],
-    ["z", convert_in2mm(2.5)],
+    ["z", convert_in2mm(3.25)],
     ["move", [0, 0, 0]],
     ["from edge", 0],
     ["rotate", [0,0, 0]],
@@ -51,7 +51,7 @@ Backwall =
 
 
 
-bit = 
+Bit = 
 ["bit dimension",
     ["x", HexBitHoleDia],
     ["y", HexBitHoleDia],
