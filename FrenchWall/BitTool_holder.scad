@@ -28,8 +28,226 @@ use <dictionary.scad>;
 // draw_Cleat_for_BackWall(Backwall);
 // draw_Drill_Bit_Holder_Cleated();
 // draw_box_for_staples();
-draw_peg_holder_for_staples();
+// draw_box_for_JigSaw_Box();
+// draw_peg_holder_for_staples();
+draw_box_Ratchet_Set();
 // scale();
+
+
+module draw_box_Ratchet_Set() 
+{
+    echo();
+    echo(FileName = "Ratchet_Set_Tray.stl");
+    echo();
+    tray = 
+    ["tray", 
+        ["x", convert_in2mm(7.5)],
+        ["y", convert_in2mm(3)],
+        ["z", convert_in2mm(0.5)],
+        ["move", [0, 0, 0]],
+        ["rotate", [0,0, 0]],
+        ["color", "LightGrey"]
+    ];
+
+    cleat = 
+    ["cleat properties", 
+        ["x", gdv(tray, "x")],
+        ["y", NozzleWidth * 8],
+        ["z", convert_in2mm(0.75)],
+        ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
+        ["parallelogram thickness", NozzleWidth * 8],
+        ["angle", 135],
+        ["extrude height", gdv(tray, "x")],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0, 0, 0]],
+        ["color", "LightGrey"]
+    ];
+
+    backwall = 
+    ["backwall", 
+        ["x", gdv(tray, "x")],
+        ["y", NozzleWidth * 8],
+        ["z", convert_in2mm(2.5)],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0,0, 0]],
+        ["include cleat", false],
+        ["cleat", cleat],
+        ["color", "LightGrey"]
+    ];
+
+    hex_bit = 
+    ["bit dimension",
+        ["x", HexBitHoleDia],
+        ["y", HexBitHoleDia],
+        ["z", gdv(tray, "z")],
+        ["fragments", 6],
+        ["move", [0,0,LayersToHeight(6)]],
+        ["rotate", [0,0, 0]],
+        ["color", "LightBlue"]
+    ];
+
+    function Index(row, col, rows) =  row + (col * rows);  
+
+    socketXajustment = 7.025;
+    // socketX = convert_in2mm(1/2) - 1;
+    minSocketDiameter = 23;
+
+    sockets = [
+        [minSocketDiameter, "3/8"],  
+        [minSocketDiameter, "7/16"],  
+        [minSocketDiameter, "1/2"],
+        [minSocketDiameter, "9/16"],
+        [convert_in2mm(5/8) + socketXajustment, "5/8"],
+        [convert_in2mm(11/16) + socketXajustment, "11/16"],
+        [convert_in2mm(3/4) + socketXajustment, "3/4"],
+        [convert_in2mm(13/16) + socketXajustment, "13/16"],
+        [convert_in2mm(7/8) + socketXajustment, "   7/8"], 
+        [convert_in2mm(15/16) + socketXajustment, "    15/16"], 
+        [convert_in2mm(1) + socketXajustment, "      1 inch"]
+    ];
+
+    columns =  1;
+    rows = 6;
+
+    xSpace = gdv(tray, "x") / (rows);
+    ySpace = gdv(tray, "y") / (columns + 1);
+    bottom_thickness = LayersToHeight(4);
+    trayWidth = gdv(tray, "x");
+    trayDepth = gdv(tray, "y");
+    // ySpace = 19.05;
+    // ySpace = trayDepth / (columns + 1);
+    echo(trayWidth = trayWidth,  trayDepth = trayDepth)
+    echo(rows = rows, columns = columns, xSpace = xSpace, ySpace = ySpace);
+
+    rotate([0,90,0])
+    union()
+    {
+        translate([gdv(tray, "x"), gdv(tray, "y"), 0])
+        rotate([0,0,180])
+        translate([0, 0, -gdv(tray, "z")])
+        difference()
+        {
+            union()
+            {
+                drawSquareShape(tray);
+                // translate([0,gdv(tray, "y") - 2,0])
+                // drawSquareShape(shortBackwall);
+            }
+            
+            for (col = [0 : columns]) 
+            {
+                for(row = [0 : rows - 1])
+                {
+                    if( row + (col * rows) < len(sockets))
+                    {
+                    echo(x= row * xSpace, y = col * ySpace, row = row, col = col, drillBit = Index(row, col, rows) );
+                        translate([ row * xSpace + xSpace/2 + (Index(row, col, rows) > 6 ? 3 : 0) * row, col * ySpace + ySpace/2, bottom_thickness + gdv(tray, "z")/2])
+                        cylinder(d = sockets[ row + (col * rows)][0], h = gdv(tray, "z"), center=true, $fn=60);
+                        
+                        translate([ row * xSpace + xSpace/2.5 + (Index(row, col, rows) >= 6 ? -2 : 0) * row, col == 0 ? col * ySpace + 1 : (col * ySpace) - 3, gdv(tray, "z") - bottom_thickness ])
+                        #linear_extrude(height = bottom_thickness)
+                        text(text=sockets[ row + (col * rows)][1], size = 5);
+                    }
+
+                }
+            }
+
+            //hex bit slot
+            translate([gdv(tray,"x") - 15, gdv(tray,"y") - 20, 0 ])
+            drawCircleShape(hex_bit);
+        }  
+        translate([gdv(backwall,"x"), 0, (3 * gdv(backwall,"z")) - gdv(tray, "z")])
+        rotate([0,90,0])
+        draw_Cleated_Back_Wall(backwall);     
+    }
+
+}
+
+module draw_box_for_JigSaw_Box()
+{
+    BladeBoxRows=10;
+    BladeBoxColumns=9;
+    BladeBoxX = 6.5 + 0.6; //printed is 5.92, difference = 0.58
+    BladeBoxY = (1.23 * 3) + 0.65; //calulate = 3.69; printed 3.04, difference = 0.65
+    BladeBoxSpacingWidth = BladeBoxY + 3;
+    BladeBoxSpacingLength = BladeBoxX + 4;
+    BladeBoxSpacing = 6.125; //convert_in2mm(0.25);
+
+    screwDriverShaftDiameter = gdv( screwDriverShaft, "x");
+
+    box = ["inner box",
+        ["x", BladeBoxX],
+        ["y", BladeBoxY],
+        ["z", gdv(Tray, "z") ],
+        ["move", [ (gdv(Tray, "x") - BladeBoxX)/2,  0, LayersToHeight(8)]],
+        ["rotate", [0,0, 0]],
+        ["color", "yellow"]
+    ];
+
+    shortBackwall = 
+    ["short back wall", 
+        ["x", gdv(Tray, "x")],
+        ["y", NozzleWidth * 6],
+        ["z", convert_in2mm(1.5)],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0,0, 0]],
+        ["include cleat", false],
+        ["cleat", cleat],
+        ["color", "LightGrey"]
+    ];    
+
+    // translate([gdv(Tray, "x"), gdv(Tray, "y"), convert_in2mm(1.75)])
+    // rotate([0,0,180])
+    difference()
+    {
+        union()
+        {
+            drawSquareShape(Tray);
+            translate([0,gdv(Tray, "y") - 2,0])
+            drawSquareShape(shortBackwall);
+        }
+
+        translate([-55,-4,0])
+        {
+            for(col = [0 : BladeBoxColumns-1 ])
+            {
+                for (row =[1 : BladeBoxRows-1 ])
+                {
+                    echo(xyz = [col * BladeBoxSpacingLength, (row * BladeBoxSpacingWidth) , 0]);
+
+                    translate([col * BladeBoxSpacingLength, (row * BladeBoxSpacingWidth) , 0])
+                    drawSquareShape(box);            
+                }
+            }            
+        }
+
+        //hex tool holder.
+        translate([gdv(Tray, "x") - 15, gdv(Tray, "y")-19, -1])
+        linear_extrude(gdv(Tray, "z")+ 5)
+        circle(d=screwDriverShaftDiameter, $fn = 90);
+
+        //hex bit holder
+        translate([gdv(Tray, "x") - 20, gdv(Tray, "y")-70, -1])
+        drawCircleShape(Bit);
+
+        //hex bit holder
+        translate([gdv(Tray, "x") - 20, gdv(Tray, "y")-55, -1])
+        drawCircleShape(Bit);
+        
+        //hex bit holder
+        #translate([gdv(Tray, "x") - 20, gdv(Tray, "y")-40, -1])
+        drawCircleShape(Bit);
+
+        // translate([0, 3 * stapleBoxSpacing + 2 * gdv(box, "y"), 0])
+        // drawSquareShape(box);    
+        
+        translate([0,gdv(Tray, "y") - 2, -convert_in2mm(0.75)])
+        screw_hole_counter_sink(screwholes, shortBackwall);
+    }
+}
 
 /*
  create a tall back wall property that measure y = tray y + 1.25" + 1.5"
@@ -146,7 +364,7 @@ module draw_Cleated_Back_Wall(properties)
     //move to positive 0 x-axis.
     translate([gdv(properties,"x"),0,0])
     //rotate so cleat is external and wall is located at 0 y-axis
-    rotate([0,0,180])
+    rotate([0,90,180])
     union()
     {
         //draw wall
@@ -404,6 +622,8 @@ module completeBitTray()
 
 module screwDriverTray()
 {
+
+    echo(FileName = "LargeHoleScrewDriverTray.stl");
     tray = 
     ["tray", 
         ["x", convert_in2mm(7)],
@@ -418,7 +638,7 @@ module screwDriverTray()
         ["x", gdv(tray, "x")],
         ["y", NozzleWidth * 8],
         ["z", convert_in2mm(0.75)],
-        ["parallelogram length", convert_in2mm(0.75) ],
+        ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
         ["parallelogram thickness", NozzleWidth * 8],
         ["angle", 135],
         ["extrude height", gdv(tray, "x")],
@@ -444,7 +664,7 @@ module screwDriverTray()
 
     shaft = 
     ["bit dimension",
-        ["x", convert_in2mm(0.75)],
+        ["x", convert_in2mm(1.25)],
         ["y", convert_in2mm(1)],
         ["z", gdv(tray, "z") * 1.25],
         ["fragments", 60],
@@ -458,11 +678,11 @@ module screwDriverTray()
         ["x", gdv(tray, "x")],
         ["y", gdv(tray, "y")],
         ["z", gdv(tray, "z")],
-        ["columns", 3],
-        ["rows", 7],
+        ["columns", 2],
+        ["rows", 4],
         ["spacing", 0],
         //move is a final adjustment
-        ["move", [gdv(shaft, "x")/6, 0, 0]],
+        ["move", [gdv(shaft, "x")/8 + 3, 4, 0]],
         ["rotate", [0,0, 0]],
         ["color", "yellow"]
     ];
@@ -474,6 +694,8 @@ module screwDriverTray()
         union()
         {
             drawSquareShape(tray);
+            translate([gdv(backwall,"x"), 0, (3 * gdv(backwall,"z")) - gdv(tray, "z")])
+            rotate([0,90,0])
             draw_Cleated_Back_Wall(backwall);      
         }
 

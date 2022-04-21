@@ -38,7 +38,7 @@ Backwall =
 ["Backwall", 
     ["x", gdv(Tray, "x")],
     ["y", NozzleWidth * 8],
-    ["z", convert_in2mm(3.25)],
+    ["z", convert_in2mm(3.5)],
     ["move", [0, 0, 0]],
     ["from edge", 0],
     ["rotate", [0,0, 0]],
