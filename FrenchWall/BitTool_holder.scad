@@ -22,7 +22,7 @@ use <dictionary.scad>;
 // drawPeggedHandle();
 // drawDrillPeggedHandle();
 // drawDrillPeggedHandleV2();
-// drawTriSquareHolder();
+drawSquarePegHolder();
 
 // draw_Cleated_Back_Wall(Backwall);
 // draw_Cleat_for_BackWall(Backwall);
@@ -30,7 +30,7 @@ use <dictionary.scad>;
 // draw_box_for_staples();
 // draw_box_for_JigSaw_Box();
 // draw_peg_holder_for_staples();
-draw_box_Ratchet_Set();
+// draw_box_Ratchet_Set();
 // scale();
 
 
@@ -43,7 +43,7 @@ module draw_box_Ratchet_Set()
     ["tray", 
         ["x", convert_in2mm(7.5)],
         ["y", convert_in2mm(3)],
-        ["z", convert_in2mm(0.5)],
+        ["z", convert_in2mm(0.75)],
         ["move", [0, 0, 0]],
         ["rotate", [0,0, 0]],
         ["color", "LightGrey"]
@@ -83,7 +83,7 @@ module draw_box_Ratchet_Set()
         ["y", HexBitHoleDia],
         ["z", gdv(tray, "z")],
         ["fragments", 6],
-        ["move", [0,0,LayersToHeight(6)]],
+        ["move", [0,0,LayersToHeight(8)]],
         ["rotate", [0,0, 0]],
         ["color", "LightBlue"]
     ];
@@ -99,13 +99,13 @@ module draw_box_Ratchet_Set()
         [minSocketDiameter, "7/16"],  
         [minSocketDiameter, "1/2"],
         [minSocketDiameter, "9/16"],
-        [convert_in2mm(5/8) + socketXajustment, "5/8"],
-        [convert_in2mm(11/16) + socketXajustment, "11/16"],
-        [convert_in2mm(3/4) + socketXajustment, "3/4"],
-        [convert_in2mm(13/16) + socketXajustment, "13/16"],
-        [convert_in2mm(7/8) + socketXajustment, "   7/8"], 
-        [convert_in2mm(15/16) + socketXajustment, "    15/16"], 
-        [convert_in2mm(1) + socketXajustment, "      1 inch"]
+        [convert_in2mm(11/16) + socketXajustment, "5/8"],
+        [convert_in2mm(12/16) + socketXajustment, "11/16"],
+        [convert_in2mm(13/16) + socketXajustment, "3/4"],
+        [convert_in2mm(14/16) + socketXajustment, "13/16"],
+        [convert_in2mm(15/16) + socketXajustment, "   7/8"], 
+        [convert_in2mm(16/16) + socketXajustment, "    15/16"], 
+        [convert_in2mm(1 + 1/16) + socketXajustment, "      1 inch"]
     ];
 
     columns =  1;
@@ -113,7 +113,7 @@ module draw_box_Ratchet_Set()
 
     xSpace = gdv(tray, "x") / (rows);
     ySpace = gdv(tray, "y") / (columns + 1);
-    bottom_thickness = LayersToHeight(4);
+    bottom_thickness = LayersToHeight(8);
     trayWidth = gdv(tray, "x");
     trayDepth = gdv(tray, "y");
     // ySpace = 19.05;
@@ -121,7 +121,7 @@ module draw_box_Ratchet_Set()
     echo(trayWidth = trayWidth,  trayDepth = trayDepth)
     echo(rows = rows, columns = columns, xSpace = xSpace, ySpace = ySpace);
 
-    rotate([0,90,0])
+    // rotate([0,90,0])
     union()
     {
         translate([gdv(tray, "x"), gdv(tray, "y"), 0])
@@ -143,7 +143,7 @@ module draw_box_Ratchet_Set()
                     if( row + (col * rows) < len(sockets))
                     {
                     echo(x= row * xSpace, y = col * ySpace, row = row, col = col, drillBit = Index(row, col, rows) );
-                        translate([ row * xSpace + xSpace/2 + (Index(row, col, rows) > 6 ? 3 : 0) * row, col * ySpace + ySpace/2, bottom_thickness + gdv(tray, "z")/2])
+                        translate([ row * xSpace + xSpace/2 + (Index(row, col, rows) > 6 ? 3.5 : 0) * row, col * ySpace + ySpace/2, bottom_thickness + gdv(tray, "z")/2])
                         cylinder(d = sockets[ row + (col * rows)][0], h = gdv(tray, "z"), center=true, $fn=60);
                         
                         translate([ row * xSpace + xSpace/2.5 + (Index(row, col, rows) >= 6 ? -2 : 0) * row, col == 0 ? col * ySpace + 1 : (col * ySpace) - 3, gdv(tray, "z") - bottom_thickness ])
@@ -449,8 +449,25 @@ module drawDrillPeggedHandle()
 
 
 
-module drawTriSquareHolder()
+module drawSquarePegHolder()
 {
+    echo();
+    echo(FileName = "drawSquarePegHolder.stl");
+    echo();
+
+    radius = gdv(DrillPeg,"x")/2;
+    unit = 0.9;
+
+    spacingA = 
+        ["spacing", 
+            ["0", [ 0, 0, 0 ]],
+            ["1", [ convert_in2mm(unit), 0, 0 ]],
+            ["2", [ convert_in2mm(2 * unit), 0, 0 ]],
+            ["3", [ convert_in2mm(3 * unit), 0, 0 ]],
+            ["4", [ convert_in2mm(4 * unit), 0, 0 ]],
+        ];
+
+    properties_echo(spacingA);
     
     difference()
     {
@@ -458,27 +475,20 @@ module drawTriSquareHolder()
         {
             rotate([7,0,0])
             drawSquareShape(Backwall);
-            // translate([-5,0,-6])
-            // drawPegs(DrillPeg, HammerBackwall);
-            // translate([gdv(DrillPeg, "from edge"),0,0])
-            radius = gdv(DrillPeg,"x")/2;
-            spacing = (gdv(Backwall, "x") - (2*gdv(DrillPeg,"x")))/5;
-            start = gdv(DrillPeg,"x");
-
-            echo(start = start, radius = radius, spacing = spacing);
             
+            translate(gdv(spacingA, "0"))
             drawSquareShape(DrillPeg);
 
-            translate([start + spacing - radius,0,0])
+            translate(gdv(spacingA, "1"))
             drawSquareShape(DrillPeg);
             
-            translate([start + 2*spacing - radius,0,0])
+            translate(gdv(spacingA, "2"))
             drawSquareShape(DrillPeg);
 
-            translate([start + 3*spacing - radius,0,0])
+            translate(gdv(spacingA, "3"))
             drawSquareShape(DrillPeg);
 
-            translate([start + 4*spacing - radius,0,0])
+            translate(gdv(spacingA, "4"))
             drawSquareShape(DrillPeg);
 
             translate([gdv(Backwall, "x") - gdv(DrillPeg,"x") ,0,0])
