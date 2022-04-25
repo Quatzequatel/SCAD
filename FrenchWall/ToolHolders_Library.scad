@@ -19,13 +19,15 @@ Tray =
     ["color", "LightGrey"]
 ];
 
+cleat_thickness = 5.2;
+
 cleat = 
 ["cleat properties", 
     ["x", gdv(Tray, "x")],
-    ["y", NozzleWidth * 8],
+    ["y",cleat_thickness],
     ["z", convert_in2mm(0.75)],
     ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
-    ["parallelogram thickness", NozzleWidth * 8],
+    ["parallelogram thickness", cleat_thickness],
     ["angle", 135],
     ["extrude height", gdv(Tray, "x")],
     ["move", [0, 0, 0]],
@@ -37,7 +39,7 @@ cleat =
 Backwall = 
 ["Backwall", 
     ["x", gdv(Tray, "x")],
-    ["y", NozzleWidth * 8],
+    ["y", cleat_thickness],
     ["z", convert_in2mm(3.5)],
     ["move", [0, 0, 0]],
     ["from edge", 0],
@@ -119,7 +121,7 @@ HammerShapperTray =
 HammerBackwall = 
 ["HammerBackwall", 
     ["x", gdv(HammerTray, "x")],
-    ["y", NozzleWidth * 8],
+    ["y",cleat_thickness],
     ["z", convert_in2mm(2)],
     ["move", [0, gdv(HammerTray, "y")/2, 0]],
     ["from edge", (gdv(HammerTray, "x")-convert_in2mm(0.75))/2],
