@@ -22,7 +22,7 @@ use <dictionary.scad>;
 // drawPeggedHandle();
 // drawDrillPeggedHandle();
 // drawDrillPeggedHandleV2();
-drawSquarePegHolder();
+// drawSquarePegHolder();
 
 // draw_Cleated_Back_Wall(Backwall);
 // draw_Cleat_for_BackWall(Backwall);
@@ -30,7 +30,7 @@ drawSquarePegHolder();
 // draw_box_for_staples();
 // draw_box_for_JigSaw_Box();
 // draw_peg_holder_for_staples();
-// draw_box_Ratchet_Set();
+draw_box_Ratchet_Set();
 // scale();
 
 
@@ -52,10 +52,10 @@ module draw_box_Ratchet_Set()
     cleat = 
     ["cleat properties", 
         ["x", gdv(tray, "x")],
-        ["y", NozzleWidth * 8],
+        ["y", cleat_thickness],
         ["z", convert_in2mm(0.75)],
         ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
-        ["parallelogram thickness", NozzleWidth * 8],
+        ["parallelogram thickness", cleat_thickness],
         ["angle", 135],
         ["extrude height", gdv(tray, "x")],
         ["move", [0, 0, 0]],
@@ -67,7 +67,7 @@ module draw_box_Ratchet_Set()
     backwall = 
     ["backwall", 
         ["x", gdv(tray, "x")],
-        ["y", NozzleWidth * 8],
+        ["y", cleat_thickness],
         ["z", convert_in2mm(2.5)],
         ["move", [0, 0, 0]],
         ["from edge", 0],
@@ -189,7 +189,7 @@ module draw_box_for_JigSaw_Box()
     shortBackwall = 
     ["short back wall", 
         ["x", gdv(Tray, "x")],
-        ["y", NozzleWidth * 6],
+        ["y", cleat_thickness],
         ["z", convert_in2mm(1.5)],
         ["move", [0, 0, 0]],
         ["from edge", 0],
@@ -272,7 +272,7 @@ module draw_box_for_staples()
     shortBackwall = 
     ["short back wall", 
         ["x", gdv(Tray, "x")],
-        ["y", NozzleWidth * 8],
+        ["y", cleat_thickness],
         ["z", convert_in2mm(1.5)],
         ["move", [0, 0, 0]],
         ["from edge", 0],
@@ -312,7 +312,7 @@ module draw_peg_holder_for_staples()
         shortBackwall = 
     ["short back wall", 
         ["x", gdv(Tray, "x")],
-        ["y", NozzleWidth * 8],
+        ["y", cleat_thickness],
         ["z", convert_in2mm(1.5)],
         ["move", [0, 0, 0]],
         ["from edge", 0],
@@ -494,7 +494,7 @@ module drawSquarePegHolder()
             translate([gdv(Backwall, "x") - gdv(DrillPeg,"x") ,0,0])
             drawSquareShape(DrillPeg);        }
 
-         screw_hole_counter_sink(screwholes, Backwall);
+         //screw_hole_counter_sink(screwholes, Backwall);
     }
               
 }
@@ -646,10 +646,10 @@ module screwDriverTray()
     cleat = 
     ["cleat properties", 
         ["x", gdv(tray, "x")],
-        ["y", NozzleWidth * 8],
+        ["y", cleat_thickness],
         ["z", convert_in2mm(0.75)],
         ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
-        ["parallelogram thickness", NozzleWidth * 8],
+        ["parallelogram thickness", cleat_thickness],
         ["angle", 135],
         ["extrude height", gdv(tray, "x")],
         ["move", [0, 0, 0]],
@@ -661,7 +661,7 @@ module screwDriverTray()
     backwall = 
     ["backwall", 
         ["x", gdv(tray, "x")],
-        ["y", NozzleWidth * 8],
+        ["y", cleat_thickness],
         ["z", convert_in2mm(2.5)],
         ["move", [0, 0, 0]],
         ["from edge", 0],
