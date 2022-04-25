@@ -11,9 +11,14 @@ use <dictionary.scad>;
 
 //height in back is 74,
 //height in front is 91.
+
+
+shedInteriorWidth = convert_in2mm(88.6);
+shedInteriorLength = convert_in2mm(88.6);
 shelfWidth = convert_in2mm(32);
 shelfWidth2 = convert_in2mm(16);
 shelfLength = convert_in2mm(90.1 - 1.5);
+sideShelfLength = convert_in2mm(54.5);
 shelfThickness = convert_in2mm(3.5 + 0.75);
 
 shed = 
@@ -32,14 +37,19 @@ shed =
 shed_door = 
 ["Tool Shed Door", 
     ["x", convert_in2mm(0.85)],
+    // // // Actual door cut
     // ["y", convert_in2mm(58.2)],
     // ["z", convert_in2mm(74.3)],
+    // ["move", [gdv(shed, "x") - gdv(shed, "wall thickness")-1, gdv(shed, "y")/2 - convert_in2mm(58.2)/2, gdv(shed, "floor thickness")]],
+    // // // end actual door
+    //
+    // start no door wall
     ["y", convert_in2mm(7 * 12 + 4.6 + 1.5)],
     ["z", convert_in2mm(90)],
+    ["move", [gdv(shed, "x") - gdv(shed, "wall thickness")-1, 0 , gdv(shed, "floor thickness")]],
+    //end no door wall.
     ["wall thickness", convert_in2mm(0.75)],
     ["floor thickness", convert_in2mm(1)],
-    // ["move", [gdv(shed, "x") - gdv(shed, "wall thickness")-1, gdv(shed, "y")/2 - convert_in2mm(58.2)/2, gdv(shed, "floor thickness")]],
-    ["move", [gdv(shed, "x") - gdv(shed, "wall thickness")-1, 0 , gdv(shed, "floor thickness")]],
     ["rotate", [0,0, 0]],
     ["color", "LightGrey"]
 ];
@@ -51,7 +61,7 @@ vboard_2x4 =
         ["z", convert_in2mm(58)],
         ["move", [0, 0, 0]],
         ["rotate", [ 0, 0, 0] ],
-        ["color", "SaddleBrown"]
+        ["color", "LightSlateGray"]
     ];
 
 hboard_2x4 = 
@@ -64,6 +74,16 @@ hboard_2x4 =
         ["color", "SaddleBrown"]
     ];
 
+hboard_2x4_side = 
+    [ "side horizontal board 2x4",
+        ["x", convert_in2mm(1.75)],
+        ["y", sideShelfLength],
+        ["z", convert_in2mm(3.5)],
+        ["rotate", [ 0, 0, 0] ],
+        ["move", [0, 0, 0]],
+        ["color", "Goldenrod"]
+    ];    
+
 hboard_2x4_brace = 
     [ "horizontal brace board 2x4",
         ["x", convert_in2mm(1.75)],
@@ -71,7 +91,7 @@ hboard_2x4_brace =
         ["z", convert_in2mm(3.5)],
         ["rotate", [ 0, 0, -90] ],
         ["move", [convert_in2mm(-2.5),  convert_in2mm(0.75), 0]],
-        ["color", "SaddleBrown"]
+        ["color", "Goldenrod"]
     ];    
 
 storage_bin = 
@@ -97,6 +117,17 @@ shelf1 =
         ["color", "Ivory"]        
     ];
 
+shelf2 = 
+    [
+        "shelf",
+        ["x", sideShelfLength],
+        ["y", shelfWidth2],
+        ["z", convert_in2mm(0.75)],
+        ["rotate", [ 0, 0, 0] ],
+        ["move", [0, 0, 0]],
+        ["color", "Ivory"]        
+    ];
+
     //points
     x1 = gdv(shed, "wall thickness");
     x2 = x1 + shelfWidth - gdv(vboard_2x4, "x");
@@ -109,6 +140,7 @@ shelf1 =
     y2 = gdv(hboard_2x4, "y") - (convert_in2mm(2) + gdv(shed, "wall thickness"));
     y3 =  gdv(hboard_2x4, "y") - gdv(hboard_2x4, "x");
     y4 =  y1 + gdv(hboard_2x4, "y")/2;
+    y5 =  y1 + gdv(vboard_2x4, "y");
 
     zTopBack = convert_in2mm(74);
     zTopFront = convert_in2mm(91);
@@ -179,6 +211,7 @@ module draw_back_shelf()
     draw_shelfs();
 
     draw_shelf_posts2();
+    draw_shelf_support2();
 }
 
 module draw_shelf_posts() 
@@ -205,9 +238,10 @@ module draw_shelf_posts2()
 {
 
     x20 = x1 + shelfWidth +  gdv(vboard_2x4, "x");
-    x21 = x20 + convert_in2mm(48);
+    x21 = x20 + convert_in2mm(48) + convert_in2mm(3);
 
     y20 = y1 + gdv(vboard_2x4, "x");
+    y22 = y1 + gdv(vboard_2x4, "x")/2;
     y21 = y20 + shelfWidth2;
 
     //post 1
@@ -215,8 +249,8 @@ module draw_shelf_posts2()
     draw_vertical_2x4_2(vboard_2x4);
 
     //post 2
-    translate([x21, y20, z1])
-    draw_vertical_2x4_2(vboard_2x4);
+    translate([x21 , y20, z1])
+    #draw_vertical_2x4_2(vboard_2x4);
 
     //post 3
     translate([x20, y21, z1])
@@ -224,7 +258,66 @@ module draw_shelf_posts2()
 
     //post 4  
     translate([x21, y21, z1])
-    draw_vertical_2x4_2(vboard_2x4);    
+    #draw_vertical_2x4_2(vboard_2x4);    
+
+     //shelf 1
+    color(gdv(shed, "color"), 0.25)
+    translate ([x20 , y22, zShelfT1])
+    linear_extrude(gdv(shelf2, "z"))
+    square(size=[gdv(shelf2, "x"), gdv(shelf2, "y")], center=false);
+
+    //shelf 2
+    color(gdv(shed, "color"), 0.25)
+    translate ([x20 , y22, zShelfT2])
+    linear_extrude(gdv(shelf2, "z"))
+    square(size=[gdv(shelf2, "x"), gdv(shelf2, "y")], center=false);
+
+    //shelf 3
+    color(gdv(shed, "color"), 0.25)
+    translate ([x20 , y22, zShelfT3])
+    linear_extrude(gdv(shelf2, "z"))
+    square(size=[gdv(shelf2, "x"), gdv(shelf2, "y")], center=false);
+}
+
+module draw_shelf_support2()
+{
+    x20 = x1 + shelfWidth;// +  gdv(vboard_2x4, "x");
+    x21 = x20 + sideShelfLength;
+
+    x200 = x2 + gdv(hboard_2x4_side, "y") + convert_in2mm(3.5) ;//+ shelfWidth + gdv(vboard_2x4, "x");
+
+    y20 = y1 + gdv(vboard_2x4, "x");
+    y21 = y20 + shelfWidth2 - convert_in2mm(5/2) ;
+
+    //shelf support 1.1
+    translate([x200, y1 + convert_in2mm(0.75), zShelf1])
+    rotate([0, 0, 90])
+    draw_vertical_2x4(hboard_2x4_side);
+
+    //shelf support 1.2
+    translate([x200, y21, zShelf1])
+    rotate([0, 0, 90])
+    draw_vertical_2x4(hboard_2x4_side);    
+
+    //shelf support 2.1
+    translate([x200, y1 + convert_in2mm(0.75), zShelf2])
+    rotate([0, 0, 90])
+    draw_vertical_2x4(hboard_2x4_side);
+
+    //shelf support 2.2
+    translate([x200, y21, zShelf2])
+    rotate([0, 0, 90])
+    draw_vertical_2x4(hboard_2x4_side); 
+
+    //shelf support 3.1
+    translate([x200, y1 + convert_in2mm(0.75), zShelf3])
+    rotate([0, 0, 90])
+    draw_vertical_2x4(hboard_2x4_side);
+
+    //shelf support 3.2
+    translate([x200, y21, zShelf3])
+    rotate([0, 0, 90])
+    draw_vertical_2x4(hboard_2x4_side); 
 }
 
 module draw_shelf_support()
@@ -327,37 +420,37 @@ module draw_storage_bins()
     binWidthAndSpace = gdv(storage_bin, "y") + 10;
 
     //first shelf
-    translate([x10, y4, zShelf1 + shelfThickness])
+    translate([x10, y5, zShelf1 + shelfThickness])
     rotate([0, 0, 90])
     draw_vertical_2x4(storage_bin);
 
     //Second shelf row1
-    translate([x10, y4, zShelf2 + shelfThickness])
+    translate([x10, y5, zShelf2 + shelfThickness])
     rotate([0, 0, 90])
     draw_vertical_2x4(storage_bin);
 
-    translate([x10, y4 + binWidthAndSpace, zShelf2 + shelfThickness])
+    translate([x10, y5 + binWidthAndSpace, zShelf2 + shelfThickness])
     rotate([0, 0, 90])
     draw_vertical_2x4(storage_bin);
 
-    translate([x10, y4 + 2 * binWidthAndSpace, zShelf2 + shelfThickness])
+    translate([x10, y5 + 2 * binWidthAndSpace, zShelf2 + shelfThickness])
     rotate([0, 0, 90])
     draw_vertical_2x4(storage_bin);
 
-    translate([x10, y4 + 3 * binWidthAndSpace + gdv(storage_bin, "x") + 10, zShelf2 + shelfThickness])
+    translate([x10, y5 + 3 * binWidthAndSpace + gdv(storage_bin, "x") + 10, zShelf2 + shelfThickness])
     rotate([0, 0, 0])
     draw_vertical_2x4(storage_bin);    
 
     //Second shelf row2
-    translate([x10 + gdv(storage_bin, "x") + 25, y4, zShelf2 + shelfThickness])
+    translate([x10 + gdv(storage_bin, "x") + 25, y5, zShelf2 + shelfThickness])
     rotate([0, 0, 90])
     draw_vertical_2x4(storage_bin);
 
-    translate([x10 + gdv(storage_bin, "x") + 25, y4 + binWidthAndSpace, zShelf2 + shelfThickness])
+    translate([x10 + gdv(storage_bin, "x") + 25, y5 + binWidthAndSpace, zShelf2 + shelfThickness])
     rotate([0, 0, 90])
     draw_vertical_2x4(storage_bin);
 
-    translate([x10 + gdv(storage_bin, "x") + 25, y4 + 2 * binWidthAndSpace, zShelf2 + shelfThickness])
+    translate([x10 + gdv(storage_bin, "x") + 25, y5 + 2 * binWidthAndSpace, zShelf2 + shelfThickness])
     rotate([0, 0, 90])
     draw_vertical_2x4(storage_bin);
 }
