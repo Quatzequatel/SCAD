@@ -8,6 +8,7 @@ use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
+use <../FrenchWall/ToolHolders_Modules_Library.scad>;
 
 //height in back is 74,
 //height in front is 91.
@@ -21,10 +22,13 @@ shelfLength = convert_in2mm(90.1 - 1.5);
 sideShelfLength = convert_in2mm(54.5);
 shelfThickness = convert_in2mm(3.5 + 0.75);
 
+shedExteriorLength = convert_in2mm(7 * 12 + 4.6 + 1.5);
+shedExteriorWidth = convert_in2mm(7 * 12 + 4.6 + 1.5);
+
 shed = 
 ["Tool Shed", 
-    ["x", convert_in2mm(7 * 12 + 4.6 + 1.5)],
-    ["y", convert_in2mm(7 * 12 + 4.6 + 1.5)],
+    ["x", shedExteriorLength],
+    ["y", shedExteriorWidth],
     // ["z", convert_in2mm(7 * 12 + 6.5)],
     ["z", convert_in2mm(74)],
     ["wall thickness", convert_in2mm(0.75)],
@@ -212,6 +216,8 @@ module draw_back_shelf()
 
     draw_shelf_posts2();
     draw_shelf_support2();
+
+    draw_external_shelve();
 }
 
 module draw_shelf_posts() 
@@ -232,6 +238,196 @@ module draw_shelf_posts()
     //post 4  
     translate([x4, y2, z1]) 
     draw_vertical_2x4(vboard_2x4);    
+}
+
+module draw_external_shelve()
+{
+    // postThickness = convert_in2mm(1.75);
+    postFloor = convert_in2mm(-12);
+    tallPost = convert_in2mm(84);
+    shortPost = convert_in2mm(79);
+    shelfHeightTall = convert_in2mm(18) + convert_in2mm(4.25);
+    shelfHeightMedium = convert_in2mm(16) + convert_in2mm(4.25);
+    shelfHeightShort = convert_in2mm(14) + convert_in2mm(4.25);
+
+    yorigin = shedExteriorWidth;
+    
+    board_width = convert_in2mm(1.75);
+    board_depth = convert_in2mm(3.5);
+    half_width = board_width/2;
+
+    echo(hypotenuse = sqrt(2 * 16^2));
+
+    locations = 
+    [
+        "locations",
+        ["p1", [ 0, yorigin, postFloor ] ],
+        ["p2", [ 0, yorigin + shelfWidth2 - board_depth, postFloor ] ],
+        ["p3", [ shedInteriorLength, yorigin, postFloor ] ],
+        ["p4", [ shedInteriorLength, yorigin + shelfWidth2 - board_depth, postFloor ] ],
+        ["r1", [ 0, yorigin + convert_in2mm(0), convert_in2mm(74) ] ],
+        ["s0", [ half_width, yorigin , postFloor ] ],
+        ["s1", [ half_width, yorigin , postFloor + shelfHeightTall ] ],
+        ["s2", [ half_width, yorigin , postFloor + shelfHeightTall + shelfHeightMedium ] ],
+        ["s3", [ half_width, yorigin , postFloor + shelfHeightTall + shelfHeightMedium + shelfHeightShort ] ]
+    ];
+
+    shelves =
+    [
+        "shelf heights",
+        ["s1", zShelf1],
+        ["s2", zShelf2],
+        ["s3", zShelf3]
+    ];
+
+    outsidePost1 = 
+    [ "outside post 1",
+        ["x", convert_in2mm(1.75)],
+        ["y", convert_in2mm(3.5)],
+        ["z", convert_in2mm(84)],
+        ["move", [0, 0, 0] ],
+        ["rotate", [ 0, 0, 0] ],
+        ["color", "LightSlateGray"]
+    ];
+
+    outsidePost2 = 
+    [ "outside post 2",
+        ["x", convert_in2mm(1.75)],
+        ["y", convert_in2mm(3.5)],
+        ["z", convert_in2mm(68)],
+        ["move", [0, 0, 0]],
+        ["rotate", [ 0, 0, 0] ],
+        ["color", "LightSlateGray"]
+    ];
+
+    roof = 
+    [
+        "cleat properties", 
+        ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
+        ["parallelogram thickness", convert_in2mm(20)],
+        ["angle", 135],
+        ["extrude height", shedExteriorLength],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0, 0, 0]],
+        ["color", "LightGrey"]
+    ];
+
+    moveTo(locations, "p1") draw_zboard(tallPost);
+    moveTo(locations, "p2") draw_zboard(shortPost);
+    moveTo(locations, "p3") draw_zboard(tallPost);
+    moveTo(locations, "p4") draw_zboard(shortPost);
+    
+    moveTo(locations, "r1") 
+    rotate([70, 0, 0]) 
+    draw_parallelogram(roof);
+
+    moveTo(locations, "s0") draw_xShelf(shedExteriorLength - convert_in2mm(1.75), shelfWidth2, convert_in2mm(0.75));
+    moveTo(locations, "s1") draw_xShelf(shedExteriorLength - convert_in2mm(1.75), shelfWidth2, convert_in2mm(0.75));
+    moveTo(locations, "s2") draw_xShelf(shedExteriorLength - convert_in2mm(1.75), shelfWidth2, convert_in2mm(0.75));
+    moveTo(locations, "s3") draw_xShelf(shedExteriorLength - convert_in2mm(1.75), shelfWidth2, convert_in2mm(0.75));
+
+    mmBoardLength = shedExteriorLength - convert_in2mm(1.75);
+
+    echo( mm = mmBoardLength, board = convert_mm2in(mmBoardLength));
+    echo( inches = mmBoardLength/mmPerInch);
+}
+
+module moveTo(location, lable)
+{
+    // echo(value = gdv(location, lable));
+    translate(gdv(location, lable)) children();
+}
+
+module draw_xShelf(length, width, thickness, include_cross_brace = true, boardcolor = "SaddleBrown" , shelfcolor = "Ivory")
+{
+    board_width = convert_in2mm(1.75);
+    board_depth = convert_in2mm(3.5);
+
+    //cross brace
+    if(include_cross_brace == true)
+    {
+        translate([0, board_width, 0])
+        draw_yboard(width- (2 * board_width));
+        
+        translate([length/2, board_width, 0])
+        draw_yboard(width- (2 * board_width));
+
+        translate([length - board_width, board_width, 0])
+        draw_yboard(width- (2 * board_width));
+    }
+
+    //braces
+    draw_xboard(length, boardcolor);
+
+    translate([0, width - convert_in2mm(1.75)])
+    draw_xboard(length, boardcolor);
+
+    color(shelfcolor, 0.5)
+    translate([0, 0, board_depth])
+    linear_extrude(thickness)
+    square(size=[length, width], center=false);
+}
+
+module draw_yShelf(length, width, thickness, include_cross_brace = true, boardcolor = "SaddleBrown" , shelfcolor = "Ivory")
+{
+    //echo()
+    board_width = convert_in2mm(1.75);
+    board_depth = convert_in2mm(3.5);
+
+    //cross brace
+    if(include_cross_brace == true)
+    {
+        translate([board_width, 0, 0])
+        draw_xboard(width- (2 * board_width));
+        
+        translate([board_width, length/2, 0])
+        draw_xboard(width- (2 * board_width));
+
+        translate([board_width, length - board_width, 0])
+        draw_xboard(width- (2 * board_width));
+    }
+
+    //braces
+    draw_yboard(length, boardcolor);
+
+    translate([width - board_width, 0])
+    draw_yboard(length, boardcolor);
+
+    color(shelfcolor, 0.5)
+    translate([0, 0, board_depth])
+    linear_extrude(thickness)
+    square(size=[width, length], center=false);
+}
+
+module draw_yboard(length, boardcolor = "SaddleBrown")
+{
+    board_width = convert_in2mm(1.75);
+    board_depth = convert_in2mm(3.5);
+
+    color(boardcolor, 0.5)
+    linear_extrude(board_depth)
+    square(size=[board_width, length], center=false);    
+}
+
+module draw_xboard(length, boardcolor = "SaddleBrown")
+{
+    board_width = convert_in2mm(1.75);
+    board_depth = convert_in2mm(3.5);
+    
+    color(boardcolor, 0.5)
+    linear_extrude(board_depth)
+    square(size=[ length, board_width], center=false);    
+}
+
+module draw_zboard(length, boardcolor = "SaddleBrown")
+{
+    board_width = convert_in2mm(1.75);
+    board_depth = convert_in2mm(3.5);
+    
+    color(boardcolor, 0.5)
+    linear_extrude(length)
+    square(size=[board_width, board_depth], center=false);    
 }
 
 module draw_shelf_posts2() 
