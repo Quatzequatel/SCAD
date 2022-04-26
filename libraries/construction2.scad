@@ -1,5 +1,7 @@
 /*
-    
+    function to make building easier to draft.
+    Starting to create a library of modules to apply a change of actions using
+    standard dictionary
 */
 use <convert.scad>;
 use <trigHelpers.scad>;
@@ -30,41 +32,86 @@ module Thing()
         ["p1", [ 100, 200, 10 ] ]
     ];
 
-    // applyColor(vboard_2x4)
-    // applyRotate(vboard_2x4) 
-    // applyMove(vboard_2x4) 
-    moveTo(locations,"p1")
+    moveTo(locations, "p1")
+    applyColor(vboard_2x4)
+    applyRotate(vboard_2x4) 
+    applyMove(vboard_2x4) 
     drawCube(vboard_2x4);
 
-
 }
 
-module moveTo(location, lable)
+/*
+    locations is a dictionary, 
+    where label is element of vector[x,y,z]
+    usage => moveTo(locations, "p1") childern();
+*/
+module moveTo(locations, label)
 {
-    translate(gdv(location, lable)) children();
+    translate(gdv(locations, label)) children();
 }
 
+/*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyMove(object) drawCube(object);
+*/
 module applyMove(properties)
 {
     translate(gdv(properties, "move")) children();
 }
 
+/*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyRotate(object) drawCube(object);
+*/
 module applyRotate(properties)
 {
     rotate(gdv(properties, "rotate")) children();
 }
 
+/*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyColor(object) drawCube(object);
+*/
 module applyColor(properties)
 {
     color(gdv(properties, "color"), 0.5) children();
 }
 
-module drawCube(properties)
-{
-    linear_extrude(gdv(properties, "z"))
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
-}
-
+/*
+    draws a horizontal (x-axis) shelf,
+    consisting of 2 x-axis boards of [length],
+    and topped with plywood of [length, width, thickness]
+*/
 module draw_xShelf(length, width, thickness, include_cross_brace = true, boardcolor = "SaddleBrown" , shelfcolor = "Ivory")
 {
     board_width = convert_in2mm(1.75);
@@ -95,6 +142,11 @@ module draw_xShelf(length, width, thickness, include_cross_brace = true, boardco
     square(size=[length, width], center=false);
 }
 
+/*
+    draws a horizontal (y-axis) shelf,
+    consisting of 2 y-axis boards of [length],
+    and topped with plywood of [length, width, thickness]
+*/
 module draw_yShelf(length, width, thickness, include_cross_brace = true, boardcolor = "SaddleBrown" , shelfcolor = "Ivory")
 {
     //echo()
@@ -126,6 +178,9 @@ module draw_yShelf(length, width, thickness, include_cross_brace = true, boardco
     square(size=[width, length], center=false);
 }
 
+/*
+    draws a horizontal (x-axis) board of length.
+*/
 module draw_yboard(length, boardcolor = "SaddleBrown")
 {
     board_width = convert_in2mm(1.75);
@@ -136,6 +191,9 @@ module draw_yboard(length, boardcolor = "SaddleBrown")
     square(size=[board_width, length], center=false);    
 }
 
+/*
+    draws a horizontal (x-axis) board of length.
+*/
 module draw_xboard(length, boardcolor = "SaddleBrown")
 {
     board_width = convert_in2mm(1.75);
@@ -146,6 +204,9 @@ module draw_xboard(length, boardcolor = "SaddleBrown")
     square(size=[ length, board_width], center=false);    
 }
 
+/*
+    draws a vertical (z-axis) board of length.
+*/
 module draw_zboard(length, boardcolor = "SaddleBrown")
 {
     board_width = convert_in2mm(1.75);
@@ -154,4 +215,25 @@ module draw_zboard(length, boardcolor = "SaddleBrown")
     color(boardcolor, 0.5)
     linear_extrude(length)
     square(size=[board_width, board_depth], center=false);    
+}
+
+/*
+    draws a cube of [x,y,z] dimensions.
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyColor(object) drawCube(object);
+*/
+module drawCube(properties)
+{
+    linear_extrude(gdv(properties, "z"))
+    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
 }
