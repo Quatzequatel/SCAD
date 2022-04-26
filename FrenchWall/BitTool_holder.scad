@@ -155,7 +155,7 @@ module draw_box_Ratchet_Set()
             }
 
             //hex bit slot
-            translate([gdv(tray,"x") - 15, gdv(tray,"y") - 20, 0 ])
+            translate([gdv(tray,"x") - 12.5, gdv(tray,"y") - 30, 0 ])
             drawCircleShape(hex_bit);
         }  
         translate([gdv(backwall,"x"), 0, (3 * gdv(backwall,"z")) - gdv(tray, "z")])
