@@ -12,6 +12,7 @@
 // include <TrellisEnums.scad>;
 include <constants.scad>;
 include <GreenHouseProperties.scad>;
+use <construction2.scad>;
 // use <shapesByPoints.scad>;
 use <convert.scad>;
 use <ObjectHelpers.scad>;
@@ -82,7 +83,39 @@ module Build(args)
     add_doorway();
 
     // GreenHouseProperties_Info();
+    add_potting_station();
 
+}
+
+module add_potting_station()
+{
+        potting_station = 
+        [ "potting station",
+            ["x", convert_in2mm(48)],
+            ["y", convert_in2mm(24)],
+            ["z", convert_in2mm(36-16)],
+            ["move", [ HouseLength/2 - convert_in2mm(24), HouseWidth, convert_in2mm(16)]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightGreen"]
+        ];
+
+        potting_station_bottom = 
+        [ "potting station",
+            ["x", convert_in2mm(48 - 16)],
+            ["y", convert_in2mm(24)],
+            ["z", convert_in2mm(16)],
+            ["move", [ HouseLength/2 - convert_in2mm(16), HouseWidth, convert_in2mm(0)]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];
+
+        applyColor(potting_station)
+        applyMove(potting_station)
+        drawCube(potting_station);
+
+        applyColor(potting_station_bottom)
+        applyMove(potting_station_bottom)
+        drawCube(potting_station_bottom);
 }
 
 module add_roof()
