@@ -8,11 +8,11 @@ use <trigHelpers.scad>;
 use <dictionary.scad>;
 
 //constants
-    board_width = convert_in2mm(1.75);
-    board_depth = convert_in2mm(3.5);
-    block_width = convert_in2mm(8);
-    block_length = convert_in2mm(16);
-    block_height = convert_in2mm(8);
+board_width = convert_in2mm(1.75);
+board_depth = convert_in2mm(3.5);
+block_width = convert_in2mm(8);
+block_length = convert_in2mm(16);
+block_height = convert_in2mm(8);
 
 build();
 
@@ -46,7 +46,6 @@ module Thing()
     moveToOrigin(vboard_2x4)
     applyExtrude(vboard_2x4)
     drawSquare(vboard_2x4);
-
 }
 
 /*
@@ -62,6 +61,7 @@ module moveTo(locations, label)
 module moveToOrigin(properties) 
 {
     translate([gdv(properties, "x")/2, gdv(properties, "y")/2]) children();
+}
 
 /*
     properties is standard object dictionary.
@@ -268,4 +268,25 @@ module drawCube(properties)
 {
     applyExtrude(properties)
     square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
+}
+
+/*
+    draws a 2D square of [x,y,z] dimensions.
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    
+    usage =>  moveToOrigin(object) applyExtrude(object) drawSquare(object);
+*/
+module drawSquare(properties)
+{
+	square(size=[gdv(properties, "x"), gdv(properties, "y")], center=true);
 }
