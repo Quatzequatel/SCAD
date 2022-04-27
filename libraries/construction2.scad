@@ -7,6 +7,13 @@ use <convert.scad>;
 use <trigHelpers.scad>;
 use <dictionary.scad>;
 
+//constants
+    board_width = convert_in2mm(1.75);
+    board_depth = convert_in2mm(3.5);
+    block_width = convert_in2mm(8);
+    block_length = convert_in2mm(16);
+    block_height = convert_in2mm(8);
+
 build();
 
 module build(args) 
@@ -32,11 +39,13 @@ module Thing()
         ["p1", [ 100, 200, 10 ] ]
     ];
 
-    moveTo(locations, "p1")
+    // moveTo(locations, "p1")
     applyColor(vboard_2x4)
-    applyRotate(vboard_2x4) 
-    applyMove(vboard_2x4) 
-    drawCube(vboard_2x4);
+    // applyRotate(vboard_2x4) 
+    // applyMove(vboard_2x4) 
+    moveToOrigin(vboard_2x4)
+    applyExtrude(vboard_2x4)
+    drawSquare(vboard_2x4);
 
 }
 
@@ -50,6 +59,10 @@ module moveTo(locations, label)
     translate(gdv(locations, label)) children();
 }
 
+module moveToOrigin(properties) 
+{
+    translate([gdv(properties, "x")/2, gdv(properties, "y")/2]) children();
+
 /*
     properties is standard object dictionary.
     template:
@@ -62,7 +75,7 @@ module moveTo(locations, label)
             ["rotate", [ 0, 90, 0] ],
             ["color", "LightSlateGray"]
         ];   
-    usage =>  applyMove(object) drawCube(object);
+    usage =>  applyMove(object) applyRotate(object) applyExtrude(object) drawSquare(object);
 */
 module applyMove(properties)
 {
@@ -108,14 +121,33 @@ module applyColor(properties)
 }
 
 /*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyExtrude(object) drawCube(object);
+*/
+module applyExtrude(properties)
+{
+    linear_extrude(gdv(properties, "z")) children();
+}
+
+/*
     draws a horizontal (x-axis) shelf,
     consisting of 2 x-axis boards of [length],
     and topped with plywood of [length, width, thickness]
 */
 module draw_xShelf(length, width, thickness, include_cross_brace = true, boardcolor = "SaddleBrown" , shelfcolor = "Ivory")
 {
-    board_width = convert_in2mm(1.75);
-    board_depth = convert_in2mm(3.5);
+    // board_width = convert_in2mm(1.75);
+    // board_depth = convert_in2mm(3.5);
 
     //cross brace
     if(include_cross_brace == true)
@@ -150,8 +182,8 @@ module draw_xShelf(length, width, thickness, include_cross_brace = true, boardco
 module draw_yShelf(length, width, thickness, include_cross_brace = true, boardcolor = "SaddleBrown" , shelfcolor = "Ivory")
 {
     //echo()
-    board_width = convert_in2mm(1.75);
-    board_depth = convert_in2mm(3.5);
+    // board_width = convert_in2mm(1.75);
+    // board_depth = convert_in2mm(3.5);
 
     //cross brace
     if(include_cross_brace == true)
@@ -183,8 +215,8 @@ module draw_yShelf(length, width, thickness, include_cross_brace = true, boardco
 */
 module draw_yboard(length, boardcolor = "SaddleBrown")
 {
-    board_width = convert_in2mm(1.75);
-    board_depth = convert_in2mm(3.5);
+    // board_width = convert_in2mm(1.75);
+    // board_depth = convert_in2mm(3.5);
 
     color(boardcolor, 0.5)
     linear_extrude(board_depth)
@@ -196,8 +228,8 @@ module draw_yboard(length, boardcolor = "SaddleBrown")
 */
 module draw_xboard(length, boardcolor = "SaddleBrown")
 {
-    board_width = convert_in2mm(1.75);
-    board_depth = convert_in2mm(3.5);
+    // board_width = convert_in2mm(1.75);
+    // board_depth = convert_in2mm(3.5);
     
     color(boardcolor, 0.5)
     linear_extrude(board_depth)
@@ -209,8 +241,8 @@ module draw_xboard(length, boardcolor = "SaddleBrown")
 */
 module draw_zboard(length, boardcolor = "SaddleBrown")
 {
-    board_width = convert_in2mm(1.75);
-    board_depth = convert_in2mm(3.5);
+    // board_width = convert_in2mm(1.75);
+    // board_depth = convert_in2mm(3.5);
     
     color(boardcolor, 0.5)
     linear_extrude(length)
@@ -234,6 +266,6 @@ module draw_zboard(length, boardcolor = "SaddleBrown")
 */
 module drawCube(properties)
 {
-    linear_extrude(gdv(properties, "z"))
+    applyExtrude(properties)
     square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
 }
