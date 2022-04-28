@@ -128,11 +128,11 @@ build();
 
 module build(args) 
 {
-    drawGreenHouseFoundation();
-    drawNorthBlockWall();
-    draw_block_bed();
+    // drawGreenHouseFoundation();
+    // drawNorthBlockWall();
+    // draw_block_bed();
     add_potting_station();
-    add_misting_station();
+    // add_misting_station();
 }
 
 module add_misting_station()
@@ -151,7 +151,8 @@ module add_potting_station()
 {
     //draw potting_station        
     applyColor(potting_station)
-    applyMove(potting_station)
+    // applyMove(potting_station)
+    
     applyExtrude(potting_station)
     moveToOrigin(potting_station)
     drawSquare(potting_station);
