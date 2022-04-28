@@ -115,9 +115,9 @@ module applyRotate(properties)
         ];   
     usage =>  applyColor(object) drawCube(object);
 */
-module applyColor(properties)
+module applyColor(properties, alpha  = 0.5)
 {
-    color(gdv(properties, "color"), 0.5) children();
+    color(gdv(properties, "color"), alpha ) children();
 }
 
 /*
@@ -215,9 +215,6 @@ module draw_yShelf(length, width, thickness, include_cross_brace = true, boardco
 */
 module draw_yboard(length, boardcolor = "SaddleBrown")
 {
-    // board_width = convert_in2mm(1.75);
-    // board_depth = convert_in2mm(3.5);
-
     color(boardcolor, 0.5)
     linear_extrude(board_depth)
     square(size=[board_width, length], center=false);    
@@ -228,9 +225,6 @@ module draw_yboard(length, boardcolor = "SaddleBrown")
 */
 module draw_xboard(length, boardcolor = "SaddleBrown")
 {
-    // board_width = convert_in2mm(1.75);
-    // board_depth = convert_in2mm(3.5);
-    
     color(boardcolor, 0.5)
     linear_extrude(board_depth)
     square(size=[ length, board_width], center=false);    
@@ -241,9 +235,6 @@ module draw_xboard(length, boardcolor = "SaddleBrown")
 */
 module draw_zboard(length, boardcolor = "SaddleBrown")
 {
-    // board_width = convert_in2mm(1.75);
-    // board_depth = convert_in2mm(3.5);
-    
     color(boardcolor, 0.5)
     linear_extrude(length)
     square(size=[board_width, board_depth], center=false);    
