@@ -63,6 +63,21 @@ module moveToOrigin(properties)
     translate([gdv(properties, "x")/2, gdv(properties, "y")/2]) children();
 }
 
+module apply_X_Move(properties) 
+{
+    translate([gdv(properties, "x"), 0, 0]) children();
+}
+
+module apply_Y_Move(properties) 
+{
+    translate([0, gdv(properties, "y"), 0]) children();
+}
+
+module apply_Z_Move(properties) 
+{
+    translate([0, 0, gdv(properties, "z")]) children();
+}
+
 /*
     properties is standard object dictionary.
     template:
