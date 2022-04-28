@@ -79,6 +79,26 @@ function GdvSetZ(properties, newZ) =
         ["color",  gdv(properties, "color")]
     ];
 
+function GdvSetXY(properties, newX, newY) =
+    [ properties.x ,
+        ["x", newX],
+        ["y", newY],
+        ["z",  gdv(properties, "z")],
+        ["move",  gdv(properties, "move")],
+        ["rotate",  gdv(properties, "rotate") ],
+        ["color",  gdv(properties, "color")]
+    ];
+
+function GdvSetXYZ(properties, newX, newY, newZ) =
+    [ properties.x ,
+        ["x", newX],
+        ["y", newY],
+        ["z",  newZ],
+        ["move",  gdv(properties, "move")],
+        ["rotate",  gdv(properties, "rotate") ],
+        ["color",  gdv(properties, "color")]
+    ];    
+
 function getDictionaryValue(v, key) = 
     assert(isVector(v), str("parameter v is not an array. For imported vectors, did you <include file>?"))
     assert(isString(v[0]), str("first element is not a key."))
