@@ -38,6 +38,47 @@ function privateGetKVPair(v, key, type = 1, i = 0,  result) = //echo(v=v, key=ke
 
 function gdv(obj, property) = getDictionaryValue(obj, property);
 
+//functions for modifing dictionary.
+function NewGd(x,y,z, move = [0, 0, 0], rotate = [0, 0, 0], color = "LemonChiffon", name = "dictionary") =     
+    [ name,
+        ["x", x],
+        ["y", y],
+        ["z", z],
+        ["move", move],
+        ["rotate", rotate ],
+        ["color", color]
+    ];
+
+function GdvSetX(properties, newX) =
+    [ properties.x ,
+        ["x", newX],
+        ["y", gdv(properties, "y")],
+        ["z",  gdv(properties, "z")],
+        ["move",  gdv(properties, "move")],
+        ["rotate",  gdv(properties, "rotate") ],
+        ["color",  gdv(properties, "color")]
+    ];
+
+function GdvSetY(properties, newY) =
+    [ properties.x ,
+        ["x", gdv(properties, "x")],
+        ["y", newy],
+        ["z",  gdv(properties, "z")],
+        ["move",  gdv(properties, "move")],
+        ["rotate",  gdv(properties, "rotate") ],
+        ["color",  gdv(properties, "color")]
+    ];    
+
+function GdvSetZ(properties, newZ) =
+    [ properties.x ,
+        ["x", gdv(properties, "x")],
+        ["y",  gdv(properties, "y")],
+        ["z", newZ],
+        ["move",  gdv(properties, "move")],
+        ["rotate",  gdv(properties, "rotate") ],
+        ["color",  gdv(properties, "color")]
+    ];
+
 function getDictionaryValue(v, key) = 
     assert(isVector(v), str("parameter v is not an array. For imported vectors, did you <include file>?"))
     assert(isString(v[0]), str("first element is not a key."))
