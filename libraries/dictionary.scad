@@ -62,7 +62,7 @@ function GdvSetX(properties, newX) =
 function GdvSetY(properties, newY) =
     [ properties.x ,
         ["x", gdv(properties, "x")],
-        ["y", newy],
+        ["y", newY],
         ["z",  gdv(properties, "z")],
         ["move",  gdv(properties, "move")],
         ["rotate",  gdv(properties, "rotate") ],
