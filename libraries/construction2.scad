@@ -39,14 +39,19 @@ module Thing()
         ["p1", [ 100, 200, 10 ] ]
     ];
 
+    value = NewGd(convert_in2mm(1.75),convert_in2mm(3.5),convert_in2mm(58));
+
     // moveTo(locations, "p1")
-    applyColor(vboard_2x4)
+    applyColor(value)
     // applyRotate(vboard_2x4) 
     // applyMove(vboard_2x4) 
-    moveToOrigin(vboard_2x4)
-    applyExtrude(vboard_2x4)
-    drawSquare(vboard_2x4);
+    moveToOrigin(value)
+    applyExtrude(GdvSetZ(value, convert_in2mm(24)))
+    drawSquare(value);
+
+    properties_echo(value);
 }
+
 
 /*
     locations is a dictionary, 
