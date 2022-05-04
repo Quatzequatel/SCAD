@@ -30,8 +30,79 @@ use <dictionary.scad>;
 // draw_box_for_staples();
 // draw_box_for_JigSaw_Box();
 // draw_peg_holder_for_staples();
-draw_box_Ratchet_Set();
+// draw_box_Ratchet_Set();
+draw_single_peg_cleat_hook();
 // scale();
+
+module draw_single_peg_cleat_hook()
+{
+
+    echo(FileName = "single_peg_cleat_hook.stl");
+
+    peg = 
+    ["Peg dimension",
+        ["x", convert_in2mm(3/8)],
+        ["y", convert_in2mm(3/8)],
+        ["z", convert_in2mm(2)],
+        ["fragments", 60],
+        ["move", [0,gdv(HammerBackwall, "move").y,convert_in2mm(3/8)/2]],
+        ["from edge", (gdv(HammerTray, "x")-convert_in2mm(1))/2],
+        ["rotate", [90,0, 0]],
+        ["color", "LightBlue"]
+    ];
+
+    tray = 
+    ["tray", 
+        ["x", convert_in2mm(3/8)],
+        ["y", convert_in2mm(3/8)],
+        ["z", convert_in2mm(0.75)],
+        ["move", [0, 0, 0]],
+        ["rotate", [0,0, 0]],
+        ["color", "LightGrey"]
+    ];
+
+    cleat = 
+    ["cleat properties", 
+        ["x", gdv(tray, "x")],
+        ["y", cleat_thickness],
+        ["z", convert_in2mm(0.75)],
+        ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
+        ["parallelogram thickness", cleat_thickness],
+        ["angle", 135],
+        ["extrude height", gdv(tray, "x")],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0, 0, 0]],
+        ["color", "LightGrey"]
+    ];
+
+    backwall = 
+    ["backwall", 
+        ["x", gdv(tray, "x")],
+        ["y", cleat_thickness],
+        ["z", convert_in2mm(2.5)],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0,0, 0]],
+        ["include cleat", false],
+        ["cleat", cleat],
+        ["color", "LightGrey"]
+    ];
+
+    applyColor(peg, 0.5)
+    applyRotate(peg)
+    applyExtrude(peg)
+    moveToOrigin(peg)
+    drawCircleShape2(peg);
+
+    // applyColor(tray, 0.5)
+    // moveToOrigin(tray)
+    // drawSquareShape2(tray);
+
+    translate([ gdv(tray, "x"), -3, gdv(tray, "x")])
+    rotate([180, 180, -5 ])
+    draw_Cleated_Back_Wall(backwall);   
+}
 
 
 module draw_box_Ratchet_Set() 
