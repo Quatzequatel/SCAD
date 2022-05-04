@@ -36,7 +36,28 @@ function privateGetKVPair(v, key, type = 1, i = 0,  result) = //echo(v=v, key=ke
     : result[type] //[0] returns key, [1] returns value and [2] returns booth
 );
 
+//short alias for getDictionaryValue().
 function gdv(obj, property) = getDictionaryValue(obj, property);
+
+/*
+    getDictionaryValue where
+    v is a vector with a string as the first element.
+    key is the lookup key. NOTE key must unique and not a sub string of a previous key.
+    Returned is the value of key label.
+*/
+function getDictionaryValue(v, key) = 
+    assert(isVector(v), str("parameter v is not an array. For imported vectors, did you <include file>?"))
+    assert(isString(v[0]), str("first element is not a key."))
+    let(result = privateGetKVPair(v, key, 1))
+    // echo(result = result)
+    result;
+
+function getDictionary(v, key) = 
+    assert(isVector(v), str("parameter v is not an array."))
+    assert(isString(v[0]), str("first element is not a key."))
+    let(result = privateGetKVPair(v, key, 2))
+    // echo(result = result)
+    result; 
 
 //functions for modifing dictionary.
 function NewGd(x,y,z, move = [0, 0, 0], rotate = [0, 0, 0], color = "LemonChiffon", name = "dictionary") =     
@@ -99,31 +120,113 @@ function GdvSetXYZ(properties, newX, newY, newZ) =
         ["color",  gdv(properties, "color")]
     ];    
 
-function getDictionaryValue(v, key) = 
-    assert(isVector(v), str("parameter v is not an array. For imported vectors, did you <include file>?"))
-    assert(isString(v[0]), str("first element is not a key."))
-    let(result = privateGetKVPair(v, key, 1))
-    // echo(result = result)
-    result;
 
-function getDictionary(v, key) = 
-    assert(isVector(v), str("parameter v is not an array."))
-    assert(isString(v[0]), str("first element is not a key."))
-    let(result = privateGetKVPair(v, key, 2))
-    // echo(result = result)
-    result;    
+/*
+    locations is a dictionary, 
+    where label is element of vector[x,y,z]
+    usage => moveTo(locations, "p1") childern();
+*/
+module moveTo(locations, label)
+{
+    translate(gdv(locations, label)) children();
+}
 
-// function getDictionaryPathValue(v, keys) = 
-//     //assert(isVector(v), str("parameter v is not an array."))
-//     //assert(isString(v[0]), str("first element is not a key."))
-//     for( i = [0: len(v)-1])
-//         let(child = privateGetKVPair(v, key, 0, 0))
-//         let(result = privateGetKVPair(v, key, 0, 0))
-//         echo(result = result)        
+module moveToOrigin(properties) 
+{
+    translate([gdv(properties, "x")/2, gdv(properties, "y")/2]) children();
+}
 
-//     result;        
+module apply_X_Move(properties) 
+{
+    translate([gdv(properties, "x"), 0, 0]) children();
+}
 
-// function dictionaryDepth(v)
+module apply_Y_Move(properties) 
+{
+    translate([0, gdv(properties, "y"), 0]) children();
+}
+
+module apply_Z_Move(properties) 
+{
+    translate([0, 0, gdv(properties, "z")]) children();
+}
+
+/*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyMove(object) applyRotate(object) applyExtrude(object) drawSquare(object);
+*/
+module applyMove(properties)
+{
+    translate(gdv(properties, "move")) children();
+}
+
+/*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyRotate(object) drawCube(object);
+*/
+module applyRotate(properties)
+{
+    rotate(gdv(properties, "rotate")) children();
+}
+
+/*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyColor(object) drawCube(object);
+*/
+module applyColor(properties, alpha  = 0.5)
+{
+    color(gdv(properties, "color"), alpha ) children();
+}
+
+/*
+    properties is standard object dictionary.
+    template:
+        object = 
+        [ "verbose description",
+            ["x", convert_in2mm(1.75)],
+            ["y", convert_in2mm(3.5)],
+            ["z", convert_in2mm(58)],
+            ["move", [100, 50, 0]],
+            ["rotate", [ 0, 90, 0] ],
+            ["color", "LightSlateGray"]
+        ];   
+    usage =>  applyExtrude(object) drawCube(object);
+*/
+module applyExtrude(properties)
+{
+    linear_extrude(gdv(properties, "z")) children();
+}   
+
 function square(size) = [[-size,-size], [-size,size], [size,size], [size,-size]];
 
     dictionary = [  "animals",
