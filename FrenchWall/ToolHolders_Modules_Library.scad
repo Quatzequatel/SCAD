@@ -22,6 +22,17 @@ module drawSquareShape(properties)
     square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);
 }
 
+module drawSquareShape2(properties)
+{
+    // color(gdv(properties, "color"), 0.5)
+    // rotate(gdv(properties, "rotate"))
+    // translate(gdv(properties, "move"))
+    //move to xy location
+    // translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
+    linear_extrude(gdv(properties, "z"))
+    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=true);
+}
+
 /*
     draws cylinder object so edge is [0, y/2] and [x/2, 0]
 */
@@ -32,6 +43,16 @@ module drawCircleShape(properties)
     rotate(gdv(properties, "rotate"))
     translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
     linear_extrude(gdv(properties, "z"))
+    circle(d=gdv(properties, "x"), $fn = gdv(properties, "fragments"));
+}
+
+module drawCircleShape2(properties)
+{
+    // color(gdv(properties, "color"), 0.5)
+    // translate(gdv(properties, "move"))
+    // rotate(gdv(properties, "rotate"))
+    // translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
+    // linear_extrude(gdv(properties, "z"))
     circle(d=gdv(properties, "x"), $fn = gdv(properties, "fragments"));
 }
 
