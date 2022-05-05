@@ -42,7 +42,7 @@ block_length = convert_in2mm(16);
 block_height = convert_in2mm(8);
 
 Y_block = 
-[ "cinder block",
+[ "Y cinder block",
     ["x", block_width],
     ["y", block_length],
     ["z", block_height],
@@ -52,29 +52,29 @@ Y_block =
     ["color", "LightSlateGray"]
 ]; 
 
-X_block = 
-[ "cinder block",
-    ["x", block_length],
-    ["y", block_width],
-    ["z", block_height],
-    ["move", [ HouseWidth - block_width, 0, 0]],
-    ["rotate", [ 0, 0, 0] ],
-    ["spacer", convert_in2mm(0.75)],
-    ["color", "LightSlateGray"]
-];
+//Create X_block from Y_block, just change the value of "spacer"
+X_block = concat ( "X cinder block", GdvSetXY(Y_block, block_length, block_width), [["spacer", convert_in2mm(0.75)]]);
 
-half_block = 
-[ "cinder block",
-    ["x", block_width],
-    ["y", block_length/2],
-    ["z", block_height],
-    ["move", [ HouseWidth - block_width, 0, 0]],
-    ["rotate", [ 0, 0, 0] ],
-    ["spacer", convert_in2mm(0.75)],
-    ["color", "LightSlateGray"]
-];
+//Create half_block from Y_block, just change the value of "spacer"
+half_block = concat( "half block",  GdvSetY(Y_block, block_length/2), [["spacer", convert_in2mm(0.75)]]);
 
 block_bed_width = 2 * block_length + gdv(Y_block, "spacer");
+
+function gdvReplace(properties, key, newValue) = 
+(
+    for (i=[0:len(properties)]) 
+    {
+        if( properties[i][0] == key)
+        {
+            let(result = )
+        }
+        else
+        {
+
+        }
+    }
+    
+);
 
 
 potting_station = 
@@ -89,7 +89,7 @@ potting_station =
 ];
 
 potting_station_bottom = 
-[ "potting station",
+[ "potting station bottom",
     ["x", block_bed_width],
     ["y", convert_in2mm(24)],
     ["z", convert_in2mm(16)],
@@ -133,6 +133,9 @@ module build(args)
     // draw_block_bed();
     add_potting_station();
     // add_misting_station();
+
+    properties_echo(Y_block);
+    properties_echo(X_block);
 }
 
 module add_misting_station()
@@ -150,67 +153,73 @@ module add_misting_station()
 module add_potting_station()
 {
     //draw potting_station        
-    applyColor(potting_station)
+    #applyColor(potting_station, 0.3)
     // applyMove(potting_station)
-    
+    // apply_Z_Move(potting_station)
+    // translate([ 0, 0, convert_in2mm(36)])
     applyExtrude(potting_station)
     moveToOrigin(potting_station)
     drawSquare(potting_station);
 
-    //draw potting_station_bottom
-    applyColor(potting_station_bottom)
-    applyMove(potting_station_bottom)
-    moveToOrigin(potting_station_bottom)
-    applyExtrude(potting_station_bottom)
-    drawSquare(potting_station_bottom);
+    translate([0, block_width/2, 0])
+    //draw base
+    union()
+    {
+        //draw potting_station_bottom
+        applyColor(potting_station_bottom, 0.3)
+        // applyMove(potting_station_bottom)
+        translate([0, block_width, 0,])
+        moveToOrigin(potting_station_bottom)
+        applyExtrude(potting_station_bottom)
+        drawSquare(potting_station_bottom);
 
-    draw_blocks_around_potting_station_bottom();    
+
+        draw_blocks_around_potting_station_bottom();        
+    }
+    
 }
 
 module draw_blocks_around_potting_station_bottom()
 {
     // block west of potting station tier 1
-    translate([0, 0, -block_width])
-    moveTo(locations, "west of potting station")
+    // translate([0, 0, -block_width])
+    // moveTo(locations, "west of potting station")
     union()
     {
-        for (i = [0:-1:-1])
+        for (i = [0:1:1])
         {
             draw_X_BlockWall(X_block, i);    
         }
     }        
 
     // block west of potting station tier 2
-    // translate([0, 0, -block_width])
-    moveTo(locations, "west of potting station")
+    translate([0, 0, block_width])
+    // moveTo(locations, "west of potting station")
     union()
     {
-        for (i = [0:-1:-1])
+        for (i = [0:1:1])
         {
             draw_X_BlockWall(X_block, i);    
         }
     } 
 
-    translate([0, -gdv(potting_station_bottom, "y") - block_width, 0])
+    translate([0, gdv(potting_station_bottom, "y") + block_width, 0])
     union()
     {
-        // block west of potting station tier 1
-        translate([0, 0, -block_width])
-        moveTo(locations, "west of potting station")
+        // block west of potting station tier 2
+        translate([0, 0, block_width])
         union()
         {
-            for (i = [0:-1:-1])
+            for (i = [0:1:1])
             {
                 draw_X_BlockWall(X_block, i);    
             }
         }        
 
-        // block west of potting station tier 2
-        // translate([0, 0, -block_width])
-        moveTo(locations, "west of potting station")
+        // block west of potting station tier 1
         union()
         {
-            for (i = [0:-1:-1])
+            for (i = [0:1:1])
             {
                 draw_X_BlockWall(X_block, i);    
             }
