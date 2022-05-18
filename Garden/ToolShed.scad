@@ -203,7 +203,7 @@ module draw_shed(shed, door)
         }
     }
 
-    draw_storage_bins();
+    // draw_storage_bins();
 }
 
 module draw_back_shelf() 
@@ -659,6 +659,17 @@ module draw_vertical_2x4_2(board)
 
 module draw_vertical_2x4(board) 
 {
+    if(gdv(board, "z") > 89)
+    {
+        echo(board_length_z = convert_mm2in(gdv(board, "z")));
+        // properties_echo(board);
+    }
+    else
+    {
+        echo(board_length_y = convert_mm2in(gdv(board, "y")));
+        // properties_echo(board);
+    }
+    
     color(gdv(board, "color"), 0.5)
     rotate(gdv(board, "rotate"))
     translate(gdv(board, "move"))
