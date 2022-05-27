@@ -25,6 +25,8 @@ shelfThickness = convert_in2mm(3.5 + 0.75);
 shedExteriorLength = convert_in2mm(7 * 12 + 4.6 + 1.5);
 shedExteriorWidth = convert_in2mm(7 * 12 + 4.6 + 1.5);
 
+echo(shedExteriorWidth = convert_mm2in(shedExteriorWidth), shedExteriorLength = convert_mm2in(shedExteriorLength));
+
 shed = 
 ["Tool Shed", 
     ["x", shedExteriorLength],
@@ -177,11 +179,20 @@ module build()
 
 module draw_shed(shed, door)
 {
+    //information mark.
     translate([x1,0,convert_in2mm(74)])
     rotate([-90,0,0])
     color("Red",0.5)
     linear_extrude(gdv(shed, "y"))
     circle(r=5);
+
+    spacer = 100;
+    Add_Label(convert_mm2in( shedInteriorWidth), [shedInteriorWidth/2, -spacer]);
+    Add_Label(convert_mm2in( gdv(shed, "x")), [gdv(shed, "x")/2, -spacer * 2]);
+    Add_Label(convert_mm2in( shedInteriorWidth), [shedInteriorWidth + spacer , gdv(shed, "y")/2], [0,0,90]);
+    Add_Label(convert_mm2in( gdv(shed, "y")), [gdv(shed, "y") + spacer * 2, gdv(shed, "y")/2], [0,0,90]);
+
+    Add_Label(text = convert_mm2in( gdv(vboard_2x4, "z")), location = [ gdv(shed, "x") + 100, 70, gdv(vboard_2x4, "z")/2], rotation = [0, 90, 0]);
 
     union()
     {
@@ -206,6 +217,18 @@ module draw_shed(shed, door)
     // draw_storage_bins();
 }
 
+module Add_Label ( text, location, rotation)
+{
+
+    color("black", 0.5)
+    translate(location)
+    if(rotation != undef )
+        rotate(rotation)
+        text(str("<- ", text, " inches ->"), font = "Liberation Sans:style=Bold Italic", size = 72, halign = "center", valign = "center");
+    else
+        text(str("<- ", text, " inches ->"), font = "Liberation Sans:style=Bold Italic", size = 72, halign = "center", valign = "center");
+}
+
 module draw_back_shelf() 
 {
 
@@ -222,7 +245,8 @@ module draw_back_shelf()
 
 module draw_shelf_posts() 
 {
-
+    // color("red", 0.5)
+    Add_Label(text = convert_mm2in( gdv(vboard_2x4, "z")), location = [ gdv(shelf1, "x") + 100, gdv(shelf1, "y")-25, gdv(vboard_2x4, "z")/2], rotation = [0, 90, 0]);    
     //post 1
     translate([x1, y1, z1])
     draw_vertical_2x4(vboard_2x4);
@@ -256,7 +280,7 @@ module draw_external_shelve()
     board_depth = convert_in2mm(3.5);
     half_width = board_width/2;
 
-    echo(hypotenuse = sqrt(2 * 16^2));
+    echo(hypotenuse = sqrt(2 * 24^2));
 
     locations = 
     [
@@ -414,6 +438,8 @@ module draw_xboard(length, boardcolor = "SaddleBrown")
 {
     board_width = convert_in2mm(1.75);
     board_depth = convert_in2mm(3.5);
+
+    echo(board_length_x = convert_mm2in(length));
     
     color(boardcolor, 0.5)
     linear_extrude(board_depth)
@@ -485,6 +511,8 @@ module draw_shelf_support2()
     y20 = y1 + gdv(vboard_2x4, "x");
     y21 = y20 + shelfWidth2 - convert_in2mm(5/2) ;
 
+    Add_Label(convert_mm2in( gdv(hboard_2x4_side, "y")), [x200 - gdv(hboard_2x4_side, "y")/2 ,y21 + 100, 26]);
+
     //shelf support 1.1
     translate([x200, y1 + convert_in2mm(0.75), zShelf1])
     rotate([0, 0, 90])
@@ -518,6 +546,7 @@ module draw_shelf_support2()
 
 module draw_shelf_support()
 {
+    Add_Label(convert_mm2in( gdv(hboard_2x4, "y")), [gdv(shelf1, "x") , gdv(hboard_2x4, "y")/2, 26], [0,0,90]);
     //shelf support 1.1
     translate([x3, y1, zShelf1])
     draw_vertical_2x4(hboard_2x4);
