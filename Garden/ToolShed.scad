@@ -280,7 +280,16 @@ module draw_external_shelve()
     board_depth = convert_in2mm(3.5);
     half_width = board_width/2;
 
-    echo(hypotenuse = sqrt(2 * 24^2));
+    echo(RoffLength = sqrt(2 * 24^2));
+
+    echo(TallPost = convert_mm2in(tallPost));
+    echo(ShortPost = convert_mm2in(shortPost));
+
+    echo(ExteneralShelf1 = convert_mm2in(postFloor));
+    echo(ExteneralShelf2 = convert_mm2in(shelfHeightShort));
+    echo(ExteneralShelf3 = convert_mm2in(shelfHeightMedium));
+    echo(ExteneralShelf4 = convert_mm2in(shelfHeightTall));
+    
 
     locations = 
     [
@@ -512,6 +521,9 @@ module draw_shelf_support2()
     y21 = y20 + shelfWidth2 - convert_in2mm(5/2) ;
 
     Add_Label(convert_mm2in( gdv(hboard_2x4_side, "y")), [x200 - gdv(hboard_2x4_side, "y")/2 ,y21 + 100, 26]);
+    echo(shelf1 = convert_mm2in(zShelf1));
+    echo(shelf2 = convert_mm2in(zShelf2));
+    echo(shelf3 = convert_mm2in(zShelf3));
 
     //shelf support 1.1
     translate([x200, y1 + convert_in2mm(0.75), zShelf1])
