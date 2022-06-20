@@ -33,10 +33,20 @@ support2 =
 //add a pinch, it's extremely tight fit.
 dowel = convert_in2mm(3/8) + 1;
 
+
+//change mirror value to print a left and right pair.
 build(mirror = false);
 
 module build(mirror = true) 
 {
+    if(mirror == true)
+    {
+        echo("save as Right-Dowel-2x4 Template.stl");
+    }
+    else
+    {
+        echo("save as Left-Dowel-2x4 Template.stl");
+    }
     properties_echo(board);
 
     template();
@@ -79,13 +89,13 @@ module support(mirror = false)
     //short side
     if(mirror)
     {
-        #linear_extrude(height = convert_in2mm(1))
+        linear_extrude(height = convert_in2mm(1))
         translate([gdv(board, "x"), -gdv(support, "y")])
         square(size=[gdv(support2, "x"), gdv(support2, "y")], center=false);        
     }
     else
     {
-        #linear_extrude(height = convert_in2mm(1))
+        linear_extrude(height = convert_in2mm(1))
         translate([-gdv(support2, "x"), -gdv(support, "y")])
         square(size=[gdv(support2, "x"), gdv(support2, "y")], center=false);               
     }
