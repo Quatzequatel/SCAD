@@ -131,9 +131,22 @@ module moveTo(locations, label)
     translate(gdv(locations, label)) children();
 }
 
+// use when center=true and want to have corner on [0,0]
 module moveToOrigin(properties) 
 {
     translate([gdv(properties, "x")/2, gdv(properties, "y")/2]) children();
+}
+
+//use to move back to xy center. good prior to any rotations.
+module moveToCenter(properties) 
+{
+    translate([-gdv(properties, "x")/2, -gdv(properties, "y")/2]) children();
+}
+
+//use to move cube back to [0, 0, 0]
+module moveTo3D_Origin(properties) 
+{
+    translate([gdv(properties, "x")/2, gdv(properties, "y")/2, gdv(properties, "z")/2]) children();
 }
 
 module apply_X_Move(properties) 
