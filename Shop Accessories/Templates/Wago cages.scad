@@ -52,7 +52,21 @@ module build(args)
     // circle(1, $fn=60);
 
     // translate([2 *gdv(Wago221_3port, "x"),0,0])
-    make_box_for_2_2port_nuts();
+    // make_box_for_2_2port_nuts();
+    // make_box_for_3_5port_nuts();
+    make_box_for_2_5port_nuts();
+}
+
+module make_box_for_2_5port_nuts()
+{
+    echo("name file, 2x Wago_221-5port enclosure.stl");
+    open_box(Wago221_5port, 2);
+}
+
+module make_box_for_3_5port_nuts()
+{
+    echo("name file, 3x Wago_221-5port enclosure.stl");
+    open_box(Wago221_5port, 3);
 }
 
 module make_box_for_2_3port_nuts()
