@@ -132,15 +132,25 @@ function GdvSetXYZ(properties, newX, newY, newZ) =
         ["color",  gdv(properties, "color")]
     ];    
 
+module drawSquare(properties)
+{
+    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
+}
+
+module drawCube(properties)
+{
+    linear_extrude(gdv(properties, "z"))
+    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
+}
 
 /*
     locations is a dictionary, 
     where label is element of vector[x,y,z]
     usage => moveTo(locations, "p1") childern();
 */
-module moveTo(locations, label)
+module moveTo(properties, label)
 {
-    translate(gdv(locations, label)) children();
+    translate(gdv(properties, label)) children();
 }
 
 // use when center=true and want to have corner on [0,0]
