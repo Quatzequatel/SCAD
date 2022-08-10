@@ -66,54 +66,75 @@ bottom_shelf_support_origin_y = gdv(shed, "wall thickness") + side_Shelf_width +
 
 bottom_shelf_support =
 [
-    "vertical shelf support for bottom shelf",
+    "shelf_support",
+        ["label", "vertical shelf support for bottom shelf"],
         ["x", convert_in2mm(1.75)],
         ["y", convert_in2mm(3.5)],
         ["z", convert_in2mm(18.5)],
         ["move", [0, 0, gdv(shed, "floor thickness")]],
-        [
-            "location", 
-            [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
-            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
-            [bottom_shelf_support_origin_x + sideShelfLength, 0],
-            [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
-        ],
         ["rotate", [ 0, 0, 0] ],
         ["color", "yellow"]    
 ];
 
-middle_shelf_support = 
+bottom_shelf_support_location =
 [
-    "vertical shelf support for middle shelf",
-        ["x", convert_in2mm(1.75)],
-        ["y", convert_in2mm(3.5)],
-        ["z", convert_in2mm(16)],
-        ["move", [0, 0, gdv(bottom_shelf_support, "move").z +gdv(bottom_shelf_support, "z") + convert_in2mm(3.5)]],
+    [
+        "location", 
         [
-            "location", 
             [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
             [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
             [bottom_shelf_support_origin_x + sideShelfLength, 0],
             [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
-        ],        
+        ]
+    ]
+];
+
+middle_shelf_support_location = 
+[
+    [
+        "location", 
+        [
+            [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
+            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
+            [bottom_shelf_support_origin_x + sideShelfLength, 0],
+            [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
+        ]
+    ]
+];
+
+top_shelf_support_location = 
+[
+    [
+        "location", 
+        [
+            [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
+            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
+            [bottom_shelf_support_origin_x + sideShelfLength, 0],
+            [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
+        ]
+    ]
+];
+
+middle_shelf_support = 
+[
+    "shelf_support",
+        ["label", "vertical shelf support for middle shelf"],
+        ["x", convert_in2mm(1.75)],
+        ["y", convert_in2mm(3.5)],
+        ["z", convert_in2mm(16)],
+        ["move", [0, 0, gdv(bottom_shelf_support, "move").z +gdv(bottom_shelf_support, "z") + convert_in2mm(3.5)]],       
         ["rotate", [ 0, 0, 0] ],
         ["color", "LightSlateGray"]    
 ];
 
 top_shelf_support = 
 [
-    "vertical shelf support for top shelf",
+    "shelf_support",
+        ["label", "vertical shelf support for top shelf"],    
         ["x", convert_in2mm(1.75)],
         ["y", convert_in2mm(3.5)],
         ["z", convert_in2mm(12)],
-        ["move", [0, 0, gdv(middle_shelf_support, "move").z + gdv(middle_shelf_support, "z") + convert_in2mm(3.5)]],
-        [
-            "location", 
-            [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
-            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
-            [bottom_shelf_support_origin_x + sideShelfLength, 0],
-            [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
-        ],        
+        ["move", [0, 0, gdv(middle_shelf_support, "move").z + gdv(middle_shelf_support, "z") + convert_in2mm(3.5)]],        
         ["rotate", [ 0, 0, 0] ],
         ["color", "LightSlateGray"]    
 ];
@@ -242,23 +263,49 @@ build();
 module build() 
 {
     // draw_shed(shed, shed_door);
-    // if (DRAW_SHELVES) 
-    // {
-    //     draw_shelving() ;  
-    // }
+    if (DRAW_SHELVES) 
+    {
+        draw_shelving() ;  
+        draw_side_segmented_shelf_support();
+        // draw_back_segmented_shelf_support();
+    }
 
-    draw_shelf_segmented_shelf_support();
+    
     // draw_segmented_shelf_posts();
     
 }
 
-module draw_shelf_segmented_shelf_support()
+module draw_side_segmented_shelf_support()
+{
+    //lists of support boards.
+    // properties_echo(bottom_shelf_support);
+    // properties_echo(bottom_shelf_support_location);
+    
+    support = [bottom_shelf_support, middle_shelf_support, top_shelf_support];
+    location = [bottom_shelf_support_location, middle_shelf_support_location, top_shelf_support_location];
+
+    echo("/////")
+    for (
+            i = [0:2]  
+        ) 
+    {
+        let(merge = concat(support[i], location[i]))
+        {
+            draw_segmented_shelf_posts(merge);
+            
+        }
+
+    }
+    
+}
+
+module draw_back_segmented_shelf_support()
 {
     //lists of support boards.
     for (i=[bottom_shelf_support, middle_shelf_support, top_shelf_support]) 
     {
         // properties_echo(i);
-        draw_segmented_shelf_posts(i);
+        // draw_segmented_shelf_posts(i);
     }
     
 }
@@ -266,10 +313,11 @@ module draw_shelf_segmented_shelf_support()
 module draw_segmented_shelf_posts(values) 
 {
     // i=0 is lable.
-    for (i=[1:4]) 
+    for (i=[0:3]) 
     {
+        echo(i=i, gda = gdv(values, "location")[i]);
         //post 1 (i)
-        translate(gda(values, "location")[i])
+        translate(gdv(values, "location")[i])
         draw_vertical_2x4(values);
     }
    
