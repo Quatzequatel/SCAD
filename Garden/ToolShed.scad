@@ -70,7 +70,7 @@ bottom_shelf_support =
         ["x", convert_in2mm(1.75)],
         ["y", convert_in2mm(3.5)],
         ["z", convert_in2mm(18.5)],
-        ["move", [0, 0, 0]],
+        ["move", [0, 0, gdv(shed, "floor thickness")]],
         [
             "location", 
             [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
@@ -88,7 +88,7 @@ middle_shelf_support =
         ["x", convert_in2mm(1.75)],
         ["y", convert_in2mm(3.5)],
         ["z", convert_in2mm(16)],
-        ["move", [0, 0, gdv(bottom_shelf_support, "z") + convert_in2mm(3.5)]],
+        ["move", [0, 0, gdv(bottom_shelf_support, "move").z +gdv(bottom_shelf_support, "z") + convert_in2mm(3.5)]],
         [
             "location", 
             [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
@@ -116,6 +116,11 @@ top_shelf_support =
         ],        
         ["rotate", [ 0, 0, 0] ],
         ["color", "LightSlateGray"]    
+];
+
+side_shelf = 
+[
+    "defining the side shelf",
 ];
 
 vboard_2x4 = 
@@ -227,9 +232,9 @@ shelf2 =
     // zShelf4 = zShelf3 +shelfThickness + convert_in2mm(12);
 
     //Draw ? objects
-    DRAW_SHELVES = false;
+    DRAW_SHELVES = true;
     DRAW_BACK_SHELVE = true;
-    DRAW_SIDE_SHELVE = true;
+    DRAW_SIDE_SHELVE = false;
     DRAW_OUTSIDE_SIDE_SHELVE = false;
 
 build();    
@@ -805,6 +810,7 @@ module draw_vertical_2x4_2(board)
 
 module draw_vertical_2x4(board) 
 {
+    properties_echo(board);
     if(gdv(board, "z") > 89)
     {
         // echo(board_length_z = convert_mm2in(gdv(board, "z")));
