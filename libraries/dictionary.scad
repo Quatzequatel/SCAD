@@ -11,7 +11,7 @@ dictionary is
 include <constants.scad>;
 /*
     returnType == 0, returns value
-    returnType == 1, returns key
+    returnType == 1, returns key or simple list.
     returnType == 2, returns dictionary
 */
 function privateGetKVPair(v, key, type = 1, i = 0,  result) = //echo(v=v, key=key, type=type, i=i, result=result)
@@ -37,7 +37,12 @@ function privateGetKVPair(v, key, type = 1, i = 0,  result) = //echo(v=v, key=ke
 );
 
 //short alias for getDictionaryValue().
-function gdv(obj, property) = getDictionaryValue(obj, property);
+// When dictionary value is single value use {gdv(list, lable)} syntax,
+// When dictionary value is single dimension list use {gdv(list, lable)[i]} syntax,
+// When dictionary value is multiple dimension list then use {gda(list, lable)[i]} syntax,
+// Note gdv vs. gda.
+function gdv(list, lable) = getDictionaryValue(list, lable);
+function gda(list, lable) = getDictionary(list, lable);
 
 /*
     getDictionaryValue where
@@ -52,6 +57,13 @@ function getDictionaryValue(v, key) =
     // echo(result = result)
     result;
 
+/*
+    Use getDictionaryValue when the returned values is a multiple dimension list.
+    getDictionaryValue where
+    v is a vector with a string as the first element.
+    key is the lookup key. NOTE key must unique and not a sub string of a previous key.
+    Returned is the value of key label.
+*/
 function getDictionary(v, key) = 
     assert(isVector(v), str("parameter v is not an array."))
     assert(isString(v[0]), str("first element is not a key."))

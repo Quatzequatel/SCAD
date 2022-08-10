@@ -25,7 +25,7 @@ shelfThickness = convert_in2mm(3.5 + 0.75);
 shedExteriorLength = convert_in2mm(7 * 12 + 4.6 + 1.5);
 shedExteriorWidth = convert_in2mm(7 * 12 + 4.6 + 1.5);
 
-echo(shedExteriorWidth = convert_mm2in(shedExteriorWidth), shedExteriorLength = convert_mm2in(shedExteriorLength));
+// echo(shedExteriorWidth = convert_mm2in(shedExteriorWidth), shedExteriorLength = convert_mm2in(shedExteriorLength));
 
 shed = 
 ["Tool Shed", 
@@ -58,6 +58,64 @@ shed_door =
     ["floor thickness", convert_in2mm(1)],
     ["rotate", [0,0, 0]],
     ["color", "LightGrey"]
+];
+
+side_Shelf_width = convert_in2mm(24);
+bottom_shelf_support_origin_x = gdv(shed, "wall thickness") + shelfWidth + convert_in2mm(1);
+bottom_shelf_support_origin_y = gdv(shed, "wall thickness") + side_Shelf_width + convert_in2mm(1);
+
+bottom_shelf_support =
+[
+    "vertical shelf support for bottom shelf",
+        ["x", convert_in2mm(1.75)],
+        ["y", convert_in2mm(3.5)],
+        ["z", convert_in2mm(18.5)],
+        ["move", [0, 0, 0]],
+        [
+            "location", 
+            [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
+            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
+            [bottom_shelf_support_origin_x + sideShelfLength, 0],
+            [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
+        ],
+        ["rotate", [ 0, 0, 0] ],
+        ["color", "yellow"]    
+];
+
+middle_shelf_support = 
+[
+    "vertical shelf support for middle shelf",
+        ["x", convert_in2mm(1.75)],
+        ["y", convert_in2mm(3.5)],
+        ["z", convert_in2mm(16)],
+        ["move", [0, 0, gdv(bottom_shelf_support, "z") + convert_in2mm(3.5)]],
+        [
+            "location", 
+            [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
+            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
+            [bottom_shelf_support_origin_x + sideShelfLength, 0],
+            [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
+        ],        
+        ["rotate", [ 0, 0, 0] ],
+        ["color", "LightSlateGray"]    
+];
+
+top_shelf_support = 
+[
+    "vertical shelf support for top shelf",
+        ["x", convert_in2mm(1.75)],
+        ["y", convert_in2mm(3.5)],
+        ["z", convert_in2mm(12)],
+        ["move", [0, 0, gdv(middle_shelf_support, "move").z + gdv(middle_shelf_support, "z") + convert_in2mm(3.5)]],
+        [
+            "location", 
+            [bottom_shelf_support_origin_x, gdv(shed, "wall thickness")],
+            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
+            [bottom_shelf_support_origin_x + sideShelfLength, 0],
+            [bottom_shelf_support_origin_x + sideShelfLength, bottom_shelf_support_origin_y]
+        ],        
+        ["rotate", [ 0, 0, 0] ],
+        ["color", "LightSlateGray"]    
 ];
 
 vboard_2x4 = 
@@ -168,12 +226,48 @@ shelf2 =
     zShelfT3 = zShelf3 + convert_in2mm(3.5);
     // zShelf4 = zShelf3 +shelfThickness + convert_in2mm(12);
 
+    //Draw ? objects
+    DRAW_SHELVES = false;
+    DRAW_BACK_SHELVE = true;
+    DRAW_SIDE_SHELVE = true;
+    DRAW_OUTSIDE_SIDE_SHELVE = false;
+
 build();    
 
 module build() 
 {
-    draw_shed(shed, shed_door);
-    draw_back_shelf() ;  
+    // draw_shed(shed, shed_door);
+    // if (DRAW_SHELVES) 
+    // {
+    //     draw_shelving() ;  
+    // }
+
+    draw_shelf_segmented_shelf_support();
+    // draw_segmented_shelf_posts();
+    
+}
+
+module draw_shelf_segmented_shelf_support()
+{
+    //lists of support boards.
+    for (i=[bottom_shelf_support, middle_shelf_support, top_shelf_support]) 
+    {
+        // properties_echo(i);
+        draw_segmented_shelf_posts(i);
+    }
+    
+}
+
+module draw_segmented_shelf_posts(values) 
+{
+    // i=0 is lable.
+    for (i=[1:4]) 
+    {
+        //post 1 (i)
+        translate(gda(values, "location")[i])
+        draw_vertical_2x4(values);
+    }
+   
 }
 
 
@@ -229,18 +323,29 @@ module Add_Label ( text, location, rotation)
         text(str("<- ", text, " inches ->"), font = "Liberation Sans:style=Bold Italic", size = 72, halign = "center", valign = "center");
 }
 
-module draw_back_shelf() 
+
+module draw_shelving() 
 {
 
-    draw_shelf_posts();
-    draw_shelf_support();
-    draw_shelf_braces();
-    draw_shelfs();
+    if(DRAW_BACK_SHELVE) 
+    {
+        draw_shelf_posts();
+        draw_shelf_support();
+        draw_shelf_braces();
+        draw_shelfs();
+    }
 
-    draw_shelf_posts2();
-    draw_shelf_support2();
+    if(DRAW_SIDE_SHELVE) 
+    {
+        draw_shelf_posts2();
+        draw_shelf_support2();
+    }
 
-    draw_external_shelve();
+    if(DRAW_OUTSIDE_SIDE_SHELVE) 
+    {
+        draw_external_shelve();
+    }
+    
 }
 
 module draw_shelf_posts() 
@@ -518,7 +623,7 @@ module draw_shelf_support2()
     x200 = x2 + gdv(hboard_2x4_side, "y") + convert_in2mm(3.5) ;//+ shelfWidth + gdv(vboard_2x4, "x");
 
     y20 = y1 + gdv(vboard_2x4, "x");
-    y21 = y20 + shelfWidth2 - convert_in2mm(5/2) ;
+    y21 = y20 + shelfWidth2 - convert_in2mm(1.5) ;
 
     Add_Label(convert_mm2in( gdv(hboard_2x4_side, "y")), [x200 - gdv(hboard_2x4_side, "y")/2 ,y21 + 100, 26]);
     echo(shelf1 = convert_mm2in(zShelf1));
@@ -526,7 +631,7 @@ module draw_shelf_support2()
     echo(shelf3 = convert_mm2in(zShelf3));
 
     //shelf support 1.1
-    translate([x200, y1 + convert_in2mm(0.75), zShelf1])
+    translate([x200, y1 + convert_in2mm(0), zShelf1])
     rotate([0, 0, 90])
     draw_vertical_2x4(hboard_2x4_side);
 
@@ -536,7 +641,7 @@ module draw_shelf_support2()
     draw_vertical_2x4(hboard_2x4_side);    
 
     //shelf support 2.1
-    translate([x200, y1 + convert_in2mm(0.75), zShelf2])
+    translate([x200, y1 + convert_in2mm(0), zShelf2])
     rotate([0, 0, 90])
     draw_vertical_2x4(hboard_2x4_side);
 
@@ -546,7 +651,7 @@ module draw_shelf_support2()
     draw_vertical_2x4(hboard_2x4_side); 
 
     //shelf support 3.1
-    translate([x200, y1 + convert_in2mm(0.75), zShelf3])
+    translate([x200, y1 + convert_in2mm(0), zShelf3])
     rotate([0, 0, 90])
     draw_vertical_2x4(hboard_2x4_side);
 
@@ -702,7 +807,7 @@ module draw_vertical_2x4(board)
 {
     if(gdv(board, "z") > 89)
     {
-        echo(board_length_z = convert_mm2in(gdv(board, "z")));
+        // echo(board_length_z = convert_mm2in(gdv(board, "z")));
         // properties_echo(board);
     }
     else
