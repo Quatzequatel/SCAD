@@ -20,7 +20,7 @@ BACK_SHELF_WIDTH = convert_in2mm(32);
 OUTSIDE_SHELF_WIDTH = convert_in2mm(16);
 SIDE_SHELF_WIDTH = convert_in2mm(24);
 shelfLength = convert_in2mm(90.1 - 1.5);
-sideShelfLength = convert_in2mm(54.5);
+SIDE_SHELF_LENGHTH = convert_in2mm(54.5);
 // FULL_SHELF_THICKNESS = convert_in2mm(3.5 + 0.75);
 PLYWOOD_THICKNESS = convert_in2mm(0.75);
 SHELF_BEAM_WIDTH = convert_in2mm(1.75);
@@ -32,8 +32,16 @@ shedExteriorWidth = convert_in2mm(7 * 12 + 4.6 + 1.5);
 
 // echo(shedExteriorWidth = convert_mm2in(shedExteriorWidth), shedExteriorLength = convert_mm2in(shedExteriorLength));
 
+BEAM_DEF =
+[
+    "2X4 definition",
+    ["x", SHELF_BEAM_WIDTH],
+    ["y", SHELF_BEAM_THICKNESS]
+];
+
 shed = 
-["Tool Shed", 
+[
+    "Tool Shed", 
     ["x", shedExteriorLength],
     ["y", shedExteriorWidth],
     // ["z", convert_in2mm(7 * 12 + 6.5)],
@@ -81,9 +89,9 @@ side_shelf_legs_yx_locations =
         "location", 
         [
             [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y],
-            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y + SIDE_SHELF_WIDTH + SHELF_BEAM_THICKNESS],
-            [bottom_shelf_support_origin_x + sideShelfLength - SHELF_BEAM_WIDTH, bottom_shelf_support_origin_y],
-            [bottom_shelf_support_origin_x + sideShelfLength - SHELF_BEAM_WIDTH, bottom_shelf_support_origin_y + SIDE_SHELF_WIDTH + SHELF_BEAM_THICKNESS]
+            [bottom_shelf_support_origin_x, bottom_shelf_support_origin_y + SIDE_SHELF_WIDTH - SHELF_BEAM_THICKNESS],
+            [bottom_shelf_support_origin_x + SIDE_SHELF_LENGHTH - SHELF_BEAM_WIDTH, bottom_shelf_support_origin_y],
+            [bottom_shelf_support_origin_x + SIDE_SHELF_LENGHTH - SHELF_BEAM_WIDTH, bottom_shelf_support_origin_y + SIDE_SHELF_WIDTH - SHELF_BEAM_THICKNESS]
         ]
     ]
 ];
@@ -91,11 +99,43 @@ side_shelf_legs_yx_locations =
 shelf_vertical_locations = 
 [
     bottom_shelf_support_origin_Z,
-    bottom_shelf_support_origin_Z + convert_in2mm(18.5) + FULL_SHELF_THICKNESS,
-    bottom_shelf_support_origin_Z + convert_in2mm(18.5) + FULL_SHELF_THICKNESS + convert_in2mm(16) + FULL_SHELF_THICKNESS,
-    bottom_shelf_support_origin_Z + convert_in2mm(18.5) + FULL_SHELF_THICKNESS + convert_in2mm(16) + FULL_SHELF_THICKNESS + convert_in2mm(12) + FULL_SHELF_THICKNESS
+    bottom_shelf_support_origin_Z 
+        + convert_in2mm(18.5) + FULL_SHELF_THICKNESS,
+    bottom_shelf_support_origin_Z 
+        + convert_in2mm(18.5) + FULL_SHELF_THICKNESS 
+        + convert_in2mm(16) + FULL_SHELF_THICKNESS,
+    bottom_shelf_support_origin_Z 
+        + convert_in2mm(18.5) + FULL_SHELF_THICKNESS 
+        + convert_in2mm(16) + FULL_SHELF_THICKNESS 
+        + convert_in2mm(12) + FULL_SHELF_THICKNESS
 ];
 
+shelf_beam_vertical_locations = 
+[
+    bottom_shelf_support_origin_Z 
+        + convert_in2mm(18.5),
+    bottom_shelf_support_origin_Z 
+        + convert_in2mm(18.5) + FULL_SHELF_THICKNESS 
+        + convert_in2mm(16),
+    bottom_shelf_support_origin_Z 
+        + convert_in2mm(18.5) + FULL_SHELF_THICKNESS 
+        + convert_in2mm(16) + FULL_SHELF_THICKNESS 
+        + convert_in2mm(12) 
+];
+
+shelf_beam_values = 
+[
+    "shelf beam values",
+    [
+        ["label", "vertical shelf support for bottom shelf"],
+        ["x", SIDE_SHELF_LENGHTH],
+        ["y", SIDE_SHELF_WIDTH],
+        ["z", SHELF_BEAM_THICKNESS],
+        ["move", [0, 0, shelf_vertical_locations[0]]],
+        ["rotate", [ 0, 0, 0] ],
+        ["color", "yellow"]         
+    ]
+];
 
 bottom_shelf_support =
 [
@@ -104,7 +144,7 @@ bottom_shelf_support =
         ["x", convert_in2mm(1.75)],
         ["y", SHELF_BEAM_THICKNESS],
         ["z", convert_in2mm(18.5)],
-        ["move", [0, 0, gdv(shed, "floor thickness")]],
+        ["move", [0, 0, shelf_vertical_locations[0]]],
         ["rotate", [ 0, 0, 0] ],
         ["color", "yellow"]    
 ];
@@ -117,7 +157,7 @@ middle_shelf_support =
         ["x", convert_in2mm(1.75)],
         ["y", SHELF_BEAM_THICKNESS],
         ["z", convert_in2mm(16)],
-        ["move", [0, 0, gdv(bottom_shelf_support, "move").z +gdv(bottom_shelf_support, "z") + SHELF_BEAM_THICKNESS]],       
+        ["move", [0, 0, shelf_vertical_locations[1]]],       
         ["rotate", [ 0, 0, 0] ],
         ["color", "LightSlateGray"]    
 ];
@@ -129,7 +169,7 @@ top_shelf_support =
         ["x", convert_in2mm(1.75)],
         ["y", SHELF_BEAM_THICKNESS],
         ["z", convert_in2mm(12)],
-        ["move", [0, 0, gdv(middle_shelf_support, "move").z + gdv(middle_shelf_support, "z") + SHELF_BEAM_THICKNESS]],        
+        ["move", [0, 0, shelf_vertical_locations[2]]],        
         ["rotate", [ 0, 0, 0] ],
         ["color", "LightSlateGray"]    
 ];
@@ -143,10 +183,10 @@ side_shelf_vertical_locations =
 
 side_shelf_sheet = 
 [
-    "defining the side shelf",
+    "defining the side shelf plywood",
         ["label", "shelf top"],    
-        ["x", sideShelfLength],
-        ["y", BACK_SHELF_WIDTH ],
+        ["x", SIDE_SHELF_LENGHTH],
+        ["y", SIDE_SHELF_WIDTH ],
         ["z", PLYWOOD_THICKNESS],
         ["move", [0, 0, 0]],        
         ["rotate", [ 0, 0, 0] ],
@@ -176,7 +216,7 @@ hboard_2x4 =
 hboard_2x4_side = 
     [ "side horizontal board 2x4",
         ["x", convert_in2mm(1.75)],
-        ["y", sideShelfLength],
+        ["y", SIDE_SHELF_LENGHTH],
         ["z", SHELF_BEAM_THICKNESS],
         ["rotate", [ 0, 0, 0] ],
         ["move", [0, 0, 0]],
@@ -219,7 +259,7 @@ shelf1 =
 shelf2 = 
     [
         "shelf",
-        ["x", sideShelfLength],
+        ["x", SIDE_SHELF_LENGHTH],
         ["y", OUTSIDE_SHELF_WIDTH],
         ["z", convert_in2mm(0.75)],
         ["rotate", [ 0, 0, 0] ],
@@ -266,18 +306,22 @@ shelf2 =
     DRAW_BACK_SHELVE = true;
     DRAW_SIDE_SHELVE = false;
     DRAW_OUTSIDE_SIDE_SHELVE = false;
+    DRAW_TOOL_SHED = true;
 
 build();    
 
 module build() 
 {
-    draw_shed(shed, shed_door);
+    if(DRAW_TOOL_SHED) draw_shed(shed, shed_door);
     if (DRAW_SHELVES) 
     {
         draw_shelving() ;  
         draw_side_segmented_shelf_support();
         // draw_back_segmented_shelf_support();
     }    
+
+    // properties_echo(concat(BEAM_DEF, [["z", 100]]));
+    // draw_shelf_beams(shelf_beam_values, vector = [0,0,0]);
 }
 
 module draw_side_segmented_shelf_support()
@@ -293,7 +337,7 @@ module draw_side_segmented_shelf_support()
         let(merge = concat(support[i], side_shelf_legs_yx_locations))
         {
             draw_segmented_shelf_posts(merge);
-            draw_plywood_sheet(side_shelf_sheet, [bottom_shelf_support_origin_x, gdv(shed, "wall thickness"), side_shelf_vertical_locations[i]]);
+            draw_plywood_sheet(side_shelf_sheet, [bottom_shelf_support_origin_x, gdv(shed, "wall thickness"), shelf_vertical_locations[i+1] - PLYWOOD_THICKNESS]);
         }
 
     }
@@ -303,6 +347,30 @@ module draw_plywood_sheet(values, vector)
 {
     translate(vector)
     drawCube(values);
+}
+
+
+module draw_shelf_beams(values, vector = [0,0,0])
+{
+    properties_echo(values);
+    if(gdv(values, "x") < gdv(values, "y"))
+    {
+        //x is length of shelf
+        translate([0, 0, 0])
+        rotate([0, 0, 0])
+        linear_extrude(SHELF_BEAM_THICKNESS)
+        square(size = [SHELF_BEAM_WIDTH, gdv(values, "x")], center = true);
+
+    }
+    else
+    {
+        //y is length of shelf
+        translate([0, 0, 0])
+        rotate([0, 0, 0])
+        linear_extrude(gdv(values, "z"))
+        square(size = [gdv(values, "y"), gdv(values, "x")], center = true);        
+    }
+    
 }
 
 module draw_back_segmented_shelf_support()
@@ -679,7 +747,7 @@ module draw_shelf_support2()
 {
     //TODO
     x20 = x1 + BACK_SHELF_WIDTH;// +  gdv(vboard_2x4, "x");
-    x21 = x20 + sideShelfLength;
+    x21 = x20 + SIDE_SHELF_LENGHTH;
 
     x200 = x2 + gdv(hboard_2x4_side, "y") + SHELF_BEAM_THICKNESS ;//+ BACK_SHELF_WIDTH + gdv(vboard_2x4, "x");
 
@@ -822,7 +890,7 @@ module draw_storage_bins()
 {
     binWidthAndSpace = gdv(storage_bin, "y") + 10;
     //TODO
-    
+
     //first shelf
     translate([x10, y5, zShelf1 + FULL_SHELF_THICKNESS])
     rotate([0, 0, 90])
@@ -875,7 +943,7 @@ module draw_vertical_2x4(board)
     }
     else
     {
-        echo(board_length_y = convert_mm2in(gdv(board, "y")));
+        // echo(board_length_y = convert_mm2in(gdv(board, "y")));
         // properties_echo(board);
     }
     
