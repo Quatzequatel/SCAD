@@ -1,3 +1,6 @@
+include <constants.scad>;
+use <convert.scad>;
+
 TopOutDiameter = 34.24;
 BottomOutDiameter = 36;
 
@@ -5,6 +8,13 @@ TopInsideDiameter = 29.25;
 BottomInsideDiameter = 31.3;
 
 Height = 40;
+
+module build()
+{
+    echo( FileName = "Anchored_ShelfAttachment");
+    Anchored_ShelfAttachment();
+    // PoleExtension();
+}
 
 module PoleAttachment()
 {
@@ -21,6 +31,29 @@ module PoleAttachment()
 module ShelfAttachment()
 {
     cylinder($fn = 360,  Height, BottomInsideDiameter/2, TopInsideDiameter/2, false);
+}
+
+module Anchored_ShelfAttachment()
+{
+    difference()
+    {
+        ShelfAttachment();
+
+        Screw_hole();
+    }
+}
+
+module Screw_hole()
+{
+    screwShankRadius = woodScrewShankDiaN_8/2;
+    screwBitShankRadius = convert_in2mm(3/8)/2;
+
+    translate([0, 0, -1])
+    cylinder($fn = 360,  Height + 10, screwShankRadius, screwShankRadius, false);
+    
+    translate([0, 0, convert_in2mm(0.5)])
+    cylinder($fn = 360,  Height, screwBitShankRadius, screwBitShankRadius, false);
+
 }
 
 module PoleExtension()
@@ -52,6 +85,6 @@ module PoleExtension()
     
 }
 
-PoleExtension();
+build();
 echo(BottomOutDiameter+25.4+BottomInsideDiameter);
 
