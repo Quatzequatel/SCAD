@@ -45,8 +45,8 @@ module Anchored_ShelfAttachment()
 
 module Screw_hole()
 {
-    screwShankRadius = woodScrewShankDiaN_8/2;
-    screwBitShankRadius = convert_in2mm(3/8)/2;
+    screwShankRadius = woodScrewShankDiaN_10/2;
+    screwBitShankRadius = convert_in2mm(1/2)/2;
 
     translate([0, 0, -1])
     cylinder($fn = 360,  Height + 10, screwShankRadius, screwShankRadius, false);
