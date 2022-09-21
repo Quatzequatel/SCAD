@@ -22,7 +22,7 @@ use <dictionary.scad>;
 // drawPeggedHandle();
 // drawDrillPeggedHandle();
 // drawDrillPeggedHandleV2();
-// drawSquarePegHolder();
+drawSquarePegHolder();
 
 // draw_Cleated_Back_Wall(Backwall);
 // draw_Cleat_for_BackWall(Backwall);
@@ -31,7 +31,7 @@ use <dictionary.scad>;
 // draw_box_for_JigSaw_Box();
 // draw_peg_holder_for_staples();
 // draw_box_Ratchet_Set();
-draw_single_peg_cleat_hook();
+// draw_single_peg_cleat_hook();
 // scale();
 
 module draw_single_peg_cleat_hook()
@@ -526,15 +526,28 @@ module drawSquarePegHolder()
     echo(FileName = "drawSquarePegHolder.stl");
     echo();
 
+    shortBackwall = 
+    ["short back wall", 
+        ["x", gdv(Tray, "x")],
+        ["y", cleat_thickness],
+        ["z", convert_in2mm(1.5)],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0,0, 0]],
+        ["include cleat", false],
+        ["cleat", cleat],
+        ["color", "LightGrey"]
+    ];    
+
     radius = gdv(DrillPeg,"x")/2;
     unit = 0.9;
 
     spacingA = 
         ["spacing", 
             ["0", [ 0, 0, 0 ]],
-            ["1", [ convert_in2mm(unit), 0, 0 ]],
-            ["2", [ convert_in2mm(2 * unit), 0, 0 ]],
-            ["3", [ convert_in2mm(3 * unit), 0, 0 ]],
+            ["1", [ convert_in2mm(unit)+2, 0, 0 ]],
+            ["2", [ convert_in2mm(2 * unit) , 0, 0 ]],
+            ["3", [ convert_in2mm(3 * unit) + 2, 0, 0 ]],
             ["4", [ convert_in2mm(4 * unit), 0, 0 ]],
         ];
 
@@ -545,7 +558,7 @@ module drawSquarePegHolder()
         union()
         {
             rotate([7,0,0])
-            drawSquareShape(Backwall);
+            drawSquareShape(shortBackwall);
             
             translate(gdv(spacingA, "0"))
             drawSquareShape(DrillPeg);
@@ -562,10 +575,21 @@ module drawSquarePegHolder()
             translate(gdv(spacingA, "4"))
             drawSquareShape(DrillPeg);
 
-            translate([gdv(Backwall, "x") - gdv(DrillPeg,"x") ,0,0])
-            drawSquareShape(DrillPeg);        }
+            translate([gdv(shortBackwall, "x") - gdv(DrillPeg,"x") ,0,0])
+            drawSquareShape(DrillPeg); 
+        }
 
-         //screw_hole_counter_sink(screwholes, Backwall);
+        translate([convert_in2mm(0.65), 0, -45])
+        drawCircleShape(screwholes);
+
+        translate([gdv(Tray, "x")/2, 0, -45])
+        drawCircleShape(screwholes);
+
+        translate([gdv(shortBackwall, "x") - gdv(DrillPeg,"x") - 7, 0, -45])
+        drawCircleShape(screwholes);
+
+        // translate([0,0, -35])
+        // screw_hole_counter_sink(screwholes, shortBackwall);
     }
               
 }
