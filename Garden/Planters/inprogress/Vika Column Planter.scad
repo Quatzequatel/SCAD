@@ -5,7 +5,9 @@ OrnamentSeed=458456630271;//
 // module brush() $fn=20 it was orginally 10 it massively affects rendering time
 // just going from 10 to 20 was an increase of 20 minutes to compute
 // it does smooth out the brush stroke but beaware of time cost. 
-$fn=360;
+FNValue = 360;   //use 60 for fast refresh, 360 high res final
+FNValue2 = 30; //use 10 for fast refresh, 30 for final
+$fn=FNValue;
 //swirls or doodles
 Swoodle=0;//[1,0]
 GlobalScale=[2,2,1];//
@@ -15,6 +17,16 @@ OrnamentAdjust=0.05;//
 OrnamentAdjustR=2;//
 Oreps=4;//
 OHeight=0.55;//
+
+NozzelDiameter = 0.8;
+WallCount = 2;
+FirstLayerHeight = 0.4;
+LayerHeight = 0.16;
+BottomLayerCount = 4;
+zScaling = 5; //1 is 100%, this how much the model is going to be scaled in the slicer
+function WallWidth() = (NozzelDiameter * WallCount)/100;
+function BottomLayerHeight() = (FirstLayerHeight + ((BottomLayerCount - 1) * LayerHeight))/zScaling;
+
 /* [Hidden] */
 dir=un([0,rnd(OrnamentSeed+536,-0.2,0.2),rnd(OrnamentSeed+324,-0.01,1)])*OrnamentAdjust;
 dir2=un([0,rnd(OrnamentSeed+546,-1,1),rnd(OrnamentSeed+344,-0.01,0.05)])*OrnamentAdjust;
@@ -32,7 +44,7 @@ difference()
     union()
     {
         //2020.03.10 changed $fn from 100 to 360
-        color("Moccasin")rotate_extrude($fn=360,convexity = 20)
+        color("Moccasin")rotate_extrude($fn=FNValue,convexity = 20)
         {
         intersection()
             {
@@ -41,7 +53,7 @@ difference()
                 {
                     //2020.03.10 changes made to make wall thinner for faster printing.
                     //2020.03.10 was r=0.75
-                    offset(r=0.25) 
+                    offset(r=WallWidth()) 
                     difference()
                     {
                         //2020.03.10 refactor by adding LF
@@ -97,7 +109,9 @@ difference()
             }
 
     }
-    rotate([180,0,0])translate([0,0,0.0001])cylinder(h=10,r=30);
+    //Cut out the bottom of the bowl to eleminate a thick cavity.
+    echo(BottomLayerHeight = BottomLayerHeight());
+    translate([0,0,BottomLayerHeight()])cylinder(h=5,r=16);
 }
 
 module spiral(op,dir,t, i=0)
@@ -141,7 +155,7 @@ rotate([0,0,bez2(i+ostep,o)[0]])translate(concat(0,bez2(bez2(i+ostep,o)[1],v)))r
 //2020.03.10 note $fn value here affects compute time dramatically
 //  reduce to under 10 when previewing model
 module brush(){
-    rotate([0,BrushRotation,0])scale(BrushScale)sphere(1,$fn=20);
+    rotate([0,BrushRotation,0])scale(BrushScale)sphere(1,$fn=FNValue2);
 }
 //ShowControl( concat(bzplot(v,20),[[0,30]]));
 
