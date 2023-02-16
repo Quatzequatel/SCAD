@@ -80,7 +80,7 @@ module hatachi_Vac_Adapter() {
     difference()
     {
         tube(HATACHI_ADAPTER_LENGTH, HATACHI_OUTER_DIAMETER_1, HATACHI_OUTER_DIAMETER_2, HATACHI_INNER_DIAMETER_1, HATACHI_INNER_DIAMETER_2, true);
-        #cylinder(h=HATACHI_ADAPTER_LENGTH, d1=20, d2=HATACHI_OUTER_DIAMETER_2-1, center=true, $fn=100);
+        #cylinder(h=HATACHI_ADAPTER_LENGTH, d1=35, d2=HATACHI_OUTER_DIAMETER_2-1, center=true, $fn=100);
     }
 
 }
