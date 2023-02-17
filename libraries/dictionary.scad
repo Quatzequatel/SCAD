@@ -71,7 +71,9 @@ function getDictionary(v, key) =
     // echo(result = result)
     result; 
 
-//functions for modifing dictionary.
+//functions for modifing dictionary (Data Object).
+
+//function which returns a standard Data Object Dictionary.
 function NewGd(x,y,z, move = [0, 0, 0], rotate = [0, 0, 0], color = "LemonChiffon", name = "dictionary") =     
     [ name,
         ["x", x],
@@ -132,15 +134,15 @@ function GdvSetXYZ(properties, newX, newY, newZ) =
         ["color",  gdv(properties, "color")]
     ];    
 
-module drawSquare(properties)
+module drawSquare(properties, center = false)
 {
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
+    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=center);    
 }
 
-module drawCube(properties)
+module drawCube(properties, center = false)
 {
     linear_extrude(gdv(properties, "z"))
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);    
+    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=middle);    
 }
 
 /*
