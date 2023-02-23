@@ -11,8 +11,8 @@ $fn = 100;
 BoardDimensions = 
 [
     "2x2 board",
-    ["x", convert_in2mm(1.55)],
-    ["y", convert_in2mm(1.55)],
+    ["x", 38.9], //convert_in2mm(1.55) => 39.37 was too big.
+    ["y", 38.9], //38.5 is tight to too small.
     ["z", convert_in2mm(96)],    
 ];
 
@@ -22,15 +22,18 @@ TemplateDimensions =
     ["x", gdv(BoardDimensions, "x") + 2 * WallThickness(6)],
     ["y", gdv(BoardDimensions, "y") + 2 * WallThickness(6)],
     ["z", convert_in2mm(0.75)],   
-    ["bottom thickness", LayersToHeight(10)] 
+    ["bottom thickness", LayersToHeight(15)] 
 ];
 
 CenterHole = 
 [
     "template center hole",
-    ["radius", convert_in2mm(3/8)/2],
+    ["diameter", 9.25],  //7.93
     ["height", gdv(TemplateDimensions, "z")],
 ];
+echo(gdv(CenterHole, "diameter"));
+echo(convert_in2mm(1.55));
+echo(convert_in2mm(3/8));
 
 build();
 
@@ -45,7 +48,7 @@ module build(args)
         this_drawCube(BoardDimensions, true);
         
         translate([0,0, -gdv(TemplateDimensions, "bottom thickness")])
-        cylinder(r=gdv(CenterHole, "radius"), h=gdv(CenterHole, "height"), center=true);
+        cylinder(d=gdv(CenterHole, "diameter"), h=gdv(CenterHole, "height"), center=true);
     }
     
 }
