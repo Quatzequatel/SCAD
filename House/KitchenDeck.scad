@@ -22,8 +22,8 @@ House =
 
 Deck = 
 [ "Deck information",
-    ["x", convert_ft2mm(29)],
-    ["y", convert_ft2mm(12)],
+    ["x", convert_ft2mm(30)],
+    ["y", convert_ft2mm(13)],
     ["z", convert_ft2mm(0.5)],
     ["rotate",[0,0,0]],
     ["move",[gdv(House, "move").x + convert_ft2mm(9.75), convert_ft2mm(25-12), convert_ft2mm(12)]],
@@ -58,7 +58,7 @@ module build(args)
 {
     House();
     Deck();
-    Yard();
+    //Yard();
 }
 
 module House()
