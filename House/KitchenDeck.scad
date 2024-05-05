@@ -110,6 +110,9 @@ module drawSquareShape(properties)
     square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);
 }
 
+///
+// drawSquareShape2: when difference() with drawSquareShape will create walls.
+///
 module drawSquareShape2(size, height, move, rotate, color)
 {
     color(color, 0.5)
