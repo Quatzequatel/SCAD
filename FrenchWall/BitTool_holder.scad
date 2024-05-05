@@ -22,9 +22,9 @@ use <dictionary.scad>;
 // drawPeggedHandle();
 // drawDrillPeggedHandle();
 // drawDrillPeggedHandleV2();
-drawSquarePegHolder();
+// drawSquarePegHolder();
 
-// draw_Cleated_Back_Wall(Backwall);
+   echo(); echo(fileName = gdv(Backwall, "filename")); echo(); draw_Cleated_Back_Wall(Backwall);
 // draw_Cleat_for_BackWall(Backwall);
 // draw_Drill_Bit_Holder_Cleated();
 // draw_box_for_staples();
@@ -78,6 +78,7 @@ module draw_single_peg_cleat_hook()
 
     backwall = 
     ["backwall", 
+        ["filename", "Cleat_for_wall.stl"],
         ["x", gdv(tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(2.5)],
@@ -430,7 +431,8 @@ module draw_peg_holder_for_staples()
 */
 module draw_Cleated_Back_Wall(properties)
 {
-    // properties_echo(properties);
+    // echo(gdv(properties, "filename"));
+    properties_echo(properties);
     //now wall and cleat is at [0,0]
     //move to positive 0 x-axis.
     translate([gdv(properties,"x"),0,0])
