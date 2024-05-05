@@ -38,6 +38,7 @@ cleat =
 
 Backwall = 
 ["Backwall", 
+    ["filename", "Cleat_for_wall.stl"],
     ["x", gdv(Tray, "x")],
     ["y", cleat_thickness],
     ["z", convert_in2mm(3.5)],
