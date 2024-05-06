@@ -11,8 +11,8 @@ use <dictionary.scad>;
 
 House = 
 [ "house information",
-    ["x", convert_ft2mm(60.25)],
-    ["y", convert_ft2mm(70)],
+    ["x", convert_ft2mm(61)],
+    ["y", convert_ft2mm(26)],
     ["z", convert_ft2mm(20)],
     ["Wall", convert_in2mm(8)],
     ["rotate",[0,0,0]],
