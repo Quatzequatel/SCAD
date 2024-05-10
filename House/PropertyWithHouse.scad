@@ -99,7 +99,7 @@ module build(args)
         culdesac();
     }
 
-    // culdesac();
+    culdesac();
     easement();
 
     house();
@@ -156,8 +156,8 @@ module culdesac(args)
 {
     // translate([convert_ft2mm(224.5), convert_ft2mm(23), convert_ft2mm(1.2)])
     translateInFt([224.5, 23, -1])
-    color("black", 1)
-    linear_extrude(convert_ft2mm(20))
+    color("lightgray", 1)
+    linear_extrude(convert_ft2mm(2))
     // translate([0, 0, convert_ft2mm(-2)])
     circle($fn = 100, convert_ft2mm(50));
 }
