@@ -140,11 +140,21 @@ module kitchenDeckLabels(args)
 module house_Lables(args) 
 {
     color(font_color, 0.5)
-    translateInFt([75 + 30, 90, 1.2])
-    text("13'", font_size);
+    translateInFt([75 + 30, 90-1.5, 1.2])
+    text("48'", font_size);
+
+    color(font_color, 1)
+    translateInFt([75 + 57, 90 - 7, 13.2])
+    rotate([0, 0, 90])     
+    text("5'", font_size);
+
+    color(font_color, 1)
+    translateInFt([75 + 75, 90 - 17, 13.2])
+    rotate([0, 0, 90])     
+    text("12'", font_size);
 
     color(font_color, 0.5)
-    translateInFt([75 + 62, 90 - 5, 1.2])
+    translateInFt([75 + 62, 90 - 6.5, 1.2])
     text("11'", font_size);
 
     color(font_color, 1)
@@ -157,7 +167,7 @@ module house_Lables(args)
     text("12'", font_size);
 
     color(font_color, 1)
-    translateInFt([75 + 62, 90 - 28, 13.2])
+    translateInFt([75 + 57, 90 - 28, 13.2])
     rotate([0, 0, 90])     
     text("12'", font_size);
 
