@@ -17,7 +17,15 @@ use <dictionary.scad>;
 
 function convert_a_ft2mm(args) = [convert_ft2mm(args.x), convert_ft2mm(args.y), convert_ft2mm(args.z)];
 
-
+z_Base = 0;
+firstFloor_ft = 10;
+firstFlorLabels_ft = firstFloor_ft + 1;
+kitchenDeck_ft = 12;
+kitchenDeck_lablels_ft = kitchenDeck_ft + 1;
+garage_deck_ft = 16;
+garage_deck_lables_ft = garage_deck_ft + 1;
+z_FirstFloor = convert_ft2mm(firstFloor_ft);
+z_KitchenDeck = convert_ft2mm(kitchenDeck_ft);
 
 SiteMap = 
 [
@@ -68,11 +76,11 @@ First_Floor =
     [ convert_ft2mm(59),convert_ft2mm(24)],
     [ convert_ft2mm(59),convert_ft2mm(20)],
     [ convert_ft2mm(61),convert_ft2mm(20)],
-    [ convert_ft2mm(61),convert_ft2mm(0) ],
-    [ convert_ft2mm(47),convert_ft2mm(0) ],
-    [ convert_ft2mm(47),convert_ft2mm(-4)],
-    [ convert_ft2mm(37),convert_ft2mm(-4)],
-    [ convert_ft2mm(37),convert_ft2mm(0) ]
+    [ convert_ft2mm(61),convert_ft2mm(0) ]
+    // [ convert_ft2mm(47),convert_ft2mm(0) ],
+    // [ convert_ft2mm(47),convert_ft2mm(-4)],
+    // [ convert_ft2mm(37),convert_ft2mm(-4)],
+    // [ convert_ft2mm(37),convert_ft2mm(0) ]
 ];
 
 GarageRoof = 
@@ -102,10 +110,10 @@ House1 =
     "house suite information",
     ["x", convert_ft2mm(61)],
     ["y", convert_ft2mm(26)],
-    ["z", convert_ft2mm(10)],
+    ["z", convert_ft2mm(firstFloor_ft)],
     ["Wall", convert_in2mm(8)],
     ["rotate",[0,0,0]],
-    ["move",[convert_ft2mm(15), convert_ft2mm(25), convert_ft2mm(10)]],
+    ["move",[convert_ft2mm(15), convert_ft2mm(25), convert_ft2mm(firstFlorLabels_ft)]],
     ["color", "Khaki"]
 ];
 
@@ -122,14 +130,6 @@ Deck =
 font_size = 1000;
 font_color = "black";
 
-z_Base = 0;
-firstFloor_ft = 10;
-firstFlorLabels_ft = firstFloor_ft + 1;
-kitchenDeck_ft = 12;
-kitchenDeck_lablels_ft = kitchenDeck_ft + 1;
-z_FirstFloor = convert_ft2mm(firstFloor_ft);
-z_KitchenDeck = convert_ft2mm(kitchenDeck_ft);
-
 build();
 
 module build(args) 
@@ -143,7 +143,17 @@ module build(args)
     culdesac();
     easement();
 
-    house();
+    translate([convert_ft2mm(60), (SiteMap[4].y - convert_ft2mm(0)) * -1, 0])    
+    rotate([0, 0, -90]) 
+    union()
+    {
+        main_floor_draw();
+        first_floor_draw();
+        front_porch_draw();
+        garage_deck_draw();
+        kitchen_deck_draw();
+
+    }
 
     labels();   
 
@@ -286,18 +296,7 @@ module garage_Roof_Lables(args)
     text("33'", font_size);
 }
 
-module house(args)
-{
-    //move to be relative to Site Map.
-    translate([convert_ft2mm(60), (SiteMap[4].y - convert_ft2mm(0)) * -1, 0])    
-    rotate([0,0,-90])
-    union()
-    {
-        house_poly();
-        front_porch();
-        decks();
-    }
-}
+
 
 module easement(args)
 {
@@ -375,7 +374,20 @@ module culdesac(args)
     circle($fn = 100, convert_ft2mm(50));
 }
 
-module house_poly(args) 
+
+module main_floor_draw()
+{
+    color("LemonChiffon", 1)
+    translateInFt([15, 25, 0])
+    linear_extrude(gdv(House1, "z"))
+    difference()
+    {
+        polygon(First_Floor);
+        offset(delta= convert_ft2mm(-0.5)) polygon(First_Floor);
+    }
+}
+
+module first_floor_draw()
 {
     color("LemonChiffon", 1)
     applyMove(House1)
@@ -385,19 +397,9 @@ module house_poly(args)
         polygon(Main_Floor);
         offset(delta= convert_ft2mm(-0.5)) polygon(Main_Floor);
     }
-    
-
-    color("LemonChiffon", 1)
-    translateInFt([61, 26, 0])
-    linear_extrude(gdv(House1, "z"))
-    difference()
-    {
-        polygon(First_Floor);
-        offset(delta= convert_ft2mm(-0.5)) polygon(First_Floor);
-    }
 }
 
-module front_porch(args) 
+module front_porch_draw()
 {
     color("grey", 1.0)
     union()
@@ -414,25 +416,27 @@ module front_porch(args)
     color("LightYellow", 1)
     translateInFt([15 + 12 + 5 - 11.5, 59 + 14, 12])
     linear_extrude(convert_ft2mm(1))
-    square(convert_ft2mm(11), convert_ft2mm(12));
-
+    square(convert_ft2mm(11), convert_ft2mm(12));    
 }
 
-module decks()
+module garage_deck_draw()
 {
     //garage roof
     color("SaddleBrown", 0.5)
     // translate([convert_ft2mm(15 + 29), convert_ft2mm(25 + 26), gdv(Deck, "move").z])
-    translateInFt([15 + 29, 25 + 26, 12])
+    translateInFt([15 + 29, 25 + 26, garage_deck_ft])
     linear_extrude(convert_ft2mm(1))
-    polygon(GarageRoof);
+    polygon(GarageRoof);    
+}
 
+module kitchen_deck_draw()
+{
     //kitchen
     color("SaddleBrown", 0.5)
     // translate([convert_ft2mm(23), convert_ft2mm(15), gdv(Deck, "move").z])
     translateInFt([23, 12, 12])
     linear_extrude(convert_ft2mm(1))
-    polygon(KitchenDeck);
+    polygon(KitchenDeck);    
 }
 
 module translateInFt(args)
