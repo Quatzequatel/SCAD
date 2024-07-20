@@ -17,6 +17,11 @@ use <dictionary.scad>;
 
 function convert_a_ft2mm(args) = [convert_ft2mm(args.x), convert_ft2mm(args.y), convert_ft2mm(args.z)];
 
+/*
+    What to show in view
+*/
+show_cudesac = 0;
+
 z_Base = 0;
 firstFloor_ft = 10;
 firstFlorLabels_ft = firstFloor_ft + 1;
@@ -137,10 +142,11 @@ module build(args)
     difference()
     {
         site_map();
-        culdesac();
+        if (show_cudesac == 1) { culdesac(); echo(str("show_cudesac = 1"));}
+
     }
 
-    culdesac();
+    if (show_cudesac == 1) { culdesac(); echo(str("show_cudesac = 1"));}
     easement();
 
     translate([convert_ft2mm(60), (SiteMap[4].y - convert_ft2mm(0)) * -1, 0])    
