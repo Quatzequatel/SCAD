@@ -12,6 +12,14 @@ use <dictionary.scad>;
 /*
     Edits:
     1. Refactor house into
+    2. added placement lines
+    3. added green house
+    4. added toolshed
+    5. added driveway
+    6. added walkway.
+    7. need to add patio
+    8. finish walkway
+    9. deminsions for sundeck, drive way, walk way, patio,
 
 */
 
@@ -21,10 +29,11 @@ function convert_a_ft2mm(args) = [convert_ft2mm(args.x), convert_ft2mm(args.y), 
     What to show in view
 */
 show_cudesac = 0;
+show_reference_lines = 0;
 
 z_Base = 0;
 firstFloor_ft = 10;
-firstFlorLabels_ft = firstFloor_ft + 1;
+firstFlorLabels_ft = firstFloor_ft + 4;
 kitchenDeck_ft = 12;
 kitchenDeck_lablels_ft = kitchenDeck_ft + 1;
 garage_deck_ft = 16;
@@ -185,11 +194,12 @@ module build(args)
     draw_toolShed();
     draw_driveway();
     draw_walkway();
+    draw_patio();
 
     translateInFt([x_moveHouse, 7.5, 0])
     labels();   
 
-    House_Placement_Lines();
+    if (show_reference_lines == 1) House_Placement_Lines();
 
 }
 
@@ -211,17 +221,17 @@ module kitchenDeckLabels(args)
     // font_size = 1000;
     font_color = "black";
 
-    color(font_color, 0.5)
-    translateInFt([75, 82, kitchenDeck_lablels_ft])
+    color(font_color, 1.0)
+    translateInFt([76, 78, kitchenDeck_lablels_ft])
     text("13'", font_size);
 
-    color(font_color, 0.5)
-    translateInFt([70, 82-20, kitchenDeck_lablels_ft])
+    color(font_color, 1.0)
+    translateInFt([74, 64, kitchenDeck_lablels_ft])
     rotate([0,0,90])
     text("30'", font_size);
 
-    color(font_color, 0.5)
-    translateInFt([73, 82 - 37, kitchenDeck_lablels_ft])
+    color(font_color, 1.0)
+    translateInFt([76, 82 - 31.5, kitchenDeck_lablels_ft])
     text("9'", font_size);
 }
 
@@ -247,10 +257,10 @@ module house_Lables(args)
 {
     color(font_color, 0.5)
     translateInFt([75 + 30, 90-1.5, firstFloor_ft])
-    text("48'", font_size);
+    text("<-48'->", font_size);
 
     color(font_color, 1)
-    translateInFt([75 + 57, 90 - 7, firstFloor_ft])
+    translateInFt([132, 85, firstFloor_ft])
     rotate([0, 0, 90])     
     text("5'", font_size);
 
@@ -306,33 +316,29 @@ module house_Lables(args)
 
 module garage_Roof_Lables(args) 
 {
-    font_size = 1000;
+    // font_size = 1000;
     font_color = "black";
 
     color(font_color)
-    translateInFt([125, 55, kitchenDeck_ft])
+    translateInFt([125, 57, garage_deck_lables_ft])
     // rotate([0, 0, 90])     
     text("33'", font_size);
 
     color(font_color)
-    translateInFt([146, 45, kitchenDeck_ft])
+    translateInFt([146, 45, garage_deck_lables_ft])
     rotate([0, 0, 90])     
     text("23'", font_size);
 
     color(font_color)
-    translateInFt([137, 37, kitchenDeck_ft])
+    translateInFt([137, 37, garage_deck_lables_ft])
     // rotate([0, 0, 90])     
     text("12'", font_size);
 
     color(font_color)
-    translateInFt([120, 35, kitchenDeck_ft])
+    translateInFt([120, 35, garage_deck_lables_ft])
     // rotate([0, 0, 90])     
     text("23'", font_size);
 
-    color(font_color)
-    translateInFt([125, 55, kitchenDeck_ft])
-    // rotate([0, 0, 90])     
-    text("33'", font_size);
 }
 
 
@@ -406,12 +412,28 @@ module House_Placement_Lines(args)
     //line to show distance from north board to house.
     color(font_placement_color)
     translateInFt([0, 0, z_placement_move])
-    line(convert_a_ft2mm([140, 103, 0]), convert_a_ft2mm([140, 103-6.667, 0]), line_size);
+    line(convert_a_ft2mm([140, 102.6, 0]), convert_a_ft2mm([140, 102.6-6.667, 0]), line_size);
 
     //line from fence to west wall of house
     color(font_placement_color)
     translateInFt([0, 0, z_placement_move])
     line(convert_a_ft2mm([1, 78.5, 0]), convert_a_ft2mm([100.334, 78.5, 0]), line_size);
+
+    //other lines
+    //reference point driveway
+    color(font_placement_color)
+    translateInFt([0, 0, 0])
+    line(convert_a_ft2mm([129.6, 38, 0]), convert_a_ft2mm([129.6-4, 38, 0]), line_size);  
+
+    //line to show distance house to walkway.
+    color(font_placement_color)
+    translateInFt([0, 0, 0])
+    line(convert_a_ft2mm([169, 55, 0]), convert_a_ft2mm([169-5.5, 55, 0]), line_size);
+
+    //reference point for patio.
+    color(font_placement_color)
+    translateInFt([0, 0, 0])
+    line(convert_a_ft2mm([101, 35, 0]), convert_a_ft2mm([101, 35+3, 0]), line_size);
 }
 
 module site_map(args)
@@ -579,9 +601,43 @@ module draw_toolShed(args)
 
 module draw_driveway(args)
 {
+    //section 1
     color("LightSlateGray", 0.5)
-    translateInFt([155, 29.5, 0])
-    square(size=[convert_ft2mm(61), convert_ft2mm(25)], center=true);
+    translateInFt([116.6 + 6.6, 23.6, 0])
+    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+
+    //section 2
+    color("LightSlateGray", 0.5)
+    translateInFt([129.7 + 6.6, 35.7, 0])
+    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+
+    color("LightSlateGray", 0.5)
+    translateInFt([129.7 + 6.6, 23.6, 0])
+    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+
+    //section 3
+    color("LightSlateGray", 0.5)
+    translateInFt([149.4, 35.7, 0])
+    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+
+    color("LightSlateGray", 0.5)
+    translateInFt([149.4, 23.6, 0])
+    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+
+    //section 4
+    color("LightSlateGray", 0.5)
+    translateInFt([156.3 + 6.2, 35.7, 0])
+    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+
+    color("LightSlateGray", 0.5)
+    translateInFt([156.3 + 6.2, 23.6, 0])
+    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);    
+
+    //section 5
+    color("LightSlateGray", 0.5)
+    translateInFt([175.2, 25.6, 0])
+    square(size=[convert_ft2mm(12), convert_ft2mm(16)], center=true);       
+  
 }
 
 module draw_walkway(args)
@@ -590,10 +646,13 @@ module draw_walkway(args)
     translateInFt([172, 52, 0])
     square(size=[convert_ft2mm(6), convert_ft2mm(20)], center=true);
 
-    //line to show distance house to walkway.
-    color(font_placement_color)
-    translateInFt([0, 0, 0])
-    line(convert_a_ft2mm([169, 55, 0]), convert_a_ft2mm([169-5.5, 55, 0]), line_size);
+}
+
+module draw_patio(args)
+{
+    color("LightSlateGray", 0.5)
+    translateInFt([95.4, 48.3, 0])
+    square(size=[convert_ft2mm(12), convert_ft2mm(20.25)], center=true);
 }
 
 module translateInFt(args)
