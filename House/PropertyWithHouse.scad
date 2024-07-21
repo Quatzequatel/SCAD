@@ -31,6 +31,11 @@ garage_deck_ft = 16;
 garage_deck_lables_ft = garage_deck_ft + 1;
 z_FirstFloor = convert_ft2mm(firstFloor_ft);
 z_KitchenDeck = convert_ft2mm(kitchenDeck_ft);
+x_moveHouse = 16.4;
+y_move_House = 12.75;
+
+    line_size = 75;
+
 
 SiteMap = 
 [
@@ -110,6 +115,19 @@ KitchenDeck =
     [ convert_ft2mm(30) ,convert_ft2mm(0) ],
 ];
 
+GreenHouse = 
+[
+    [convert_ft2mm(0) , convert_ft2mm(0)],
+    [ convert_ft2mm(0)    , convert_ft2mm(16)],
+    [convert_ft2mm(11.25) , convert_ft2mm(16)],
+    [convert_ft2mm(11.25) , convert_ft2mm(10.5)],
+    [convert_ft2mm(15.25) , convert_ft2mm(10.5)],
+    [convert_ft2mm(15.25) , convert_ft2mm(5.5) ],
+    [convert_ft2mm(11.25) , convert_ft2mm(5.5) ],
+    [convert_ft2mm(11.25) , convert_ft2mm(0)   ],
+    [convert_ft2mm(0) , convert_ft2mm(0) ],
+];
+
 House1 = 
 [
     "house suite information",
@@ -132,8 +150,10 @@ Deck =
     ["color", "SaddleBrown"]
 ];
 
-font_size = 1000;
+font_size = 500;
 font_color = "black";
+font_placement_color = "blue";
+
 
 build();
 
@@ -142,15 +162,16 @@ module build(args)
     difference()
     {
         site_map();
-        if (show_cudesac == 1) { culdesac(); echo(str("show_cudesac = 1"));}
-
+        // if (show_cudesac == 1) { culdesac(); echo(str("show_cudesac = 1"));}
     }
 
     if (show_cudesac == 1) { culdesac(); echo(str("show_cudesac = 1"));}
     easement();
 
-    translate([convert_ft2mm(60), (SiteMap[4].y - convert_ft2mm(0)) * -1, 0])    
+    translateInFt([0, 7.5,0])
+    translate([convert_ft2mm(60 + x_moveHouse), ((SiteMap[4].y + convert_ft2mm(0)) * -1), 0])    
     rotate([0, 0, -90]) 
+    //draw the house
     union()
     {
         main_floor_draw();
@@ -158,24 +179,36 @@ module build(args)
         front_porch_draw();
         garage_deck_draw();
         kitchen_deck_draw();
-
     }
 
+    Draw_greenhouse();
+    draw_toolShed();
+    draw_driveway();
+    draw_walkway();
+
+    translateInFt([x_moveHouse, 7.5, 0])
     labels();   
+
+    House_Placement_Lines();
 
 }
 
 module labels(args)
 {
-    kitchenDeckLabels();
-    house_Lables();
-    garage_Roof_Lables();
-    front_entryway_labels();
+    
+    union()
+    {
+        kitchenDeckLabels();
+        house_Lables();
+        garage_Roof_Lables();
+        front_entryway_labels();        
+    }
+
 }
 
 module kitchenDeckLabels(args)
 {
-    font_size = 1000;
+    // font_size = 1000;
     font_color = "black";
 
     color(font_color, 0.5)
@@ -306,7 +339,6 @@ module garage_Roof_Lables(args)
 
 module easement(args)
 {
-    line_size = 75;
 
     color( font_color )
     translateInFt([2, 150/2, 1.2])
@@ -314,7 +346,7 @@ module easement(args)
     text("<- Boundry 103.24' ->", font_size);
 
     color( font_color )
-    translateInFt([11, 150/2, 1.2])
+    translateInFt([10, 150/2, 1.2])
     rotate([0,0,-90])
     text("Easement 12'", font_size);
 
@@ -327,13 +359,14 @@ module easement(args)
     rotate([0, 0, 5])
     text("<- Boundry 175.87' ->", font_size);
 
+    //Easement text
     color( font_color )
     translateInFt([175/2, 16, 1.2])
     rotate([0, 0, 5])
     text("Easement 10'", font_size);
-
+    //Easement line
     color( font_color )
-    line(convert_a_ft2mm([0.5,10,0]), convert_a_ft2mm([174, 15.35 + 10, 0]), line_size);
+    line(convert_a_ft2mm([0.5,10,0]), convert_a_ft2mm([180, 15.35 + 10, 0]), line_size);
 
     color( font_color )
     translateInFt([175/2, 99, 1.2])
@@ -353,8 +386,32 @@ module easement(args)
     color( font_color )
     translateInFt([207, 45, 1.2])
     rotate([0, 0, -62])
-    text("r = 50.00", font_size);
+    text("r = 50.00", font_size);   
+}
 
+module House_Placement_Lines(args)
+{
+    z_placement_move = 10;
+    y_garage_move = 12.75;
+    //line show porch to boarder
+    color(font_placement_color)
+    translateInFt([0, 0, z_placement_move])
+    line(convert_a_ft2mm([195.5, 78.5, 0]), convert_a_ft2mm([195.5-22, 78.5, 0]), line_size);
+
+    //line show garage to boarder
+    color(font_placement_color)
+    translateInFt([0, 0, z_placement_move])
+    line(convert_a_ft2mm([140, y_garage_move, 0]), convert_a_ft2mm([140, y_garage_move + 29, 0]), line_size);
+
+    //line to show distance from north board to house.
+    color(font_placement_color)
+    translateInFt([0, 0, z_placement_move])
+    line(convert_a_ft2mm([140, 103, 0]), convert_a_ft2mm([140, 103-6.667, 0]), line_size);
+
+    //line from fence to west wall of house
+    color(font_placement_color)
+    translateInFt([0, 0, z_placement_move])
+    line(convert_a_ft2mm([1, 78.5, 0]), convert_a_ft2mm([100.334, 78.5, 0]), line_size);
 }
 
 module site_map(args)
@@ -443,6 +500,100 @@ module kitchen_deck_draw()
     translateInFt([23, 12, 12])
     linear_extrude(convert_ft2mm(1))
     polygon(KitchenDeck);    
+}
+
+module Draw_greenhouse()
+{
+    greenhouse_placement = [13.667, 29.5, 0];
+    //Green house
+    color("LightSlateGray", 0.5)
+    // translate([convert_ft2mm(23), convert_ft2mm(15), gdv(Deck, "move").z])
+    translateInFt(greenhouse_placement)
+    linear_extrude(convert_ft2mm(1))
+    //rotate([0, 0, -90]) 
+    polygon(GreenHouse);         
+
+    //label
+    color(font_color)
+    translateInFt([greenhouse_placement.x, greenhouse_placement.y + 18, 5])
+    text("Green House", font_size);    
+    
+    //length
+    color(font_color)
+    translateInFt([greenhouse_placement.x, greenhouse_placement.y + 8, 5])
+    text("16'", font_size);
+    
+    //width
+    color(font_color)
+    translateInFt([greenhouse_placement.x + 3, greenhouse_placement.y + 14, 5])
+    text("11'3''", font_size);
+
+    color(font_color)
+    translateInFt([greenhouse_placement.x + 3, greenhouse_placement.y + 0.5, 5])
+    text("11'3''", font_size);
+    
+    //short wall 
+    color(font_color)
+    translateInFt([greenhouse_placement.x + 11, greenhouse_placement.y + 2, 5])
+    text("5'6''", font_size);
+
+    color(font_color)
+    translateInFt([greenhouse_placement.x + 11, greenhouse_placement.y + 12, 5])
+    text("5'6''", font_size);
+
+    //door
+    color(font_color)
+    translateInFt([greenhouse_placement.x + 15.5, greenhouse_placement.y + 7, 5])
+    text("5'", font_size);
+
+    color(font_color)
+    translateInFt([greenhouse_placement.x + 12, greenhouse_placement.y + 8.5, 5])
+    text("4'", font_size);
+
+    color(font_color)
+    translateInFt([greenhouse_placement.x + 12, greenhouse_placement.y + 5.5, 5])
+    text("4'", font_size);
+
+}
+
+module draw_toolShed(args) 
+{
+    color("LightSlateGray", 0.5)
+    translateInFt([40, 95, 5])
+    square(size=[convert_in2mm(91), convert_in2mm(91)], center=true);
+
+    //toolshed
+    color(font_color)
+    translateInFt([35, 99, 5])
+    text("Tool Shed", font_size);
+
+    color(font_color)
+    translateInFt([44, 94, 5])
+    text("7'7''", font_size);
+
+    color(font_color)
+    translateInFt([38, 89, 5])
+    text("7'7''", font_size);
+
+}
+
+module draw_driveway(args)
+{
+    color("LightSlateGray", 0.5)
+    translateInFt([155, 29.5, 0])
+    square(size=[convert_ft2mm(61), convert_ft2mm(25)], center=true);
+}
+
+module draw_walkway(args)
+{
+    color("LightSlateGray", 0.5)
+    translateInFt([172, 52, 0])
+    square(size=[convert_ft2mm(6), convert_ft2mm(20)], center=true);
+
+    //line to show distance house to walkway.
+    color(font_placement_color)
+    translateInFt([0, 0, 0])
+    line(convert_a_ft2mm([169, 55, 0]), convert_a_ft2mm([169-5.5, 55, 0]), line_size);
 }
 
 module translateInFt(args)
