@@ -628,9 +628,33 @@ module draw_driveway(args)
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     //section 4
+    walkway_section = 
+    [
+        [convert_ft2mm(0) ,convert_ft2mm(0)],
+        [convert_ft2mm(0) ,convert_ft2mm(13.75)],
+        [convert_ft2mm(9.5) ,convert_ft2mm(13.75)],
+        [convert_ft2mm(9.5) ,convert_ft2mm(6)],
+        [convert_ft2mm(13) ,convert_ft2mm(6)],
+        [convert_ft2mm(13) ,convert_ft2mm(0)],
+        [convert_ft2mm(0) ,convert_ft2mm(0)],
+    ];
+
     color("LightSlateGray", 0.5)
-    translateInFt([156.3 + 6.2, 35.7, 0])
-    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+    // translateInFt([156.3 + 6.2, 35.7, 0])
+    // square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+    translateInFt([156.0, 29.8, 0])
+    polygon(walkway_section);
+
+    small_garage = 
+    [
+        [convert_ft2mm(0) ,convert_ft2mm(0)],
+        [convert_ft2mm(0) ,convert_ft2mm(13.75)],
+        [convert_ft2mm(9.5) ,convert_ft2mm(13.75)],
+        [convert_ft2mm(9.5) ,convert_ft2mm(6)],
+        [convert_ft2mm(13) ,convert_ft2mm(6)],
+        [convert_ft2mm(13) ,convert_ft2mm(0)],
+        [convert_ft2mm(0) ,convert_ft2mm(0)],
+    ];    
 
     color("LightSlateGray", 0.5)
     translateInFt([156.3 + 6.2, 23.6, 0])
@@ -645,10 +669,21 @@ module draw_driveway(args)
 
 module draw_walkway(args)
 {
+    //main section
     color("LightSlateGray", 0.5)
-    translateInFt([172, 52, 0])
+    translateInFt([172.2, 51.8, 0])
     square(size=[convert_ft2mm(6), convert_ft2mm(20)], center=true);
 
+    //stairs to porch
+    color("LightSlateGray", 0.5)
+    translateInFt([170, 66, 0])
+    rotate([0, 0, 24])
+    square(size=[convert_ft2mm(4.5), convert_ft2mm(10.5)], center=true);
+
+    //connect main to driveway
+    color("LightSlateGray", 0.5)
+    translateInFt([172.2, 37.7, 0])
+    square(size=[convert_ft2mm(6), convert_ft2mm(8)], center=true);
 }
 
 module draw_patio(args)
