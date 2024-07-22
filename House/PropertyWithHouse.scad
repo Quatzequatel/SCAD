@@ -313,11 +313,6 @@ module house_Lables(args)
     text("10'", font_size);
 
     color(font_color)
-    translateInFt([82.5, 42, firstFloor_ft])
-    // rotate([0, 0, 90])     
-    text("4'", font_size);
-
-    color(font_color)
     translateInFt([88, 65, firstFloor_ft])
     rotate([0, 0, 90])     
     text("37'", font_size);
@@ -513,6 +508,19 @@ module first_floor_draw()
         polygon(Main_Floor);
         offset(delta= convert_ft2mm(-0.5)) polygon(Main_Floor);
     }
+
+    //color in the alcove
+    color("white", 1)
+    translateInFt([52, 21.5, firstFloor_ft])
+    linear_extrude(convert_in2mm(6))
+    square([convert_ft2mm(10), convert_ft2mm(4)]);
+
+    //alcove lable
+    color(font_color)
+    translateInFt([61, 23, firstFloor_ft + 1])
+    rotate([0, 0, 90])     
+    text("4'", font_size);
+
 }
 
 module front_porch_draw()
@@ -543,6 +551,12 @@ module garage_deck_draw()
     translateInFt([15 + 29, 25 + 26, garage_deck_ft])
     linear_extrude(convert_ft2mm(1))
     polygon(GarageRoof);    
+    
+    //lable
+    color(font_color, 1.0)
+    translateInFt([57, 60, garage_deck_ft + 5])
+    rotate([0, 0, 90])
+    text("Garage Deck", font_size); 
 }
 
 module kitchen_deck_draw()
@@ -553,6 +567,12 @@ module kitchen_deck_draw()
     translateInFt([23, 12, 12])
     linear_extrude(convert_ft2mm(1))
     polygon(KitchenDeck);    
+
+    //lable
+    color(font_color, 1.0)
+    translateInFt([32, 19, garage_deck_ft + 5])
+    // rotate([0, 0, 90])
+    text("Kitchen Deck", font_size);     
 }
 
 module Draw_greenhouse()
@@ -720,6 +740,11 @@ module draw_walkway(args)
     color("LightSlateGray", local_color_alpha)
     translateInFt([172.2, 37.7, 0])
     square(size=[convert_ft2mm(6), convert_ft2mm(8)], center=true);
+
+    //lable
+    color(font_color, 1.0)
+    translateInFt([165, 78, kitchenDeck_lablels_ft])
+    text("Porch", font_size); 
 }
 
 module draw_patio(args)
@@ -738,6 +763,11 @@ module draw_patio(args)
     color(font_color, 1.0)
     translateInFt([94, 39, kitchenDeck_lablels_ft])
     text("12'", font_size);    
+
+    //caption
+    color(font_color, 1.0)
+    translateInFt([93, 45, kitchenDeck_lablels_ft])
+    text("Patio", font_size);    
 }
 
 module draw_setbacks(args)
