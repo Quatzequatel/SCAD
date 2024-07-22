@@ -525,15 +525,17 @@ module first_floor_draw()
 
 module front_porch_draw()
 {
-    color("grey", 0.5)
+    color("Gainsboro", 1)
     union()
     {
         // translate([convert_ft2mm(15 + 12 + 5), convert_ft2mm(59 + 26), gdv(Deck, "move").z])
         translateInFt([15+12+5, 59 + 26, 12])
+        linear_extrude(convert_ft2mm(1))
         circle(r = convert_ft2mm(12));
 
         // translate([convert_ft2mm(15 + 12 + 5), convert_ft2mm(59 + 14), gdv(Deck, "move").z])
         translateInFt([15 + 12 + 5, 59 + 14, 12])
+        linear_extrude(convert_ft2mm(1))
         square(convert_ft2mm(12));
     }
 
