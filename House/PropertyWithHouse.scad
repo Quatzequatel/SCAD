@@ -20,6 +20,7 @@ use <dictionary.scad>;
     7. need to add patio
     8. finish walkway
     9. deminsions for sundeck, drive way, walk way, patio,
+    10. Adding Setbacks, 20 ft for front yard, 10 ft for back yard, 5 for side yard.
 
 */
 
@@ -195,6 +196,8 @@ module build(args)
     draw_driveway();
     draw_walkway();
     draw_patio();
+    draw_setbacks();
+    // draw_storage();
 
     translateInFt([x_moveHouse, 7.5, 0])
     labels();   
@@ -347,29 +350,29 @@ module easement(args)
 {
 
     color( font_color )
-    translateInFt([2, 150/2, 1.2])
+    translateInFt([0.5, 150/2, 1.2])
     rotate([0,0,-90])
-    text("<- Boundry 103.24' ->", font_size);
+    text("<-- Boundry 103.24' -->", font_size);
 
     color( font_color )
-    translateInFt([10, 150/2, 1.2])
+    translateInFt([12.5, 150/2, 1.2])
     rotate([0,0,-90])
-    text("Easement 12'", font_size);
+    text("<-- Easement 12' -->", font_size);
 
     color( font_color )
     translate([0, 0, convert_ft2mm(1.2)])
     line([convert_ft2mm(12), convert_ft2mm(1.6), 0], [convert_ft2mm(12), convert_ft2mm(103.24), 0], line_size);
 
     color( font_color )
-    translateInFt([175/2, 9, 1.2])
+    translateInFt([175/2, 8, 1.2])
     rotate([0, 0, 5])
-    text("<- Boundry 175.87' ->", font_size);
+    text("<-- Boundry 175.87' -->", font_size);
 
     //Easement text
     color( font_color )
     translateInFt([175/2, 16, 1.2])
     rotate([0, 0, 5])
-    text("Easement 10'", font_size);
+    text("<-- Easement 10' -->", font_size);
     //Easement line
     color( font_color )
     line(convert_a_ft2mm([0.5,10,0]), convert_a_ft2mm([180, 15.35 + 10, 0]), line_size);
@@ -507,7 +510,7 @@ module front_porch_draw()
 module garage_deck_draw()
 {
     //garage roof
-    color("SaddleBrown", 0.5)
+    color("SaddleBrown", 0.2)
     // translate([convert_ft2mm(15 + 29), convert_ft2mm(25 + 26), gdv(Deck, "move").z])
     translateInFt([15 + 29, 25 + 26, garage_deck_ft])
     linear_extrude(convert_ft2mm(1))
@@ -517,7 +520,7 @@ module garage_deck_draw()
 module kitchen_deck_draw()
 {
     //kitchen
-    color("SaddleBrown", 0.5)
+    color("SaddleBrown", 0.2)
     // translate([convert_ft2mm(23), convert_ft2mm(15), gdv(Deck, "move").z])
     translateInFt([23, 12, 12])
     linear_extrude(convert_ft2mm(1))
@@ -581,7 +584,7 @@ module Draw_greenhouse()
 module draw_toolShed(args) 
 {
     color("LightSlateGray", 0.5)
-    translateInFt([40, 95, 5])
+    translateInFt([40, 103.24-9.5, 0])
     square(size=[convert_in2mm(91), convert_in2mm(91)], center=true);
 
     //toolshed
@@ -653,6 +656,51 @@ module draw_patio(args)
     color("LightSlateGray", 0.5)
     translateInFt([95.4, 48.3, 0])
     square(size=[convert_ft2mm(12), convert_ft2mm(20.25)], center=true);
+}
+
+module draw_setbacks(args)
+{
+    //10. Adding Setbacks, 20 ft for front yard, 10 ft for back yard, 5 for side yard.
+    local_line_size = 25;
+
+
+    //north side yard
+    color( "LightSlateGray" )
+    translateInFt([1, 103.24-5, 0])
+    line(convert_a_ft2mm([0, 0, 0]), convert_a_ft2mm([181.67, 0, 0]), local_line_size);
+
+    color( "LightSlateGray" )
+    translateInFt([181.67/2, 103.24-6, 0])
+    text("<-- 5 ft Setback -->", font_size*0.8);
+
+    //back yard
+    color( "LightSlateGray" )
+    translateInFt([10, 1, 0])
+    line(convert_a_ft2mm([0, 0, 0]), convert_a_ft2mm([0, 102.24, 0]), local_line_size);
+
+    color( "LightSlateGray" )
+    translateInFt([9.5, 102.24/2 + 10, 0])
+    rotate([0, 0, -90])
+    text("<-- 10 ft Setback -->", font_size*0.8);
+
+    //south side yard
+    color( "LightSlateGray" )
+    translateInFt([1, 5, 0])
+    rotate([0, 0, 5])
+    line(convert_a_ft2mm([0, 0, 0]), convert_a_ft2mm([175.87, 0, 0]), local_line_size);
+
+    color( "LightSlateGray" )
+    translateInFt([175.87/2, 12, 0])
+    rotate([0, 0, 5])
+    text("<-- 5 ft Setback -->", font_size*0.8);
+    //front yard
+}
+
+module draw_storage(args) {
+    //
+    color("LightSlateGray", 0.5)
+    translateInFt([106, 103.24-6, 0])
+    square(size=[convert_in2mm(68), convert_in2mm(41)], center=true);
 }
 
 module translateInFt(args)
