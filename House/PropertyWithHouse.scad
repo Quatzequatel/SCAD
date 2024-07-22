@@ -29,7 +29,7 @@ function convert_a_ft2mm(args) = [convert_ft2mm(args.x), convert_ft2mm(args.y), 
 /*
     What to show in view
 */
-show_cudesac = 0;
+show_cudesac = 1;
 show_reference_lines = 0;
 
 z_Base = 0;
@@ -215,6 +215,7 @@ module labels(args)
         house_Lables();
         garage_Roof_Lables();
         front_entryway_labels();        
+        labels_for_large();
     }
 
 }
@@ -241,16 +242,16 @@ module kitchenDeckLabels(args)
 module front_entryway_labels(args) 
 {
     color(font_color, 1)
-    translateInFt([75 + 62, 90 - 17, firstFlorLabels_ft])
+    translateInFt([137, 73, firstFlorLabels_ft])
     text("11'", font_size);
 
     color(font_color, 1)
-    translateInFt([75 + 75, 90 - 17, firstFlorLabels_ft])
+    translateInFt([146, 75, firstFlorLabels_ft])
     rotate([0, 0, 90])     
     text("12'", font_size);
 
     color(font_color, 1)
-    translateInFt([75 + 57, 90 - 28, firstFlorLabels_ft])
+    translateInFt([132, 64, firstFlorLabels_ft])
     rotate([0, 0, 90])     
     text("12'", font_size);
     
@@ -258,9 +259,9 @@ module front_entryway_labels(args)
 
 module house_Lables(args) 
 {
-    color(font_color, 0.5)
-    translateInFt([75 + 30, 90-1.5, firstFloor_ft])
-    text("<-48'->", font_size);
+    // color(font_color, 0.5)
+    // translateInFt([75 + 30, 90-1.5, firstFloor_ft])
+    // text("<-48'->", font_size);
 
     color(font_color, 1)
     translateInFt([132, 85, firstFloor_ft])
@@ -287,12 +288,12 @@ module house_Lables(args)
     text("14'", font_size);
 
     color(font_color)
-    translateInFt([108, 34, firstFloor_ft])
+    translateInFt([108, 37, firstFloor_ft])
     rotate([0, 0, 90])     
     text("16'", font_size);
 
     color(font_color)
-    translateInFt([105, 30, firstFloor_ft])
+    translateInFt([106.5, 30, firstFloor_ft])
     // rotate([0, 0, 90])     
     text("4'", font_size);
 
@@ -302,17 +303,22 @@ module house_Lables(args)
     text("20'", font_size);
 
     color(font_color)
-    translateInFt([90, 31, firstFloor_ft])
+    translateInFt([88, 33, firstFloor_ft])
     rotate([0, 0, 90])     
     text("14'", font_size);
 
     color(font_color)
-    translateInFt([85, 43, firstFloor_ft])
+    translateInFt([88, 44.5, firstFloor_ft])
     rotate([0, 0, 90])     
     text("10'", font_size);
 
     color(font_color)
-    translateInFt([90, 65, firstFloor_ft])
+    translateInFt([82.5, 42, firstFloor_ft])
+    // rotate([0, 0, 90])     
+    text("4'", font_size);
+
+    color(font_color)
+    translateInFt([88, 65, firstFloor_ft])
     rotate([0, 0, 90])     
     text("37'", font_size);
 }
@@ -344,7 +350,29 @@ module garage_Roof_Lables(args)
 
 }
 
+module labels_for_large(args)
+{
+    color(font_color)
+    translateInFt([98, 28, firstFloor_ft])
+    rotate([0, 0, 90])     
+    text("<- - - - - -- - - - - - - - - - - - - - 61' - - - - - - - - - - - - - - - - - - - ->", font_size);
 
+    color(font_color)
+    translateInFt([85, 84, firstFloor_ft])
+    // rotate([0, 0, 90])     
+    text("<- - - - - - - - - - - - - - - - 48' - - - - - - - -- - - - - - -->", font_size);        
+
+    color(font_color)
+    translateInFt([125, 10, firstFloor_ft])
+    rotate([0, 0, 90])     
+    text("<- - - - - - - -25'- - - - - - ->", font_size);        
+
+    color(font_color)
+    translateInFt([100, 15, firstFloor_ft])
+    // rotate([0, 0, 90])     
+    text("<- - - - - - - - - - - - - - - - - - - - - - - - 67' - - - -- - - - - - - - - - - - - - - ->", font_size);        
+
+}
 
 module easement(args)
 {
@@ -455,7 +483,7 @@ module site_map(args)
 module culdesac(args)
 {
     // translate([convert_ft2mm(224.5), convert_ft2mm(23), convert_ft2mm(1.2)])
-    translateInFt([224.5, 23, -1])
+    translateInFt([228.5, 20, -1])
     color("lightgray", 1)
     linear_extrude(convert_ft2mm(0.1))
     // translate([0, 0, convert_ft2mm(-2)])
@@ -489,7 +517,7 @@ module first_floor_draw()
 
 module front_porch_draw()
 {
-    color("grey", 1.0)
+    color("grey", 0.5)
     union()
     {
         // translate([convert_ft2mm(15 + 12 + 5), convert_ft2mm(59 + 26), gdv(Deck, "move").z])
@@ -604,26 +632,42 @@ module draw_toolShed(args)
 
 module draw_driveway(args)
 {
+    local_color_alpha = 0.2;
     //section 1
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([116.6 + 6.6, 23.6, 0])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     //section 2
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([129.7 + 6.6, 35.7, 0])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([129.7 + 6.6, 23.6, 0])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     //section 3
-    color("LightSlateGray", 0.5)
-    translateInFt([149.4, 35.7, 0])
-    square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
+    small_garage = 
+    [
+        [convert_ft2mm(0) ,convert_ft2mm(0)],
+        [convert_ft2mm(0) ,convert_ft2mm(13.75)],
+        [convert_ft2mm(12.9) ,convert_ft2mm(13.75)],
+        // [convert_ft2mm(9.5) ,convert_ft2mm(6)],
+        // [convert_ft2mm(12.9) ,convert_ft2mm(6)],
+        [convert_ft2mm(12.9) ,convert_ft2mm(0)],
+        [convert_ft2mm(0) ,convert_ft2mm(0)],
+    ];
+    
+    // color("LightSlateGray", local_color_alpha)
+    // translateInFt([149.4, 35.7, 0])
+    // square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
+    translateInFt([143.0, 29.8, 0])
+    polygon(small_garage);    
+
+    color("LightSlateGray", local_color_alpha)
     translateInFt([149.4, 23.6, 0])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
@@ -632,36 +676,27 @@ module draw_driveway(args)
     [
         [convert_ft2mm(0) ,convert_ft2mm(0)],
         [convert_ft2mm(0) ,convert_ft2mm(13.75)],
-        [convert_ft2mm(9.5) ,convert_ft2mm(13.75)],
-        [convert_ft2mm(9.5) ,convert_ft2mm(6)],
+        [convert_ft2mm(7.5) ,convert_ft2mm(13.75)],
+        [convert_ft2mm(7.8) ,convert_ft2mm(6)],
         [convert_ft2mm(13) ,convert_ft2mm(6)],
         [convert_ft2mm(13) ,convert_ft2mm(0)],
         [convert_ft2mm(0) ,convert_ft2mm(0)],
     ];
 
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     // translateInFt([156.3 + 6.2, 35.7, 0])
     // square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
     translateInFt([156.0, 29.8, 0])
     polygon(walkway_section);
 
-    small_garage = 
-    [
-        [convert_ft2mm(0) ,convert_ft2mm(0)],
-        [convert_ft2mm(0) ,convert_ft2mm(13.75)],
-        [convert_ft2mm(9.5) ,convert_ft2mm(13.75)],
-        [convert_ft2mm(9.5) ,convert_ft2mm(6)],
-        [convert_ft2mm(13) ,convert_ft2mm(6)],
-        [convert_ft2mm(13) ,convert_ft2mm(0)],
-        [convert_ft2mm(0) ,convert_ft2mm(0)],
-    ];    
+    
 
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([156.3 + 6.2, 23.6, 0])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);    
 
     //section 5
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([175.2, 25.6, 0])
     square(size=[convert_ft2mm(12), convert_ft2mm(16)], center=true);       
   
@@ -669,28 +704,40 @@ module draw_driveway(args)
 
 module draw_walkway(args)
 {
+    local_color_alpha = 0.2;
     //main section
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([172.2, 51.8, 0])
     square(size=[convert_ft2mm(6), convert_ft2mm(20)], center=true);
 
     //stairs to porch
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([170, 66, 0])
     rotate([0, 0, 24])
     square(size=[convert_ft2mm(4.5), convert_ft2mm(10.5)], center=true);
 
     //connect main to driveway
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([172.2, 37.7, 0])
     square(size=[convert_ft2mm(6), convert_ft2mm(8)], center=true);
 }
 
 module draw_patio(args)
 {
-    color("LightSlateGray", 0.5)
+    local_color_alpha = 0.2;
+    //draw patio
+    color("LightSlateGray", local_color_alpha)
     translateInFt([95.4, 48.3, 0])
     square(size=[convert_ft2mm(12), convert_ft2mm(20.25)], center=true);
+
+    //add labels
+    color(font_color, 1.0)
+    translateInFt([90, 47, kitchenDeck_lablels_ft])
+    text("20'", font_size);
+
+    color(font_color, 1.0)
+    translateInFt([94, 39, kitchenDeck_lablels_ft])
+    text("12'", font_size);    
 }
 
 module draw_setbacks(args)
@@ -733,7 +780,7 @@ module draw_setbacks(args)
 
 module draw_storage(args) {
     //
-    color("LightSlateGray", 0.5)
+    color("LightSlateGray", local_color_alpha)
     translateInFt([106, 103.24-6, 0])
     square(size=[convert_in2mm(68), convert_in2mm(41)], center=true);
 }
