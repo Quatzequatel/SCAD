@@ -21,6 +21,9 @@ use <dictionary.scad>;
     8. finish walkway
     9. deminsions for sundeck, drive way, walk way, patio,
     10. Adding Setbacks, 20 ft for front yard, 10 ft for back yard, 5 for side yard.
+    11. Added z_ globals
+    12. Added scale_large to include a XY scale graph.
+    13. used globals instead of literals.
 
 */
 
@@ -33,6 +36,9 @@ show_cudesac = 1;
 show_reference_lines = 0;
 
 z_Base = 0;
+z_easement = 1.2;
+z_driveway = 0.1;
+z_culdesac = 1.0;
 firstFloor_ft = 10;
 firstFlorLabels_ft = firstFloor_ft + 4;
 kitchenDeck_ft = 12;
@@ -167,8 +173,39 @@ font_placement_color = "blue";
 
 build();
 
+//puts a foot scale on X and Y axis for point of reference.
+module scale_large(size = 24, increment = convert_in2mm(1), fontsize = 12)
+{
+  if($preview)
+  {
+    for (i=[0:size]) 
+    {
+        translate([f(i, increment), -increment/2, 0])
+        color("black", 0.5)
+        union()
+        {
+            text(text = str(i * 10, " ft"), size = fontsize);
+            rotate([90,0])
+            cylinder(r=convert_in2mm(1), h=f(1, increment/2), center=true);
+        }
+
+        translate([-increment/2, f(i, increment), 0])
+        color("black", 0.5)
+        union()
+        {
+            text(text = str(i * 10, " ft"), size = fontsize);
+            rotate([0,90])
+            cylinder(r=convert_in2mm(1), h=f(1, increment/2), center=true);
+        }   
+    }     
+  }
+}
+
 module build(args) 
 {
+    translateInFt([0,0,z_easement])
+    scale_large(size = 22, increment = convert_in2mm(120), fontsize = 500);
+
     difference()
     {
         site_map();
@@ -373,50 +410,51 @@ module easement(args)
 {
 
     color( font_color )
-    translateInFt([0.5, 150/2, 1.2])
+    translateInFt([0.5, 150/2, z_easement])
     rotate([0,0,-90])
     text("<-- Boundry 103.24' -->", font_size);
 
     color( font_color )
-    translateInFt([12.5, 150/2, 1.2])
+    translateInFt([12.5, 150/2, z_easement])
     rotate([0,0,-90])
     text("<-- Easement 12' -->", font_size);
 
     color( font_color )
-    translate([0, 0, convert_ft2mm(1.2)])
+    translateInFt([0, 0, z_easement])
     line([convert_ft2mm(12), convert_ft2mm(1.6), 0], [convert_ft2mm(12), convert_ft2mm(103.24), 0], line_size);
 
     color( font_color )
-    translateInFt([175/2, 8, 1.2])
+    translateInFt([175/2, 8, z_easement])
     rotate([0, 0, 5])
     text("<-- Boundry 175.87' -->", font_size);
 
     //Easement text
     color( font_color )
-    translateInFt([175/2, 16, 1.2])
+    translateInFt([175/2, 16, z_easement])
     rotate([0, 0, 5])
     text("<-- Easement 10' -->", font_size);
     //Easement line
+    translateInFt([0, 0, z_easement])
     color( font_color )
     line(convert_a_ft2mm([0.5,10,0]), convert_a_ft2mm([180, 15.35 + 10, 0]), line_size);
 
     color( font_color )
-    translateInFt([175/2, 99, 1.2])
+    translateInFt([175/2, 99, z_easement])
     text("<- Boundry 181.67' ->", font_size);
 
     color( font_color )
-    translateInFt([178, 102, 1.2])
+    translateInFt([178, 102, z_easement])
     rotate([0, 0, -60])
     text("<- Boundry 42.40' ->", font_size);
 
     //culdesac
-    color( font_color )
-    translateInFt([0, 0, 1.2])
+    color( font_color, 1.0 )
+    translateInFt([0, 0, z_easement])
     // !rotate([0, 0, -60])
     line(convert_a_ft2mm([224.5, 23, 0]), convert_a_ft2mm([202, 67, 0]), line_size);
 
     color( font_color )
-    translateInFt([207, 45, 1.2])
+    translateInFt([207, 45, z_easement])
     rotate([0, 0, -62])
     text("r = 50.00", font_size);   
 }
@@ -465,7 +503,7 @@ module House_Placement_Lines(args)
 module site_map(args)
 {
     // translate([0, SiteMap[4].y * -1, 0])
-    translateInFt([0, 103.24, 0])
+    translateInFt([0, 103.24, z_easement])
     color("PaleGreen", 1)
     linear_extrude(convert_in2mm(0.5))
     difference()
@@ -477,11 +515,10 @@ module site_map(args)
 
 module culdesac(args)
 {
-    // translate([convert_ft2mm(224.5), convert_ft2mm(23), convert_ft2mm(1.2)])
-    translateInFt([228.5, 20, -1])
-    color("lightgray", 1)
-    linear_extrude(convert_ft2mm(0.1))
-    // translate([0, 0, convert_ft2mm(-2)])
+    // translate([convert_ft2mm(224.5), convert_ft2mm(23), convert_ft2mm(z_easement)])
+    translateInFt([228.5, 20, z_culdesac])
+    color("lightgray", 1.0)
+    linear_extrude(convert_ft2mm(0.00001))
     circle($fn = 100, convert_ft2mm(50));
 }
 
@@ -657,16 +694,16 @@ module draw_driveway(args)
     local_color_alpha = 0.2;
     //section 1
     color("LightSlateGray", local_color_alpha)
-    translateInFt([116.6 + 6.6, 23.6, 0])
+    translateInFt([116.6 + 6.6, 23.6, z_driveway])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     //section 2
     color("LightSlateGray", local_color_alpha)
-    translateInFt([129.7 + 6.6, 35.7, 0])
+    translateInFt([129.7 + 6.6, 35.7, z_driveway])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     color("LightSlateGray", local_color_alpha)
-    translateInFt([129.7 + 6.6, 23.6, 0])
+    translateInFt([129.7 + 6.6, 23.6, z_driveway])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     //section 3
@@ -682,15 +719,15 @@ module draw_driveway(args)
     ];
     
     // color("LightSlateGray", local_color_alpha)
-    // translateInFt([149.4, 35.7, 0])
+    // translateInFt([149.4, 35.7, z_driveway])
     // square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     color("LightSlateGray", local_color_alpha)
-    translateInFt([143.0, 29.8, 0])
+    translateInFt([143.0, 29.8, z_driveway])
     polygon(small_garage);    
 
     color("LightSlateGray", local_color_alpha)
-    translateInFt([149.4, 23.6, 0])
+    translateInFt([149.4, 23.6, z_driveway])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
 
     //section 4
@@ -706,20 +743,20 @@ module draw_driveway(args)
     ];
 
     color("LightSlateGray", local_color_alpha)
-    // translateInFt([156.3 + 6.2, 35.7, 0])
+    // translateInFt([156.3 + 6.2, 35.7, z_driveway])
     // square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);
-    translateInFt([156.0, 29.8, 0])
+    translateInFt([156.0, 29.8, z_driveway])
     polygon(walkway_section);
 
     
 
     color("LightSlateGray", local_color_alpha)
-    translateInFt([156.3 + 6.2, 23.6, 0])
+    translateInFt([156.3 + 6.2, 23.6, z_driveway])
     square(size=[convert_ft2mm(13), convert_ft2mm(12)], center=true);    
 
     //section 5
     color("LightSlateGray", local_color_alpha)
-    translateInFt([175.2, 25.6, 0])
+    translateInFt([175.2, 25.6, z_driveway])
     square(size=[convert_ft2mm(12), convert_ft2mm(16)], center=true);       
   
 }
@@ -729,18 +766,18 @@ module draw_walkway(args)
     local_color_alpha = 0.2;
     //main section
     color("LightSlateGray", local_color_alpha)
-    translateInFt([172.2, 51.8, 0])
+    translateInFt([172.2, 51.8, z_Base])
     square(size=[convert_ft2mm(6), convert_ft2mm(20)], center=true);
 
     //stairs to porch
     color("LightSlateGray", local_color_alpha)
-    translateInFt([170, 66, 0])
+    translateInFt([170, 66, z_Base])
     rotate([0, 0, 24])
     square(size=[convert_ft2mm(4.5), convert_ft2mm(10.5)], center=true);
 
     //connect main to driveway
     color("LightSlateGray", local_color_alpha)
-    translateInFt([172.2, 37.7, 0])
+    translateInFt([172.2, 37.7, z_Base])
     square(size=[convert_ft2mm(6), convert_ft2mm(8)], center=true);
 
     //lable
@@ -780,31 +817,31 @@ module draw_setbacks(args)
 
     //north side yard
     color( "LightSlateGray" )
-    translateInFt([1, 103.24-5, 0])
+    translateInFt([1, 103.24-5, z_easement])
     line(convert_a_ft2mm([0, 0, 0]), convert_a_ft2mm([181.67, 0, 0]), local_line_size);
 
     color( "LightSlateGray" )
-    translateInFt([181.67/2, 103.24-6, 0])
+    translateInFt([181.67/2, 103.24-6, z_easement])
     text("<-- 5 ft Setback -->", font_size*0.8);
 
     //back yard
     color( "LightSlateGray" )
-    translateInFt([10, 1, 0])
+    translateInFt([10, 1, z_easement])
     line(convert_a_ft2mm([0, 0, 0]), convert_a_ft2mm([0, 102.24, 0]), local_line_size);
 
     color( "LightSlateGray" )
-    translateInFt([9.5, 102.24/2 + 10, 0])
+    translateInFt([9.5, 102.24/2 + 10, z_easement])
     rotate([0, 0, -90])
     text("<-- 10 ft Setback -->", font_size*0.8);
 
     //south side yard
     color( "LightSlateGray" )
-    translateInFt([1, 5, 0])
+    translateInFt([1, 5, z_easement])
     rotate([0, 0, 5])
     line(convert_a_ft2mm([0, 0, 0]), convert_a_ft2mm([175.87, 0, 0]), local_line_size);
 
     color( "LightSlateGray" )
-    translateInFt([175.87/2, 12, 0])
+    translateInFt([175.87/2, 12, z_easement])
     rotate([0, 0, 5])
     text("<-- 5 ft Setback -->", font_size*0.8);
     //front yard
