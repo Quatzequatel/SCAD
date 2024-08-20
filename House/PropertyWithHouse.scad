@@ -24,6 +24,7 @@ use <dictionary.scad>;
     11. Added z_ globals
     12. Added scale_large to include a XY scale graph.
     13. used globals instead of literals.
+    14. Added kitchen addition.
 
 */
 
@@ -125,10 +126,18 @@ KitchenDeck =
 [
     [ convert_ft2mm(0) ,convert_ft2mm(0) ],
     [ convert_ft2mm(0) ,convert_ft2mm(13) ],
-    [ convert_ft2mm(29) ,convert_ft2mm(13) ],
-    [ convert_ft2mm(29) ,convert_ft2mm(9) ],
-    [ convert_ft2mm(30) ,convert_ft2mm(9) ],
-    [ convert_ft2mm(30) ,convert_ft2mm(0) ],
+    [ convert_ft2mm(27) ,convert_ft2mm(13) ],
+    [ convert_ft2mm(27) ,convert_ft2mm(9) ],
+    [ convert_ft2mm(28) ,convert_ft2mm(9) ],
+    [ convert_ft2mm(28) ,convert_ft2mm(0) ],
+];
+
+KitchenDeckAddition = 
+[
+    [ convert_ft2mm(0) ,convert_ft2mm(0) ],
+    [ convert_ft2mm(0) ,convert_ft2mm(13) ],
+    [ convert_ft2mm(10) ,convert_ft2mm(13) ],
+    [ convert_ft2mm(10) ,convert_ft2mm(0) ],
 ];
 
 GreenHouse = 
@@ -269,7 +278,7 @@ module kitchenDeckLabels(args)
     color(font_color, 1.0)
     translateInFt([74, 64, kitchenDeck_lablels_ft])
     rotate([0,0,90])
-    text("30'", font_size);
+    text("29'", font_size);
 
     color(font_color, 1.0)
     translateInFt([76, 82 - 31.5, kitchenDeck_lablels_ft])
@@ -603,15 +612,34 @@ module kitchen_deck_draw()
     //kitchen
     color("SaddleBrown", 0.2)
     // translate([convert_ft2mm(23), convert_ft2mm(15), gdv(Deck, "move").z])
-    translateInFt([23, 12, 12])
+    translateInFt([25, 12, 12])
     linear_extrude(convert_ft2mm(1))
     polygon(KitchenDeck);    
 
     //lable
     color(font_color, 1.0)
-    translateInFt([32, 19, garage_deck_ft + 5])
+    translateInFt([28, 19, garage_deck_ft + 5])
     // rotate([0, 0, 90])
-    text("Kitchen Deck", font_size);     
+    text("Current Kitchen Deck", font_size);   
+
+    //Kitchen Addition
+    color("Aquamarine", 0.2)
+    // translate([convert_ft2mm(23), convert_ft2mm(15), gdv(Deck, "move").z])
+    translateInFt([15, 12, 12])
+    linear_extrude(convert_ft2mm(1))
+    polygon(KitchenDeckAddition);    
+
+    //lable
+    color(font_color, 1.0)
+    translateInFt([21, 15, garage_deck_ft + 5])
+    rotate([0, 0, 90])
+    text("New Add", font_size);         
+
+    //lable
+    color(font_color, 1.0)
+    translateInFt([21, 14, garage_deck_ft + 5])
+    rotate([0, 0, -180])
+    text("10'", font_size);  
 }
 
 module Draw_greenhouse()
@@ -797,7 +825,7 @@ module draw_patio(args)
     //add labels
     color(font_color, 1.0)
     translateInFt([90, 47, kitchenDeck_lablels_ft])
-    text("20'", font_size);
+    text("19'", font_size);
 
     color(font_color, 1.0)
     translateInFt([94, 39, kitchenDeck_lablels_ft])
