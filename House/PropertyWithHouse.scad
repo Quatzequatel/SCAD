@@ -25,6 +25,8 @@ use <dictionary.scad>;
     12. Added scale_large to include a XY scale graph.
     13. used globals instead of literals.
     14. Added kitchen addition.
+    15. Add kitchen pergola
+    16. add patio pergola.
 
 */
 
@@ -140,6 +142,16 @@ KitchenDeckAddition =
     [ convert_ft2mm(10) ,convert_ft2mm(0) ],
 ];
 
+PatioPergola = 
+[
+    [ convert_ft2mm(0) ,convert_ft2mm(0) ],
+    [ convert_ft2mm(19) ,convert_ft2mm(0) ],
+    [ convert_ft2mm(19) ,convert_ft2mm(12) ],
+    [ convert_ft2mm(9) ,convert_ft2mm(12) ],
+    [ convert_ft2mm(9) ,convert_ft2mm(8) ],
+    [ convert_ft2mm(0) ,convert_ft2mm(8) ],
+];
+
 GreenHouse = 
 [
     [convert_ft2mm(0) , convert_ft2mm(0)],
@@ -235,6 +247,7 @@ module build(args)
         front_porch_draw();
         garage_deck_draw();
         kitchen_deck_draw();
+        kitchen_pergola_draw();
     }
 
     Draw_greenhouse();
@@ -640,6 +653,41 @@ module kitchen_deck_draw()
     translateInFt([21, 14, garage_deck_ft + 5])
     rotate([0, 0, -180])
     text("10'", font_size);  
+}
+
+module kitchen_pergola_draw()
+{
+    // applyMove(House1)
+    color("black", 0.5)
+    translateInFt([15, 11.5, 25])
+    linear_extrude(convert_in2mm(6))
+    difference()
+    {
+        square([convert_ft2mm(26), convert_ft2mm(15)]);
+        offset(delta= convert_ft2mm(-0.5)) square([convert_ft2mm(26), convert_ft2mm(15)]);
+    }
+
+    //label
+    color(font_color)
+    translateInFt([29,-12,0])
+    rotate([0, 0, 90])         
+    text("New deck perogala -->", font_size);     
+
+    color("black", 0.5)
+    translateInFt([53, 13, 25])
+    linear_extrude(convert_in2mm(6))
+    difference()
+    {
+        polygon(PatioPergola);  
+        offset(delta= convert_ft2mm(-0.5)) polygon(PatioPergola);
+    }
+    
+    //label
+    color(font_color)
+    translateInFt([64,-10,0])
+    rotate([0, 0, 90])         
+    text("New patio perogala -->", font_size);  
+
 }
 
 module Draw_greenhouse()
