@@ -1,3 +1,5 @@
+use <convert.scad>;
+
 /*
     Notes: 
     Fit is very tight. expanding from 42.7 to 43.2.
@@ -9,55 +11,122 @@ $fn=200;
 // import("C://Users//quatz//Downloads//Blink_Outdoor_Camera_Hood.stl");
 build();
 
-translate([38,0,8])
-rotate([90,0,90])
-linear_extrude(height = 20)
-hull() {
-    translate([0,32,0]) circle(7);
-    circle(7);
-}
 
-module build(args) {
-    draw_case(50, 47, 1);
+
+module build(args) 
+{
+    case_height = 35;
+    case_width = 47;
+    difference()
+    {
+        union()
+        {
+            draw_case(case_height, case_width, 1);
+            translate([14,0,0])
+            draw_Shade(rad = convert_in2mm(2.5), height = case_height + 20, res = 200);
+        }
+
+        translate([-16/2, - (case_width - 15), 16])
+        draw_Speaker_hole(16, 4, case_width);
+
+    }
 }
 
 module draw_case(height = 32.0, width = 47, thickness = 1 ) 
 {
-    r1 = 13.5;
-    r2 = r1 + thickness;
-    w2 = width - 3.2;
-
-    //hole size
-    hole_radius = 30;
-
-    difference()
+    rotate([0,0,180])
+    union()
     {
-        //main
-        minkowski()
-        {
-            cube([width, width, 0.1], true);
-            cylinder(r=r2,h=height);
-        };
 
-        //cut
-        minkowski()
+        draw_pilar(height);
+
+        rCorner_1 = 13.5;
+        rCorner_2 = rCorner_1 + thickness;
+        width2 = width - 3.2;
+
+        z1 = 0.1;
+        z2 = 0.2;
+
+        //hole size
+        hole_radius = 30;
+
+        difference()
         {
-            cube([w2, w2, 0.2], true);
-            cylinder(r=r1,h=height);
+            //main
+            minkowski()
+            {
+                cube([width, width, z1], true);
+                cylinder(r=rCorner_2, h=height);
+            };
+
+            //cut
+            minkowski()
+            {
+                cube([width2, width2, z2], true);
+                cylinder(r=rCorner_1, h=height);
+            }
         }
-    }
 
-    //bottom of case
-    difference()
-    {
-        minkowski()
+        //bottom of case
+        difference()
         {
-            cube([47,47,0.1], true);
-            cylinder(r=14.5,h=0.5);
-        };
+            minkowski()
+            {
+                cube([width,width, z1], true);
+                cylinder(r=14.5, h=0.5);
+            };
 
-        translate([0,0,-3])
-        cylinder(r=hole_radius, h=height);
-    }    
+            translate([0,0,-3])
+            cylinder(r=hole_radius, h=height);
+        } 
+    }   
 }
+
+module draw_pilar(case_height)
+{
+    pilar_width = 14;
+    pilar_height = 10;
+    y_move = case_height ;
+    
+    x_move = 38;
+    z_move = 7;
+
+    translate([x_move, 0, z_move])
+    rotate([90,0,90])
+    linear_extrude(height = pilar_height)
+    hull() 
+        {
+            translate([0, y_move, 0]) circle(d = pilar_width);
+            circle(d = pilar_width);
+        }
+}
+
+module draw_Shade(rad, height, res)
+{
+    // radius = 4 * 25.4; // Convert inches to millimeters (OpenSCAD uses mm)
+    // angle = 45; // Adjust the angle as needed for your arc
+    // resolution = 200; // Number of segments in the arc
+
+    linear_extrude(height=height)
+    difference() 
+    {
+        circle(rad, $fn=res);
+        translate([10,0,0])
+        circle(rad+5, $fn=res);
+    }
+}
+
+module draw_Speaker_hole(whole_length, whole_width, case_width)
+{
+    zheight = 10;
+    
+    rotate([90, 0, 0])     
+    linear_extrude(height = zheight)
+    hull()
+    {
+        circle(d = whole_width);
+        translate([whole_length, 0, 0]) circle(d = whole_width);
+    }
+}
+
 
