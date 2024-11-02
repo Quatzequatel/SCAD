@@ -2,13 +2,12 @@ use <convert.scad>;
 
 /*
     Notes: 
-    Fit is very tight. expanding from 42.7 to 43.2.
-    1. Added parameter based modules
-    2. Added top support for todo roof.
+    Currently buildls a nice cover for a blink 4th gen camera.
+    The camera fits loosely into case. Did not want to make it snug, 
+    for better heat to disapation.
 */
 
 $fn=200;
-// import("C://Users//quatz//Downloads//Blink_Outdoor_Camera_Hood.stl");
 build();
 
 
@@ -17,13 +16,14 @@ module build(args)
 {
     case_height = 35;
     case_width = 47;
+    shade_extension = 20;
     difference()
     {
         union()
         {
             draw_case(case_height, case_width, 1);
             translate([14,0,0])
-            draw_Shade(rad = convert_in2mm(2.5), height = case_height + 20, res = 200);
+            draw_Shade(rad = convert_in2mm(2.5), height = case_height + shade_extension, res = 200);
         }
 
         translate([-16/2, - (case_width - 15), 19])
@@ -101,21 +101,32 @@ module draw_pilar(case_height)
         }
 }
 
+//
+// Creates a cresent moon cap to shade the camera.
+//
 module draw_Shade(rad, height, res)
 {
-    // radius = 4 * 25.4; // Convert inches to millimeters (OpenSCAD uses mm)
-    // angle = 45; // Adjust the angle as needed for your arc
+    // rad = radius = in millimeters (OpenSCAD uses mm)
+    // cap, is a cresent moon shape created from the intersection of 2 circles.
+    // the 2nd circle is a little larger to create the cresent
+    
+    rad2 = rad + 5; // increasing value makes short thinner cresent.
+                    // decreasing value makes longer thicker cresent.
     // resolution = 200; // Number of segments in the arc
+    max_thickness = 10; //max thickness of shade cover.
 
     linear_extrude(height=height)
     difference() 
     {
         circle(rad, $fn=res);
-        translate([10,0,0])
-        circle(rad+5, $fn=res);
+        translate([max_thickness, 0, 0])
+        circle(rad2, $fn=res);
     }
 }
 
+//
+// draw a cut out for the speaker on the left side of the camera.
+//
 module draw_Speaker_hole(whole_length, whole_width, case_width)
 {
     zheight = 10;
