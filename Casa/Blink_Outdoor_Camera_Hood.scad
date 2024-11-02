@@ -26,8 +26,8 @@ module build(args)
             draw_Shade(rad = convert_in2mm(2.5), height = case_height + 20, res = 200);
         }
 
-        translate([-16/2, - (case_width - 15), 16])
-        draw_Speaker_hole(16, 4, case_width);
+        translate([-16/2, - (case_width - 15), 19])
+        draw_Speaker_hole(16, 5, case_width);
 
     }
 }
