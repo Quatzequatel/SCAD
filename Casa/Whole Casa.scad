@@ -11,6 +11,8 @@ use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 
+function M2mm(M) = M * 1000;
+
 /*
     Dictiionarys
 */
@@ -18,6 +20,22 @@ Casa =
 [
     "Casa Infromation",
     ["", convert_in2mm()],
+];
+
+Floor_points = [
+    [0,0],
+    [M2mm(0), M2mm(10.67)],
+    [M2mm(7.16), M2mm(10.67)],
+    [M2mm(7.16), M2mm(7.49)],
+    [M2mm(6.10), M2mm(7.49)],
+    [M2mm(6.10), M2mm(4.12)],
+    [M2mm(7.93), M2mm(4.12)],
+    [M2mm(7.93), M2mm(1.22)],
+    [M2mm(10.66), M2mm(1.22)],
+    [M2mm(10.66), M2mm(-3.05)],
+    [M2mm(6.10), M2mm(-3.05)],
+    [M2mm(6.10), M2mm(0)],
+    [0,0]
 ];
 
 Casa_gate = 
