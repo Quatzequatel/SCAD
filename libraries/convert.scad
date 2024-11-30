@@ -24,6 +24,7 @@ function convertV_mm2Inch(mm) =
 function convert_mm2ft(mm) = convert_in2ft(in = convert_mm2Inch(mm));
 function convert_feet2feet(ft) = ft;
 function convert_in2in(in) = in;
+function M2mm(M) = M * 1000;
 
 function convertV_mm2Feet(mm) =
     [
