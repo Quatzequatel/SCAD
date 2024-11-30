@@ -1,5 +1,10 @@
 /*
     use to build Casa projects
+
+    Note:
+        X = is horizontal which is also in the North-South vector.
+        Y = is vertical in the East-West Vector.
+
     1. draw walls
     2. draw Casa
 */
@@ -19,7 +24,7 @@ function M2mm(M) = M * 1000;
 Casa = 
 [
     "Casa Infromation",
-    ["", convert_in2mm()],
+    ["first floor height", M2mm(3.04)],
 ];
 
 Floor_points = [
@@ -36,6 +41,13 @@ Floor_points = [
     [M2mm(6.10), M2mm(-3.05)],
     [M2mm(6.10), M2mm(0)],
     [0,0]
+];
+
+Wall_points = [
+    [0,0],
+    [0,convert_in2mm(1284)],
+    [convert_in2mm(953),convert_in2mm(1284)],
+    [convert_in2mm(953),0]
 ];
 
 Casa_gate = 
@@ -92,47 +104,28 @@ module build(args)
 
 module Draw_Casa()
 {
-    Draw_Casa_Bedroom();
+    Draw_Casa_Perrimeter();
 }
 
-module Draw_Casa_Bedroom() 
+module Draw_Casa_Perrimeter() 
 {
-    translate(
-        v = 
-        [
-            convert_in2mm(391), 
-            gdv(Casa_Walls, "south wall") - gdv(Casa_bedroom, "east") - convert_in2mm(395), 
-            0
-        ]) 
-    linear_extrude(height = gdv(Casa_bedroom, "height"))
-    difference() 
+    linear_extrude(height = gdv(Casa_Walls, "z")) 
+    difference()
     {
-        square(size = [
-            gdv(Casa_bedroom, "east"), gdv(Casa_bedroom, "north")
-        ]);
-
-        translate(v = [gdv(Casa_Walls, "wall width"), gdv(Casa_Walls, "wall width"), 0]) 
-        square(size = 
-        [
-            gdv(Casa_bedroom, "east") - 2 * gdv(Casa_Walls, "wall width"), 
-            gdv(Casa_bedroom, "north") - 2 * gdv(Casa_Walls, "wall width")
-        ]);
+        polygon(Floor_points);
+        offset(delta= convert_in2mm(-8)) polygon(Floor_points);
     }
 }
+
 
 module Draw_Walls()
 {
     linear_extrude(height = gdv(Casa_Walls, "z")) 
-    difference() 
+    difference()
     {
-        square(size = [
-            gdv(Casa_Walls, "east wall") + 2 * gdv(Casa_Walls, "wall width"), 
-            gdv(Casa_Walls, "south wall") + 2 * gdv(Casa_Walls, "wall width")
-            ]);
-        translate(v = [gdv(Casa_Walls, "wall width"), gdv(Casa_Walls, "wall width"), 0]) 
-        square(size = [gdv(Casa_Walls, "east wall"), gdv(Casa_Walls, "south wall")]);
-    }
-    
+        offset(delta= convert_in2mm(8)) polygon(Wall_points);
+        polygon(Wall_points);
+    }    
 }
 
 module Draw_Lables() 
