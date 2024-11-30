@@ -27,36 +27,25 @@ Casa =
     ["first floor height", M2mm(3.04)],
 ];
 
-// Floor_points = [
-//     [0,0],
-//     [M2mm(0), M2mm(10.67)],
-//     [M2mm(7.16), M2mm(10.67)],
-//     [M2mm(7.16), M2mm(7.49)],
-//     [M2mm(6.10), M2mm(7.49)],
-//     [M2mm(6.10), M2mm(4.12)],
-//     [M2mm(7.93), M2mm(4.12)],
-//     [M2mm(7.93), M2mm(1.22)],
-//     [M2mm(10.66), M2mm(1.22)],
-//     [M2mm(10.66), M2mm(-3.05)],
-//     [M2mm(6.10), M2mm(-3.05)],
-//     [M2mm(6.10), M2mm(0)],
-//     [0,0]
-// ];
+
 
 Floor_points = [
-    [0,M2mm(3.05)],
-    [M2mm(0), M2mm(13.75)],
-    [M2mm(8.45), M2mm(13.75)],
-    [M2mm(8.45), M2mm(10.54)],
-    [M2mm(7.39), M2mm(10.54)],
-    [M2mm(7.39), M2mm(7.17)],
-    [M2mm(9.22), M2mm(7.17)],
-    [M2mm(9.22), M2mm(3.05)],
-    [M2mm(11.95), M2mm(3.05)],
-    [M2mm(11.95), M2mm(0)],
-    [M2mm(6.10), M2mm(0)],
-    [M2mm(6.10), M2mm(3.05)],
+    [M2mm(6.10), M2mm(0)],     //0
+    [M2mm(11.95), M2mm(0)],     //1
+    [M2mm(11.95), M2mm(4.27)],     //2
+    [M2mm(9.22), M2mm(4.27)],     //3
+    [M2mm(9.22), M2mm(7.17)],     //4
+    [M2mm(7.39), M2mm(7.17)],     //5
+    [M2mm(7.39), M2mm(10.54)],     //6
+    [M2mm(8.45), M2mm(10.54)],     //7
+    [M2mm(8.45), M2mm(13.72)],     //8
+    [M2mm(0), M2mm(13.72)],     //9
+    [M2mm(0), M2mm(3.05)],     //10
+    [M2mm(6.10), M2mm(3.05)],     //11
+    [M2mm(6.10), M2mm(0)],     //12
 ];
+
+Floor_Center = [-M2mm(11.95)/2, -M2mm(13.72)/2];
 
 
 Wall_points = [
@@ -64,6 +53,13 @@ Wall_points = [
     [0,convert_in2mm(1284)],
     [convert_in2mm(953),convert_in2mm(1284)],
     [convert_in2mm(953),0]
+];
+
+Carport_points = [
+    [0,0],
+    [0, convert_in2mm(298)],
+    [convert_in2mm(171), convert_in2mm(298)],
+    [convert_in2mm(171), 0],
 ];
 
 Casa_gate = 
@@ -113,7 +109,9 @@ build();
 
 module build(args) 
 {
+    scale_large();
     Draw_Casa();
+    Draw_Carport();
     Draw_Walls();
     Draw_Lables();
 }
@@ -123,12 +121,26 @@ module Draw_Casa()
     Draw_Casa_Perrimeter();
 }
 
+module Draw_Carport() 
+{
+    translate([convert_in2mm(61), M2mm(32.75) - convert_in2mm(298),0]) 
+    linear_extrude(height = convert_in2mm(8)) 
+    polygon(Carport_points);
+
+    //driveway
+    translate([M2mm(16), M2mm(32.75) - convert_in2mm(341),0]) 
+    linear_extrude(height = convert_in2mm(8)) 
+    square(size = [convert_in2mm(120), convert_in2mm(341)]);
+}
+
 module Draw_Casa_Perrimeter() 
 {
-    translate([M2mm(3), M2mm(5), 0]) 
-    linear_extrude(height = gdv(Casa_Walls, "z")) 
-    
-    mirror([1,0,0])
+    translate([M2mm(16), M2mm(20), 0]) 
+    linear_extrude(height = gdv(Casa, "first floor height")) 
+
+    // mirror([1,0,0])
+    rotate([0, 0, 180]) 
+    translate(Floor_Center) 
     difference()
     {
         polygon(Floor_points);
@@ -151,11 +163,11 @@ module Draw_Lables()
 {
     color(font_lable_color, 1.0)
     translate(v = [convert_in2mm(953)/2, -convert_in2mm(36), 0]) 
-    text(gdv(Casa_Lables,"west"), font_lable_size);
+    text(gdv(Casa_Lables,"east"), font_lable_size);
 
     color(font_lable_color, 1.0)
     translate(v = [convert_in2mm(953)/2, convert_in2mm(1284 + 36), 0]) 
-    text(gdv(Casa_Lables,"east"), font_lable_size);
+    text(gdv(Casa_Lables,"west"), font_lable_size);
 
     color(font_lable_color, 1.0)
     translate(v = [-convert_in2mm(24), convert_in2mm(1284)/2, 0]) 
@@ -166,4 +178,33 @@ module Draw_Lables()
     translate(v = [convert_in2mm(953) + convert_in2mm(48), convert_in2mm(1284)/2, 0])  
     rotate([0, 0, 90])     
     text(gdv(Casa_Lables,"north"), font_lable_size);
+}
+
+//puts a foot scale on X and Y axis for point of reference.
+module scale_large(size = 60, increment = M2mm(1), fontsize = 200)
+{
+  if($preview)
+  {
+    for (i=[0:size]) 
+    {
+        translate([f(i, increment), -increment/2, 0])
+        color("blue", 0.5)
+        union()
+        {
+            rotate([0,0, -90]) 
+            text(text = str(i * 10, " M"), size = fontsize);
+            rotate([90,0])
+            cylinder(r=convert_in2mm(1), h=f(1, increment/2), center=true);
+        }
+
+        translate([-increment/2, f(i, increment), 0])
+        color("blue", 0.5)
+        union()
+        {
+            text(text = str(i * 10, " M"), size = fontsize);
+            rotate([0,90])
+            cylinder(r=convert_in2mm(1), h=f(1, increment/2), center=true);
+        }   
+    }     
+  }
 }
