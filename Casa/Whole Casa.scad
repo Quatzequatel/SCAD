@@ -27,21 +27,37 @@ Casa =
     ["first floor height", M2mm(3.04)],
 ];
 
+// Floor_points = [
+//     [0,0],
+//     [M2mm(0), M2mm(10.67)],
+//     [M2mm(7.16), M2mm(10.67)],
+//     [M2mm(7.16), M2mm(7.49)],
+//     [M2mm(6.10), M2mm(7.49)],
+//     [M2mm(6.10), M2mm(4.12)],
+//     [M2mm(7.93), M2mm(4.12)],
+//     [M2mm(7.93), M2mm(1.22)],
+//     [M2mm(10.66), M2mm(1.22)],
+//     [M2mm(10.66), M2mm(-3.05)],
+//     [M2mm(6.10), M2mm(-3.05)],
+//     [M2mm(6.10), M2mm(0)],
+//     [0,0]
+// ];
+
 Floor_points = [
-    [0,0],
-    [M2mm(0), M2mm(10.67)],
-    [M2mm(7.16), M2mm(10.67)],
-    [M2mm(7.16), M2mm(7.49)],
-    [M2mm(6.10), M2mm(7.49)],
-    [M2mm(6.10), M2mm(4.12)],
-    [M2mm(7.93), M2mm(4.12)],
-    [M2mm(7.93), M2mm(1.22)],
-    [M2mm(10.66), M2mm(1.22)],
-    [M2mm(10.66), M2mm(-3.05)],
-    [M2mm(6.10), M2mm(-3.05)],
+    [0,M2mm(3.05)],
+    [M2mm(0), M2mm(13.75)],
+    [M2mm(8.45), M2mm(13.75)],
+    [M2mm(8.45), M2mm(10.54)],
+    [M2mm(7.39), M2mm(10.54)],
+    [M2mm(7.39), M2mm(7.17)],
+    [M2mm(9.22), M2mm(7.17)],
+    [M2mm(9.22), M2mm(3.05)],
+    [M2mm(11.95), M2mm(3.05)],
+    [M2mm(11.95), M2mm(0)],
     [M2mm(6.10), M2mm(0)],
-    [0,0]
+    [M2mm(6.10), M2mm(3.05)],
 ];
+
 
 Wall_points = [
     [0,0],
@@ -109,7 +125,10 @@ module Draw_Casa()
 
 module Draw_Casa_Perrimeter() 
 {
+    translate([M2mm(3), M2mm(5), 0]) 
     linear_extrude(height = gdv(Casa_Walls, "z")) 
+    
+    mirror([1,0,0])
     difference()
     {
         polygon(Floor_points);
