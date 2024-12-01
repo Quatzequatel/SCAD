@@ -2,6 +2,7 @@
     use to build Casa projects
 
     What is next;
+        break project into multiple files. think of layers or focus area.
         add existing walkway around house.
         add desired walkway from front to back of house.
         add plants into drawing.
