@@ -110,10 +110,21 @@ build();
 module build(args) 
 {
     scale_large();
+    Draw_landmarks();
     Draw_Casa();
     Draw_Carport();
     Draw_Walls();
     Draw_Lables();
+}
+
+module Draw_landmarks() 
+{
+    //north wall to house
+    color( "red", 0.5) 
+    translate([convert_in2mm(953 - 140.5),convert_in2mm(1284/2),0]) 
+    square(size = [convert_in2mm(140.5), convert_in2mm(6)]);
+
+    //Eech direction around the house needs landmarks.
 }
 
 module Draw_Casa()
@@ -127,15 +138,15 @@ module Draw_Carport()
     linear_extrude(height = convert_in2mm(8)) 
     polygon(Carport_points);
 
-    //driveway
-    translate([M2mm(16), M2mm(32.75) - convert_in2mm(341),0]) 
+    //driveway needs to verified and corrected.
+    translate([M2mm(16), M2mm(26.75) - convert_in2mm(240),0]) 
     linear_extrude(height = convert_in2mm(8)) 
-    square(size = [convert_in2mm(120), convert_in2mm(341)]);
+    square(size = [convert_in2mm(120), convert_in2mm(341) + M2mm(3.50)]);
 }
 
 module Draw_Casa_Perrimeter() 
 {
-    translate([M2mm(16), M2mm(20), 0]) 
+    translate([M2mm(14.5), M2mm(17), 0]) 
     linear_extrude(height = gdv(Casa, "first floor height")) 
 
     // mirror([1,0,0])
@@ -181,7 +192,7 @@ module Draw_Lables()
 }
 
 //puts a foot scale on X and Y axis for point of reference.
-module scale_large(size = 60, increment = M2mm(1), fontsize = 200)
+module scale_large(size = 30, increment = M2mm(1), fontsize = 200)
 {
   if($preview)
   {
