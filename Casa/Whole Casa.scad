@@ -1,12 +1,25 @@
 /*
     use to build Casa projects
 
+    What is next;
+        add existing walkway around house.
+        add desired walkway from front to back of house.
+        add plants into drawing.
+        add toolshed
+        add raised bed.
+        add palm trees
+        add fruit trees.
+
     Note:
         X = is horizontal which is also in the North-South vector.
         Y = is vertical in the East-West Vector.
 
     1. draw walls
     2. draw Casa
+    3. draw landmarks - these are measurement verification lines
+    4. draw carport
+    5. draw pool - ball park to refine.
+    6. draw labels - catch all for labeling.
 */
 
 include <constants.scad>;
@@ -105,6 +118,14 @@ Casa_Lables =
     ["west", "West Wall"],
 ];
 
+Casa_pool = 
+[
+    "pool demensions, in meters",
+    ["x", 5.0],
+    ["y", 10.0],
+    ["z", 0],
+];
+
 build();
 
 module build(args) 
@@ -114,9 +135,18 @@ module build(args)
     Draw_Casa();
     Draw_Carport();
     Draw_Walls();
+    Draw_Pool();
     Draw_Lables();
 }
 
+
+module Draw_Pool() 
+{
+    
+    translate([M2mm(M = 2.5), M2mm(M = 8), 0])
+    color("SteelBlue", 1.0)
+    square(size = [M2mm(M = gdv(Casa_pool, "x")), M2mm(gdv(Casa_pool, "y"))]); 
+}
 module Draw_landmarks() 
 {
     //north wall to house
@@ -125,6 +155,24 @@ module Draw_landmarks()
     square(size = [convert_in2mm(140.5), convert_in2mm(6)]);
 
     //Eech direction around the house needs landmarks.
+
+    //East wall to house
+    color( "yellow", 0.5) 
+    translate([convert_in2mm(953/2),convert_in2mm(950),0]) 
+    rotate([0, 0, 90])
+    square(size = [convert_in2mm(341), convert_in2mm(6)]);
+
+    //west wall to house
+    color( "blue", 0.5) 
+    translate([convert_in2mm(953/2 +60),convert_in2mm(12),0]) 
+    rotate([0, 0, 90])
+    square(size = [convert_in2mm(341), convert_in2mm(6)]);
+
+    //south wall to house
+    color( "red", 0.5) 
+    translate([convert_in2mm(0),convert_in2mm(1284/1.5),0]) 
+    rotate([0, 0, 0])
+    square(size = [convert_in2mm(331), convert_in2mm(6)]);
 }
 
 module Draw_Casa()
@@ -134,6 +182,7 @@ module Draw_Casa()
 
 module Draw_Carport() 
 {
+    //this is the carport
     translate([convert_in2mm(61), M2mm(32.75) - convert_in2mm(298),0]) 
     linear_extrude(height = convert_in2mm(8)) 
     polygon(Carport_points);
