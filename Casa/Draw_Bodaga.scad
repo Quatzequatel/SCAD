@@ -41,7 +41,7 @@ Draw_Bodaga();
 module Draw_Bodaga() 
 {
 //    drawSquareShape(PumpHouseDic);
-    color(gdv(PumpHouseDic, "color"), 0.5)
+    color(gdv(PumpHouseDic, "color"), 0.25)
     translate(PumpHouseDic_move)
     linear_extrude(gdv(PumpHouseDic, "z"))
     square(size=[gdv(PumpHouseDic, "x"), gdv(PumpHouseDic, "y")], center=false);

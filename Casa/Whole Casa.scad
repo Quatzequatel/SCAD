@@ -34,6 +34,7 @@ use <Draw_Pool.scad>;
 use <Draw_Lables.scad>;
 use <Draw_Irrigation.scad>;
 use <Draw_Bodaga.scad>;
+use <Draw_Planter.scad>;
 
 
 use <convert.scad>;
@@ -66,13 +67,15 @@ build();
 module build(args) 
 {
     // scale_large();
-    Draw_landmarks();
+    // Draw_landmarks();
     Draw_Casa();
     Draw_Carport();
     Draw_Walls();
     Draw_Pool();
     Draw_Lables();
     Draw_Bodaga();
+    Draw_Irrigation();
+    Draw_Planter();
 }
 
 //puts a foot scale on X and Y axis for point of reference.
