@@ -26,3 +26,5 @@ PropertyDic =
     ["y", convert_in2mm(1284)],
     ["z", 0],
 ];
+
+Lot = [convert_in2mm(953), convert_in2mm(1284)];

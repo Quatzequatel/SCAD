@@ -30,6 +30,19 @@ PumpHouseDic =
 
 PumpHouseDic_move = [convert_in2mm(4), gdv(PropertyDic, "y") - 2*gdv(PumpHouseDic, "y"), 0];
 
+ToolShedDic = 
+[
+    "Pump House information",
+    ["x", convert_in2mm(129)],
+    ["y", convert_in2mm(73)],
+    ["z", convert_in2mm(60)],
+    ["Wall", convert_in2mm(7)],
+    ["rotate",[0,0,0]],
+    // ["move",[convert_ft2mm(15), gdv(PropertyDic, "y"), 0]],
+    ["color", "Khaki"]
+];
+
+ToolShedDic_move = [0, 0, 0];
 
 //-------------------------------------------------------------------------------------------------------------------
 /*
@@ -40,11 +53,18 @@ Draw_Bodaga();
 
 module Draw_Bodaga() 
 {
-//    drawSquareShape(PumpHouseDic);
+    //Draw Pump House.
     color(gdv(PumpHouseDic, "color"), 0.25)
     translate(PumpHouseDic_move)
     linear_extrude(gdv(PumpHouseDic, "z"))
     square(size=[gdv(PumpHouseDic, "x"), gdv(PumpHouseDic, "y")], center=false);
+
+    //Draw Toolshed.
+    color(gdv(ToolShedDic, "color"), 0.05)
+    translate(ToolShedDic_move)
+    linear_extrude(gdv(ToolShedDic, "z"))
+    square(size=[gdv(ToolShedDic, "x"), gdv(ToolShedDic, "y")], center=false);
+
 }
 
 //-----------------------------------------------------

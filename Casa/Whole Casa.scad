@@ -35,6 +35,7 @@ use <Draw_Lables.scad>;
 use <Draw_Irrigation.scad>;
 use <Draw_Bodaga.scad>;
 use <Draw_Planter.scad>;
+use <Draw_Plants.scad>;
 
 
 use <convert.scad>;
@@ -76,6 +77,7 @@ module build(args)
     Draw_Bodaga();
     Draw_Irrigation();
     Draw_Planter();
+    Draw_Plants();
 }
 
 //puts a foot scale on X and Y axis for point of reference.
