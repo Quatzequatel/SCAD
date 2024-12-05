@@ -21,10 +21,15 @@ Carport_points = [
     [convert_in2mm(171), 0],
 ];
 
+
+
+Driveway_size = [convert_in2mm(146), convert_in2mm(479)];
+
 //-------------------------------------------------------------------------------------------------------------------
 /*
     Begin Modules
 */
+Draw_Carport();
 
 module Draw_Carport() 
 {
@@ -35,6 +40,7 @@ module Draw_Carport()
 
     //driveway needs to verified and corrected.
     translate([M2mm(16), M2mm(26.75) - convert_in2mm(240),0]) 
+    color(c = "IndianRed") 
     linear_extrude(height = convert_in2mm(8)) 
-    square(size = [convert_in2mm(120), convert_in2mm(341) + M2mm(3.50)]);
+    square(size = Driveway_size);
 }

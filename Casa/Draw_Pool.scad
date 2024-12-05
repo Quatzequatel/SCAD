@@ -17,10 +17,10 @@ use <dictionary.scad>;
 Casa_pool = 
 [
     "pool demensions, in meters",
-    ["x", M2mm(5.0)],
-    ["y", M2mm(6.55)],
+    ["x", M2mm(3.5)],
+    ["y", M2mm(7.5)],
     ["z", 0],
-    ["tx", M2mm(M = 2.5)],
+    ["tx", M2mm(M = 3.0)],
     ["ty", M2mm(M = 16.5)],
 ];
 
