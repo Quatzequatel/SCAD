@@ -54,6 +54,18 @@ manifold1Dic =
     ["color2", "black"],
 ];
 
+FrontYardFeeder = [M2mm(8), M2mm(5), M2mm(0.2)];
+TFrontYardFeeder = [M2mm(7), M2mm(27)];
+
+EastYardFeeder = [M2mm(0.5), M2mm(20), M2mm(0.2)];
+TEastYardFeeder = [M2mm(0.5), M2mm(4)];
+
+BackYardFeeder = [M2mm(14), M2mm(4), M2mm(0.2)];
+TBackYardFeeder = [M2mm(6), M2mm(1)];
+
+PalmsFeeder = [M2mm(1), M2mm(25), M2mm(0.2)];
+TPalmsFeeder = [M2mm(22.5), M2mm(6)];
+
 MoveManifold1=[M2mm(0.30), M2mm(24.75)];
 MoveManifold2=[M2mm(9.5), M2mm(0.33)];
 MoveManifold3=[convert_in2mm(949), M2mm(15)];
@@ -68,18 +80,31 @@ Draw_Irrigation();
 
 module Draw_Irrigation() 
 {
-    Draw_Main_pipe() ;
-    //manifold 1
-    translate(v = MoveManifold1) 
-    Draw_Manifold_single(manifold1Dic);
-    //manifold 2
-    translate(v = MoveManifold2) 
-    rotate([0, 0, 90]) 
-    Draw_Manifold_tri();
-    //manifold 3
-    translate(v = MoveManifold3) 
-    rotate([0, 0, 180]) 
-    Draw_Manifold_tri();
+    Draw_Main_pipe();
+    Draw_Manifolds();
+    Draw_FeederPipes();
+
+}
+
+module Draw_FeederPipes() 
+{
+    Draw_Pipe(dim = FrontYardFeeder, mov = TFrontYardFeeder);
+    Draw_Pipe(dim = EastYardFeeder, mov = TEastYardFeeder);
+    Draw_Pipe(dim = BackYardFeeder, mov = TBackYardFeeder);
+    Draw_Pipe(dim = PalmsFeeder, mov = TPalmsFeeder);
+}
+
+module Draw_Pipe(dim, mov) 
+{
+    color("black", 0.5) 
+    translate(v = [mov.x, mov.y]) 
+    linear_extrude(height = dim.z)    
+    difference() 
+    {
+        polygon([[0,0], [0, dim.y], [dim.x, dim.y], [dim.x, 0]]);
+        polygon([[dim.z, dim.z], [dim.z, dim.y-dim.z], [dim.x-dim.z, dim.y-dim.z], [dim.x-dim.z, dim.z]]);
+    }
+    
 }
 
 module Draw_Main_pipe() 
@@ -116,7 +141,17 @@ module Draw_Main_pipe()
 
 module Draw_Manifolds() 
 {
-
+    //manifold 1
+    translate(v = MoveManifold1) 
+    Draw_Manifold_single(manifold1Dic);
+    //manifold 2
+    translate(v = MoveManifold2) 
+    rotate([0, 0, 90]) 
+    Draw_Manifold_tri();
+    //manifold 3
+    translate(v = MoveManifold3) 
+    rotate([0, 0, 180]) 
+    Draw_Manifold_tri();
 }
 
 module Draw_Manifold_tri() 
