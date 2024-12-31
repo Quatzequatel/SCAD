@@ -60,7 +60,7 @@ TFrontYardFeeder = [M2mm(7), M2mm(27)];
 EastYardFeeder = [M2mm(0.5), M2mm(20), M2mm(0.2)];
 TEastYardFeeder = [M2mm(0.5), M2mm(4)];
 
-BackYardFeeder = [M2mm(14), M2mm(4), M2mm(0.2)];
+BackYardFeeder = [M2mm(14), M2mm(2), M2mm(0.2)];
 TBackYardFeeder = [M2mm(6), M2mm(1)];
 
 PalmsFeeder = [M2mm(1), M2mm(25), M2mm(0.2)];
@@ -96,7 +96,7 @@ module Draw_FeederPipes()
 
 module Draw_Pipe(dim, mov) 
 {
-    color("black", 0.5) 
+    color("black", 0.25) 
     translate(v = [mov.x, mov.y]) 
     linear_extrude(height = dim.z)    
     difference() 
@@ -112,28 +112,28 @@ module Draw_Main_pipe()
     //South Wall -----------------------------------------------------------------------------------------------------------
     //pipe 1
     translate([convert_in2mm(12), convert_in2mm(12)]) 
-    color(gdv(pipe1Dic, "color"), 0.5)
+    color(gdv(pipe1Dic, "color"), 0.25)
     rotate([-90,0,0]) 
     cylinder(h = gdv(pipe1Dic, "south length"), r = gdv(pipe1Dic, "Dia"));
     
     //East Wall -----------------------------------------------------------------------------------------------------------
     //pipe 1
     translate([convert_in2mm(12), convert_in2mm(12.75)]) 
-    color(gdv(pipe1Dic, "color"), 0.5)
+    color(gdv(pipe1Dic, "color"), 0.25)
     rotate([0,90,0]) 
     cylinder(h = gdv(pipe1Dic, "east length"), r = gdv(pipe1Dic, "Dia"));
     
     //Avoid planter wall -----------------------------------------------------------------------------------------------------------
     //pipe 1
     translate([convert_in2mm(east_wall_length + 12), convert_in2mm(12)]) 
-    color(gdv(pipe1Dic, "color"), 0.5)
+    color(gdv(pipe1Dic, "color"), 0.25)
     linear_extrude(height = 2*gdv(pipe1Dic, "Dia")) 
     rotate(45)
     square(size = [gdv(pipe1Dic, "avoid planter length"), 2*gdv(pipe1Dic, "Dia")]);
 
     //North Wall -----------------------------------------------------------------------------------------------------------
     translate([convert_in2mm(948), convert_in2mm(153)]) 
-    color(gdv(pipe1Dic, "color"), 0.5)
+    color(gdv(pipe1Dic, "color"), 0.25)
     rotate([-90,0,0]) 
     cylinder(h = gdv(pipe1Dic, "north length"), r = gdv(pipe1Dic, "Dia"));
       
