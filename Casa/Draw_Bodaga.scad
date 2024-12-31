@@ -32,17 +32,35 @@ PumpHouseDic_move = [convert_in2mm(4), gdv(PropertyDic, "y") - 2*gdv(PumpHouseDi
 
 ToolShedDic = 
 [
-    "Pump House information",
+    "Tool shed information",
     ["x", convert_in2mm(129)],
     ["y", convert_in2mm(73)],
-    ["z", convert_in2mm(60)],
-    ["Wall", convert_in2mm(7)],
+    ["z", convert_in2mm(94)],
+    ["wall", convert_in2mm(7)],
     ["rotate",[0,0,0]],
     // ["move",[convert_ft2mm(15), gdv(PropertyDic, "y"), 0]],
     ["color", "Khaki"]
 ];
 
 ToolShedDic_move = [0, 0, 0];
+ToolShedDic_offset = [gdv(ToolShedDic, "x") - 2*gdv(ToolShedDic, "wall"), 
+                        gdv(ToolShedDic, "y") - 2*gdv(ToolShedDic, "wall")];
+
+CompostBlind = 
+[
+    "Pump House information",
+    ["x", M2mm(1)],
+    ["y", M2mm(2)],
+    ["z", M2mm(1.6)],
+    ["wall", convert_in2mm(1)],
+    ["rotate",[0,0,0]],
+    // ["move",[convert_ft2mm(15), gdv(PropertyDic, "y"), 0]],
+    ["color", "DarkGoldenrod"]
+];
+
+CompostBlind_move = [M2mm(0), M2mm(1.8), 0];
+CompostBlind_offset = [gdv(CompostBlind, "x") - gdv(CompostBlind, "wall"), 
+                        gdv(CompostBlind, "y") - gdv(CompostBlind, "wall")];
 
 //-------------------------------------------------------------------------------------------------------------------
 /*
@@ -60,11 +78,29 @@ module Draw_Bodaga()
     square(size=[gdv(PumpHouseDic, "x"), gdv(PumpHouseDic, "y")], center=false);
 
     //Draw Toolshed.
-    color(gdv(ToolShedDic, "color"), 0.05)
+    color(gdv(ToolShedDic, "color"), 0.25)
     translate(ToolShedDic_move)
     linear_extrude(gdv(ToolShedDic, "z"))
-    square(size=[gdv(ToolShedDic, "x"), gdv(ToolShedDic, "y")], center=false);
+    difference() 
+    {
+        square(size=[gdv(ToolShedDic, "x"), gdv(ToolShedDic, "y")], center=false);
 
+        translate(v = [gdv(ToolShedDic, "wall"), gdv(ToolShedDic, "wall")]) 
+        square(ToolShedDic_offset, center=false);
+    }
+    
+
+    //Draw Compost Blind
+    color(gdv(CompostBlind, "color"), 0.25)
+    translate(CompostBlind_move)
+    linear_extrude(gdv(CompostBlind, "z"))
+    difference() 
+    {
+        square(size=[gdv(CompostBlind, "x"), gdv(CompostBlind, "y")], center=false);
+        translate(v = [-gdv(CompostBlind, "wall"), -gdv(CompostBlind, "wall")]) 
+        square(CompostBlind_offset, center=false);
+    }
+    
 }
 
 //-----------------------------------------------------
