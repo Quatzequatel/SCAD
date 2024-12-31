@@ -40,6 +40,28 @@ Floor_points = [
 
 Floor_Center = [-M2mm(11.95)/2, -M2mm(13.72)/2];
 
+Patio = 
+[
+    "Patio Infromation",
+    ["floor height", M2mm(0.10)],
+];
+
+Patio_points = [
+    // [M2mm(6.10), M2mm(0)],     //0
+    // [M2mm(11.95), M2mm(0)],     //1
+    [M2mm(11.95), M2mm(4.27)],     //2
+    [M2mm(9.22), M2mm(4.27)],     //3
+    [M2mm(9.22), M2mm(7.17)],     //4
+    [M2mm(7.39), M2mm(7.17)],     //5
+    [M2mm(7.39), M2mm(10.54)],     //6
+    [M2mm(8.45), M2mm(10.54)],     //7
+    [M2mm(8.45), M2mm(13.72)],     //8
+    [M2mm(11.95), M2mm(13.72)],     //9
+    [M2mm(11.95), M2mm(4.27)],     //10
+    // [M2mm(6.10), M2mm(3.05)],     //11
+    // [M2mm(6.10), M2mm(0)],     //12
+];
+
 
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -48,10 +70,12 @@ Floor_Center = [-M2mm(11.95)/2, -M2mm(13.72)/2];
 */
 module Draw_Casa()
 {
-    Draw_Casa_Perrimeter();
+    Draw_Casa_Perimeter();
+
+    Draw_Patio();
 }
 
-module Draw_Casa_Perrimeter() 
+module Draw_Casa_Perimeter() 
 {
     translate([M2mm(14.5), M2mm(17), 0]) 
     linear_extrude(height = gdv(Casa, "first floor height")) 
@@ -64,4 +88,16 @@ module Draw_Casa_Perrimeter()
         polygon(Floor_points);
         offset(delta= convert_in2mm(-8)) polygon(Floor_points);
     }
+}
+
+module Draw_Patio() 
+{
+    translate([M2mm(14.5), M2mm(17), 0]) 
+    color("LightCoral", 0.25) 
+    linear_extrude(height = gdv(Patio, "floor height")) 
+
+    // mirror([1,0,0])
+    rotate([0, 0, 180]) 
+    translate(Floor_Center) 
+    polygon(Patio_points);
 }
