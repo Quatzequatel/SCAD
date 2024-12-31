@@ -19,7 +19,7 @@ Casa_Walls =
     "Casa Wall information",
     ["x", convert_ft2mm(61)],
     ["y", convert_ft2mm(26)],
-    ["z", convert_ft2mm(4)],
+    ["z", M2mm(1.6)],
     ["wall width", convert_in2mm(8)],
     ["south wall", convert_in2mm(1284)],
     ["east wall", convert_in2mm(953)],
