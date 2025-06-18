@@ -16,7 +16,7 @@ use <dictionary.scad>;
 
 //un comment to show ruler in drawing.
 // scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
-// screwDriverTray();
+screwDriverTray();
 // completeBitTray();
 // drawHammerHandle();
 // drawPeggedHandle();
@@ -24,7 +24,7 @@ use <dictionary.scad>;
 // drawDrillPeggedHandleV2();
 // drawSquarePegHolder();
 
-   echo(); echo(fileName = gdv(Backwall, "filename")); echo(); draw_Cleated_Back_Wall(Backwall);
+   //echo(); echo(fileName = gdv(Backwall, "filename")); echo(); draw_Cleated_Back_Wall(Backwall);
 // draw_Cleat_for_BackWall(Backwall);
 // draw_Drill_Bit_Holder_Cleated();
 // draw_box_for_staples();
@@ -190,8 +190,8 @@ module draw_box_Ratchet_Set()
     trayDepth = gdv(tray, "y");
     // ySpace = 19.05;
     // ySpace = trayDepth / (columns + 1);
-    echo(trayWidth = trayWidth,  trayDepth = trayDepth)
-    echo(rows = rows, columns = columns, xSpace = xSpace, ySpace = ySpace);
+    // echo(trayWidth = trayWidth,  trayDepth = trayDepth)
+    // echo(rows = rows, columns = columns, xSpace = xSpace, ySpace = ySpace);
 
     // rotate([0,90,0])
     union()
@@ -214,7 +214,7 @@ module draw_box_Ratchet_Set()
                 {
                     if( row + (col * rows) < len(sockets))
                     {
-                    echo(x= row * xSpace, y = col * ySpace, row = row, col = col, drillBit = Index(row, col, rows) );
+                    // echo(x= row * xSpace, y = col * ySpace, row = row, col = col, drillBit = Index(row, col, rows) );
                         translate([ row * xSpace + xSpace/2 + (Index(row, col, rows) > 6 ? 3.5 : 0) * row, col * ySpace + ySpace/2, bottom_thickness + gdv(tray, "z")/2])
                         cylinder(d = sockets[ row + (col * rows)][0], h = gdv(tray, "z"), center=true, $fn=60);
                         
@@ -288,7 +288,7 @@ module draw_box_for_JigSaw_Box()
             {
                 for (row =[1 : BladeBoxRows-1 ])
                 {
-                    echo(xyz = [col * BladeBoxSpacingLength, (row * BladeBoxSpacingWidth) , 0]);
+                    // echo(xyz = [col * BladeBoxSpacingLength, (row * BladeBoxSpacingWidth) , 0]);
 
                     translate([col * BladeBoxSpacingLength, (row * BladeBoxSpacingWidth) , 0])
                     drawSquareShape(box);            
@@ -432,7 +432,7 @@ module draw_peg_holder_for_staples()
 module draw_Cleated_Back_Wall(properties)
 {
     // echo(gdv(properties, "filename"));
-    properties_echo(properties);
+    // properties_echo(properties);
     //now wall and cleat is at [0,0]
     //move to positive 0 x-axis.
     translate([gdv(properties,"x"),0,0])
@@ -553,7 +553,7 @@ module drawSquarePegHolder()
             ["4", [ convert_in2mm(4 * unit), 0, 0 ]],
         ];
 
-    properties_echo(spacingA);
+    // properties_echo(spacingA);
     
     difference()
     {
@@ -674,8 +674,8 @@ module draw_Drill_Bit_Holder_Cleated()
     ySpace = gdv(Tray, "y") / (columns + 1);
     // ySpace = 19.05;
     // ySpace = trayDepth / (columns + 1);
-    echo(trayWidth = trayWidth,  trayDepth = trayDepth)
-    echo(rows = rows, columns = columns, xSpace = xSpace, ySpace = ySpace);
+    // echo(trayWidth = trayWidth,  trayDepth = trayDepth)
+    // echo(rows = rows, columns = columns, xSpace = xSpace, ySpace = ySpace);
 
 
     difference()
@@ -729,8 +729,9 @@ module completeBitTray()
 
 module screwDriverTray()
 {
-
+    echo();
     echo(FileName = "LargeHoleScrewDriverTray.stl");
+    echo();
     tray = 
     ["tray", 
         ["x", convert_in2mm(7)],
@@ -829,8 +830,8 @@ module screw_hole_counter_sink(properties, backwall)
 
 module drawPegs(properties, backwall)
 {
-    properties_echo(properties);
-    properties_echo(backwall);
+    // properties_echo(properties);
+    // properties_echo(backwall);
 
     count = gdv(properties, "count");
     spacing = gdv(backwall, "x") / (count + 1);
@@ -845,15 +846,15 @@ module drawPegs(properties, backwall)
 
 module drawPegs2(pegs, wall)
 {
-    properties_echo(pegs);
-    properties_echo(wall);
+    // properties_echo(pegs);
+    // properties_echo(wall);
 
     count = gdv(pegs, "count");
     spacing = gdv(wall, "x") / (1 + count) - gdv(pegs, "x")/2;
 
     for(item = [0: count-1])
     {
-        echo(spacing = (item * spacing) + spacing);
+        // echo(spacing = (item * spacing) + spacing);
         translate([(item * spacing) + spacing, 0, 0])
         
             color(gdv(pegs, "color"), 0.5)
