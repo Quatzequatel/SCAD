@@ -63,17 +63,17 @@ Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
 BUILD_SUIT = 0; //current set in use.
-BUILD_SINGLE_SMALL = 0;
+BUILD_SINGLE_SMALL = 1;
 BUILD_SET = 0; //0 = do nothing; 1 = single BUILD_SIZE set; 2 = set of SET_DEFINED.
-BUILD_SIZE = 5;
+BUILD_SIZE = 4;
 BUILD_COUNT = MAX_COUNTS[BUILD_SIZE];
 // SET_DEFINED = [[3,1],[4,0]];
 // SET_DEFINED = [[2,1],[3,0]];
-SET_DEFINED = [[0,4]];
-// SET_DEFINED = [[2,1],[3,2]];
+// SET_DEFINED = [[0,4]];
+SET_DEFINED = [[2,1],[3,2]];
 BUILD_SIDE_SET = 0;
 BUILD_SIDE_BRACKET = 0;
-BUILD_WAVE_SPACER = 1;
+BUILD_WAVE_SPACER = 0;
 
 /*****************************************************************************
 MAIN SUB - where the instructions start.
@@ -85,6 +85,10 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build()
 {
+    echo();
+    echo(FileName = str("TrustSpacer BS-", BUILD_SIZE,"-", SPACER_SIZE_VALUES[BUILD_SIZE],"mm.stl"));
+    echo();
+
     if(BUILD_SINGLE_SMALL) H_Bracket(SPACER_SIZE_VALUES[BUILD_SIZE]);
     if(BUILD_SUIT) create_suit(SPACER_HEIGHTS, SPACER_HEIGHTS_OFFSETS,5,2);
 
