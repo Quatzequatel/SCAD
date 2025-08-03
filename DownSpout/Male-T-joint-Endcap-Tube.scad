@@ -18,9 +18,9 @@ outerWidthDownspout= 80.5 - minkowski_circle;
 outerheightDownspout = 58 - minkowski_circle;
 
 //endCapDownSpout();
-//L_Tube(outerwidth2,outerheight2,wallThickness2,height);
+L_Tube(outerwidth2,outerheight2,wallThickness2,height);
 
-endStop(outerWidthDownspout,outerheightDownspout,wallThickness2,lip);
+//endStop(outerWidthDownspout,outerheightDownspout,wallThickness2,lip);
 
 
 module endCapDownSpout()
