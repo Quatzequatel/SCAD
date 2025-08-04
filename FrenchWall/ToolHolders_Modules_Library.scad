@@ -38,7 +38,7 @@ module drawSquareShape2(properties)
 */
 module drawCircleShape(properties)
 {
-    color(gdv(properties, "color"), 0.5)
+    // color(gdv(properties, "color"), 0.5)
     translate(gdv(properties, "move"))
     rotate(gdv(properties, "rotate"))
     translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
