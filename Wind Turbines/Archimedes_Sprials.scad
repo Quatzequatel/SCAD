@@ -24,7 +24,7 @@ module build(args)
     if(args == "helix")
     {
         // Example usage with tapering effect        
-        archimedes_helix(height=400, base_width=210, top_width=20, twist=360*3, blade_thickness=10, segments=1000, blade_count = 3);
+        archimedes_helix(height=400, base_width=400, top_width=20, twist=360*2, blade_thickness=10, segments=1000, blade_count = 4);
     }
     else
     {
