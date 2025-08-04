@@ -16,11 +16,11 @@ use <dictionary.scad>;
 
 //un comment to show ruler in drawing.
 // scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
-screwDriverTray();
+// screwDriverTray(false);
 // completeBitTray();
 // drawHammerHandle();
-// drawPeggedHandle();
-// drawDrillPeggedHandle();
+drawPeggedHandle();
+//drawDrillPeggedHandle();
 // drawDrillPeggedHandleV2();
 // drawSquarePegHolder();
 
@@ -31,7 +31,7 @@ screwDriverTray();
 // draw_box_for_JigSaw_Box();
 // draw_peg_holder_for_staples();
 // draw_box_Ratchet_Set();
-// draw_single_peg_cleat_hook();
+//  draw_single_peg_cleat_hook();
 // scale();
 
 module draw_single_peg_cleat_hook()
@@ -727,7 +727,7 @@ module completeBitTray()
     }
 }
 
-module screwDriverTray()
+module screwDriverTray(screwholes = true)
 {
     echo();
     echo(FileName = "LargeHoleScrewDriverTray.stl");
@@ -807,9 +807,11 @@ module screwDriverTray()
             draw_Cleated_Back_Wall(backwall);      
         }
 
-        drawArrayOfCircleShapes(shaft_array, shaft);
-        screw_hole_counter_sink(screwholes, backwall);
-
+        if(screwholes == true)
+        {
+            drawArrayOfCircleShapes(shaft_array, shaft);
+            screw_hole_counter_sink(screwholes, backwall);
+        }
     }
 }
 
@@ -888,9 +890,9 @@ module drawHammerHandle()
             }            
         }      
         translate([gdv(HammerBackwall, "from edge"),-10,-10])
-        drawCircleShape(screwhole);
+        // drawCircleShape(screwhole);
         translate([-gdv(HammerBackwall, "from edge"),-10,-10])
-        drawCircleShape(screwhole);
+        // drawCircleShape(screwhole);
 
         translate([29,-14,0])
         difference()
