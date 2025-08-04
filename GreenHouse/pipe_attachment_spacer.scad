@@ -19,8 +19,8 @@ anchor =
         ["depth", convert_in2mm(0.75)],  
         ["height", convert_in2mm(0.75)],  //base model height, for ziptie holes
         ["wall_thickness", NozzleWidth * 8],
-        ["additional_height",  convert_in2mm(0.0)], //use this to increase height of spacer.
-        ["pipe_height", convert_in2mm(0.3)],
+        ["additional_height",  convert_in2mm(0)], //use this to increase height of spacer.
+        ["pipe_height", convert_in2mm(0.2)],
         ["location", [0, 0, 0] ],  
         ["color", "Aqua"], 
 ];
@@ -180,7 +180,7 @@ module move_ziptie_to_left(properties)
     translate(
         [ 
             - (gdv(properties, "width")/2 - gdv(properties, "wall_thickness")) , 
-            - (gdv(properties, "depth")/2 - gdv(properties, "wall_thickness") ), 
+            - (gdv(properties, "depth")/2 - gdv(properties, "wall_thickness")), 
             15 + gdv(properties, "additional_height")
         ]
         )
@@ -191,7 +191,7 @@ module move_ziptie_to_center(properties) {
         translate(
         [ 
             0, 
-            0, 
+            2, 
             -gdv(properties, "length") / 2
         ]
         )
