@@ -50,6 +50,35 @@ Backwall =
     ["color", "LightGrey"]
 ];
 
+Peg_Cleat = 
+["cleat properties", 
+    ["x", convert_in2mm(3)],
+    ["y",cleat_thickness],
+    ["z", convert_in2mm(0.75)],
+    ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
+    ["parallelogram thickness", cleat_thickness],
+    ["angle", 135],
+    ["extrude height", convert_in2mm(3)],
+    ["move", [0, 0, 0]],
+    ["from edge", 0],
+    ["rotate", [0, 0, 0]],
+    ["color", "LightGrey"]
+];
+
+Cleat_for_Peg_Tray = 
+["Cleat_for_Peg_Tray", 
+    ["filename", "Cleat_for_Peg_Tray.stl"],
+    ["x", convert_in2mm(3)],
+    ["y", cleat_thickness],
+    ["z", convert_in2mm(3.5)],
+    ["move", [0, 0, 0]],
+    ["from edge", 0],
+    ["rotate", [0,0, 0]],
+    ["include cleat", false],
+    ["cleat", Peg_Cleat],
+    ["color", "LightGrey"]
+];
+
 
 
 
@@ -136,7 +165,8 @@ Peg =
     ["y", convert_in2mm(3/8)],
     ["z", convert_in2mm(2)],
     ["fragments", 60],
-    ["move", [0,gdv(HammerBackwall, "move").y,convert_in2mm(3/8)/2]],
+    // ["move", [0,gdv(HammerBackwall, "move").y,convert_in2mm(3/8)/2]],
+    ["move", [0,0,0]],
     ["from edge", (gdv(HammerTray, "x")-convert_in2mm(1))/2],
     ["rotate", [90,0, 0]],
     ["color", "LightBlue"]
