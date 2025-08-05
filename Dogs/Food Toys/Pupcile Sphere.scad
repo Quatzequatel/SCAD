@@ -13,34 +13,36 @@ $fn = 100; // Set the number of fragments for smoothness
 
 Pupcile_Sphere = 
 ["Popcile Sphere", 
-    ["x", 45],
-    ["y", 45],
-    ["z", 45],
+    ["x", 50],
+    ["y", 50],
+    ["z", 50],
     ["move", [0, 0, 0]],
     ["rotate", [0, 0, 0]],
     ["color", "LightGrey"],
-    ["fragments", 100]
+    ["fragments", 200]
 ];
 
 Outer_Sphere = 
 ["Popcile Sphere", 
-    ["x", 55],
-    ["y", 55],
-    ["z", 55],
+    ["x", 60],
+    ["y", 60],
+    ["z", 60],
     ["move", [0, 0, 0]],
     ["rotate", [0, 0, 0]],
     ["color", "LightGreen"],
-    ["fragments", 100]
+    ["fragments", 200]
 ];
 
 Wall_Width = gdv(Pupcile_Sphere, "x") + 10;
+Small_hole = [12, 5, 50];
 
 build();
 
 module build()
 {
+    scale(size = 10, increment = 10, fontsize = 6, axis = [1, 1, 1]);
 
-difference()
+    difference()
     {
         // Draw the outer sphere first
         translate([-gdv(Outer_Sphere, "x")/2, -gdv(Outer_Sphere, "y")/2, 0])
@@ -50,7 +52,7 @@ difference()
         {
             drawPupcileSphere(Pupcile_Sphere);
         }
-        translate([0, 0, 30])
+        translate([0, 0, 20])
         cube([Wall_Width, Wall_Width, 25], center=true);
 
         cylinder(d=25, h=60, center=true);
@@ -59,7 +61,7 @@ difference()
         translate([0, 0, -20])
         minkowski()
         {
-            cube([8, 3, 50], center=true);
+            cube(Small_hole, center=true);
             cylinder(r=2,h=1);
         }
 
@@ -67,7 +69,7 @@ difference()
         translate([0, 0, -20])
         minkowski()
         {
-            cube([8, 3, 50], center=true);
+            cube(Small_hole, center=true);
             cylinder(r=2,h=1);
         }
                 
@@ -75,7 +77,7 @@ difference()
         translate([0, 0, -20])
         minkowski()
         {
-            cube([8, 3, 50], center=true);
+            cube(Small_hole, center=true);
             cylinder(r=2,h=1);
         }
 
@@ -83,7 +85,7 @@ difference()
         translate([0, 0, -20])
         minkowski()
         {
-            cube([8, 3, 50], center=true);
+            cube(Small_hole, center=true);
             cylinder(r=2,h=1);
         }        
 
@@ -91,7 +93,7 @@ difference()
         translate([0, 0, -20])
         minkowski()
         {
-            cube([8, 3, 50], center=true);
+            cube(Small_hole, center=true);
             cylinder(r=2,h=1);
         }        
     }

@@ -15,12 +15,15 @@ IS_DEBUG_DEBUG = false;
 // }
 
 //puts a foot scale on X and Y axis for point of reference.
-module scale(size = 24, increment = convert_in2mm(1), fontsize = 12)
+module scale(size = 24, increment = convert_in2mm(1), fontsize = 12, axis = [1,1,1])
 {
+  // echo("scale", size, increment, fontsize, axis);
   if($preview)
   {
     for (i=[-size:size]) 
     {
+      if(axis[0])
+      {
         translate([f(i, increment), 0, 0])
         color("red", 0.5)
         union()
@@ -29,7 +32,10 @@ module scale(size = 24, increment = convert_in2mm(1), fontsize = 12)
             rotate([90,0])
             cylinder(r=0.5, h=f(1, increment), center=true);
         }
+      }
 
+      if(axis[1])
+      {
         translate([0, f(i, increment), 0])
         color("green", 0.5)
         union()
@@ -37,7 +43,20 @@ module scale(size = 24, increment = convert_in2mm(1), fontsize = 12)
             text(text = str(i), size = fontsize);
             rotate([0,90])
             cylinder(r=0.5, h=f(1, increment), center=true);
-        }   
+        }        
+      }
+
+      if(axis[2])
+      {
+        translate([0, 0, f(i, increment)])
+        color("green", 0.5)
+        union()
+        {
+            text(text = str(i), size = fontsize);
+            rotate([0,0, 90])
+            cylinder(r=0.5, h=f(1, increment), center=true);
+        }        
+      }   
     }     
   }
 }
