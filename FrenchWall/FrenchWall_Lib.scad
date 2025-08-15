@@ -23,7 +23,7 @@ use <ObjectHelpers.scad>;
 use <dictionary.scad>;
 
 // Uncomment to show ruler in drawing
-// scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
+// scale(size = 5, increment = 10, fontsize = 8);
 
 /*
     Dictionaries for use in Library files.
@@ -51,32 +51,39 @@ use <dictionary.scad>;
     ["triangle dowel",
         ["x", convert_in2mm(0.4)],
         ["y", convert_in2mm(0.4)],
-        ["z", convert_in2mm(1.5)],
-        ["move", [0, convert_in2mm(0.75), 2]],
+        ["z", convert_in2mm(1.0)],
+        ["move", [0, convert_in2mm(0.20), 2]],
         ["rotate", [90, 0, 0]],
         ["color", "Yellow"]
     ];
 
-    build_this = ["drawCleat", "dowels", "drawTray", "both"];
+    build_this = ["build this", 
+                    ["drawCleat", 0], 
+                    ["dowels", 1], 
+                    ["drawTray", 0], 
+                    ["drawPegTray", 0],
+                    ["both", 0],
+                    ["peg Tray", 1]
+                ];
     build_tray = ["peg Tray", ""];
 
 
 
-build(build_this[0], build_tray[0]); // Change index to build different components
+build(build_this, build_tray); // Change index to build different components
 
 module build(part, trayType) 
 {
-    echo("part", part);
-    echo("trayType", trayType);
+    // echo("part", part);
+    echo("tray", tray);
 
 
-    if(part == "drawCleat")
+    if(gdv(part, "drawCleat") == 1)
     {
-        echo("Drawing cleat with part: ", Backwall);
+        echo("Drawing cleat ");
         rotate(cleat_print_rotaation) 
         difference()
         {
-            if(trayType == "peg Tray")
+            if(gdv(part, "drawPegTray") == 1)
             {
                 echo("Drawing peg tray with cleat");
                 draw_Cleat(Cleat_for_Peg_Tray);
@@ -93,12 +100,9 @@ module build(part, trayType)
                 echo();
             }     
             draw_dowels(tray_x);       
-        }
-               
-        
-        
+        }                               
     }
-    else if(part == "drawTray")
+    if(gdv(part, "drawTray") == 1)
     {
         echo("Drawing tray with part: ", tray);
         difference()
@@ -106,7 +110,7 @@ module build(part, trayType)
             union()
             {
                 draw_Tray(tray);
-                if(trayType == "peg Tray")
+                if(gdv(part,"peg Tray")==1)
                 {
                     echo("Drawing peg tray");
                     draw_Peg_Tray(Peg);
@@ -123,7 +127,7 @@ module build(part, trayType)
         echo("FileName = FrenchWall_Tray.stl");
         echo();
     }
-    else if (part == "dowels")
+    if (gdv(part, "dowels") == 1)
     {
         echo("Drawing dowels with part: ", dowel);
         draw_dowels(tray_x);
@@ -132,14 +136,14 @@ module build(part, trayType)
         echo("FileName = FrenchWall_Dowels.stl");
         echo();
     }
-    else if (part == "both")
+    if (gdv(part, "both") == 1)
     {
         echo("Drawing both cleat and tray");
         difference()
         {
             union()
             {
-                if(trayType == "peg Tray")
+                if(gdv(part,"peg Tray")==1)
                 {
                     echo("Drawing peg tray with cleat");
                     draw_Cleat(Cleat_for_Peg_Tray);
@@ -152,7 +156,7 @@ module build(part, trayType)
                 
                 draw_Tray(tray);
             }           
-            draw_dowels(tray_x);
+            #draw_dowels(tray_x);
         }
 
     }
