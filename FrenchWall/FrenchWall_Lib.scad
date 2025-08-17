@@ -54,6 +54,8 @@ use <dictionary.scad>;
         ["z", convert_in2mm(1.0)],
         ["move", [0, convert_in2mm(0.20), 2]],
         ["rotate", [90, 0, 0]],
+        ["Add bevel", 1],
+        ["Bevel vector", [0, 0.01, 2]],
         ["color", "Yellow"]
     ];
 
@@ -221,6 +223,12 @@ module draw_dowels(xValue)
 module draw_triangle_Dowel(properties) 
 {
     // echo("Drawing triangle dowel with properties: ", properties);
+    points = 
+        [
+            [0, 0],
+            [gdv(properties, "x"), 0],
+            [gdv(properties, "x")/2, gdv(properties, "y")]
+        ];
     applyColor(properties) 
     {
         applyMove(properties) 
@@ -228,12 +236,47 @@ module draw_triangle_Dowel(properties)
             // Apply rotation to the triangle dowel
             applyRotate(properties) 
             {
-                // Apply extrusion to the triangle dowel
-                applyExtrude(properties) 
+                if(gdv(properties, "Add bevel") == 1)
                 {
-                    // Draw the triangle dowel as a polygon
-                    polygon(points=[[0, 0], [gdv(properties, "x"), 0], [gdv(properties, "x")/2, gdv(properties, "y")]], paths=[[0, 1, 2]]);
+                    union()
+                    {
+                        // Apply bevel to the triangle dowel                    
+                        // Draw the triangle dowel as a polygon with bevel
+                        // translate([x, 0, 0])
+                        translate([gdv(properties, "x"), 0, 0])
+                        rotate([0, 180, 0])
+                        for(x = [gdv(properties, "Bevel vector").x : gdv(properties, "Bevel vector").y : gdv(properties, "Bevel vector").z])
+                        {                            
+                            // Draw the triangle dowel as a polygon
+                            linear_extrude(height=x)
+                            offset(delta = -x, chamfer = true)
+                            polygon(points=points, paths=[[0, 1, 2]]);
+                        }
+                        linear_extrude(height=gdv(properties, "z") - ( 2 * gdv(properties, "Bevel vector").z))
+                        polygon(points=points, paths=[[0, 1, 2]]);
+
+                        translate([0, 0, gdv(properties, "z") - (2 * gdv(properties, "Bevel vector").z)])
+                        rotate([0, 0, 0])
+                        for(x = [gdv(properties, "Bevel vector").x : gdv(properties, "Bevel vector").y : gdv(properties, "Bevel vector").z])
+                        {                            
+                            // Draw the triangle dowel as a polygon
+                            linear_extrude(height=x)
+                            offset(delta = -x, chamfer = true)
+                            polygon(points=points, paths=[[0, 1, 2]]);
+                        }                        
+                    }
                 }
+                else                
+                {
+                    // Draw the triangle dowel as a polygon without bevel
+                    // Apply extrusion to the triangle dowel
+                    applyExtrude(properties) 
+                    {
+                        // Draw the triangle dowel as a polygon
+                        polygon(points=points, paths=[[0, 1, 2]]);
+                    }
+                }
+
             }
         }       
     }
