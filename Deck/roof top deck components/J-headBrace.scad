@@ -6,6 +6,9 @@ Description : the J-brace purpose;
 NOTE: slicer is not slicing wall 1mm thick. removing -3*BRACE_THICKNESS from height,
 since first increment will not appear in g-code.
 UPDATE: While above is true the shorter thicker model came out better.
+
+Added Flat J-brace for use to do leveling of string attached to the wall.
+Also can be used to hold rubber on the wall.
 */
 
 /*****************************************************************************
@@ -32,7 +35,8 @@ Directives - defines what to build with optional features.
 *****************************************************************************/
 INCLUDE_THING = 0;
 BUILD_JBRACE = 0;
-BUILD_LONG_RULER_STAND = 1;
+BUILD_FLAT_JBRACE = 1;
+BUILD_LONG_RULER_STAND = 0;
 BUILD_LONG_RULER_VISUAL_MARKER = 0;
 BUILD_JBRACE_FLOOR_SPACER = 0;
 
@@ -47,6 +51,36 @@ MODULES: - the meat of the project.
 module build()
 {
     if(BUILD_JBRACE) J_Brace();
+    if (BUILD_FLAT_JBRACE) 
+    {
+        echo("Building flat J-brace");
+        echo(FileName = "Flat screw holder.stl");
+        // flat J-brace
+        difference()
+        {
+            union()
+            {
+                rotate([0, 90, 0]) 
+                linear_extrude(BRACE_WIDTH)
+                {
+                    for (i=[0:0.1:BRACE_THICKNESS]) 
+                    {
+                        // echo(str("wedgeIncrement(i)=", wedgeIncrement(WALL_HEIGHT,i)));
+                        translate([i, 0, 0]) 
+                        square(size=[1,3 * i], center = false);
+                    }        
+                    translate([0, -WALL_HEIGHT/4, 0])
+                    square(size=[BRACE_THICKNESS+1, WALL_HEIGHT/4], center = false);
+                }             
+            }      
+            //screw hole for spacer.
+            translate([half(BRACE_WIDTH), -half(WALL_HEIGHT/4), half(WALL_HEIGHT/4)]) 
+            // rotate([90, 0, 0]) 
+            cylinder(h = 100,d = 5, $fn=100, center = true);                  
+        }
+
+        
+    }
     if(BUILD_LONG_RULER_STAND) longRulerStand(20,10,3.5,BRACE_THICKNESS);
     if(BUILD_LONG_RULER_VISUAL_MARKER) longRulerStandVisualMarker(20,10,3.5,BRACE_THICKNESS);
     if(BUILD_JBRACE_FLOOR_SPACER)
@@ -163,8 +197,8 @@ module J_Brace() {
 module staggaredWall(height=WALL_HEIGHT)
 {
     echo(str("height = ", height));
-    translate([BRACE_THICKNESS+0.3, 1.8* BRACE_THICKNESS, BRACE_WIDTH]) 
-    rotate([0, 180, 5]) 
+    // translate([BRACE_THICKNESS+0.3, 1.8* BRACE_THICKNESS, BRACE_WIDTH]) 
+    // rotate([0, 180, 5]) 
     linear_extrude(BRACE_WIDTH)
     {
         for (i=[1:(BRACE_THICKNESS)]) {
