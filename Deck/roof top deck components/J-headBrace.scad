@@ -10,7 +10,7 @@ UPDATE: While above is true the shorter thicker model came out better.
 Added Flat J-brace for use to do leveling of string attached to the wall.
 Also can be used to hold rubber on the wall.
 */
-
+use <convert.scad>;
 /*****************************************************************************
 CONSTANTS
 *****************************************************************************/
@@ -21,7 +21,7 @@ WALL_HEIGHT = 180;
 FLOOR_WIDTH = 85;
 TRUSS_HEIGHT = 40;
 BRACE_WIDTH = 30;
-BRACE_THICKNESS = 6;
+BRACE_THICKNESS = 10;
 TRIANGLE = [[0,0],[0,1],[1,0]];
 
 /*****************************************************************************
@@ -54,31 +54,10 @@ module build()
     if (BUILD_FLAT_JBRACE) 
     {
         echo("Building flat J-brace");
-        echo(FileName = "Flat screw holder.stl");
+        echo(FileName = "0.5in Flat screw holder.stl");
         // flat J-brace
-        difference()
-        {
-            union()
-            {
-                rotate([0, 90, 0]) 
-                linear_extrude(BRACE_WIDTH)
-                {
-                    for (i=[0:0.1:BRACE_THICKNESS]) 
-                    {
-                        // echo(str("wedgeIncrement(i)=", wedgeIncrement(WALL_HEIGHT,i)));
-                        translate([i, 0, 0]) 
-                        square(size=[1,3 * i], center = false);
-                    }        
-                    translate([0, -WALL_HEIGHT/4, 0])
-                    square(size=[BRACE_THICKNESS+1, WALL_HEIGHT/4], center = false);
-                }             
-            }      
-            //screw hole for spacer.
-            translate([half(BRACE_WIDTH), -half(WALL_HEIGHT/4), half(WALL_HEIGHT/4)]) 
-            // rotate([90, 0, 0]) 
-            cylinder(h = 100,d = 5, $fn=100, center = true);                  
-        }
 
+        Flat_Under_Flashing_Insert(width=convert_in2mm(1), length=convert_in2mm(5), depth=12.5); ;
         
     }
     if(BUILD_LONG_RULER_STAND) longRulerStand(20,10,3.5,BRACE_THICKNESS);
@@ -215,5 +194,39 @@ module triangle90(width,height,depth)
     scale([width, height, 0]) 
     {
         polygon(points=[[0,0],[1,0],[0,1]]);
+    }
+}
+
+module Flat_Under_Flashing_Insert(width=BRACE_WIDTH, length=WALL_HEIGHT, depth=BRACE_THICKNESS) 
+{
+    echo(str("width=", width, " length=", length, " depth=", depth));
+    // translate([0, 0, 0]) 
+    // rotate([0, 90, 0]) 
+    // color("LightGrey")
+    {
+            difference()
+            {
+                union()
+                {
+                    rotate([0, 90, 0]) 
+                    linear_extrude(width)
+                    {
+                        for (i=[0:0.1:depth]) 
+                        {
+                            translate([i, 0, 0]) 
+                            square(size=[1,3 * i], center = false);
+                        }        
+                        translate([0, -length, 0])
+                        square(size=[depth + 1, length], center = false);
+                    }             
+                }      
+                for (i=[convert_in2mm(1): convert_in2mm(1): length - convert_in2mm(0.5)]) 
+                {
+                    //screw hole for spacer.
+                    translate([width/2, -i, 0]) 
+                    // rotate([90, 0, 0]) 
+                    cylinder(h = 100,d = 5, $fn=100, center = true);                  
+                }    
+        }
     }
 }
