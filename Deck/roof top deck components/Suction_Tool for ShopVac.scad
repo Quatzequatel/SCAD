@@ -17,7 +17,7 @@ build_this = ["build this",
             ["peg Tray", 0]
         ];
 
-bottomRadius = convert_in2mm(2.25);
+bottomRadius = convert_in2mm(3.75);
 bottomHeight = convert_in2mm(0.5);
 bottomTubeRadius = 4;
 fn = 200;
@@ -46,6 +46,11 @@ module drawBottom() {
     // translate([0, 0, 0]) 
     {
         // color(gdv(Tray, "color")) 
+        echo(str("Drawing Bottom with radius=", bottomRadius, " height=", bottomHeight));
+        echo();
+        echo(K1C = "Max size of bottom is 8 inches in diameter.");
+        echo(FileName = "Suction_Tool for ShopVac.stl");
+        echo();
         difference()
         {
             union()
@@ -53,15 +58,15 @@ module drawBottom() {
                 rotate([-90, 0, 0])
                 {
                     translate([0, 0, convert_in2mm(0.4)])
-                    cylinder(r1 = bottomRadius, r2 = bottomRadius-10, h=convert_in2mm(0.9), center=true, $fn=fn);
+                    cylinder(r1 = bottomRadius, r2 = bottomRadius-25, h=convert_in2mm(0.9), center=true, $fn=fn);
                 }
             }
 
             union()
             {
-                translate([0, convert_in2mm(0.4), -convert_in2mm(1.3)])
-                rotate([8, 0, 0])
-                cylinder(r1=convert_in2mm(0.27), r2 = convert_in2mm(0.24), h=convert_in2mm(3), center=true, $fn=fn);
+                translate([0, convert_in2mm(0.3), -convert_in2mm(2.5)])
+                rotate([5, 0, 0])
+                cylinder(r1=convert_in2mm(0.37), r2 = convert_in2mm(0.34), h=convert_in2mm(7), center=true, $fn=fn);
                 // rotate([90, 0, 0])
                 for(i = [0 : 15 : 180]) 
                 {
