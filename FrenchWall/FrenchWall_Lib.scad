@@ -29,8 +29,12 @@ use <dictionary.scad>;
     Dictionaries for use in Library files.
 */
     tray_x = convert_in2mm(3);
-    tray_y = convert_in2mm(0.8);    
+    tray_y = convert_in2mm(0.5);    
     tray_z = convert_in2mm(0.75);
+
+    dowel_length = tray_y;
+    dowel_xyz = [convert_in2mm(0.4), convert_in2mm(0.4), convert_in2mm(0.8)];
+
     tray_move = [0, 0, 0];
     tray_rotate = [0, 0, 0];
     tray_color = "LightGrey";
@@ -49,9 +53,9 @@ use <dictionary.scad>;
 
     dowel = 
     ["triangle dowel",
-        ["x", convert_in2mm(0.4)],
-        ["y", convert_in2mm(0.4)],
-        ["z", convert_in2mm(1.0)],
+        ["x", dowel_xyz.x],
+        ["y", dowel_xyz.y],
+        ["z", dowel_xyz.z],
         ["move", [0, convert_in2mm(0.20), 2]],
         ["rotate", [90, 0, 0]],
         ["Add bevel", 1],
@@ -62,12 +66,26 @@ use <dictionary.scad>;
     build_this = ["build this", 
                     ["drawCleat", 0], 
                     ["dowels", 1], 
-                    ["drawTray", 0], 
+                    ["drawTray", 1], 
                     ["drawPegTray", 0],
                     ["both", 0],
-                    ["peg Tray", 1]
+                    ["peg Tray", 0]
                 ];
     build_tray = ["peg Tray", ""];
+
+    Cleat_for_Peg_Tray = 
+    ["Cleat_for_Peg_Tray", 
+        ["filename", "Cleat_for_Peg_Tray.stl"],
+        ["x", convert_in2mm(3)],
+        ["y", cleat_thickness],
+        ["z", convert_in2mm(3.5)],
+        ["move", [0, 0, 0]],
+        ["from edge", 0],
+        ["rotate", [0,0, 0]],
+        ["include cleat", false],
+        ["cleat", Peg_Cleat],
+        ["color", "LightGrey"]
+    ];
 
 
 
@@ -88,7 +106,7 @@ module build(part, trayType)
             if(gdv(part, "drawPegTray") == 1)
             {
                 echo("Drawing peg tray with cleat");
-                draw_Cleat(Cleat_for_Peg_Tray);
+                draw_Cleat(Cleat_for_Peg_Tray);     //Cleat_for_Peg_Tray was defined in ToolHolders_Library.scad
                 echo();
                 echo("FileName = FrenchWall_Peg_Cleat.stl");
                 echo();                
@@ -132,7 +150,7 @@ module build(part, trayType)
     if (gdv(part, "dowels") == 1)
     {
         echo("Drawing dowels with part: ", dowel);
-        draw_dowels(tray_x);
+        draw_dowels(dowel_length);
 
         echo();
         echo("FileName = FrenchWall_Dowels.stl");
@@ -148,7 +166,7 @@ module build(part, trayType)
                 if(gdv(part,"peg Tray")==1)
                 {
                     echo("Drawing peg tray with cleat");
-                    draw_Cleat(Cleat_for_Peg_Tray);
+                    draw_Cleat(Cleat_for_Peg_Tray);  //Cleat_for_Peg_Tray was defined in ToolHolders_Library.scad
                 }
                 else
                 {
@@ -158,7 +176,7 @@ module build(part, trayType)
                 
                 draw_Tray(tray);
             }           
-            #draw_dowels(tray_x);
+            #draw_dowels(dowel_length);
         }
 
     }
