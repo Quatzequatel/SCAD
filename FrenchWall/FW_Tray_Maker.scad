@@ -46,9 +46,15 @@ dowel_xyz = [convert_in2mm(0.4), convert_in2mm(0.4), convert_in2mm(0.8)];
 tray_move = [0, 0, 0];
 tray_rotate = [0, 0, 0];
 tray_color = "LightGrey";
+
+pegs2 = 
+        [
+            ["peg1", [5, (tray_y - 5),0]],
+            ["peg2", [57, (tray_y - 5),0]]
+        ];
 cleat_print_rotaation = [0, 90, 0];
 cleat_thickness = 5.2;
-cleat_length = convert_in2mm(0.75);
+cleat_length = convert_in2mm(2);
 cleat_move = [0, 0, 0];
 
 parallelogram = 
@@ -125,11 +131,12 @@ Directives - defines what to build with optional features.
 *****************************************************************************/
 build_this = ["build this", 
                 ["drawCleat", 1], 
-                ["dowels", 1], 
-                ["drawTray", 0], 
+                ["dowels", 0], 
+                ["drawTrayBase", 0], 
                 ["drawPegTray", 0],
                 ["both", 0],
-                ["peg Tray", 0]
+                ["peg Tray", 0],
+                ["2 pegs", 1]
             ];
 
 /*****************************************************************************
@@ -150,45 +157,59 @@ module build(directives)
     {
         draw_dowels(tray_x);
     }    
-    if (gdv(directives, "drawTray") == 1) 
+    if (gdv(directives, "drawTrayBase") == 1) 
     {
-        tray_module(Tray, Backwall);
+        tray_module(tray);
     }
     if (gdv(directives, "drawPegTray") == 1) 
     {
         peg_tray_module(Tray, Backwall, Peg_Cleat);
+    }
+    if( gdv(directives, "2 pegs") == 1)
+    {
+        draw_2Pegs(thisCleat);
     }
 }
 
 /*
 MODULES to make the objects.
 */
-module draw_cleat_module(properties) 
+module draw_cleat_module(properties, exclude_dowels=true) 
 {
-    translate(gdv(properties, "move"))
-        rotate(gdv(properties, "rotate"))
+    // translate(gdv(properties, "move"))
+        // rotate(gdv(properties, "rotate"))
                 // body...
             echo("Drawing cleat with args: ", properties);
             //move to positive 0 x-axis.
             translate(cleat_move)
             //rotate so cleat is external and wall is located at 0 y-axis
             //rotate([0,90,180])
-            union()
+            difference()
             {
-                //draw wall
-                drawSquareShape(properties);    
-                // square([gdv(properties, "x"), gdv(properties, "y")]);
-                //draw cleat
-                translate([0, gdv(properties,"y"), gdv(properties,"z")])
-                draw_parallelogram(parallelogram);
+                union()
+                {
+                    //draw wall
+                    drawSquareShape(properties);    
+                    // square([gdv(properties, "x"), gdv(properties, "y")]);
+                    //draw cleat
+                    translate([0, gdv(properties,"y"), gdv(properties,"z")])
+                    draw_parallelogram(parallelogram);
+                } 
+
+                if( exclude_dowels == true)
+                {
+                    draw_dowels(tray_x);
+                }
+                              
             }
+
 }
 
-module tray_module(tray, backwall) 
+module tray_module(tray) 
 {
     translate(gdv(tray, "move"))
         rotate(gdv(tray, "rotate"))
-            tray_maker(tray, backwall);
+            draw_Tray(tray);
 }
 
 module peg_tray_module(tray, backwall, peg_cleat) 
@@ -293,9 +314,12 @@ module draw_Tray(properties)
     }
 }
 
-module draw_Peg_Tray(properties) 
+module draw_2Pegs(properties) 
 {
     echo("Drawing peg tray with properties: ", properties);
+    echo(pegs2, pegs2);
+    echo("pegs2[0]", pegs2[0]);
+    echo("pegs2[0][1].x", pegs2[0][1].x);
 
 
     applyColor(properties) 
@@ -303,11 +327,11 @@ module draw_Peg_Tray(properties)
         // applyRotate(properties) 
         {
             // translate([gdv(properties, "from edge"),0,0])
-            translate([5, - (tray_y -5), 0])
+            translate([pegs2[0][1].x, pegs2[0][1].y, 0])
             drawCircleShape(properties);
             
             // translate([2 * gdv(properties, "from edge"),0,0])
-            translate([57, - (tray_y - 5), 0])
+            translate([pegs2[1][1].x, pegs2[1][1].y, 0])
             drawCircleShape(properties);
         }
     }
