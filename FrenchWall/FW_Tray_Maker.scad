@@ -47,11 +47,14 @@ tray_move = [0, 0, 0];
 tray_rotate = [0, 0, 0];
 tray_color = "LightGrey";
 
+// Define peg positions
 pegs2 = 
         [
             ["peg1", [5, (tray_y) - 15.5,0]],
             ["peg2", [57, (tray_y - 15.5),0]]
         ];
+
+// Define cleat properties        
 cleat_print_rotaation = [0, 90, 0];
 cleat_thickness = 5.2;
 cleat_length = convert_in2mm(2);
@@ -92,12 +95,11 @@ this_peg =
 ["Peg dimension",
     ["x", convert_in2mm(3/8)],
     ["y", convert_in2mm(3/8)],
-    ["z", convert_in2mm(4)],
+    ["z", convert_in2mm(4)], //length of peg
+    ["from edge", (tray_x - convert_in2mm(1))/2],
     ["fragments", 60],
-    // ["move", [0,gdv(HammerBackwall, "move").y,convert_in2mm(3/8)/2]],
     ["move", [0,0,0]],
-    // ["from edge", (gdv(HammerTray, "x")-convert_in2mm(1))/2],
-    ["rotate", [90,0, 0]],
+    ["rotate", [90, 0, 0]],
     ["color", "LightBlue"]
 ];
 
@@ -133,7 +135,8 @@ build_this = ["build this",
                 ["drawCleat", 0], 
                 ["dowels", 0], 
                 ["drawTrayBase", 0], 
-                ["drawPegTray", 1],
+                ["drawPegTray", 0],
+                ["Re-enforced 2 Long Pegs Tray", 1],
                 ["both", 0],
                 ["peg Tray", 0],
                 ["2 pegs", 0]
@@ -149,6 +152,9 @@ MODULES: - the meat of the project.
 *****************************************************************************/
 module build(directives) 
 {
+    echo();
+    echo();
+
     if (gdv(directives, "drawCleat") == 1) 
     {
         draw_cleat_module(thisCleat);
@@ -174,6 +180,13 @@ module build(directives)
             draw_dowels(tray_x);
         }
     }
+    if (gdv(directives, "Re-enforced 2 Long Pegs Tray") == 1) 
+    {
+        echo("Building Re-enforced 2 Long Pegs Tray.stl");
+        echo();
+        echo();        
+        draw_peg_tray_module();
+    }
     if( gdv(directives, "2 pegs") == 1)
     {
         draw_2Pegs(this_peg);
@@ -183,6 +196,30 @@ module build(directives)
 /*
 MODULES to make the objects.
 */
+
+module draw_peg_tray_module() 
+{
+            difference()
+        {
+            union()
+            {
+                tray_module(tray);
+                translate([pegs2[0][1].x, pegs2[0][1].y, 0])
+                translate([4.75, -gdv(this_peg, "z")/2, 5])
+                cube(size=[6, gdv(this_peg, "z")-2, 10], center=true);
+
+                translate([pegs2[1][1].x, pegs2[1][1].y, 0])
+                translate([4.75, -gdv(this_peg, "z")/2, 5])
+                cube(size=[6, gdv(this_peg, "z")-2, 10], center=true);
+
+                translate([0,-0.75,0])
+                rotate([-5,0,0])
+                draw_2Pegs(this_peg);
+            }
+
+            draw_dowels(tray_x);
+        }
+}
 module draw_cleat_module(properties, exclude_dowels=true) 
 {
     // translate(gdv(properties, "move"))
@@ -329,21 +366,14 @@ module draw_Tray(properties)
 
 module draw_2Pegs(properties) 
 {
-    // echo("Drawing peg tray with properties: ", properties);
-    // echo(pegs2, pegs2);
-    // echo("pegs2[0]", pegs2[0]);
-    // echo("pegs2[0][1].x", pegs2[0][1].x);
-
 
     applyColor(properties) 
     {
         // applyRotate(properties) 
         {
-            // translate([gdv(properties, "from edge"),0,0])
             translate([pegs2[0][1].x, pegs2[0][1].y, 0])
             drawCircleShape(properties);
             
-            // translate([2 * gdv(properties, "from edge"),0,0])
             translate([pegs2[1][1].x, pegs2[1][1].y, 0])
             drawCircleShape(properties);
         }
