@@ -57,7 +57,7 @@ module build()
         echo(FileName = "0.5in Flat screw holder.stl");
         // flat J-brace
 
-        Flat_Under_Flashing_Insert(width=convert_in2mm(1), length=convert_in2mm(5), depth=12.5); ;
+        Flat_Under_Flashing_Insert(width=convert_in2mm(1), length=convert_in2mm(2), depth=12.5); ;
         
     }
     if(BUILD_LONG_RULER_STAND) longRulerStand(20,10,3.5,BRACE_THICKNESS);
