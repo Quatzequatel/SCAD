@@ -31,13 +31,13 @@ use <dictionary.scad>;
 /*****************************************************************************
 CONSTANTS
 *****************************************************************************/
-$fn=100;
+$fn=60;
 PI = 4 * atan2(1,1);
 
 TRIANGLE = [[0,0],[0,1],[1,0]];
 
 tray_x = convert_in2mm(3);
-tray_y = convert_in2mm(0.5);    
+tray_y = convert_in2mm(0.6);    
 tray_z = convert_in2mm(0.75);
 
 dowel_length = tray_y;
@@ -49,8 +49,8 @@ tray_color = "LightGrey";
 
 pegs2 = 
         [
-            ["peg1", [5, (tray_y - 5),0]],
-            ["peg2", [57, (tray_y - 5),0]]
+            ["peg1", [5, (tray_y) - 15.5,0]],
+            ["peg2", [57, (tray_y - 15.5),0]]
         ];
 cleat_print_rotaation = [0, 90, 0];
 cleat_thickness = 5.2;
@@ -92,11 +92,11 @@ this_peg =
 ["Peg dimension",
     ["x", convert_in2mm(3/8)],
     ["y", convert_in2mm(3/8)],
-    ["z", convert_in2mm(2)],
+    ["z", convert_in2mm(4)],
     ["fragments", 60],
     // ["move", [0,gdv(HammerBackwall, "move").y,convert_in2mm(3/8)/2]],
     ["move", [0,0,0]],
-    ["from edge", (gdv(HammerTray, "x")-convert_in2mm(1))/2],
+    // ["from edge", (gdv(HammerTray, "x")-convert_in2mm(1))/2],
     ["rotate", [90,0, 0]],
     ["color", "LightBlue"]
 ];
@@ -130,13 +130,13 @@ function wedgeIncrement(height,i) = i * half(height)/(BRACE_THICKNESS)+half(heig
 Directives - defines what to build with optional features.
 *****************************************************************************/
 build_this = ["build this", 
-                ["drawCleat", 1], 
+                ["drawCleat", 0], 
                 ["dowels", 0], 
                 ["drawTrayBase", 0], 
-                ["drawPegTray", 0],
+                ["drawPegTray", 1],
                 ["both", 0],
                 ["peg Tray", 0],
-                ["2 pegs", 1]
+                ["2 pegs", 0]
             ];
 
 /*****************************************************************************
@@ -163,11 +163,20 @@ module build(directives)
     }
     if (gdv(directives, "drawPegTray") == 1) 
     {
-        peg_tray_module(Tray, Backwall, Peg_Cleat);
+        difference()
+        {
+            union()
+            {
+                tray_module(tray);
+                draw_2Pegs(this_peg);
+            }
+
+            draw_dowels(tray_x);
+        }
     }
     if( gdv(directives, "2 pegs") == 1)
     {
-        draw_2Pegs(thisCleat);
+        draw_2Pegs(this_peg);
     }
 }
 
@@ -209,7 +218,12 @@ module tray_module(tray)
 {
     translate(gdv(tray, "move"))
         rotate(gdv(tray, "rotate"))
+        difference()
+        {
             draw_Tray(tray);
+
+            draw_dowels(tray_x);
+        }
 }
 
 module peg_tray_module(tray, backwall, peg_cleat) 
@@ -251,7 +265,6 @@ module draw_triangle_Dowel(properties)
                     {
                         // Apply bevel to the triangle dowel                    
                         // Draw the triangle dowel as a polygon with bevel
-                        // translate([x, 0, 0])
                         translate([gdv(properties, "x"), 0, 0])
                         rotate([0, 180, 0])
                         for(x = [gdv(properties, "Bevel vector").x : gdv(properties, "Bevel vector").y : gdv(properties, "Bevel vector").z])
@@ -316,10 +329,10 @@ module draw_Tray(properties)
 
 module draw_2Pegs(properties) 
 {
-    echo("Drawing peg tray with properties: ", properties);
-    echo(pegs2, pegs2);
-    echo("pegs2[0]", pegs2[0]);
-    echo("pegs2[0][1].x", pegs2[0][1].x);
+    // echo("Drawing peg tray with properties: ", properties);
+    // echo(pegs2, pegs2);
+    // echo("pegs2[0]", pegs2[0]);
+    // echo("pegs2[0][1].x", pegs2[0][1].x);
 
 
     applyColor(properties) 
