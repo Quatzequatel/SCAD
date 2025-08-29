@@ -42,6 +42,7 @@ tray_z = convert_in2mm(0.75);
 
 dowel_length = tray_y;
 dowel_xyz = [convert_in2mm(0.4), convert_in2mm(0.4), convert_in2mm(0.8)];
+dowel_diameter = convert_in2mm(3/8);
 
 tray_move = [0, 0, 0];
 tray_rotate = [0, 0, 0];
@@ -57,7 +58,7 @@ pegs2 =
 // Define cleat properties        
 cleat_print_rotaation = [0, 90, 0];
 cleat_thickness = 5.2;
-cleat_length = convert_in2mm(2);
+cleat_length = convert_in2mm(2.5);
 cleat_move = [0, 0, 0];
 
 parallelogram = 
@@ -73,7 +74,7 @@ dowel =
     ["x", dowel_xyz.x],
     ["y", dowel_xyz.y],
     ["z", dowel_xyz.z],
-    ["move", [0, convert_in2mm(0.15), 2]], // Change Y to adjust dowel penetration into cleat wall.
+    ["move", [0, convert_in2mm(0.25), 2]], // Change Y to adjust dowel penetration into cleat wall.
     ["from edge", 0],
     ["rotate", [90, 0, 0]],
     ["Add bevel", 1],
@@ -273,11 +274,55 @@ module peg_tray_module(tray, backwall, peg_cleat)
 module draw_dowels(xValue)
 {
         // Draw dowels
-        for (x = [5 : 26 : xValue])
+        for (x = [15 : 26 : xValue])
         {
-            translate([x, 0, 0])
-            draw_triangle_Dowel(dowel);
+            translate([x, 0, dowel_diameter/2])
+            // draw_triangle_Dowel(dowel);
+            #draw_cylendar_dowel(dowel);
         }        
+}
+
+module draw_cylendar_dowel(properties) 
+{
+    echo("Drawing cylinder dowel with properties: ", properties);
+    applyColor(properties) 
+    {
+        applyMove(properties) 
+        {
+            // Apply rotation to the cylinder dowel
+            applyRotate(properties) 
+            {
+                if(gdv(properties, "Add bevel") == 1)
+                {
+                    union()
+                    {
+                        // Apply bevel to the cylinder dowel                    
+                        // translate([0, 0, -gdv(properties, "Bevel vector").z]) 
+                        cylinder(h = gdv(properties, "Bevel vector").z, d1 = dowel_diameter/2, d2 = dowel_diameter);
+
+                        // Draw the main part of the dowel without bevel
+                        translate([0, 0, gdv(properties, "Bevel vector").z]) 
+                        cylinder(h = gdv(properties, "z") - ( 2 * gdv(properties, "Bevel vector").z), d=dowel_diameter);
+
+                        translate([0, 0, gdv(properties, "z") - (gdv(properties, "Bevel vector").z)])
+                        cylinder(h = gdv(properties, "Bevel vector").z, d1 = dowel_diameter, d2 = dowel_diameter/2);
+                    }
+                }
+                else                
+                {
+                    assert(false, "No Bevel, not implemented yet.");
+                    // Draw the cylinder dowel as a circle without bevel
+                    // Apply extrusion to the cylinder dowel
+                    applyExtrude(properties) 
+                    {
+                        // Draw the cylinder dowel as a circle
+                        cylinder(h = gdv(properties, "z"), d=dowel_diameter);
+                    }
+                }
+
+            }
+        }       
+    }
 }
 
 module draw_triangle_Dowel(properties) 
@@ -302,17 +347,21 @@ module draw_triangle_Dowel(properties)
                     {
                         // Apply bevel to the triangle dowel                    
                         // Draw the triangle dowel as a polygon with bevel
-                        translate([gdv(properties, "x"), 0, 0])
-                        rotate([0, 180, 0])
+                        // translate([gdv(properties, "x"), 0, 0]) //when dowel is a cilinder no need to move it.
+                        rotate([0, 180, 0]) // cilinder is drawn in the opposite direction.
                         for(x = [gdv(properties, "Bevel vector").x : gdv(properties, "Bevel vector").y : gdv(properties, "Bevel vector").z])
                         {                            
                             // Draw the triangle dowel as a polygon
                             linear_extrude(height=x)
                             offset(delta = -x, chamfer = true)
-                            polygon(points=points, paths=[[0, 1, 2]]);
+                            // polygon(points=points, paths=[[0, 1, 2]]);
+                            circle(d=dowel_diameter);
                         }
+
+                        // Draw the main part of the dowel without bevel
                         linear_extrude(height=gdv(properties, "z") - ( 2 * gdv(properties, "Bevel vector").z))
-                        polygon(points=points, paths=[[0, 1, 2]]);
+                        // polygon(points=points, paths=[[0, 1, 2]]);
+                        circle(d=dowel_diameter);
 
                         translate([0, 0, gdv(properties, "z") - (2 * gdv(properties, "Bevel vector").z)])
                         rotate([0, 0, 0])
@@ -321,18 +370,20 @@ module draw_triangle_Dowel(properties)
                             // Draw the triangle dowel as a polygon
                             linear_extrude(height=x)
                             offset(delta = -x, chamfer = true)
-                            polygon(points=points, paths=[[0, 1, 2]]);
+                            // polygon(points=points, paths=[[0, 1, 2]]);
+                            circle(d=dowel_diameter);
                         }                        
                     }
                 }
                 else                
                 {
+                    assert(false, "No Bevel, not implemented yet.");
                     // Draw the triangle dowel as a polygon without bevel
                     // Apply extrusion to the triangle dowel
                     applyExtrude(properties) 
                     {
                         // Draw the triangle dowel as a polygon
-                        polygon(points=points, paths=[[0, 1, 2]]);
+                        // polygon(points=points, paths=[[0, 1, 2]]);
                     }
                 }
 
