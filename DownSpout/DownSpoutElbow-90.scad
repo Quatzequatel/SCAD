@@ -33,16 +33,18 @@ function actualWidth(length, radius, wall) = TIGHT_ELBOW_90_OFFSET;
 /*****************************************************************************
 Directives - defines what to build with optional features.
 *****************************************************************************/
-INCLUDE_CHANNEL = 1;
+INCLUDE_CHANNEL = 0;
 BUILD_MALE_CONNECTOR = 0;
 BUILD_ELBOW_CONNECTOR = 0;
 BUILD_STRAIGHT_CONNECTOR = 0;
 BUILD_T_TUBE = 0;
+BUILD_L_TUBE = 1;
 BUILD_ENDSTOP_ELBOW = 0;
 BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR = 0;
 BUILD_NORMAL_DOWNSPOUT_ELBOW = 0;
 BUILD_TRIPLE_ELBOW_CONNECTOR = 0;
-BUILD_OFFSET_ELBOW_CONNECTOR = 1;
+BUILD_OFFSET_ELBOW_CONNECTOR = 0;
+BUILD_LARGE_SINGLE_ELBOW_CONNECTOR = 0;
 
 
 /*****************************************************************************
@@ -60,6 +62,7 @@ module build()
     if(BUILD_MALE_CONNECTOR) maleConnector();
     if(BUILD_STRAIGHT_CONNECTOR) straightConnector();
     if(BUILD_T_TUBE) ttubeConnector();
+    if(BUILD_L_TUBE) L_TubeConnector();
     if(BUILD_ENDSTOP_ELBOW) endstop_elbow();
     if(BUILD_ROUNDPIPE_STRAIGHT_CONNECTOR)
     {
@@ -67,6 +70,7 @@ module build()
     }
     if(BUILD_NORMAL_DOWNSPOUT_ELBOW)normal_downspout_elbow();
     if(BUILD_OFFSET_ELBOW_CONNECTOR) OFFSET_ELBOW_CONNECTOR();
+    if(BUILD_LARGE_SINGLE_ELBOW_CONNECTOR) large_single_elbow_connector();
 }
 
 module OFFSET_ELBOW_CONNECTOR()
@@ -206,6 +210,44 @@ module triple_elbow_connector()
     }
 }
 
+/*
+    simple elbow with long straight section on one side.
+    modification of triple elbow connector.
+*/
+module large_single_elbow_connector() 
+{
+    difference()
+    {
+        union()
+        {
+            //Long tube section.
+            translate([-100,60,0])
+            rotate([90,0,90])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, 200);
+
+            translate([100,0,0])
+            elbowConnector();
+            //elbowConnector();
+            //translate([-100,0,0])
+            //elbowConnector();
+        }
+            //Open channel for water to flow.
+            translate([50,0,0])
+            rotate([0,0,90])
+            channel2(250);
+            
+            translate([-100,60,0])
+            rotate([90,0,90])
+            downSpout_Center(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, 200);
+            
+            translate([100,0,0])
+            elbow_center();
+            // elbow_center();
+            // translate([-100,0,0])
+            // elbow_center();
+    }
+}
+
 module elbowConnector()
 {
     difference()
@@ -232,6 +274,7 @@ module elbowConnector()
 
 module ttubeConnector()
 {
+    //Main elbow body of the T tube.
     difference()
     {
         union()
@@ -259,6 +302,7 @@ module ttubeConnector()
     }
 
     
+    //Connectors for T tube channel.
     difference()
     {
         union()
@@ -268,6 +312,41 @@ module ttubeConnector()
             downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
 
             translate([ELBOW_90_OFFSET,168,0])
+            rotate([90,0,0])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+
+            translate([-50,ELBOW_90_OFFSET-0.1,0])
+            rotate([90,0,90])
+            downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
+        }
+
+        channel(1);
+    }
+}
+
+module L_TubeConnector()
+{
+    //Main elbow body of the T tube.
+    difference()
+    {
+        union()
+        {
+            elbow();
+        }
+
+        union()
+        {
+            elbowChannel();   
+        }
+    }
+
+    
+    //Connectors for L tube channel.
+    difference()
+    {
+        union()
+        {
+            translate([ELBOW_90_OFFSET,0,0])
             rotate([90,0,0])
             downSpout(FEMALE_DEMS,FEMALE_RADIUS,DS_WALL, CONNECTOR_LENGTH);
 
