@@ -133,11 +133,11 @@ function wedgeIncrement(height,i) = i * half(height)/(BRACE_THICKNESS)+half(heig
 Directives - defines what to build with optional features.
 *****************************************************************************/
 build_this = ["build this", 
-                ["drawCleat", 0], 
+                ["drawCleat", 1], 
                 ["dowels", 0], 
                 ["drawTrayBase", 0], 
                 ["drawPegTray", 0],
-                ["Re-enforced 2 Long Pegs Tray", 1],
+                ["Re-enforced 2 Long Pegs Tray", 0],
                 ["both", 0],
                 ["peg Tray", 0],
                 ["2 pegs", 0]
