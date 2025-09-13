@@ -27,6 +27,7 @@ module build()
 {
     // draw_mounting_strap();
     draw_cover_bracket();
+    // baseplate();
 }
 
 module draw_mounting_strap()
@@ -36,7 +37,7 @@ module draw_mounting_strap()
     {
         union()
         {
-            linear_extrude(height = 2,  slices = 20)
+            linear_extrude(height = 6,  slices = 20)
             difference()
             {
                 minkowski()
@@ -74,7 +75,7 @@ module draw_cover_bracket()
 {
     length = 46;
     width = 20;
-    height = 3;
+    height = 6;
     offset = 30;
     tri_start = 22;
     tri_w = 6;
@@ -88,15 +89,13 @@ module draw_cover_bracket()
         // color("LightBlue", 0.5)
         union()
         {
-            color("LightGreen", 0.5)
+            color("Lightblue", 0.5)
             linear_extrude(height = height,  slices = 20)
             translate([0, offset,0])
-            // rotate([0,0,180])
+            // draw pentagon shape.
             minkowski()
             {        
-                // translate([0,-width+2.6,0])
-                // square([length/2, width], center = true);
-                color("LightGreen", 0.5)
+                color("Lightblue", 0.5)
                 polygon(points=[
                     [shp_w * -2, 0],
                     [shp_w * -1, shp_h],
@@ -109,9 +108,9 @@ module draw_cover_bracket()
 
             color("LightGreen", 0.5)
             linear_extrude(height = height, slices = 20)
-
             translate([0,-offset,0])
             rotate([0,0,180])    
+            // draw pentagon shape.
             minkowski()
             {
                 
@@ -127,28 +126,106 @@ module draw_cover_bracket()
 
             translate([0,0,height])
             linear_extrude(height = height, slices = 20)
-            // translate([0, -offset, 0])
+            // draw rectangle shape.
             minkowski()
             {
                 rotate([0,0,90])
                 square([length + offset - 3, width], center = true);
-                circle(d=2, $fn=20);
+                circle(d=2, $fn=20); //for rounded corners
             }
 
             cylinder(d=screwTube_d, h = screwTube_h, $fn=20);
 
         }       
 
+        //cut holes for screws.
         union()
         {
             translate([0,0,-1])
-            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h + 3, $fn=20);
+            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h + 10, $fn=20);
 
             translate([0,31.47,-1])
-            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h + 3, $fn=20);
+            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h + 10, $fn=20);
             translate([0,-31.47,-1])
-            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h +3, $fn=20);
+            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h +10, $fn=20);
         }
     }
 
+}
+
+module baseplate()
+{
+    length = 70;
+    width = 20;
+    height = 5;
+    offset = 30;
+    tri_start = 22;
+    tri_w = width/2;
+    tri_h = 15;
+    shp_w = 4;
+    shp_h = 6;
+    nutDiameter = 17;
+
+    // rotate([0,0,90])
+    union()
+    {
+            color("purple", 0.5)
+            linear_extrude(height = height,  slices = 20)
+            translate([-4, 0,0])
+            minkowski()
+            {
+                polygon(points=[
+                    [0,tri_h],                
+                    [-tri_w,0],
+                    [0,-tri_h],
+                    ]);
+                circle(d=2, $fn=20);                
+            }
+
+    
+    difference()
+    {
+        union()
+        {
+            color("pink", 0.5)
+            linear_extrude(height = height,  slices = 20)
+            rotate([0,0,90])
+            translate([0,0,0])
+            // draw rectangle shape.
+            minkowski()
+            {
+                square([length, width], center = true);
+                circle(d=2, $fn=20);
+            }      
+
+
+        }
+ 
+
+        //cut holes for screws.
+        union()
+        {
+            //external screw holes
+            translate([0,31.47,-1])
+            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h +3, $fn=20);
+            translate([0,-31.47,-1])
+            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h = screwTube_h +3, $fn=20);
+
+            //middle hole for mounting strap screw.
+            translate([0,0,-1])
+            cylinder(d=gdv(light_coupling_dict, "adj screw width"), h =10, $fn=20);
+            
+            //nut holes also remove some material for less plastic use.
+            translate([width/2 -4,0,-1])
+            cylinder(d=nutDiameter, h = 10, $fn=50);
+            translate([width/2 + 2,0,-1])
+            cube([nutDiameter, 3*nutDiameter, 15], center = true);
+
+            translate([-width/2 - 3,0,-1])
+            // cylinder(d=nutDiameter, h = 10, $fn=50);
+            cube([nutDiameter, 3*nutDiameter, 15], center = true);
+
+        }
+    }
+    }
 }
