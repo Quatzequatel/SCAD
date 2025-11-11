@@ -64,7 +64,8 @@ use <dictionary.scad>;
     ];
 
     build_this = ["build this", 
-                    ["drawCleat", 1], 
+                    ["draw Wall Cleat", 1], 
+                    ["drawCleat", 0], 
                     ["dowels", 0], 
                     ["drawTray", 0], 
                     ["drawPegTray", 0],
@@ -105,14 +106,21 @@ function wall_cleat_points(height, width) =
     )
     [A, B, C, D];
 
-drawWallCleat();
-// build(build_this, build_tray); // Change index to build different components
+build(build_this, build_tray); // Change index to build different components
 
 module build(part, trayType) 
 {
     // echo("part", part);
     echo("tray", tray);
 
+    if(gdv(part, "draw Wall Cleat") == 1)
+    {
+        echo("Drawing wall cleat");
+        drawWallCleat();
+        echo();
+        echo("FileName = FrenchWall_Wall_Cleat.stl");
+        echo();
+    }
 
     if(gdv(part, "drawCleat") == 1)
     {
