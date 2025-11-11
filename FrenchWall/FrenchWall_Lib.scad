@@ -64,9 +64,9 @@ use <dictionary.scad>;
     ];
 
     build_this = ["build this", 
-                    ["drawCleat", 0], 
-                    ["dowels", 1], 
-                    ["drawTray", 1], 
+                    ["drawCleat", 1], 
+                    ["dowels", 0], 
+                    ["drawTray", 0], 
                     ["drawPegTray", 0],
                     ["both", 0],
                     ["peg Tray", 0]
@@ -87,9 +87,26 @@ use <dictionary.scad>;
         ["color", "LightGrey"]
     ];
 
+/* 
+    Functions
+*/
 
+//
+// Generate points for wall cleat shape.
+// where width is the legs of the cleat and 
+// height is outer edge of cleat.
+//
+function wall_cleat_points(height, width) = 
+    let(        
+        A = [ 0, 0 ],
+        B = [ 0, height ],
+        C = [ width, height],
+        D = [ width, width]
+    )
+    [A, B, C, D];
 
-build(build_this, build_tray); // Change index to build different components
+drawWallCleat();
+// build(build_this, build_tray); // Change index to build different components
 
 module build(part, trayType) 
 {
@@ -319,3 +336,36 @@ module draw_Peg_Tray(properties)
         }
     }
 }   
+
+module drawWallCleat(properties)
+{
+    echo("Drawing wall cleat with args: ", properties);
+    //move to positive 0 x-axis.
+    // translate([gdv(properties,"x"),0,0])
+    //rotate so cleat is external and wall is located at 0 y-axis
+    //rotate([0,90,180])
+
+    points = wall_cleat_points(height=convert_in2mm(2), width=convert_in2mm(0.75));
+    hole_Diameter = convert_in2mm(0.2);
+    difference()
+    {
+        //draw wall cleat
+        linear_extrude(height = convert_in2mm(12), slices = 20)
+            polygon(points=points);  
+        //cut holes for screws.
+        union()
+        {
+            translate([-convert_in2mm(0.75), convert_in2mm(1.37), convert_in2mm(1)])
+            rotate([0,90,0])
+            cylinder(d=hole_Diameter, h = convert_in2mm(2), $fn=20);
+
+            translate([-convert_in2mm(0.75), convert_in2mm(1.37), convert_in2mm(6)])
+            rotate([0,90,0])
+            cylinder(d=hole_Diameter, h = convert_in2mm(2), $fn=20);
+
+            translate([-convert_in2mm(0.75), convert_in2mm(1.37), convert_in2mm(11)])
+            rotate([0,90,0])
+            cylinder(d=hole_Diameter, h = convert_in2mm(2), $fn=20);
+        }
+    }
+}
