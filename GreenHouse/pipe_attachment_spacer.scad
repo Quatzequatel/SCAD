@@ -25,6 +25,20 @@ anchor =
         ["color", "Aqua"], 
 ];
 
+small_hole_anchor = 
+[
+    "small hole anchor",
+        ["width", convert_in2mm(2)],    
+        ["depth", convert_in2mm(0.75)],  
+        ["height", convert_in2mm(0.45)],  //base model height, for ziptie holes
+        ["wall_thickness", NozzleWidth * 8],
+        ["additional_height",  convert_in2mm(0)], //use this to increase height of spacer.
+        ["pipe_height", convert_in2mm(0.15)],
+        ["location", [0, 0, 0] ],  
+        ["color", "Aqua"], 
+        ["filename", "Electric cord anchor.stl"],
+];
+
 pipe_theequarter_inch =
 [
     "3/4 inch pipe",
@@ -35,7 +49,7 @@ pipe_theequarter_inch =
 pipe_half_inch =
 [
     "1/2 inch pipe",
-    ["diameter", convert_in2mm(0.65)],
+    ["diameter", convert_in2mm(0.4)],
     ["length", convert_in2mm(4)]
 ];
 
@@ -59,18 +73,42 @@ ziptie =
     ["thickness", ziptie_thickness + 2],    
     ["width",  ziptie_width + 2],
     ["length", convert_in2mm(1)],
-    ["angle", 40]
+    ["angle", 30]
 ];
+
+ziptie2 =
+[
+    "6 inch generic zip tie",
+    ["thickness", ziptie_thickness + 2],    
+    ["width",  ziptie_width + 2],
+    ["length", convert_in2mm(1)],
+    ["angle", 50]
+];
+
+ziptie_offset = 10;  //distance above base to start ziptie hole
 
 build();
 
 module build(args) 
 {
-    make_pipe_achor(anchor, pipe_theequarter_inch, screw_hole, ziptie);
+    make_pipe_achor(small_hole_anchor, pipe_half_inch, screw_hole, ziptie2);
 }
 
 module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties, ziptie_properties)
 {
+    echo("------------------------------");
+    echo("filename", gdv( spacer_properties, "filename" ));
+    echo("------------------------------");
+    echo("------------------------------");
+    echo("Drawing spacer_properties with args: ", spacer_properties);
+    echo("------------------------------");
+    echo("Drawing pipe_properties with args: ", pipe_properties);
+    echo("------------------------------");
+    echo("Drawing screw_hole_properties with args: ", screw_hole_properties);
+    echo("------------------------------");
+    echo("Drawing ziptie with args: ", ziptie_properties);
+    echo("------------------------------");
+
     color(gdv(spacer_properties, "color"), 0.9)
     difference()
     {
@@ -86,10 +124,10 @@ module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties
         move_screw_to_left_side(spacer_properties) make_screw_hole(screw_hole); 
 
         move_ziptie_to_right(spacer_properties)
-        make_ziptie_hole( ziptie_properties, false );
+        #make_ziptie_hole( ziptie_properties, false );
 
         move_ziptie_to_left(spacer_properties)
-        make_ziptie_hole(ziptie_properties, true );
+        #make_ziptie_hole(ziptie_properties, true );
     }
 
 }
@@ -113,6 +151,7 @@ module make_screw_hole(properties)
 
 module make_ziptie_hole(properties, left)
 {
+    // echo("Drawing ziptie with args: ", properties);
     if(left == true)
         {
             rotate([0, gdv(properties, "angle"), 0])
@@ -169,7 +208,7 @@ module move_ziptie_to_right(properties)
         [ 
             (gdv(properties, "width")/2 - gdv(properties, "wall_thickness")) , 
             - (gdv(properties, "depth")/2 - gdv(properties, "wall_thickness") ), 
-            15 + gdv(properties, "additional_height")
+            ziptie_offset + gdv(properties, "additional_height")
         ]
         )
     children();
@@ -181,7 +220,7 @@ module move_ziptie_to_left(properties)
         [ 
             - (gdv(properties, "width")/2 - gdv(properties, "wall_thickness")) , 
             - (gdv(properties, "depth")/2 - gdv(properties, "wall_thickness")), 
-            15 + gdv(properties, "additional_height")
+            ziptie_offset + gdv(properties, "additional_height")
         ]
         )
     children();
