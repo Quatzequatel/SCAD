@@ -35,7 +35,7 @@ use <dictionary.scad>;
     rail_length = convert_in2mm(19); // standard length for French cleat rail
     pilot_hole_diameter = GRK_cabinet_screw_shank_dia;
     // echo("pilot_hole_diameter", pilot_hole_diameter);
-    pilot_hole_depth = convert_in2mm(0.75 + 0.25); // extra depth for countersink
+    pilot_hole_depth = convert_in2mm(0.75); // extra depth for countersink
     counter_sink_diameter = GRK_cabinet_screw_head_dia; // For #8 screw
     counter_sink_depth = 2.5 + 0.5; // extra depth for countersink
     $fn = 40;
@@ -124,10 +124,13 @@ module build(part, trayType)
     if(gdv(part, "draw Wall Cleat") == 1)
     {
         echo("Drawing wall cleat");
+        rotate([0,0,-45])
+        translate([rail_length/2,0,0])
+        rotate([0,-90,0])
         drawFrenchCleatRail();
         // drawPilotHoleWithCounterSunk(fn = 40);
         echo();
-        echo("FileName = FrenchWall_Wall_Rail.stl");
+        echo("FileName = FrenchWall_Rail.stl");
         echo();
     }
 
@@ -381,15 +384,15 @@ module drawFrenchCleatRail(properties)
         union()
         {
             for (i = holes_placement)
-                translate([-1, convert_in2mm(0.5), i])
-                drawPilotHoleWithCounterSunk();
+                translate([pilot_hole_depth, convert_in2mm(1), i])
+                #drawPilotHoleWithCounterSunk();
         }
     }
 }
 
 module drawPilotHoleWithCounterSunk(diameter = pilot_hole_diameter, height = pilot_hole_depth, fn=$fn)
 {
-    rotate([0,90,0])
+    rotate([0,90,180])
     union()
     {
         cylinder(d = diameter, h = height, $fn=fn);
