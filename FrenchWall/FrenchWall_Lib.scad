@@ -32,6 +32,14 @@ use <dictionary.scad>;
     tray_y = convert_in2mm(0.5);    
     tray_z = convert_in2mm(0.75);
 
+    rail_length = convert_in2mm(19); // standard length for French cleat rail
+    pilot_hole_diameter = GRK_cabinet_screw_shank_dia;
+    // echo("pilot_hole_diameter", pilot_hole_diameter);
+    pilot_hole_depth = convert_in2mm(0.75 + 0.25); // extra depth for countersink
+    counter_sink_diameter = GRK_cabinet_screw_head_dia; // For #8 screw
+    counter_sink_depth = 2.5 + 0.5; // extra depth for countersink
+    $fn = 40;
+
     dowel_length = tray_y;
     dowel_xyz = [convert_in2mm(0.4), convert_in2mm(0.4), convert_in2mm(0.8)];
 
@@ -116,9 +124,10 @@ module build(part, trayType)
     if(gdv(part, "draw Wall Cleat") == 1)
     {
         echo("Drawing wall cleat");
-        drawWallCleat();
+        drawFrenchCleatRail();
+        // drawPilotHoleWithCounterSunk(fn = 40);
         echo();
-        echo("FileName = FrenchWall_Wall_Cleat.stl");
+        echo("FileName = FrenchWall_Wall_Rail.stl");
         echo();
     }
 
@@ -345,9 +354,9 @@ module draw_Peg_Tray(properties)
     }
 }   
 
-module drawWallCleat(properties)
+module drawFrenchCleatRail(properties)
 {
-    echo("Drawing wall cleat with args: ", properties);
+    echo("Drawing wall rail with args: ", properties);
     //move to positive 0 x-axis.
     // translate([gdv(properties,"x"),0,0])
     //rotate so cleat is external and wall is located at 0 y-axis
@@ -355,25 +364,40 @@ module drawWallCleat(properties)
 
     points = wall_cleat_points(height=convert_in2mm(2), width=convert_in2mm(0.75));
     hole_Diameter = convert_in2mm(0.2);
+    
+    echo("width", points[1][1]);
+    echo("height", points[2][0]);
+    rail_width = points[1][1];
+    rail_height = points[2][0];
     difference()
     {
-        //draw wall cleat
-        linear_extrude(height = convert_in2mm(12), slices = 20)
+        //draw wall rail
+        translate([rail_height,rail_width,0])
+        rotate([0,0,180])
+        linear_extrude(height = rail_length, slices = 20)
             polygon(points=points);  
         //cut holes for screws.
+        holes_placement = [convert_in2mm(1.5), rail_length/2,  rail_length - convert_in2mm(1.5)];
         union()
         {
-            translate([-convert_in2mm(0.75), convert_in2mm(1.37), convert_in2mm(1)])
-            rotate([0,90,0])
-            cylinder(d=hole_Diameter, h = convert_in2mm(2), $fn=20);
-
-            translate([-convert_in2mm(0.75), convert_in2mm(1.37), convert_in2mm(6)])
-            rotate([0,90,0])
-            cylinder(d=hole_Diameter, h = convert_in2mm(2), $fn=20);
-
-            translate([-convert_in2mm(0.75), convert_in2mm(1.37), convert_in2mm(11)])
-            rotate([0,90,0])
-            cylinder(d=hole_Diameter, h = convert_in2mm(2), $fn=20);
+            for (i = holes_placement)
+                translate([-1, convert_in2mm(0.5), i])
+                drawPilotHoleWithCounterSunk();
         }
     }
+}
+
+module drawPilotHoleWithCounterSunk(diameter = pilot_hole_diameter, height = pilot_hole_depth, fn=$fn)
+{
+    rotate([0,90,0])
+    union()
+    {
+        cylinder(d = diameter, h = height, $fn=fn);
+        drawCountersink(fn=fn);
+    }
+}
+
+module drawCountersink(diameter = pilot_hole_diameter, depth = counter_sink_depth, fn=20)
+{
+    cylinder(d = 2*diameter, h = depth, $fn=fn);
 }
