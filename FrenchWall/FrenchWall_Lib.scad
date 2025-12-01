@@ -33,6 +33,9 @@ use <dictionary.scad>;
     tray_z = convert_in2mm(0.75);
 
     rail_length = convert_in2mm(19); // standard length for French cleat rail
+    //cut holes for screws.
+    holes_placement = [convert_in2mm(1.5), rail_length/2,  rail_length - convert_in2mm(1.5)];
+
     pilot_hole_diameter = GRK_cabinet_screw_shank_dia;
     // echo("pilot_hole_diameter", pilot_hole_diameter);
     pilot_hole_depth = convert_in2mm(0.75); // extra depth for countersink
@@ -72,7 +75,7 @@ use <dictionary.scad>;
     ];
 
     build_this = ["build this", 
-                    ["draw Wall Cleat", 1], 
+                    ["draw Wall Rail", 1], 
                     ["drawCleat", 0], 
                     ["dowels", 0], 
                     ["drawTray", 0], 
@@ -121,14 +124,13 @@ module build(part, trayType)
     // echo("part", part);
     echo("tray", tray);
 
-    if(gdv(part, "draw Wall Cleat") == 1)
+    if(gdv(part, "draw Wall Rail") == 1)
     {
-        echo("Drawing wall cleat");
+        echo("Drawing wall Rail");
         rotate([0,0,-45])
         translate([rail_length/2,0,0])
         rotate([0,-90,0])
         drawFrenchCleatRail();
-        // drawPilotHoleWithCounterSunk(fn = 40);
         echo();
         echo("FileName = FrenchWall_Rail.stl");
         echo();
@@ -379,8 +381,7 @@ module drawFrenchCleatRail(properties)
         rotate([0,0,180])
         linear_extrude(height = rail_length, slices = 20)
             polygon(points=points);  
-        //cut holes for screws.
-        holes_placement = [convert_in2mm(1.5), rail_length/2,  rail_length - convert_in2mm(1.5)];
+
         union()
         {
             for (i = holes_placement)

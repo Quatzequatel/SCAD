@@ -16,10 +16,10 @@ use <dictionary.scad>;
 
 //un comment to show ruler in drawing.
 // scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
-// screwDriverTray(false);
+screwDriverTray(true);
 // completeBitTray();
 // drawHammerHandle();
-drawPeggedHandle();
+// drawPeggedHandle();
 //drawDrillPeggedHandle();
 // drawDrillPeggedHandleV2();
 // drawSquarePegHolder();
@@ -317,7 +317,7 @@ module draw_box_for_JigSaw_Box()
         // drawSquareShape(box);    
         
         translate([0,gdv(Tray, "y") - 2, -convert_in2mm(0.75)])
-        screw_hole_counter_sink(screwholes, shortBackwall);
+        screw_hole_counter_sink(includeScrewholes, shortBackwall);
     }
 }
 
@@ -375,7 +375,7 @@ module draw_box_for_staples()
         drawSquareShape(box);    
         
         translate([0,gdv(Tray, "y") - 2, -convert_in2mm(0.75)])
-        screw_hole_counter_sink(screwholes, shortBackwall);
+        screw_hole_counter_sink(includeScrewholes, shortBackwall);
     }
 }
 
@@ -419,10 +419,10 @@ module draw_peg_holder_for_staples()
             echo(distance = (gdv(shortBackwall, "x") - (radius + convert_in2mm(0.5))) - (spacing - radius) );
         }
 
-        screw_hole_counter_sink(screwholes, shortBackwall);
+        screw_hole_counter_sink(includeScrewholes, shortBackwall);
 
         translate([0, 0, -gdv(shortBackwall, "z") + convert_in2mm(0.75)])
-        screw_hole_counter_sink(screwholes, shortBackwall);
+        screw_hole_counter_sink(includeScrewholes, shortBackwall);
     } 
 }
 
@@ -484,10 +484,10 @@ module drawDrillPeggedHandleV2()
             drawCircleShape(DrillPeg);
         }
 
-         screw_hole_counter_sink(screwholes, Backwall);
+         screw_hole_counter_sink(includeScrewholes, Backwall);
 
         //  translate([0, 0, -gdv(Backwall, "z") + convert_in2mm(0.75)])
-        //  screw_hole_counter_sink(screwholes, Backwall);
+        //  screw_hole_counter_sink(includeScrewholes, Backwall);
     }              
 }
 
@@ -513,10 +513,10 @@ module drawDrillPeggedHandle()
             drawCircleShape(DrillPeg);
         }
 
-         screw_hole_counter_sink(screwholes, Backwall);
+         screw_hole_counter_sink(includeScrewholes, Backwall);
 
         translate([0, 0, -gdv(Backwall, "z") + convert_in2mm(0.75)])
-         screw_hole_counter_sink(screwholes, Backwall);
+         screw_hole_counter_sink(includeScrewholes, Backwall);
     }              
 }
 
@@ -582,16 +582,16 @@ module drawSquarePegHolder()
         }
 
         translate([convert_in2mm(0.65), 0, -45])
-        drawCircleShape(screwholes);
+        drawCircleShape(includeScrewholes);
 
         translate([gdv(Tray, "x")/2, 0, -45])
-        drawCircleShape(screwholes);
+        drawCircleShape(includeScrewholes);
 
         translate([gdv(shortBackwall, "x") - gdv(DrillPeg,"x") - 7, 0, -45])
-        drawCircleShape(screwholes);
+        drawCircleShape(includeScrewholes);
 
         // translate([0,0, -35])
-        // screw_hole_counter_sink(screwholes, shortBackwall);
+        // screw_hole_counter_sink(includeScrewholes, shortBackwall);
     }
               
 }
@@ -611,7 +611,7 @@ module drawPeggedHandle()
             drawCircleShape(Peg);
         }
 
-        screw_hole_counter_sink(screwholes, HammerBackwall);
+        screw_hole_counter_sink(includeScrewholes, HammerBackwall);
     }
               
 }
@@ -723,15 +723,16 @@ module completeBitTray()
         }
         
         drawArrayOfCircleShapes(tool_bit_array, Bit);
-        // screw_hole_counter_sink(screwholes, Backwall);
+        // screw_hole_counter_sink(includeScrewholes, Backwall);
     }
 }
 
-module screwDriverTray(screwholes = true)
+module screwDriverTray(includeScrewholes = true)
 {
     echo();
     echo(FileName = "LargeHoleScrewDriverTray.stl");
     echo();
+
     tray = 
     ["tray", 
         ["x", convert_in2mm(7)],
@@ -741,15 +742,20 @@ module screwDriverTray(screwholes = true)
         ["rotate", [0,0, 0]],
         ["color", "LightGrey"]
     ];
+
+    tray_x = gdv(tray, "x");
+    tray_y = gdv(tray, "y");   
+    tray_z = gdv(tray, "z");
+
     cleat = 
     ["cleat properties", 
-        ["x", gdv(tray, "x")],
+        ["x", tray_x],
         ["y", cleat_thickness],
         ["z", convert_in2mm(0.75)],
         ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
         ["parallelogram thickness", cleat_thickness],
         ["angle", 135],
-        ["extrude height", gdv(tray, "x")],
+        ["extrude height", tray_x],
         ["move", [0, 0, 0]],
         ["from edge", 0],
         ["rotate", [0, 0, 0]],
@@ -758,7 +764,7 @@ module screwDriverTray(screwholes = true)
 
     backwall = 
     ["backwall", 
-        ["x", gdv(tray, "x")],
+        ["x", tray_x],
         ["y", cleat_thickness],
         ["z", convert_in2mm(2.5)],
         ["move", [0, 0, 0]],
@@ -774,7 +780,7 @@ module screwDriverTray(screwholes = true)
     ["bit dimension",
         ["x", convert_in2mm(1.25)],
         ["y", convert_in2mm(1)],
-        ["z", gdv(tray, "z") * 1.25],
+        ["z", tray_z * 1.25],
         ["fragments", 60],
         ["move", [0,0,LayersToHeight(-2)]],
         ["rotate", [0,0, 0]],
@@ -783,14 +789,14 @@ module screwDriverTray(screwholes = true)
 
     shaft_array = 
     ["tool_bit_array",
-        ["x", gdv(tray, "x")],
-        ["y", gdv(tray, "y")],
-        ["z", gdv(tray, "z")],
+        ["x", tray_x],
+        ["y", tray_y],
+        ["z", tray_z],
         ["columns", 2],
         ["rows", 4],
-        ["spacing", 0],
+        ["spacing", 2],
         //move is a final adjustment
-        ["move", [gdv(shaft, "x")/8 + 3, 4, 0]],
+        ["move", [tray_x/8 + 3, 4, 0]],
         ["rotate", [0,0, 0]],
         ["color", "yellow"]
     ];
@@ -807,10 +813,10 @@ module screwDriverTray(screwholes = true)
             draw_Cleated_Back_Wall(backwall);      
         }
 
-        if(screwholes == true)
+        if(includeScrewholes == true)
         {
             drawArrayOfCircleShapes(shaft_array, shaft);
-            screw_hole_counter_sink(screwholes, backwall);
+            //screw_hole_counter_sink(shaft, backwall);
         }
     }
 }
@@ -820,13 +826,14 @@ module screw_hole_counter_sink(properties, backwall)
     // properties_echo(properties);
     // properties_echo(backwall);
 
-    count = gdv(properties, "count");
+    // count = gdv(properties, "count");
+    count = 0;
     spacing = gdv(backwall, "x") / (count + 1);
 
     for(item = [0: count])
     {
         translate([item * spacing + spacing/2, 0, 0])
-        drawCircleShape(properties);
+        #drawCircleShape(properties);
     }
 }
 
