@@ -32,14 +32,14 @@ use <dictionary.scad>;
     tray_y = convert_in2mm(0.5);    
     tray_z = convert_in2mm(0.75);
 
-    rail_length = convert_in2mm(19); // standard length for French cleat rail
+    rail_length = convert_in2mm(6); // standard length for French cleat rail
     //cut holes for screws.
-    holes_placement = [convert_in2mm(1.5), rail_length/2,  rail_length - convert_in2mm(1.5)];
+    holes_placement = [convert_in2mm(1), rail_length/2,  rail_length - convert_in2mm(1)];
 
     pilot_hole_diameter = GRK_cabinet_screw_shank_dia;
     // echo("pilot_hole_diameter", pilot_hole_diameter);
     pilot_hole_depth = convert_in2mm(0.75); // extra depth for countersink
-    counter_sink_diameter = GRK_cabinet_screw_head_dia; // For #8 screw
+    counter_sink_diameter = GRK_cabinet_screw_head_dia ; // For #8 screw
     counter_sink_depth = 2.5 + 0.5; // extra depth for countersink
     $fn = 40;
 
@@ -397,7 +397,7 @@ module drawPilotHoleWithCounterSunk(diameter = pilot_hole_diameter, height = pil
     union()
     {
         cylinder(d = diameter, h = height, $fn=fn);
-        drawCountersink(fn=fn);
+        drawCountersink(counter_sink_diameter, counter_sink_depth, fn=fn);
     }
 }
 
