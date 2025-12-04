@@ -32,7 +32,7 @@ use <dictionary.scad>;
     tray_y = convert_in2mm(0.5);    
     tray_z = convert_in2mm(0.75);
 
-    rail_length = convert_in2mm(6); // standard length for French cleat rail
+    rail_length = convert_in2mm(10); // standard length for French cleat rail
     //cut holes for screws.
     holes_placement = [convert_in2mm(1), rail_length/2,  rail_length - convert_in2mm(1)];
 
@@ -403,5 +403,5 @@ module drawPilotHoleWithCounterSunk(diameter = pilot_hole_diameter, height = pil
 
 module drawCountersink(diameter = pilot_hole_diameter, depth = counter_sink_depth, fn=20)
 {
-    cylinder(d = 2*diameter, h = depth, $fn=fn);
+    cylinder(d = diameter, h = depth, $fn=fn);
 }
