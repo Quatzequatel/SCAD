@@ -32,9 +32,9 @@ use <dictionary.scad>;
     tray_y = convert_in2mm(0.5);    
     tray_z = convert_in2mm(0.75);
 
-    rail_length = convert_in2mm(10); // standard length for French cleat rail
+    rail_length = convert_in2mm(6); // standard length for French cleat rail
     //cut holes for screws.
-    holes_placement = [convert_in2mm(1), rail_length/2,  rail_length - convert_in2mm(1)];
+    holes_placement = [rail_length/8, rail_length/2,  (7 * rail_length)/8];
 
     pilot_hole_diameter = GRK_cabinet_screw_shank_dia;
     // echo("pilot_hole_diameter", pilot_hole_diameter);
