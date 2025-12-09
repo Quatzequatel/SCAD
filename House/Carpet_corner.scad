@@ -26,7 +26,7 @@ module build(args) {
     
     // Preview
     linear_extrude(height=5)
-    hex_lattice_square(size=200, hex_flat_d=10, gap=2, border=20);
+    hex_lattice_square(sizeX = 200, sizeY = 200, hex_flat_d=10, gap=2, border=20);
 }
 
 // Hex-filled lattice pattern inside a square cutout
@@ -37,40 +37,46 @@ module build(args) {
 //   border     - border thickness around square (default 10 mm)
 
 
+// Hex-filled 200x200 mm square with 10 mm across-flats hexagons
+// Adjust hex_flat_d if you mean 10 mm across-points (use 11.547 mm instead)
 
-module hex_lattice_square(size=200, hex_flat_d=10, gap=2, border=10) {
-    R  = hex_flat_d / sqrt(3);
-    dx = 1.5 * R + gap+1;         // horizontal spacing with gap
-    dy = sqrt(3) * R + gap-2;     // vertical spacing with gap
+module hex_lattice_square(sizeX = 200, sizeY = 100, hex_flat_d=10, gap=1, border=6) {
+
 
     difference() {
         
         // Inner cutout region (where hex lattice goes)
         translate([border, border])
-            square([size - 2*border, size - 2*border], center=false);
+            square([sizeX - 2*border, sizeY - 2*border], center=false);
 
         // Hex lattice pattern clipped to inner cutout
         translate([border, border])
-        hex_lattice(size=200, hex_flat_d=10, gap=2, border=10, R=R, dx=dx, dy=dy); 
+        hex_lattice(sizeX = sizeX, sizeY = sizeY, hex_flat_d=hex_flat_d, gap=gap, border=border); 
     }
 
     difference() 
     {
         // Outer square 
-        square([size, size], center=false);
+        square([sizeX, sizeY], center=false);
         // Inner cutout region (where hex lattice goes)
         translate([border, border])
-            square([size - 2*border, size - 2*border], center=false);   
+            square([sizeX - 2*border, sizeY - 2*border], center=false);   
     }
 }
 
-module hex_lattice(size=200, hex_flat_d=10, gap=2, border=10, R=5.77, dx=11.55, dy=10) {
-    intersection() {
-            square([size - 2*border, size - 2*border], center=false);
+module hex_lattice(sizeX = 200, sizeY = 100, hex_flat_d=10, gap=2, border=10) {
+    R  = hex_flat_d / sqrt(3);
+    dx = 1.5 * R + gap;         // horizontal spacing with gap
+    dy = sqrt(3) * R + gap/2;     // vertical spacing with gap
+    echo("R=", R, " dx=", dx, " dy=", dy);
+    echo(sizeX = sizeX, sizeY = sizeY, hex_flat_d=hex_flat_d, gap=gap, border= border);
+
+        intersection() {
+            square([sizeX - 2*border, sizeY - 2*border], center=false);
 
             union() {
-                rows = ceil((size - 2*border)/dy) + 2;
-                cols = ceil((size - 2*border)/dx) + 2;
+                rows = ceil((sizeY - 2*border)/dy) + 2;
+                cols = ceil((sizeX - 2*border)/dx) + 2;
 
                 for (row = [-1 : rows]) {
                     y = row * dy;
