@@ -1,5 +1,5 @@
 
-PadOD = 100;
+PadOD = 300;
 
 LayerHeight = 0.4;
 NozzleWidth = 0.8;

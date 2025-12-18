@@ -25,8 +25,8 @@ build(args = []);
 module build(args) {
     
     // Preview
-    linear_extrude(height=5)
-    hex_lattice_square(sizeX = 200, sizeY = 200, hex_flat_d=10, gap=2, border=20);
+    linear_extrude(height=2)
+    hex_lattice_square(sizeX = 200, sizeY = 100, hex_flat_d=5, gap=1, border=10);
 }
 
 // Hex-filled lattice pattern inside a square cutout
@@ -66,7 +66,7 @@ module hex_lattice_square(sizeX = 200, sizeY = 100, hex_flat_d=10, gap=1, border
 
 module hex_lattice(sizeX = 200, sizeY = 100, hex_flat_d=10, gap=2, border=10) {
     R  = hex_flat_d / sqrt(3);
-    dx = 1.5 * R + gap;         // horizontal spacing with gap
+    dx = 1.8 * R + gap;         // horizontal spacing with gap
     dy = sqrt(3) * R + gap/2;     // vertical spacing with gap
     echo("R=", R, " dx=", dx, " dy=", dy);
     echo(sizeX = sizeX, sizeY = sizeY, hex_flat_d=hex_flat_d, gap=gap, border= border);

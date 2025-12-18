@@ -1,6 +1,6 @@
 
-PadOD = 60;
-SampleWidth = 30;
+PadOD = 20;
+SampleWidth = 5;
 PadID = PadOD - SampleWidth;
 PadHeight = 0.8;
 
@@ -13,7 +13,18 @@ $fn=100;
 Build();
 module Build()
 {
-    PadCreate(PadOD, PadID, PadHeight);
+    // PadCreate(PadOD, PadID, PadHeight);
+    Print4corners();
+}
+
+module Print4corners()
+{
+    // PadCreate(PadOD, PadID, PadHeight, );
+    distance = 140;
+    for(i = [1:4])
+    {
+        PadCreate(PadOD, PadID, PadHeight, xFactor[i]*distance, yFactor[i]*distance);
+    }
 }
 
 module PadCreate(od, id, height, x=0, y=0, z=0) 

@@ -32,7 +32,7 @@ use <dictionary.scad>;
     tray_y = convert_in2mm(0.5);    
     tray_z = convert_in2mm(0.75);
 
-    rail_length = convert_in2mm(6); // standard length for French cleat rail
+    rail_length = convert_in2mm(19); // standard length for French cleat rail
     //cut holes for screws.
     holes_placement = [rail_length/8, rail_length/2,  (7 * rail_length)/8];
 
@@ -127,7 +127,7 @@ module build(part, trayType)
     if(gdv(part, "draw Wall Rail") == 1)
     {
         echo("Drawing wall Rail");
-        rotate([0,0,-45])
+        rotate([0,0,45])
         translate([rail_length/2,0,0])
         rotate([0,-90,0])
         drawFrenchCleatRail();
@@ -403,5 +403,6 @@ module drawPilotHoleWithCounterSunk(diameter = pilot_hole_diameter, height = pil
 
 module drawCountersink(diameter = pilot_hole_diameter, depth = counter_sink_depth, fn=20)
 {
+    echo("Drawing countersink with diameter=", diameter, " depth=", depth);
     cylinder(d = diameter, h = depth, $fn=fn);
 }

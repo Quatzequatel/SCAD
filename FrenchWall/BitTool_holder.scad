@@ -53,8 +53,8 @@ module draw_single_peg_cleat_hook()
 
     tray = 
     ["tray", 
-        ["x", convert_in2mm(3/8)],
-        ["y", convert_in2mm(3/8)],
+        ["x", convert_in2mm(2/8)],
+        ["y", convert_in2mm(2/8)],
         ["z", convert_in2mm(0.75)],
         ["move", [0, 0, 0]],
         ["rotate", [0,0, 0]],
@@ -732,6 +732,7 @@ module screwDriverTray(includeScrewholes = true)
     echo();
     echo(FileName = "LargeHoleScrewDriverTray.stl");
     echo();
+    echo( tray = tray );
 
     tray = 
     ["tray", 
@@ -778,7 +779,7 @@ module screwDriverTray(includeScrewholes = true)
 
     shaft = 
     ["bit dimension",
-        ["x", convert_in2mm(1.25)],
+        ["x", convert_in2mm(0.5)],
         ["y", convert_in2mm(1)],
         ["z", tray_z * 1.25],
         ["fragments", 60],
@@ -792,7 +793,7 @@ module screwDriverTray(includeScrewholes = true)
         ["x", tray_x],
         ["y", tray_y],
         ["z", tray_z],
-        ["columns", 2],
+        ["columns", 3],
         ["rows", 4],
         ["spacing", 2],
         //move is a final adjustment
