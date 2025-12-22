@@ -736,8 +736,8 @@ module screwDriverTray(includeScrewholes = true)
 
     tray = 
     ["tray", 
-        ["x", convert_in2mm(7)],
-        ["y", convert_in2mm(3)],
+        ["x", convert_in2mm(4)],
+        ["y", convert_in2mm(2)],
         ["z", convert_in2mm(0.5)],
         ["move", [0, 0, 0]],
         ["rotate", [0,0, 0]],
@@ -779,7 +779,7 @@ module screwDriverTray(includeScrewholes = true)
 
     shaft = 
     ["bit dimension",
-        ["x", convert_in2mm(0.5)],
+        ["x", convert_in2mm(0.75)],
         ["y", convert_in2mm(1)],
         ["z", tray_z * 1.25],
         ["fragments", 60],
@@ -793,11 +793,11 @@ module screwDriverTray(includeScrewholes = true)
         ["x", tray_x],
         ["y", tray_y],
         ["z", tray_z],
-        ["columns", 3],
+        ["columns", 2],
         ["rows", 4],
         ["spacing", 2],
         //move is a final adjustment
-        ["move", [tray_x/8 + 3, 4, 0]],
+        ["move", [tray_x/12, 4, 0]],
         ["rotate", [0,0, 0]],
         ["color", "yellow"]
     ];
@@ -809,7 +809,7 @@ module screwDriverTray(includeScrewholes = true)
         union()
         {
             drawSquareShape(tray);
-            translate([gdv(backwall,"x"), 0, (3 * gdv(backwall,"z")) - gdv(tray, "z")])
+            translate([gdv(backwall,"x"), 0, (2 * gdv(backwall,"z")) - 2 *gdv(tray, "z")])
             rotate([0,90,0])
             draw_Cleated_Back_Wall(backwall);      
         }
