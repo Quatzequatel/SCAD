@@ -59,8 +59,11 @@ module build(args)
 
 module make_box_for_2_5port_nuts()
 {
-    echo("name file, 2x Wago_221-5port enclosure.stl");
-    open_box(Wago221_5port, 2);
+    echo();
+    echo("name file: ");
+    echo("2x Wago_221-3port enclosure.stl");
+    echo();
+    open_box(Wago221_3port, 2);
 }
 
 module make_box_for_3_5port_nuts()

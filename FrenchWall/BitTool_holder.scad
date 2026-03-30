@@ -737,7 +737,7 @@ module screwDriverTray(includeScrewholes = true)
     tray = 
     ["tray", 
         ["x", convert_in2mm(4)],
-        ["y", convert_in2mm(2)],
+        ["y", convert_in2mm(3)],
         ["z", convert_in2mm(0.5)],
         ["move", [0, 0, 0]],
         ["rotate", [0,0, 0]],
@@ -793,9 +793,9 @@ module screwDriverTray(includeScrewholes = true)
         ["x", tray_x],
         ["y", tray_y],
         ["z", tray_z],
-        ["columns", 2],
+        ["columns", 3],
         ["rows", 4],
-        ["spacing", 2],
+        ["spacing", 1],
         //move is a final adjustment
         ["move", [tray_x/12, 4, 0]],
         ["rotate", [0,0, 0]],
@@ -816,7 +816,10 @@ module screwDriverTray(includeScrewholes = true)
 
         if(includeScrewholes == true)
         {
-            drawArrayOfCircleShapes(shaft_array, shaft);
+            // drawArrayOfCircleShapes2(shaft_array, shaft);
+            linear_extrude(height = gdv(tray, "z") * 1.25)
+            #drawArrayOfCircleShapes2(rows=gdv(shaft_array, "rows"), columns=gdv(shaft_array, "columns"), 
+                width=gdv(shaft_array, "x"), height=gdv(shaft_array, "y"), spacing=gdv(shaft_array, "spacing"));
             //screw_hole_counter_sink(shaft, backwall);
         }
     }

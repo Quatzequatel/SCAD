@@ -56,7 +56,12 @@ module drawCircleShape2(properties)
     circle(d=gdv(properties, "x"), $fn = gdv(properties, "fragments"));
 }
 
-function GetTrayCellLength(v) = ( gdv(v, "x") - gdv(v, "rows") * gdv(v, "spacing") ) / gdv(v, "rows") ;
+function GetTrayCellLength(v) = 
+    ( 
+        gdv(v, "x") - gdv(v, "rows") * gdv(v, "spacing") 
+    ) 
+    / 
+    gdv(v, "rows") ;
 function GetTrayCellWidth(v, columns) = ( gdv(v, "y") - gdv(v, "columns") * gdv(v, "spacing") )  / gdv(v, "columns") ;
 
 module drawArrayOfCircleShapes(array, bitInfo)
@@ -79,6 +84,33 @@ module drawArrayOfCircleShapes(array, bitInfo)
                     echo(ponits =[row * xDistance, col * yDistance, 0]);
                     translate([row * xDistance, col * yDistance, 0])
                     drawCircleShape(bitInfo);
+                }        
+            }          
+        }        
+    }  
+}
+
+function GetDiameter(cellwidth, cellheight, spacing) = 
+    (cellwidth <= cellheight) ? (cellwidth - 2*spacing) : (cellheight - 2*spacing);
+
+function GetDelta(rowcol, diameter, spacing) = rowcol*(diameter + 2*spacing) + (diameter/2 + spacing);
+
+module drawArrayOfCircleShapes2(rows, columns, width, height, spacing, fn = 100)
+{
+    cellwidth = width/rows;
+    cellheight = height/columns;
+    diameter = (cellwidth <= cellheight) ? (cellwidth - 2*spacing) : (cellheight - 2*spacing);
+    echo(cellwidth=cellwidth, cellheight=cellheight, diameter=diameter);
+    {
+        union()
+        {
+            for (row=[0:rows-1]) 
+            {
+                for (col=[0:columns-1]) 
+                {
+                    echo(points =[GetDelta(row, diameter, spacing), GetDelta(col, diameter, spacing), 0]);
+                    translate([GetDelta(row, diameter, spacing), GetDelta(col, diameter, spacing), 0])
+                    circle(d=diameter, $fn = fn);
                 }        
             }          
         }        
