@@ -16,7 +16,7 @@ use <dictionary.scad>;
 
 //un comment to show ruler in drawing.
 // scale(size = 5, increment = convert_in2mm(1), fontsize = 8);
-screwDriverTray(true);
+// screwDriverTray(true);
 // completeBitTray();
 // drawHammerHandle();
 // drawPeggedHandle();
@@ -31,7 +31,7 @@ screwDriverTray(true);
 // draw_box_for_JigSaw_Box();
 // draw_peg_holder_for_staples();
 // draw_box_Ratchet_Set();
-//  draw_single_peg_cleat_hook();
+draw_single_peg_cleat_hook();
 // scale();
 
 module draw_single_peg_cleat_hook()
@@ -432,7 +432,7 @@ module draw_peg_holder_for_staples()
 module draw_Cleated_Back_Wall(properties)
 {
     // echo(gdv(properties, "filename"));
-    // properties_echo(properties);
+    properties_echo(properties);
     //now wall and cleat is at [0,0]
     //move to positive 0 x-axis.
     translate([gdv(properties,"x"),0,0])
