@@ -114,4 +114,13 @@ function BackwallAdjusted(filename,X,Y,Z,move,from_edge,rotate,include_cleat,cle
         ["cleat", cleat],
         ["color", color]
     ];  
-    
+
+function PropertiesAdjusted(description,X,Y,Z,move,rotate,color) = 
+    [description,
+        ["x", X],
+        ["y", Y],
+        ["z", Z],
+        ["move", move],
+        ["rotate", rotate],
+        ["color", color]
+    ];
