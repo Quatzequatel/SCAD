@@ -20,130 +20,80 @@ cleat_thickness = convert_in2mm(1/8);
 cleat_angle = 135;
 
 // draw_single_peg_cleat_hook();
-draw_peg_bracket(length, thickness, BackwallAdjusted(
-        "Cleat_for_wall.stl",
-        trayX,
-        cleat_thickness,
-        convert_in2mm(2.5),
-        [0, 0, 0],
-        0,
-        [0,0, 0],
-        false,
-        cleat,
-        "LightGrey"
-    ));
+draw_peg_bracket(Tray());
 
 // module draw_Cleated_Back_Wall(properties)
-module draw_single_peg_cleat_hook()
+module draw_single_peg_cleat_hook(pegProperties = Peg(), trayProperties = Tray(), backwallProperties = Backwall())
 {
     echo();
     echo(FileName = "single_peg_cleat_hook.stl");
     echo();
 
-    // peg = Peg();
-    peg = PegAdjusted(
-        convert_in2mm(3/8), 
-        convert_in2mm(3/8), 
-        convert_in2mm(2), 
-        60, 
-        [0,gdv(HammerBackwall, "move").y,convert_in2mm(3/8)/2], 
-        (gdv(HammerTray, "x")-convert_in2mm(1))/2, 
-        [90,0, 0], 
-        "LightBlue"
-    );
 
-    // tray = TrayAdjusted(
-    //     convert_in2mm(2/8),
-    //     convert_in2mm(2/8),
-    //     convert_in2mm(0.75),
-    //     [0, 0, 0],
-    //     [0,0, 0],
-    //     "LightGrey"
-    // );
-
-    // cleat = CleatAdjusted(
-    //     gdv(tray, "x"),
-    //     cleat_thickness,
-    //     convert_in2mm(0.75),
-    //     convert_in2mm(0.75)/sin(45),
-    //     cleat_thickness,
-    //     135,
-    //     gdv(tray, "x"),
-    //     [0, 0, 0],
-    //     0,
-    //     [0, 0, 0],
-    //     "LightGrey"
-    // );
-
-    backwall = BackwallAdjusted(
-        "Cleat_for_wall.stl",
-        gdv(tray, "x"),
-        cleat_thickness,
-        convert_in2mm(2.5),
-        [0, 0, 0],
-        0,
-        [0,0, 0],
-        false,
-        cleat,
-        "LightGrey"
-    );
-
-    applyColor(peg, 0.5)
-    applyRotate(peg)
-    applyExtrude(peg)
-    moveToOrigin(peg)
-    drawCircleShape2(peg);
+    applyColor(pegProperties, 0.5)
+    applyRotate(pegProperties)
+    applyExtrude(pegProperties)
+    moveToOrigin(pegProperties)
+    drawCircleShape2(pegProperties);
 
     // applyColor(tray, 0.5)
     // moveToOrigin(tray)
     // drawSquareShape2(tray);
 
-    translate([ gdv(tray, "x"), -3, gdv(tray, "x")])
+    translate([ gdv(trayProperties, "x"), -3, gdv(trayProperties, "x")])
     rotate([180, 180, -5 ])
-    draw_Cleated_Back_Wall(backwall);   
+    draw_Cleated_Back_Wall(backwallProperties);   
 }
 
-module draw_peg_bracket(length, thickness, backwall) 
+module draw_peg_bracket(trayProperties) 
 {
-    tray = TrayAdjusted(
-        convert_in2mm(2/8),
-        convert_in2mm(2/8),
-        convert_in2mm(0.75),
-        [0, 0, 0],
-        [0, 0, 0],
-        "LightGrey"
+    echo();
+    echo(FileName = "draw_peg_bracket.stl");
+    echo();
+
+    thickness = 2;
+    length = 50;
+
+    bracket_Properties1 = PropertiesAdjusted
+        (
+            description = "Peg Bracket", 
+            X = gdv(trayProperties, "x"), 
+            Y =gdv(trayProperties, "y"), 
+            Z= 10, 
+            move=[0,0,0], 
+            rotate=[0,0,0], 
+            color="LightGrey"
+        );    
+
+    bracket_Properties2 = PropertiesAdjusted
+        (
+            description = "Peg Bracket", 
+            X = gdv(bracket_Properties1, "x"), 
+            Y =gdv(bracket_Properties1, "y"), 
+            Z= 10, 
+            move=[0,50,0], 
+            rotate=[0,0,0], 
+            color="LightGrey"
+        );
+
+    bracket_Properties3 = PropertiesAdjusted
+    (
+        description = "Peg Bracket", 
+        X = gdv(bracket_Properties1, "x")+ thickness, 
+        Y = length + gdv(bracket_Properties1, "y") + 2 * thickness, 
+        Z = 5, 
+        move=[1, -thickness,1], 
+        rotate=[0,0,0], 
+        color="LightGrey"
     );
 
-    cleat = CleatAdjusted(
-        gdv(tray, "x"),
-        cleat_thickness,
-        convert_in2mm(0.75),
-        convert_in2mm(0.75)/sin(45),
-        cleat_thickness,
-        135,
-        gdv(tray, "x"),
-        [0, 0, 0],
-        0,
-        [0, 0, 0],
-        "LightGrey"
-    );
-
-    draw_peg_bracket(10, 5, 
-        BackwallAdjusted(
-            "Cleat_for_wall.stl",
-            gdv(tray, "x"),
-            cleat_thickness,
-            convert_in2mm(2.5),
-            [0, 0, 0],
-            0,
-            [0,0, 0],
-            false,
-            cleat,
-            "LightGrey"
-        )
-    );
-
-    drawSquareShape(backwall);
-    translate([0, length, 0]) 
-    drawSquareShape(backwall);
+    difference()
+    {
+        drawSquareShape(bracket_Properties3);
+        union()
+        {
+            drawSquareShape(bracket_Properties1);
+            drawSquareShape(bracket_Properties2);
+        }
+    }
 }
