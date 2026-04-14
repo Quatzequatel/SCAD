@@ -25,8 +25,8 @@ function Peg(args) =
         ["color", "LightBlue"]
     ];
 
-function PegAdjusted(X,Y,Z,fragments,move,from_edge,rotate,color) = 
-    ["Peg dimension",
+function PegAdjusted(description,X,Y,Z,fragments,move,from_edge,rotate,color) = 
+    [description,
         ["x", X],
         ["y", Y],
         ["z", Z],
@@ -72,8 +72,8 @@ function Cleat(args) =
         ["color", "LightGrey"]
     ];
 
-function CleatAdjusted(X,Y,Z,parallelogram_length,parallelogram_thickness,angle,extrude_height,move,from_edge,rotate,color) = 
-    ["cleat properties", 
+function CleatAdjusted(description,X,Y,Z,parallelogram_length,parallelogram_thickness,angle,extrude_height,move,from_edge,rotate,color) = 
+    [description, 
         ["x", X],
         ["y", Y],
         ["z", Z],
