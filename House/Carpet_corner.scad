@@ -26,7 +26,7 @@ module build(args) {
     
     // Preview
     linear_extrude(height=2)
-    hex_lattice_square(sizeX = 200, sizeY = 100, hex_flat_d=5, gap=1, border=10);
+    hex_lattice_square(sizeX = 200, sizeY = 100, hex_flat_d=5, gap=0.4, border=10);
 }
 
 // Hex-filled lattice pattern inside a square cutout
