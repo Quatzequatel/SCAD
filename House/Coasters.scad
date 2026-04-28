@@ -7,6 +7,7 @@ use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
 use <dictionary.scad>;
+
     diameter = 89; // 3.7 inches in mm
     insert_thickness = 2; // 2 mm thickness for coaster insert
     brim_height = 2.5; // height of walls in lattice pattern
@@ -24,7 +25,7 @@ draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bo
 // echo(FileName = str("coaster_insert.stl"));
 // echo();
 
-module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness, cosaster_count = 12) 
+module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness, cosaster_count = 16) 
 {
      echo();
      echo(FileName = str("Coasters Holder.stl"));
@@ -32,7 +33,8 @@ module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_hei
     // body...
     holder_wall_thickness = 6;
     space_between_coasters_and_holder = 2; // space between coasters in holder for easy removal
-    holder_height = bottom_thickness + (brim_height * cosaster_count) + 2; // height of holder walls, add extra 2 mm for clearance when inserting coasters
+    wobble_room = 0.5; // extra space added to height of each coaster for easy stacking of coasters in holder.
+    holder_height = bottom_thickness + (brim_height + wobble_room) * cosaster_count + 2; // height of holder walls, add extra 2 mm for clearance when inserting coasters
     // Outer circle
     diaOuter = diameter + (brim_thickness * 2) + holder_wall_thickness; // add holder wall thickness to diameter for spacing between coasters
     diaInner = diameter + (brim_thickness * 2) + space_between_coasters_and_holder; // add holder wall thickness to diameter for spacing between coasters
@@ -76,9 +78,6 @@ module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_hei
 
 module draw_finger_slot(holder_height, finger_diameter, thickness = 10) 
 {
-     echo();
-    //  echo(FileName = str("Finger Slot.stl"));
-     echo();
 
     translate([thickness/2, 0, 0])
     rotate([0, -90, 0])
