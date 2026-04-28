@@ -14,22 +14,53 @@ use <dictionary.scad>;
     brim_thickness = 2.5; // thickness of walls in lattice pattern
     bottom_thickness = LayerHeight * 12; // thickness of bottom layer of coaster
 
-draw_complete_coaster(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
-// draw_coaster_brim_and_bottom(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
-// draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
+// build(args = "Complete Coaster");
+// build(args = "Coaster Brim and Bottom");
+// build(args = "Coaster Insert");
+// build(args = "Coaster Holder");
 
+module build(args) 
+{
+    if( args != undef)
+    {
+        if (args == "Coaster Holder") 
+        {
+            echo();
+            echo(FileName = str("Coasters Holder.stl"));
+            echo();
+            draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);            
+        }
 
+        if(args == "Coaster Insert") 
+        {
+            echo();
+            echo(FileName = str("Coaster Insert.stl"));
+            echo();
+            draw_coaster_insert(diameter, insert_thickness);            
+        }
 
-// draw_coaster_insert(diameter, insert_thickness);
-// echo();
-// echo(FileName = str("coaster_insert.stl"));
-// echo();
+        if(args == "Coaster Brim and Bottom") 
+        {
+            echo();
+            echo(FileName = str("Coaster Brim and Bottom.stl"));
+            echo();
+            draw_coaster_brim_and_bottom(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);            
+        }
+
+        if(args == "Complete Coaster") 
+        {
+            echo();
+            echo(FileName = str("Complete Coaster.stl"));
+            echo();
+            draw_complete_coaster(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
+        }
+    }
+}
+
 
 module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness, cosaster_count = 16) 
 {
-     echo();
-     echo(FileName = str("Coasters Holder.stl"));
-     echo();
+
     // body...
     holder_wall_thickness = 6;
     space_between_coasters_and_holder = 2; // space between coasters in holder for easy removal
@@ -97,10 +128,6 @@ module draw_finger_slot(holder_height, finger_diameter, thickness = 10)
 
 module draw_coaster_brim_and_bottom(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness) 
 {
-     echo();
-     echo(FileName = str("coaster_brim_and_bottom.stl"));
-     echo();
-
     // brim
     draw_coaster_brim(diameter, brim_thickness, brim_height);
 
@@ -111,9 +138,7 @@ module draw_coaster_brim_and_bottom(diameter, insert_thickness, brim_thickness, 
 
 module draw_complete_coaster(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness) 
 {
-     echo();
-     echo(FileName = str("Coaster.stl"));
-     echo();
+
 
     // insert
     draw_coaster_insert(diameter, insert_thickness);
