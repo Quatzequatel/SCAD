@@ -14,9 +14,9 @@ use <dictionary.scad>;
     brim_thickness = 2.5; // thickness of walls in lattice pattern
     bottom_thickness = LayerHeight * 12; // thickness of bottom layer of coaster
 
-// draw_complete_coaster(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
+draw_complete_coaster(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
 // draw_coaster_brim_and_bottom(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
-draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
+// draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);
 
 
 
@@ -44,7 +44,7 @@ module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_hei
     echo(str("diaInner = ", diaInner));
     echo(str("diameter = ", diameter));
 
-    translate([-3, -2.5, 0]) 
+    // Main holder structure centered at origin (0, 0, 0)
     difference()
     {
         union()
@@ -53,24 +53,27 @@ module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_hei
             linear_extrude(height=holder_height)
             difference() 
             {
-
-                translate([diaOuter/2, diaOuter/2]) 
+                // Outer circular wall
                 circle(d=diaOuter, $fn=100);
 
-                // Inner cutout circle
-                translate([diaOuter/2, diaOuter/2])
+                // Inner cutout circle (cavity for coasters)
                 circle(d=diaInner, $fn=100);
             }        
 
-            translate([ 2.75, 3.4, 0]) // translate down slightly to ensure cut goes all the way through
+            // Stack of coaster brims and bottoms - centered at origin
+            translate([0, 0, 0])
             draw_coaster_brim_and_bottom(diaInner-2, insert_thickness, brim_thickness, brim_height, bottom_thickness);     
         }
        
-        // cutouts for coasters
-        translate([0, diaInner/2, bottom_thickness]) // translate down slightly to ensure cut goes all the way through
+        // Finger slots cut through opposite walls for easy coaster removal
+        // Top wall finger slot
+        translate([0, diaOuter/2, bottom_thickness])
+        rotate([0, 0, 90])
         draw_finger_slot(holder_height, finger_diameter=15, thickness=10);
 
-        translate([diaOuter , diaInner/2, bottom_thickness]) // translate down slightly to ensure cut goes all the way through
+        // Bottom wall finger slot
+        translate([0, -diaOuter/2, bottom_thickness])
+        rotate([0, 0, 90])
         draw_finger_slot(holder_height, finger_diameter=15, thickness=10);
     }
 
@@ -128,9 +131,9 @@ module draw_coaster_insert(diameter, insert_thickness)
     linear_extrude(height=insert_thickness)    
     difference() 
     {        
-        translate([diameter/2, diameter/2])
         circle(d=diameter);
-
+        
+        translate([-diameter/2, -diameter/2])
         hex_lattice(sizeX = diameter, sizeY = diameter, hex_flat_d=5, gap=0.4, border=0);
     } 
 }
@@ -143,28 +146,26 @@ module draw_coaster_brim(diameter, brim_thickness, brim_height)
         // Outer circle
         diaOuter = diameter + brim_thickness * 2;
 
-        translate([diameter/2, diameter/2]) 
         circle(d=diaOuter, $fn=100);
 
         // Inner cutout circle
-        translate([diameter/2, diameter/2])
         circle(d=diameter, $fn=100);
     }
     
     // chamfer on top edge of brim
-    translate([diameter/2, diameter/2, brim_height])
+    translate([0, 0, brim_height])
     draw_chamfer([[0,0], [brim_thickness, 0], [brim_thickness, insert_thickness]], diameter);
 
 }
 
 module draw_coaster_bottom(diameter, bottom_thickness) 
 {
-    translate([diameter/2, diameter/2, -bottom_thickness])
+    translate([0, 0, -bottom_thickness])
     linear_extrude(height=bottom_thickness)
     circle(d=diameter, $fn=100);
 
     // chamfer on bottom edge of brim
-    translate([diameter/2, diameter/2, -bottom_thickness - 0.0])
+    translate([0, 0, -bottom_thickness - 0.0])
     draw_chamfer([[0,0], [brim_thickness, bottom_thickness ], [0, bottom_thickness ]], (diameter - brim_thickness/2) + 0.7);
 }
 
