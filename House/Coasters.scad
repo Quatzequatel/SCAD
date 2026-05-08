@@ -33,7 +33,7 @@ use <dictionary.scad>;
 // build(args = "Complete Coaster");
 // build(args = "Coaster Brim and Bottom");
 // build(args = "Coaster Insert");
-// build(args = "Coaster Holder");
+build(args = "Coaster Holder");
 
 // Build selector module - routes execution to requested component
 // Parameters:
@@ -44,10 +44,11 @@ module build(args)
     {
         if (args == "Coaster Holder") 
         {
+            coaster_count = 10; // Number of coasters to stack in holder
             echo();
-            echo(FileName = str("Coasters Holder.stl"));
+            echo(FileName = str(coaster_count, " Coasters Holder.stl"));
             echo();
-            draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness);            
+            draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness, coaster_count = coaster_count);            
         }
 
         if(args == "Coaster Insert") 
@@ -89,7 +90,7 @@ module build(args)
 //   bottom_thickness - thickness of coaster base
 //   coaster_count - number of coasters to stack (default: 16)
 // Returns: Cylindrical holder with internal slots and finger access holes
-module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness, cosaster_count = 16) 
+module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_height, bottom_thickness, coaster_count = 1) 
 {
     // ========================================================================
     // HOLDER GEOMETRY CALCULATIONS
@@ -97,10 +98,13 @@ module draw_coasters_holder(diameter, insert_thickness, brim_thickness, brim_hei
     holder_wall_thickness = 6;                                    // Outer wall thickness (mm)
     space_between_coasters_and_holder = 2;                        // Radial clearance for coaster removal
     wobble_room = 0.5;                                            // Vertical clearance per coaster layer
+    coaster_height = 2 * brim_height ;                            // Height of one coaster layer
     
     // Total holder height calculation:
     // (coasters * height_per_coaster) + base + top clearance
-    holder_height = bottom_thickness + (brim_height + wobble_room) * cosaster_count + 2;
+    holder_height = (2 * bottom_thickness) + (coaster_height * coaster_count) + 2;
+
+    echo(str("holder_height = ", holder_height));
     
     // Diameter calculations for circular geometry:
     // Outer diameter = coaster diameter + 2*(brim_thickness + holder_wall_thickness)
