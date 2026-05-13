@@ -19,11 +19,11 @@ trayZ = convert_in2mm(0.75);
 cleat_thickness = convert_in2mm(1/8);
 cleat_angle = 135;
 
-// draw_single_peg_cleat_hook(pegLengthInches = 4, pegRadiusInches = 3/8);
+// draw_single_peg_cleat_hook(pegLengthInches = 6, pegRadiusInches = 4/8, hull = true);
 // draw_peg_bracket(bracketInseamInches = 2);
 // draw_Assorted_peg_brackets([1.5, 2, 2.5, 3]) ;
 
-draw_Assorted_single_peg_cleats([[0,0], [2, 3/8], [2, 3/8], [3, 3/8], [3, 3/8]]);
+draw_Assorted_single_peg_cleats([[0,0], [6, 4/8], [6, 4/8]]);
 
 module draw_Assorted_peg_brackets(args) 
 {
@@ -51,21 +51,21 @@ module draw_Assorted_single_peg_cleats(args)
     // draw_single_peg_cleat_hook(pegLengthInches = args[0][0], pegRadiusInches = args[0][1])
      
      translate([30, -30, 0])
-     draw_single_peg_cleat_hook(pegLengthInches = args[1][0], pegRadiusInches = args[1][1]);
+     draw_single_peg_cleat_hook(pegLengthInches = args[1][0], pegRadiusInches = args[1][1], hull = true);
      
      translate([60, -60, 0])
-     draw_single_peg_cleat_hook(pegLengthInches = args[2][0], pegRadiusInches = args[2][1]);
+     draw_single_peg_cleat_hook(pegLengthInches = args[2][0], pegRadiusInches = args[2][1], hull = true);
 
-     translate([90, -90, 0])
-     draw_single_peg_cleat_hook(pegLengthInches = args[3][0], pegRadiusInches = args[3][1]);
+    //  translate([90, -90, 0])
+    //  draw_single_peg_cleat_hook(pegLengthInches = args[3][0], pegRadiusInches = args[3][1], hull = true);
 
-     translate([120, -120, 0])
-     draw_single_peg_cleat_hook(pegLengthInches = args[4][0], pegRadiusInches = args[4][1]);
+    //  translate([125, -125, 0])
+    //  draw_single_peg_cleat_hook(pegLengthInches = args[4][0], pegRadiusInches = args[4][1], hull = true);
     
 }
 
 // module draw_Cleated_Back_Wall(properties)
-module draw_single_peg_cleat_hook(pegLengthInches = 1, pegRadiusInches = 3/8)
+module draw_single_peg_cleat_hook(pegLengthInches = 1, pegRadiusInches = 3/8, hull = false)
 {
     pegProperties = Peg();
     trayProperties = Tray();
@@ -134,11 +134,35 @@ module draw_single_peg_cleat_hook(pegLengthInches = 1, pegRadiusInches = 3/8)
     // properties_echo(backwallProperties);
     // properties_echo(backwallAdjust);
 
-    applyColor(pegAdjust, 0.5)
-    applyRotate(pegAdjust)
-    applyExtrude(pegAdjust)
-    moveToOrigin(pegAdjust)
-    drawCircleShape2(pegAdjust);
+    // applyColor(pegAdjust, 0.5)
+    // applyRotate(pegAdjust)
+    // applyExtrude(pegAdjust)
+    // moveToOrigin(pegAdjust)
+    // drawCircleShape2(pegAdjust);
+
+    if(hull)
+    {
+        hull()
+        {
+            applyRotate(pegAdjust)
+            applyExtrude(pegAdjust)
+            moveToOrigin(pegAdjust)
+            drawCircleShape2(pegAdjust);
+
+            translate([10, 0, 0])
+            applyRotate(pegAdjust)
+            applyExtrude(pegAdjust)
+            moveToOrigin(pegAdjust)
+            drawCircleShape2(pegAdjust);
+        }
+    }
+    else
+    {
+        applyRotate(pegAdjust)
+        applyExtrude(pegAdjust)
+        moveToOrigin(pegAdjust)
+        drawCircleShape2(pegAdjust);
+    }
 
 
     translate([ gdv(trayAdjust, "x"), -3, gdv(pegAdjust, "x")])
