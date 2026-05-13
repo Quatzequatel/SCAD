@@ -41,19 +41,6 @@ function kv_new_with(pairs = []) = pairs;
 // GET OPERATIONS
 // ============================================================================
 
-// Internal recursive search for key lookup
-// Parameters:
-//   store - the KV store to search
-//   key - the key to find
-//   index - current search position (recursive)
-// Returns: [key, value] pair if found, undef if not found
-function _kv_find_pair(store, key, index = 0) =
-    index >= len(store) 
-        ? undef
-        : store[index][0] == key
-            ? store[index]
-            : _kv_find_pair(store, key, index + 1);
-
 // Get a value from the store by key
 // Parameters:
 //   store - the KV store
@@ -62,8 +49,8 @@ function _kv_find_pair(store, key, index = 0) =
 // Returns: The value associated with the key, or default/undef if not found
 // Example: kv_get(store, "name")
 function kv_get(store, key, default = undef) =
-    let(pair = _kv_find_pair(store, key))
-    pair == undef ? default : pair[1];
+    let(matches = [for (pair = store) if (pair[0] == key) pair[1]])
+    len(matches) > 0 ? matches[0] : default;
 
 // Check if a key exists in the store
 // Parameters:
@@ -71,7 +58,7 @@ function kv_get(store, key, default = undef) =
 //   key - the key to check
 // Returns: true if key exists, false otherwise
 function kv_has(store, key) =
-    _kv_find_pair(store, key) != undef;
+    len([for (pair = store) if (pair[0] == key) pair]) > 0;
 
 // ============================================================================
 // SET/UPDATE OPERATIONS
@@ -93,10 +80,8 @@ function kv_set(store, key, value) =
 //   pairs - list of [key, value] pairs to add
 // Returns: New store with all pairs added/updated
 // Example: kv_set_multi(store, [ ["x", 10], ["y", 20] ])
-function kv_set_multi(store, pairs, index = 0) =
-    index >= len(pairs) 
-        ? store 
-        : kv_set_multi(kv_set(store, pairs[index][0], pairs[index][1]), pairs, index + 1);
+function kv_set_multi(store, pairs) =
+    concat([for (pair = store) if (!_key_in_list(pairs, pair[0])) pair], pairs);
 
 // ============================================================================
 // DELETE OPERATIONS
@@ -117,10 +102,8 @@ function kv_delete(store, key) =
 //   keys - list of keys to remove
 // Returns: New store with all specified keys removed
 // Example: kv_delete_multi(store, ["name", "color"])
-function kv_delete_multi(store, keys, index = 0) =
-    index >= len(keys)
-        ? store
-        : kv_delete_multi(kv_delete(store, keys[index]), keys, index + 1);
+function kv_delete_multi(store, keys) =
+    [for (pair = store) if (!_contains_key(keys, pair[0])) pair];
 
 // Clear all entries from the store
 // Parameters:
@@ -213,14 +196,6 @@ function kv_omit(store, keys) =
             pair
     ];
 
-// Internal helper - check if list contains key
-function _contains_key(keys, key, index = 0) =
-    index >= len(keys)
-        ? false
-        : keys[index] == key
-            ? true
-            : _contains_key(keys, key, index + 1);
-
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
@@ -239,60 +214,67 @@ function kv_to_string(store) =
 // Returns: true if value exists in store, false otherwise
 function kv_contains_value(store, value) =
     let(values = kv_values(store))
-    _value_in_list(values, value);
+    len([for (v = values) if (v == value) v]) > 0;
 
-// Internal helper - check if value is in list
-function _value_in_list(list, value, index = 0) =
-    index >= len(list)
-        ? false
-        : list[index] == value
-            ? true
-            : _value_in_list(list, value, index + 1);
+// Internal helper - check if key is in list of pairs
+function _key_in_list(pairs, key) =
+    len([for (pair = pairs) if (pair[0] == key) pair]) > 0;
+
+// Internal helper - check if specific key exists in key list
+function _contains_key(keys, key) =
+    len([for (k = keys) if (k == key) k]) > 0;
 
 // ============================================================================
 // EXAMPLE USAGE (uncomment to test)
 // ============================================================================
 
-/*
-// Create stores
-store1 = kv_new_with([
-    ["name", "Coaster Holder"],
-    ["size", 89],
-    ["color", "SaddleBrown"]
-]);
+// // Create stores
+// store1 = kv_new_with([
+//     ["name", "Coaster Holder"],
+//     ["size", 89],
+//     ["color", "SaddleBrown"]
+// ]);
 
-store2 = kv_new_with([
-    ["height", 150],
-    ["color", "Red"]
-]);
+// store2 = kv_new_with([
+//     ["height", 150],
+//     ["color", "Red"]
+// ]);
 
-// Get operations
-name = kv_get(store1, "name");                      // "Coaster Holder"
-missing = kv_get(store1, "missing", "N/A");         // "N/A"
-has_size = kv_has(store1, "size");                  // true
+// // Get operations
+// name = kv_get(store1, "name");                      // "Coaster Holder"
+// missing = kv_get(store1, "missing", "N/A");         // "N/A"
+// has_size = kv_has(store1, "size");                  // true
 
-// Set operations
-store3 = kv_set(store1, "material", "PETG");        // Add new pair
-store4 = kv_set(store1, "size", 100);               // Update existing
-store5 = kv_set_multi(store1, [["x", 10], ["y", 20]]);
+// // Set operations
+// store3 = kv_set(store1, "material", "PETG");        // Add new pair
+// store4 = kv_set(store1, "size", 100);               // Update existing
+// store5 = kv_set_multi(store1, [["x", 10], ["y", 20]]);
 
-// Delete operations
-store6 = kv_delete(store3, "material");             // Remove pair
-store7 = kv_delete_multi(store1, ["color", "size"]);
+// // Delete operations
+// store6 = kv_delete(store3, "material");             // Remove pair
+// store7 = kv_delete_multi(store1, ["color", "size"]);
 
-// List operations
-keys = kv_keys(store1);                             // ["name", "size", "color"]
-values = kv_values(store1);                         // ["Coaster Holder", 89, "SaddleBrown"]
-size = kv_size(store1);                             // 3
-empty = kv_is_empty(store1);                        // false
+// // List operations
+// keys = kv_keys(store1);                             // ["name", "size", "color"]
+// values = kv_values(store1);                         // ["Coaster Holder", 89, "SaddleBrown"]
+// size = kv_size(store1);                             // 3
+// empty = kv_is_empty(store1);                        // false
 
-// Transform operations
-merged = kv_merge(store1, store2);                  // Merge two stores
-subset = kv_pick(store1, ["name", "size"]);        // Keep only these keys
-filtered = kv_omit(store1, ["color"]);             // Remove these keys
-cloned = kv_clone(store1);                          // Make a copy
+// // Transform operations
+// merged = kv_merge(store1, store2);                  // Merge two stores
+// subset = kv_pick(store1, ["name", "size"]);        // Keep only these keys
+// filtered = kv_omit(store1, ["color"]);             // Remove these keys
+// cloned = kv_clone(store1);                          // Make a copy
 
-// Utility operations
-description = kv_to_string(store1);                 // "KVStore(3 entries, ...)"
-has_value = kv_contains_value(store1, 89);          // true
-*/
+// // Utility operations
+// description = kv_to_string(store1);                 // "KVStore(3 entries, ...)"
+// has_value = kv_contains_value(store1, 89);          // true
+
+// echo(description = description);
+// echo(merged = kv_to_string(merged));
+// echo(subset = kv_to_string(subset));
+// echo(filtered = kv_to_string(filtered));
+// echo(cloned = kv_to_string(cloned));
+// echo(has_value = has_value);
+// echo(missing = missing);
+// echo(has_size = has_size);
