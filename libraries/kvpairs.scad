@@ -77,27 +77,6 @@ function kv_has(store, key) =
 // SET/UPDATE OPERATIONS
 // ============================================================================
 
-// Internal helper to update or add a key-value pair
-// Parameters:
-//   store - the KV store
-//   key - the key to add/update
-//   value - the new value
-//   index - current position (recursive)
-//   found - whether key was already found (recursive)
-// Returns: Updated store with new or modified pair
-function _kv_set_recursive(store, key, value, index = 0, found = false) =
-    index >= len(store)
-        ? found
-            ? store
-            : concat(store, [[key, value]])
-        : store[index][0] == key
-            ? concat(
-                [for (i = 0; i <= index; i++) 
-                    i == index ? [key, value] : store[i]],
-                [for (i = index + 1; i < len(store); i++) store[i]]
-            )
-            : _kv_set_recursive(store, key, value, index + 1, found);
-
 // Add or update a key-value pair
 // Parameters:
 //   store - the KV store
@@ -106,7 +85,7 @@ function _kv_set_recursive(store, key, value, index = 0, found = false) =
 // Returns: New store with the pair added or updated
 // Example: kv_set(store, "name", "NewName")
 function kv_set(store, key, value) =
-    _kv_set_recursive(store, key, value);
+    concat([for (pair = store) if (pair[0] != key) pair], [[key, value]]);
 
 // Add multiple key-value pairs at once
 // Parameters:
@@ -114,31 +93,14 @@ function kv_set(store, key, value) =
 //   pairs - list of [key, value] pairs to add
 // Returns: New store with all pairs added/updated
 // Example: kv_set_multi(store, [ ["x", 10], ["y", 20] ])
-function kv_set_multi(store, pairs) =
-    pairs == [] 
+function kv_set_multi(store, pairs, index = 0) =
+    index >= len(pairs) 
         ? store 
-        : kv_set_multi(kv_set(store, pairs[0][0], pairs[0][1]), 
-                       [for (i = 1; i < len(pairs); i++) pairs[i]]);
+        : kv_set_multi(kv_set(store, pairs[index][0], pairs[index][1]), pairs, index + 1);
 
 // ============================================================================
 // DELETE OPERATIONS
 // ============================================================================
-
-// Internal helper to remove a key
-// Parameters:
-//   store - the KV store
-//   key - the key to remove
-//   index - current position (recursive)
-// Returns: Store with the key removed
-function _kv_delete_recursive(store, key, index = 0) =
-    index >= len(store)
-        ? store
-        : store[index][0] == key
-            ? concat(
-                [for (i = 0; i < index; i++) store[i]],
-                [for (i = index + 1; i < len(store); i++) store[i]]
-            )
-            : _kv_delete_recursive(store, key, index + 1);
 
 // Delete a key-value pair from the store
 // Parameters:
@@ -147,7 +109,7 @@ function _kv_delete_recursive(store, key, index = 0) =
 // Returns: New store with the pair removed
 // Example: kv_delete(store, "name")
 function kv_delete(store, key) =
-    _kv_delete_recursive(store, key);
+    [for (pair = store) if (pair[0] != key) pair];
 
 // Delete multiple keys at once
 // Parameters:
@@ -155,11 +117,10 @@ function kv_delete(store, key) =
 //   keys - list of keys to remove
 // Returns: New store with all specified keys removed
 // Example: kv_delete_multi(store, ["name", "color"])
-function kv_delete_multi(store, keys) =
-    keys == []
+function kv_delete_multi(store, keys, index = 0) =
+    index >= len(keys)
         ? store
-        : kv_delete_multi(kv_delete(store, keys[0]),
-                         [for (i = 1; i < len(keys); i++) keys[i]]);
+        : kv_delete_multi(kv_delete(store, keys[index]), keys, index + 1);
 
 // Clear all entries from the store
 // Parameters:
@@ -226,8 +187,7 @@ function kv_clone(store) =
 // Returns: New merged store combining both
 // Example: kv_merge(store1, store2)
 function kv_merge(store1, store2) =
-    let(result = [for (pair = store1) pair])
-    kv_set_multi(result, store2);
+    kv_set_multi(store1, store2);
 
 // Filter store to keep only specified keys
 // Parameters:
