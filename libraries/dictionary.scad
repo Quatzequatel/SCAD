@@ -285,12 +285,12 @@ echo(lenV = len(dictionary));
 echo(getDictionaryValue = getDictionaryValue(getDictionary(dictionary, "Avian"), "bird"));  
 echo(getDictionary = getDictionary(dictionary, "mamals"));  
 
-// echo(type = type(dictionary[1]));
-// echo(fargsEcho("dictionary" , dictionary));
-// echo( found = Search("animals" , dictionary));
+echo(type = type(dictionary[1]));
+echo(fargsEcho("dictionary" , dictionary));
+echo( found = Search("animals" , dictionary));
 
-// echo(square = square(4));
-// echo(getChildDictionary = getChildDictionary(dictionary, "cat"));  
-// echo(GetDictionary = GetDictionary(dictionary, "animals"));  
+echo(square = square(4));
+echo(getChildDictionary = getChildDictionary(dictionary, "cat"));  
+echo(GetDictionary = GetDictionary(dictionary, "animals"));  
 echo();
 echo();
