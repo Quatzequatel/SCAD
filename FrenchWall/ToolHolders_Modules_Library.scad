@@ -3,34 +3,34 @@ include <constants.scad>;
 use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
-use <dictionary.scad>;
+use <../libraries/kvpairs.scad>;
 
 /*
-    Modules for drawing simple objects,
-    usally from dictionaries (maps)
+    Modules for drawing simple objects using key-value pair stores.
+    This library uses kvpairs.scad for key-value storage and retrieval.
 */
 
 
 module drawSquareShape(properties)
 {
-    color(gdv(properties, "color"), 0.5)
-    rotate(gdv(properties, "rotate"))
-    translate(gdv(properties, "move"))
+    color(kv_get(properties, "color"), 0.5)
+    rotate(kv_get(properties, "rotate"))
+    translate(kv_get(properties, "move"))
     //move to xy location
-    // translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
-    linear_extrude(gdv(properties, "z"))
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=false);
+    // translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2])
+    linear_extrude(kv_get(properties, "z"))
+    square(size=[kv_get(properties, "x"), kv_get(properties, "y")], center=false);
 }
 
 module drawSquareShape2(properties)
 {
-    // color(gdv(properties, "color"), 0.5)
-    // rotate(gdv(properties, "rotate"))
-    // translate(gdv(properties, "move"))
+    // color(kv_get(properties, "color"), 0.5)
+    // rotate(kv_get(properties, "rotate"))
+    // translate(kv_get(properties, "move"))
     //move to xy location
-    // translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
-    linear_extrude(gdv(properties, "z"))
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=true);
+    // translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2])
+    linear_extrude(kv_get(properties, "z"))
+    square(size=[kv_get(properties, "x"), kv_get(properties, "y")], center=true);
 }
 
 /*
@@ -38,42 +38,42 @@ module drawSquareShape2(properties)
 */
 module drawCircleShape(properties)
 {
-    // color(gdv(properties, "color"), 0.5)
-    translate(gdv(properties, "move"))
-    rotate(gdv(properties, "rotate"))
-    translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
-    linear_extrude(gdv(properties, "z"))
-    circle(d=gdv(properties, "x"), $fn = gdv(properties, "fragments"));
+    // color(kv_get(properties, "color"), 0.5)
+    translate(kv_get(properties, "move"))
+    rotate(kv_get(properties, "rotate"))
+    translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2])
+    linear_extrude(kv_get(properties, "z"))
+    circle(d=kv_get(properties, "x"), $fn = kv_get(properties, "fragments"));
 }
 
 module drawCircleShape2(properties)
 {
-    // color(gdv(properties, "color"), 0.5)
-    // translate(gdv(properties, "move"))
-    // rotate(gdv(properties, "rotate"))
-    // translate([gdv(properties, "x")/2, gdv(properties, "y")/2])
-    // linear_extrude(gdv(properties, "z"))
-    circle(d=gdv(properties, "x"), $fn = gdv(properties, "fragments"));
+    // color(kv_get(properties, "color"), 0.5)
+    // translate(kv_get(properties, "move"))
+    // rotate(kv_get(properties, "rotate"))
+    // translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2])
+    // linear_extrude(kv_get(properties, "z"))
+    circle(d=kv_get(properties, "x"), $fn = kv_get(properties, "fragments"));
 }
 
 function GetTrayCellLength(v) = 
     ( 
-        gdv(v, "x") - gdv(v, "rows") * gdv(v, "spacing") 
+        kv_get(v, "x") - kv_get(v, "rows") * kv_get(v, "spacing") 
     ) 
     / 
-    gdv(v, "rows") ;
-function GetTrayCellWidth(v, columns) = ( gdv(v, "y") - gdv(v, "columns") * gdv(v, "spacing") )  / gdv(v, "columns") ;
+    kv_get(v, "rows") ;
+function GetTrayCellWidth(v, columns) = ( kv_get(v, "y") - kv_get(v, "columns") * kv_get(v, "spacing") )  / kv_get(v, "columns") ;
 
 module drawArrayOfCircleShapes(array, bitInfo)
 {
     properties_echo(array);
     properties_echo(bitInfo);
-    rows = gdv(array, "rows");
-    columns = gdv(array, "columns");
+    rows = kv_get(array, "rows");
+    columns = kv_get(array, "columns");
     xDistance = GetTrayCellLength(array);
     yDistance = GetTrayCellWidth(array);
     echo(xDistance=xDistance, yDistance=yDistance);
-    translate(gdv(array,"move"))
+    translate(kv_get(array,"move"))
     {
         union()
         {
@@ -121,7 +121,7 @@ module draw_Cleat_for_Back_Wall(properties)
 {
     //now wall and cleat is at [0,0]
     //move to positive 0 x-axis.
-    translate([gdv(properties,"x"),0,0])
+    translate([kv_get(properties,"x"),0,0])
     //rotate so cleat is external and wall is located at 0 y-axis
     rotate([0,0,180])
     union()
@@ -129,8 +129,8 @@ module draw_Cleat_for_Back_Wall(properties)
         //draw wall
         drawSquareShape(properties);    
         //draw cleat
-        translate([0, gdv(properties,"y"), gdv(properties,"z")])
-        draw_parallelogram(gdv(properties, "cleat"));
+        translate([0, kv_get(properties,"y"), kv_get(properties,"z")])
+        draw_parallelogram(kv_get(properties, "cleat"));
     }
 }
 
@@ -168,9 +168,9 @@ module draw_parallelogram(properties)
     */
     // properties_echo(properties);
 
-    length = gdv(properties, "parallelogram length");
-    height = gdv(properties, "parallelogram thickness");
-    angle = gdv(properties, "angle");    
+    length = kv_get(properties, "parallelogram length");
+    height = kv_get(properties, "parallelogram thickness");
+    angle = kv_get(properties, "angle");    
     base_length = height/tan(angle);
     hypotenuse = sqrt(pow(height, 2) + pow(base_length, 2));
     // echo(length=length, height=height, hypotenuse=hypotenuse);
@@ -182,12 +182,12 @@ module draw_parallelogram(properties)
 
     points = [A, B, C, D];
     // echo(points = points);
-    color(gdv(properties, "color"), 0.5)
+    color(kv_get(properties, "color"), 0.5)
 
     translate([0, 0, -hypotenuse])
     rotate([angle - 90, 0, 0])
     rotate([0,90,0])
-    linear_extrude(height = gdv(properties, "extrude height"), center=false)
+    linear_extrude(height = kv_get(properties, "extrude height"), center=false)
     polygon(points=points); 
 }
 
@@ -200,13 +200,13 @@ module draw_parallelogram(properties)
 module draw_simple_4sided_polyhedron(args) 
 {
     // properties_echo(args=args);
-    points = [gdv(args, "A"), gdv(args, "B"), gdv(args, "C"), gdv(args, "D")];
+    points = [kv_get(args, "A"), kv_get(args, "B"), kv_get(args, "C"), kv_get(args, "D")];
 
-    color(gdv(args, "color"), 0.5)
-    translate(gdv(args, "move"))
-    rotate(gdv(args, "rotate"))
+    color(kv_get(args, "color"), 0.5)
+    translate(kv_get(args, "move"))
+    rotate(kv_get(args, "rotate"))
 
-    linear_extrude(height = gdv(args, "length"))
+    linear_extrude(height = kv_get(args, "length"))
     polygon(points=points);    
 
 }
@@ -225,22 +225,22 @@ module draw_trapizoid(cleat_properties)
               A       B
     */
     properties_echo(cleat_properties);
-    inverted_trapizoid = gdv(cleat_properties, "inverted trapizoid");
-    length = gdv(cleat_properties, "bottom length");
-    height = gdv(cleat_properties, "height");
-    angle = gdv(cleat, "angle");    
+    inverted_trapizoid = kv_get(cleat_properties, "inverted trapizoid");
+    length = kv_get(cleat_properties, "bottom length");
+    height = kv_get(cleat_properties, "height");
+    angle = kv_get(cleat, "angle");    
     base_length = height/tan(angle);
 
     points = trapizoid_points(length, height, base_length, inverted_trapizoid);
 
     echo(points = points);
 
-    color(gdv(cleat_properties, "color"), 0.5)
+    color(kv_get(cleat_properties, "color"), 0.5)
 
     rotate([0, 90, 0])
     rotate([0, 0, angle])
     translate([0, -height,0])
-    linear_extrude(height = gdv(cleat_properties, "extrude height"), center=false)
+    linear_extrude(height = kv_get(cleat_properties, "extrude height"), center=false)
     polygon(points=points);    
 }
 
