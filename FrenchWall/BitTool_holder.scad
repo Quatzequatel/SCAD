@@ -10,7 +10,7 @@ use <../FrenchWall/ToolHolders_Modules_Library.scad>;
 use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
-use <dictionary.scad>;
+use <../libraries/kvpairs.scad>;
 // use <../libraries/vectorHelpers.scad>;
 
 
@@ -24,7 +24,7 @@ use <dictionary.scad>;
 // drawDrillPeggedHandleV2();
 // drawSquarePegHolder();
 
-   //echo(); echo(fileName = gdv(Backwall, "filename")); echo(); draw_Cleated_Back_Wall(Backwall);
+   //echo(); echo(fileName = kv_get(Backwall, "filename")); echo(); draw_Cleated_Back_Wall(Backwall);
 // draw_Cleat_for_BackWall(Backwall);
 // draw_Drill_Bit_Holder_Cleated();
 // draw_box_for_staples();
@@ -45,8 +45,8 @@ module draw_single_peg_cleat_hook()
         ["y", convert_in2mm(3/8)],
         ["z", convert_in2mm(2)],
         ["fragments", 60],
-        ["move", [0,gdv(HammerBackwall, "move").y,convert_in2mm(3/8)/2]],
-        ["from edge", (gdv(HammerTray, "x")-convert_in2mm(1))/2],
+        ["move", [0,kv_get(HammerBackwall, "move")[1],convert_in2mm(3/8)/2]],
+        ["from edge", (kv_get(HammerTray, "x")-convert_in2mm(1))/2],
         ["rotate", [90,0, 0]],
         ["color", "LightBlue"]
     ];
@@ -63,13 +63,13 @@ module draw_single_peg_cleat_hook()
 
     cleat = 
     ["cleat properties", 
-        ["x", gdv(tray, "x")],
+        ["x", kv_get(tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(0.75)],
         ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
         ["parallelogram thickness", cleat_thickness],
         ["angle", 135],
-        ["extrude height", gdv(tray, "x")],
+        ["extrude height", kv_get(tray, "x")],
         ["move", [0, 0, 0]],
         ["from edge", 0],
         ["rotate", [0, 0, 0]],
@@ -79,7 +79,7 @@ module draw_single_peg_cleat_hook()
     backwall = 
     ["backwall", 
         ["filename", "Cleat_for_wall.stl"],
-        ["x", gdv(tray, "x")],
+        ["x", kv_get(tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(2.5)],
         ["move", [0, 0, 0]],
@@ -100,7 +100,7 @@ module draw_single_peg_cleat_hook()
     // moveToOrigin(tray)
     // drawSquareShape2(tray);
 
-    translate([ gdv(tray, "x"), -3, gdv(tray, "x")])
+    translate([ kv_get(tray, "x"), -3, kv_get(tray, "x")])
     rotate([180, 180, -5 ])
     draw_Cleated_Back_Wall(backwall);   
 }
@@ -123,13 +123,13 @@ module draw_box_Ratchet_Set()
 
     cleat = 
     ["cleat properties", 
-        ["x", gdv(tray, "x")],
+        ["x", kv_get(tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(0.75)],
         ["parallelogram length", convert_in2mm(0.75)/sin(45) ],
         ["parallelogram thickness", cleat_thickness],
         ["angle", 135],
-        ["extrude height", gdv(tray, "x")],
+        ["extrude height", kv_get(tray, "x")],
         ["move", [0, 0, 0]],
         ["from edge", 0],
         ["rotate", [0, 0, 0]],
@@ -138,7 +138,7 @@ module draw_box_Ratchet_Set()
 
     backwall = 
     ["backwall", 
-        ["x", gdv(tray, "x")],
+        ["x", kv_get(tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(2.5)],
         ["move", [0, 0, 0]],
@@ -153,7 +153,7 @@ module draw_box_Ratchet_Set()
     ["bit dimension",
         ["x", HexBitHoleDia],
         ["y", HexBitHoleDia],
-        ["z", gdv(tray, "z")],
+        ["z", kv_get(tray, "z")],
         ["fragments", 6],
         ["move", [0,0,LayersToHeight(8)]],
         ["rotate", [0,0, 0]],
@@ -183,11 +183,11 @@ module draw_box_Ratchet_Set()
     columns =  1;
     rows = 6;
 
-    xSpace = gdv(tray, "x") / (rows);
-    ySpace = gdv(tray, "y") / (columns + 1);
+    xSpace = kv_get(tray, "x") / (rows);
+    ySpace = kv_get(tray, "y") / (columns + 1);
     bottom_thickness = LayersToHeight(8);
-    trayWidth = gdv(tray, "x");
-    trayDepth = gdv(tray, "y");
+    trayWidth = kv_get(tray, "x");
+    trayDepth = kv_get(tray, "y");
     // ySpace = 19.05;
     // ySpace = trayDepth / (columns + 1);
     // echo(trayWidth = trayWidth,  trayDepth = trayDepth)
@@ -196,15 +196,15 @@ module draw_box_Ratchet_Set()
     // rotate([0,90,0])
     union()
     {
-        translate([gdv(tray, "x"), gdv(tray, "y"), 0])
+        translate([kv_get(tray, "x"), kv_get(tray, "y"), 0])
         rotate([0,0,180])
-        translate([0, 0, -gdv(tray, "z")])
+        translate([0, 0, -kv_get(tray, "z")])
         difference()
         {
             union()
             {
                 drawSquareShape(tray);
-                // translate([0,gdv(tray, "y") - 2,0])
+                // translate([0,kv_get(tray, "y") - 2,0])
                 // drawSquareShape(shortBackwall);
             }
             
@@ -215,10 +215,10 @@ module draw_box_Ratchet_Set()
                     if( row + (col * rows) < len(sockets))
                     {
                     // echo(x= row * xSpace, y = col * ySpace, row = row, col = col, drillBit = Index(row, col, rows) );
-                        translate([ row * xSpace + xSpace/2 + (Index(row, col, rows) > 6 ? 3.5 : 0) * row, col * ySpace + ySpace/2, bottom_thickness + gdv(tray, "z")/2])
-                        cylinder(d = sockets[ row + (col * rows)][0], h = gdv(tray, "z"), center=true, $fn=60);
+                        translate([ row * xSpace + xSpace/2 + (Index(row, col, rows) > 6 ? 3.5 : 0) * row, col * ySpace + ySpace/2, bottom_thickness + kv_get(tray, "z")/2])
+                        cylinder(d = sockets[ row + (col * rows)][0], h = kv_get(tray, "z"), center=true, $fn=60);
                         
-                        translate([ row * xSpace + xSpace/2.5 + (Index(row, col, rows) >= 6 ? -2 : 0) * row, col == 0 ? col * ySpace + 1 : (col * ySpace) - 3, gdv(tray, "z") - bottom_thickness ])
+                        translate([ row * xSpace + xSpace/2.5 + (Index(row, col, rows) >= 6 ? -2 : 0) * row, col == 0 ? col * ySpace + 1 : (col * ySpace) - 3, kv_get(tray, "z") - bottom_thickness ])
                         #linear_extrude(height = bottom_thickness)
                         text(text=sockets[ row + (col * rows)][1], size = 5);
                     }
@@ -227,10 +227,10 @@ module draw_box_Ratchet_Set()
             }
 
             //hex bit slot
-            translate([gdv(tray,"x") - 12.5, gdv(tray,"y") - 30, 0 ])
+            translate([kv_get(tray,"x") - 12.5, kv_get(tray,"y") - 30, 0 ])
             drawCircleShape(hex_bit);
         }  
-        translate([gdv(backwall,"x"), 0, (3 * gdv(backwall,"z")) - gdv(tray, "z")])
+        translate([kv_get(backwall,"x"), 0, (3 * kv_get(backwall,"z")) - kv_get(tray, "z")])
         rotate([0,90,0])
         draw_Cleated_Back_Wall(backwall);     
     }
@@ -247,20 +247,20 @@ module draw_box_for_JigSaw_Box()
     BladeBoxSpacingLength = BladeBoxX + 4;
     BladeBoxSpacing = 6.125; //convert_in2mm(0.25);
 
-    screwDriverShaftDiameter = gdv( screwDriverShaft, "x");
+    screwDriverShaftDiameter = kv_get( screwDriverShaft, "x");
 
     box = ["inner box",
         ["x", BladeBoxX],
         ["y", BladeBoxY],
-        ["z", gdv(Tray, "z") ],
-        ["move", [ (gdv(Tray, "x") - BladeBoxX)/2,  0, LayersToHeight(8)]],
+        ["z", kv_get(Tray, "z") ],
+        ["move", [ (kv_get(Tray, "x") - BladeBoxX)/2,  0, LayersToHeight(8)]],
         ["rotate", [0,0, 0]],
         ["color", "yellow"]
     ];
 
     shortBackwall = 
     ["short back wall", 
-        ["x", gdv(Tray, "x")],
+        ["x", kv_get(Tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(1.5)],
         ["move", [0, 0, 0]],
@@ -271,14 +271,14 @@ module draw_box_for_JigSaw_Box()
         ["color", "LightGrey"]
     ];    
 
-    // translate([gdv(Tray, "x"), gdv(Tray, "y"), convert_in2mm(1.75)])
+    // translate([kv_get(Tray, "x"), kv_get(Tray, "y"), convert_in2mm(1.75)])
     // rotate([0,0,180])
     difference()
     {
         union()
         {
             drawSquareShape(Tray);
-            translate([0,gdv(Tray, "y") - 2,0])
+            translate([0,kv_get(Tray, "y") - 2,0])
             drawSquareShape(shortBackwall);
         }
 
@@ -297,26 +297,26 @@ module draw_box_for_JigSaw_Box()
         }
 
         //hex tool holder.
-        translate([gdv(Tray, "x") - 15, gdv(Tray, "y")-19, -1])
-        linear_extrude(gdv(Tray, "z")+ 5)
+        translate([kv_get(Tray, "x") - 15, kv_get(Tray, "y")-19, -1])
+        linear_extrude(kv_get(Tray, "z")+ 5)
         circle(d=screwDriverShaftDiameter, $fn = 90);
 
         //hex bit holder
-        translate([gdv(Tray, "x") - 20, gdv(Tray, "y")-70, -1])
+        translate([kv_get(Tray, "x") - 20, kv_get(Tray, "y")-70, -1])
         drawCircleShape(Bit);
 
         //hex bit holder
-        translate([gdv(Tray, "x") - 20, gdv(Tray, "y")-55, -1])
+        translate([kv_get(Tray, "x") - 20, kv_get(Tray, "y")-55, -1])
         drawCircleShape(Bit);
         
         //hex bit holder
-        #translate([gdv(Tray, "x") - 20, gdv(Tray, "y")-40, -1])
+        #translate([kv_get(Tray, "x") - 20, kv_get(Tray, "y")-40, -1])
         drawCircleShape(Bit);
 
-        // translate([0, 3 * stapleBoxSpacing + 2 * gdv(box, "y"), 0])
+        // translate([0, 3 * stapleBoxSpacing + 2 * kv_get(box, "y"), 0])
         // drawSquareShape(box);    
         
-        translate([0,gdv(Tray, "y") - 2, -convert_in2mm(0.75)])
+        translate([0,kv_get(Tray, "y") - 2, -convert_in2mm(0.75)])
         screw_hole_counter_sink(includeScrewholes, shortBackwall);
     }
 }
@@ -335,15 +335,15 @@ module draw_box_for_staples()
     box = ["inner box",
         ["x", stapleBoxLength],
         ["y", stapleBoxWidth],
-        ["z", gdv(Tray, "z") ],
-        ["move", [ (gdv(Tray, "x") - stapleBoxLength)/2,  0, LayersToHeight(8)]],
+        ["z", kv_get(Tray, "z") ],
+        ["move", [ (kv_get(Tray, "x") - stapleBoxLength)/2,  0, LayersToHeight(8)]],
         ["rotate", [0,0, 0]],
         ["color", "yellow"]
     ];
 
     shortBackwall = 
     ["short back wall", 
-        ["x", gdv(Tray, "x")],
+        ["x", kv_get(Tray, "x")],,
         ["y", cleat_thickness],
         ["z", convert_in2mm(1.5)],
         ["move", [0, 0, 0]],
@@ -354,27 +354,27 @@ module draw_box_for_staples()
         ["color", "LightGrey"]
     ];    
 
-    // translate([gdv(Tray, "x"), gdv(Tray, "y"), convert_in2mm(1.75)])
+    // translate([kv_get(Tray, "x"), kv_get(Tray, "y"), convert_in2mm(1.75)])
     rotate([0,0,180])
     difference()
     {
         union()
         {
             drawSquareShape(Tray);
-            translate([0,gdv(Tray, "y") - 2,0])
+            translate([0,kv_get(Tray, "y") - 2,0])
             drawSquareShape(shortBackwall);
         }
 
         translate([0, stapleBoxSpacing, 0])
         drawSquareShape(box);
 
-        translate([0, 2 * stapleBoxSpacing + gdv(box, "y"), 0])
+        translate([0, 2 * stapleBoxSpacing + kv_get(box, "y"), 0])
         drawSquareShape(box);
 
-        translate([0, 3 * stapleBoxSpacing + 2 * gdv(box, "y"), 0])
+        translate([0, 3 * stapleBoxSpacing + 2 * kv_get(box, "y"), 0])
         drawSquareShape(box);    
         
-        translate([0,gdv(Tray, "y") - 2, -convert_in2mm(0.75)])
+        translate([0,kv_get(Tray, "y") - 2, -convert_in2mm(0.75)])
         screw_hole_counter_sink(includeScrewholes, shortBackwall);
     }
 }
@@ -383,7 +383,7 @@ module draw_peg_holder_for_staples()
 {
         shortBackwall = 
     ["short back wall", 
-        ["x", gdv(Tray, "x")],
+        ["x", kv_get(Tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(1.5)],
         ["move", [0, 0, 0]],
@@ -404,24 +404,24 @@ module draw_peg_holder_for_staples()
             drawSquareShape(shortBackwall);
             // translate([-5,0,-6])
             // drawPegs(DrillPeg, HammerBackwall);
-            // translate([gdv(DrillPeg, "from edge"),0,0])
-            radius = gdv(DrillPeg,"x")/2;
-            spacing = gdv(shortBackwall, "x")/3;
+            // translate([kv_get(DrillPeg, "from edge"),0,0])
+            radius = kv_get(DrillPeg,"x")/2;
+            spacing = kv_get(shortBackwall, "x")/3;
             
             //left peg
             translate([spacing - radius,0,0])
             drawCircleShape(DrillPeg);
             
             //right peg
-            translate([gdv(shortBackwall, "x") - (radius + convert_in2mm(0.5)) ,0,0])
+            translate([kv_get(shortBackwall, "x") - (radius + convert_in2mm(0.5)) ,0,0])
             drawCircleShape(DrillPeg);
 
-            echo(distance = (gdv(shortBackwall, "x") - (radius + convert_in2mm(0.5))) - (spacing - radius) );
+            echo(distance = (kv_get(shortBackwall, "x") - (radius + convert_in2mm(0.5))) - (spacing - radius) );
         }
 
         screw_hole_counter_sink(includeScrewholes, shortBackwall);
 
-        translate([0, 0, -gdv(shortBackwall, "z") + convert_in2mm(0.75)])
+        translate([0, 0, -kv_get(shortBackwall, "z") + convert_in2mm(0.75)])
         screw_hole_counter_sink(includeScrewholes, shortBackwall);
     } 
 }
@@ -431,11 +431,11 @@ module draw_peg_holder_for_staples()
 */
 module draw_Cleated_Back_Wall(properties)
 {
-    // echo(gdv(properties, "filename"));
+    // echo(kv_get(properties, "filename"));
     // properties_echo(properties);
     //now wall and cleat is at [0,0]
     //move to positive 0 x-axis.
-    translate([gdv(properties,"x"),0,0])
+    translate([kv_get(properties,"x"),0,0])
     //rotate so cleat is external and wall is located at 0 y-axis
     rotate([0,90,180])
     union()
@@ -443,8 +443,8 @@ module draw_Cleated_Back_Wall(properties)
         //draw wall
         drawSquareShape(properties);    
         //draw cleat
-        translate([0, gdv(properties,"y"), gdv(properties,"z")])
-        draw_parallelogram(gdv(properties, "cleat"));
+        translate([0, kv_get(properties,"y"), kv_get(properties,"z")])
+        draw_parallelogram(kv_get(properties, "cleat"));
     }
 }
 
@@ -455,7 +455,7 @@ module draw_Cleat_for_BackWall( properties)
 {
     //rotate for printing
     rotate([0, 90, 0])
-    translate([gdv(properties, "x"), 0, 0])
+    translate([kv_get(properties, "x"), 0, 0])
     rotate([0, 0, 180])
     draw_Cleat_for_Back_Wall(properties);
 }
@@ -473,20 +473,20 @@ module drawDrillPeggedHandleV2()
             drawSquareShape(Backwall);
             // translate([-5,0,-6])
             // drawPegs(DrillPeg, HammerBackwall);
-            // translate([gdv(DrillPeg, "from edge"),0,0])
-            radius = gdv(DrillPeg,"x")/2;
-            spacing = gdv(Backwall, "x")/4;
+            // translate([kv_get(DrillPeg, "from edge"),0,0])
+            radius = kv_get(DrillPeg,"x")/2;
+            spacing = kv_get(Backwall, "x")/4;
             
             translate([spacing - radius,0,0])
             drawCircleShape(DrillPeg);
             
-            translate([gdv(Backwall, "x") - spacing - radius,0,0])
+            translate([kv_get(Backwall, "x") - spacing - radius,0,0])
             drawCircleShape(DrillPeg);
         }
 
          screw_hole_counter_sink(includeScrewholes, Backwall);
 
-        //  translate([0, 0, -gdv(Backwall, "z") + convert_in2mm(0.75)])
+        //  translate([0, 0, -kv_get(Backwall, "z") + convert_in2mm(0.75)])
         //  screw_hole_counter_sink(includeScrewholes, Backwall);
     }              
 }
@@ -502,9 +502,9 @@ module drawDrillPeggedHandle()
             drawSquareShape(Backwall);
             // translate([-5,0,-6])
             // drawPegs(DrillPeg, HammerBackwall);
-            // translate([gdv(DrillPeg, "from edge"),0,0])
-            radius = gdv(DrillPeg,"x")/2;
-            spacing = gdv(Backwall, "x")/3;
+            // translate([kv_get(DrillPeg, "from edge"),0,0])
+            radius = kv_get(DrillPeg,"x")/2;
+            spacing = kv_get(Backwall, "x")/3;
             
             translate([spacing - radius,0,0])
             drawCircleShape(DrillPeg);
@@ -515,7 +515,7 @@ module drawDrillPeggedHandle()
 
          screw_hole_counter_sink(includeScrewholes, Backwall);
 
-        translate([0, 0, -gdv(Backwall, "z") + convert_in2mm(0.75)])
+        translate([0, 0, -kv_get(Backwall, "z") + convert_in2mm(0.75)])
          screw_hole_counter_sink(includeScrewholes, Backwall);
     }              
 }
@@ -530,7 +530,7 @@ module drawSquarePegHolder()
 
     shortBackwall = 
     ["short back wall", 
-        ["x", gdv(Tray, "x")],
+        ["x", kv_get(Tray, "x")],
         ["y", cleat_thickness],
         ["z", convert_in2mm(1.5)],
         ["move", [0, 0, 0]],
@@ -541,7 +541,7 @@ module drawSquarePegHolder()
         ["color", "LightGrey"]
     ];    
 
-    radius = gdv(DrillPeg,"x")/2;
+    radius = kv_get(DrillPeg,"x")/2;
     unit = 0.9;
 
     spacingA = 
@@ -562,32 +562,32 @@ module drawSquarePegHolder()
             rotate([7,0,0])
             drawSquareShape(shortBackwall);
             
-            translate(gdv(spacingA, "0"))
+            translate(kv_get(spacingA, "0"))
             drawSquareShape(DrillPeg);
 
-            translate(gdv(spacingA, "1"))
+            translate(kv_get(spacingA, "1"))
             drawSquareShape(DrillPeg);
             
-            translate(gdv(spacingA, "2"))
+            translate(kv_get(spacingA, "2"))
             drawSquareShape(DrillPeg);
 
-            translate(gdv(spacingA, "3"))
+            translate(kv_get(spacingA, "3"))
             drawSquareShape(DrillPeg);
 
-            translate(gdv(spacingA, "4"))
+            translate(kv_get(spacingA, "4"))
             drawSquareShape(DrillPeg);
 
-            translate([gdv(shortBackwall, "x") - gdv(DrillPeg,"x") ,0,0])
+            translate([kv_get(shortBackwall, "x") - kv_get(DrillPeg,"x") ,0,0])
             drawSquareShape(DrillPeg); 
         }
 
         translate([convert_in2mm(0.65), 0, -45])
         drawCircleShape(includeScrewholes);
 
-        translate([gdv(Tray, "x")/2, 0, -45])
+        translate([kv_get(Tray, "x")/2, 0, -45])
         drawCircleShape(includeScrewholes);
 
-        translate([gdv(shortBackwall, "x") - gdv(DrillPeg,"x") - 7, 0, -45])
+        translate([kv_get(shortBackwall, "x") - kv_get(DrillPeg,"x") - 7, 0, -45])
         drawCircleShape(includeScrewholes);
 
         // translate([0,0, -35])
@@ -604,10 +604,10 @@ module drawPeggedHandle()
         union()
         {
             drawSquareShape(HammerBackwall);
-            translate([gdv(Peg, "from edge"),0,0])
+            translate([kv_get(Peg, "from edge"),0,0])
             drawCircleShape(Peg);
             
-            translate([-gdv(Peg, "from edge"),0,0])
+            translate([-kv_get(Peg, "from edge"),0,0])
             drawCircleShape(Peg);
         }
 
@@ -664,14 +664,14 @@ module draw_Drill_Bit_Holder_Cleated()
         
     properties_echo(Tray);
 
-    trayWidth = gdv(Tray, "x");
-    trayDepth = gdv(Tray, "y");
+    trayWidth = kv_get(Tray, "x");
+    trayDepth = kv_get(Tray, "y");
     bottom_thickness = LayersToHeight(4);
     rows = 7;
     columns = floor(len(drillBits)/rows) - 1 ;
 
-    xSpace = gdv(Tray, "x") / (rows);
-    ySpace = gdv(Tray, "y") / (columns + 1);
+    xSpace = kv_get(Tray, "x") / (rows);
+    ySpace = kv_get(Tray, "y") / (columns + 1);
     // ySpace = 19.05;
     // ySpace = trayDepth / (columns + 1);
     // echo(trayWidth = trayWidth,  trayDepth = trayDepth)
@@ -680,12 +680,12 @@ module draw_Drill_Bit_Holder_Cleated()
 
     difference()
     {
-        translate([gdv(Tray,"x"), gdv(Tray,"y"), 0])
+        translate([kv_get(Tray,"x"), kv_get(Tray,"y"), 0])
         rotate([0,0,180])
         union()
         {
             drawSquareShape(Tray);
-            // translate([0, gdv(Tray, "y"),0])
+            // translate([0, kv_get(Tray, "y"),0])
             
             draw_Cleated_Back_Wall(Backwall);            
         }
@@ -697,10 +697,10 @@ module draw_Drill_Bit_Holder_Cleated()
                 if( row + (col * rows) < len(drillBits))
                 {
                     echo(x= row * xSpace, y = col * ySpace, row = row, col = col, drillBit = row + (col * rows) );
-                    translate([ row * xSpace + xSpace/2 , col * ySpace + ySpace/2, bottom_thickness + gdv(Tray, "z")/2])
-                    #cylinder(d = drillBits[ row + (col * rows)][0], h = gdv(Tray, "z"), center=true, $fn=60);
+                    translate([ row * xSpace + xSpace/2 , col * ySpace + ySpace/2, bottom_thickness + kv_get(Tray, "z")/2])
+                    #cylinder(d = drillBits[ row + (col * rows)][0], h = kv_get(Tray, "z"), center=true, $fn=60);
                     
-                    translate([ row * xSpace + xSpace/4 , col == 0 ? col * ySpace + 2 : (col * ySpace) - 2, gdv(Tray, "z") - bottom_thickness ])
+                    translate([ row * xSpace + xSpace/4 , col == 0 ? col * ySpace + 2 : (col * ySpace) - 2, kv_get(Tray, "z") - bottom_thickness ])
                     #linear_extrude(height = bottom_thickness)
                     text(text=drillBits[ row + (col * rows)][1], size = 3);
                 }
@@ -718,7 +718,7 @@ module completeBitTray()
         union()
         {
             drawSquareShape(Tray);
-            // translate([0, gdv(Tray, "y"),0])
+            // translate([0, kv_get(Tray, "y"),0])
             draw_Cleated_Back_Wall(Backwall);            
         }
         
@@ -744,9 +744,9 @@ module screwDriverTray(includeScrewholes = true)
         ["color", "LightGrey"]
     ];
 
-    tray_x = gdv(tray, "x");
-    tray_y = gdv(tray, "y");   
-    tray_z = gdv(tray, "z");
+    tray_x = kv_get(tray, "x");
+    tray_y = kv_get(tray, "y");   
+    tray_z = kv_get(tray, "z");
 
     cleat = 
     ["cleat properties", 
@@ -809,7 +809,7 @@ module screwDriverTray(includeScrewholes = true)
         union()
         {
             drawSquareShape(tray);
-            translate([gdv(backwall,"x"), 0, (2 * gdv(backwall,"z")) - 2 *gdv(tray, "z")])
+            translate([kv_get(backwall,"x"), 0, (2 * kv_get(backwall,"z")) - 2 *kv_get(tray, "z")])
             rotate([0,90,0])
             draw_Cleated_Back_Wall(backwall);      
         }
@@ -817,9 +817,9 @@ module screwDriverTray(includeScrewholes = true)
         if(includeScrewholes == true)
         {
             // drawArrayOfCircleShapes2(shaft_array, shaft);
-            linear_extrude(height = gdv(tray, "z") * 1.25)
-            #drawArrayOfCircleShapes2(rows=gdv(shaft_array, "rows"), columns=gdv(shaft_array, "columns"), 
-                width=gdv(shaft_array, "x"), height=gdv(shaft_array, "y"), spacing=gdv(shaft_array, "spacing"));
+            linear_extrude(height = kv_get(tray, "z") * 1.25)
+            #drawArrayOfCircleShapes2(rows=kv_get(shaft_array, "rows"), columns=kv_get(shaft_array, "columns"), 
+                width=kv_get(shaft_array, "x"), height=kv_get(shaft_array, "y"), spacing=kv_get(shaft_array, "spacing"));
             //screw_hole_counter_sink(shaft, backwall);
         }
     }
@@ -830,9 +830,9 @@ module screw_hole_counter_sink(properties, backwall)
     // properties_echo(properties);
     // properties_echo(backwall);
 
-    // count = gdv(properties, "count");
+    // count = kv_get(properties, "count");
     count = 0;
-    spacing = gdv(backwall, "x") / (count + 1);
+    spacing = kv_get(backwall, "x") / (count + 1);
 
     for(item = [0: count])
     {
@@ -846,8 +846,8 @@ module drawPegs(properties, backwall)
     // properties_echo(properties);
     // properties_echo(backwall);
 
-    count = gdv(properties, "count");
-    spacing = gdv(backwall, "x") / (count + 1);
+    count = kv_get(properties, "count");
+    spacing = kv_get(backwall, "x") / (count + 1);
 
     for(item = [0: count])
     {
@@ -862,20 +862,20 @@ module drawPegs2(pegs, wall)
     // properties_echo(pegs);
     // properties_echo(wall);
 
-    count = gdv(pegs, "count");
-    spacing = gdv(wall, "x") / (1 + count) - gdv(pegs, "x")/2;
+    count = kv_get(pegs, "count");
+    spacing = kv_get(wall, "x") / (1 + count) - kv_get(pegs, "x")/2;
 
     for(item = [0: count-1])
     {
         // echo(spacing = (item * spacing) + spacing);
         translate([(item * spacing) + spacing, 0, 0])
         
-            color(gdv(pegs, "color"), 0.5)
-            // translate(gdv(pegs, "move"))
-            rotate(gdv(pegs, "rotate"))
-            translate([gdv(pegs, "x")/2, gdv(pegs, "y")/2])
-            linear_extrude(gdv(pegs, "z"))
-            circle(d=gdv(pegs, "x"), $fn = gdv(pegs, "fragments"));
+            color(kv_get(pegs, "color"), 0.5)
+            // translate(kv_get(pegs, "move"))
+            rotate(kv_get(pegs, "rotate"))
+            translate([kv_get(pegs, "x")/2, kv_get(pegs, "y")/2])
+            linear_extrude(kv_get(pegs, "z"))
+            circle(d=kv_get(pegs, "x"), $fn = kv_get(pegs, "fragments"));
     }
 }
 
@@ -895,14 +895,14 @@ module drawHammerHandle()
             drawCircleShape(HammerHead);
             hull() 
             {
-                translate([0,-(gdv(HammerHead, "y")*2),0])
+                translate([0,-(kv_get(HammerHead, "y")*2),0])
                 drawCircleShape(HammerShaft);    
                 drawCircleShape(HammerShaft);    
             }            
         }      
-        translate([gdv(HammerBackwall, "from edge"),-10,-10])
+        translate([kv_get(HammerBackwall, "from edge"),-10,-10])
         // drawCircleShape(screwhole);
-        translate([-gdv(HammerBackwall, "from edge"),-10,-10])
+        translate([-kv_get(HammerBackwall, "from edge"),-10,-10])
         // drawCircleShape(screwhole);
 
         translate([29,-14,0])
