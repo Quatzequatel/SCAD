@@ -9,6 +9,7 @@ dictionary is
 */
 
 include <constants.scad>;
+use <kvpairs.scad>;
 /*
     returnType == 0, returns value
     returnType == 1, returns key or simple list.
@@ -37,11 +38,11 @@ function privateGetKVPair(v, key, type = 1, i = 0,  result) = //echo(v=v, key=ke
 );
 
 //short alias for getDictionaryValue().
-// When dictionary value is single value use {gdv(list, lable)} syntax,
-// When dictionary value is single dimension list use {gdv(list, lable)[i]} syntax,
+// When dictionary value is single value use {kv_get(list, lable)} syntax,
+// When dictionary value is single dimension list use {kv_get(list, lable)[i]} syntax,
 // When dictionary value is multiple dimension list then use {gda(list, lable)[i]} syntax,
-// Note gdv vs. gda.
-function gdv(list, lable) = getDictionaryValue(list, lable);
+// Note kv_get vs. gda.
+// function kv_get(list, lable) = getDictionaryValue(list, lable);
 function gda(list, lable) = getDictionary(list, lable);
 
 /*
@@ -87,41 +88,41 @@ function NewGd(x,y,z, move = [0, 0, 0], rotate = [0, 0, 0], color = "LemonChiffo
 function GdvSetX(properties, newX) =
     [ properties.x ,
         ["x", newX],
-        ["y", gdv(properties, "y")],
-        ["z",  gdv(properties, "z")],
-        ["move",  gdv(properties, "move")],
-        ["rotate",  gdv(properties, "rotate") ],
-        ["color",  gdv(properties, "color")]
+        ["y", kv_get(properties, "y")],
+        ["z",  kv_get(properties, "z")],
+        ["move",  kv_get(properties, "move")],
+        ["rotate",  kv_get(properties, "rotate") ],
+        ["color",  kv_get(properties, "color")]
     ];
 
 function GdvSetY(properties, newY) =
     [ properties.x ,
-        ["x", gdv(properties, "x")],
+        ["x", kv_get(properties, "x")],
         ["y", newY],
-        ["z",  gdv(properties, "z")],
-        ["move",  gdv(properties, "move")],
-        ["rotate",  gdv(properties, "rotate") ],
-        ["color",  gdv(properties, "color")]
+        ["z",  kv_get(properties, "z")],
+        ["move",  kv_get(properties, "move")],
+        ["rotate",  kv_get(properties, "rotate") ],
+        ["color",  kv_get(properties, "color")]
     ];    
 
 function GdvSetZ(properties, newZ) =
     [ properties.x ,
-        ["x", gdv(properties, "x")],
-        ["y",  gdv(properties, "y")],
+        ["x", kv_get(properties, "x")],
+        ["y",  kv_get(properties, "y")],
         ["z", newZ],
-        ["move",  gdv(properties, "move")],
-        ["rotate",  gdv(properties, "rotate") ],
-        ["color",  gdv(properties, "color")]
+        ["move",  kv_get(properties, "move")],
+        ["rotate",  kv_get(properties, "rotate") ],
+        ["color",  kv_get(properties, "color")]
     ];
 
 function GdvSetXY(properties, newX, newY) =
     [ properties.x ,
         ["x", newX],
         ["y", newY],
-        ["z",  gdv(properties, "z")],
-        ["move",  gdv(properties, "move")],
-        ["rotate",  gdv(properties, "rotate") ],
-        ["color",  gdv(properties, "color")]
+        ["z",  kv_get(properties, "z")],
+        ["move",  kv_get(properties, "move")],
+        ["rotate",  kv_get(properties, "rotate") ],
+        ["color",  kv_get(properties, "color")]
     ];
 
 function GdvSetXYZ(properties, newX, newY, newZ) =
@@ -129,20 +130,20 @@ function GdvSetXYZ(properties, newX, newY, newZ) =
         ["x", newX],
         ["y", newY],
         ["z",  newZ],
-        ["move",  gdv(properties, "move")],
-        ["rotate",  gdv(properties, "rotate") ],
-        ["color",  gdv(properties, "color")]
+        ["move",  kv_get(properties, "move")],
+        ["rotate",  kv_get(properties, "rotate") ],
+        ["color",  kv_get(properties, "color")]
     ];    
 
 module drawSquare(properties, center = false)
 {
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=center);    
+    square(size=[kv_get(properties, "x"), kv_get(properties, "y")], center=center);    
 }
 
 module drawCube(properties, center = false)
 {
-    linear_extrude(gdv(properties, "z"))
-    square(size=[gdv(properties, "x"), gdv(properties, "y")], center=middle);    
+    linear_extrude(kv_get(properties, "z"))
+    square(size=[kv_get(properties, "x"), kv_get(properties, "y")], center=middle);    
 }
 
 /*
@@ -152,40 +153,40 @@ module drawCube(properties, center = false)
 */
 module moveTo(properties, label)
 {
-    translate(gdv(properties, label)) children();
+    translate(kv_get(properties, label)) children();
 }
 
 // use when center=true and want to have corner on [0,0]
 module moveToOrigin(properties) 
 {
-    translate([gdv(properties, "x")/2, gdv(properties, "y")/2]) children();
+    translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2]) children();
 }
 
 //use to move back to xy center. good prior to any rotations.
 module moveToCenter(properties) 
 {
-    translate([-gdv(properties, "x")/2, -gdv(properties, "y")/2]) children();
+    translate([-kv_get(properties, "x")/2, -kv_get(properties, "y")/2]) children();
 }
 
 //use to move cube back to [0, 0, 0]
 module moveTo3D_Origin(properties) 
 {
-    translate([gdv(properties, "x")/2, gdv(properties, "y")/2, gdv(properties, "z")/2]) children();
+    translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2, kv_get(properties, "z")/2]) children();
 }
 
 module apply_X_Move(properties) 
 {
-    translate([gdv(properties, "x"), 0, 0]) children();
+    translate([kv_get(properties, "x"), 0, 0]) children();
 }
 
 module apply_Y_Move(properties) 
 {
-    translate([0, gdv(properties, "y"), 0]) children();
+    translate([0, kv_get(properties, "y"), 0]) children();
 }
 
 module apply_Z_Move(properties) 
 {
-    translate([0, 0, gdv(properties, "z")]) children();
+    translate([0, 0, kv_get(properties, "z")]) children();
 }
 
 /*
@@ -204,7 +205,7 @@ module apply_Z_Move(properties)
 */
 module applyMove(properties)
 {
-    translate(gdv(properties, "move")) children();
+    translate(kv_get(properties, "move")) children();
 }
 
 /*
@@ -223,7 +224,7 @@ module applyMove(properties)
 */
 module applyRotate(properties)
 {
-    rotate(gdv(properties, "rotate")) children();
+    rotate(kv_get(properties, "rotate")) children();
 }
 
 /*
@@ -242,7 +243,7 @@ module applyRotate(properties)
 */
 module applyColor(properties, alpha  = 0.5)
 {
-    color(gdv(properties, "color"), alpha ) children();
+    color(kv_get(properties, "color"), alpha ) children();
 }
 
 /*
@@ -261,7 +262,7 @@ module applyColor(properties, alpha  = 0.5)
 */
 module applyExtrude(properties)
 {
-    linear_extrude(gdv(properties, "z")) children();
+    linear_extrude(kv_get(properties, "z")) children();
 }   
 
 function square(size) = [[-size,-size], [-size,size], [size,size], [size,-size]];
