@@ -43,7 +43,7 @@ function privateGetKVPair(v, key, type = 1, i = 0,  result) = //echo(v=v, key=ke
 // When dictionary value is multiple dimension list then use {gda(list, lable)[i]} syntax,
 // Note kv_get vs. gda.
 // function kv_get(list, lable) = getDictionaryValue(list, lable);
-function gda(list, lable) = getDictionary(list, lable);
+// function gda(list, lable) = getDictionary(list, lable);
 
 /*
     getDictionaryValue where
@@ -52,8 +52,8 @@ function gda(list, lable) = getDictionary(list, lable);
     Returned is the value of key label.
 */
 function getDictionaryValue(v, key) = 
-    assert(isVector(v), str("parameter v is not an array. For imported vectors, did you <include file>?"))
-    assert(isString(v[0]), str("first element is not a key."))
+    // assert(isVector(v), str("parameter v is not an array. For imported vectors, did you <include file>?"))
+    // assert(isString(v[0]), str("first element is not a key."))
     let(result = privateGetKVPair(v, key, 1))
     // echo(result = result)
     result;
@@ -66,8 +66,8 @@ function getDictionaryValue(v, key) =
     Returned is the value of key label.
 */
 function getDictionary(v, key) = 
-    assert(isVector(v), str("parameter v is not an array."))
-    assert(isString(v[0]), str("first element is not a key."))
+    // assert(isVector(v), str("parameter v is not an array."))
+    // assert(isString(v[0]), str("first element is not a key."))
     let(result = privateGetKVPair(v, key, 2))
     // echo(result = result)
     result; 
@@ -157,10 +157,10 @@ module moveTo(properties, label)
 }
 
 // use when center=true and want to have corner on [0,0]
-module moveToOrigin(properties) 
-{
-    translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2]) children();
-}
+// module moveToOrigin(properties) 
+// {
+//     translate([kv_get(properties, "x")/2, kv_get(properties, "y")/2]) children();
+// }
 
 //use to move back to xy center. good prior to any rotations.
 module moveToCenter(properties) 
@@ -222,10 +222,10 @@ module applyMove(properties)
         ];   
     usage =>  applyRotate(object) drawCube(object);
 */
-module applyRotate(properties)
-{
-    rotate(kv_get(properties, "rotate")) children();
-}
+// module applyRotate(properties)
+// {
+//     rotate(kv_get(properties, "rotate")) children();
+// }
 
 /*
     properties is standard object dictionary.
@@ -260,10 +260,10 @@ module applyColor(properties, alpha  = 0.5)
         ];   
     usage =>  applyExtrude(object) drawCube(object);
 */
-module applyExtrude(properties)
-{
-    linear_extrude(kv_get(properties, "z")) children();
-}   
+// module applyExtrude(properties)
+// {
+//     linear_extrude(kv_get(properties, "z")) children();
+// }   
 
 function square(size) = [[-size,-size], [-size,size], [size,size], [size,-size]];
 
