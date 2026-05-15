@@ -17,10 +17,10 @@ use <dictionary.scad>;
 Casa_pool = 
 [
     "pool demensions, in meters",
-    ["x", M2mm(3.5)],
-    ["y", M2mm(7.5)],
+    ["x", M2mm(4.5)],
+    ["y", M2mm(7.3)],
     ["z", 0],
-    ["tx", M2mm(M = 3.0)],
+    ["tx", M2mm(M = 2.5)],
     ["ty", M2mm(M = 16.5)],
 ];
 
@@ -50,7 +50,13 @@ module DrawThePool()
     translate([0, -gdv(Casa_pool, "y"), 0])   //move so next movement is based on propery boundary.
     color("DeepSkyBlue", 1.0)
     linear_extrude(height = M2mm(0.15)) 
-    square(size = [gdv(Casa_pool, "x"), gdv(Casa_pool, "y")]); 
+    union() 
+    {
+        square(size = [gdv(Casa_pool, "x"), gdv(Casa_pool, "y")]); 
+        translate([M2mm(M = 1.8), M2mm(3.6)]) 
+        circle(r = M2mm(2.5));
+    }
+    
 
 }
 
