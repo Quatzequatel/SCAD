@@ -7,10 +7,10 @@ Cleat_Bracket_Store =
 [
     ["description", "dimension properties for cleat seperator"],
     // ["Cleat_seperator_width", convert_in2mm(5)],
-    ["Cleat_seperator_depth", 8],
+    ["Cleat_seperator_depth", 10],
     ["Bracket_edge_to_cleat_width", convert_in2mm(0.25)],
-    ["Cleat_depth", 5.5],
-    ["Cleat_width", 13],
+    ["Cleat_depth", 7.5],
+    ["Cleat_width", 14],
     ["Space_between_cleats_width", 30],
     ["linear_extrude_height", 15],
     ["move", [0, 0, 0]],
