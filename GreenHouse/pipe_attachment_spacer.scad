@@ -9,12 +9,13 @@ include <constants.scad>;
 use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
-use <dictionary.scad>;
+// use <dictionary.scad>;
+use <kvpairs.scad>;
 $fn = 100;
 
 anchor = 
 [
-    "0.75 in anchor",
+        ["description", "0.75 in anchor"],
         ["width", convert_in2mm(2)],    
         ["depth", convert_in2mm(0.75)],  
         ["height", convert_in2mm(0.75)],  //base model height, for ziptie holes
@@ -27,7 +28,7 @@ anchor =
 
 small_hole_anchor = 
 [
-    "small hole anchor",
+        ["description", "small hole anchor"]   ,
         ["width", convert_in2mm(2)],    
         ["depth", convert_in2mm(0.75)],  
         ["height", convert_in2mm(0.45)],  //base model height, for ziptie holes
@@ -41,15 +42,15 @@ small_hole_anchor =
 
 pipe_theequarter_inch =
 [
-    "3/4 inch pipe",
+    ["description", "3/4 inch pipe"],
     ["diameter", convert_in2mm(0.85)],
     ["length", convert_in2mm(4)]
 ];
 
 pipe_half_inch =
 [
-    "1/2 inch pipe",
-    ["diameter", convert_in2mm(0.4)],
+    ["description", "1/2 inch pipe"],
+    ["diameter", convert_in2mm(0.75)],
     ["length", convert_in2mm(4)]
 ];
 
@@ -62,14 +63,14 @@ pipe_one_inch =
 
 screw_hole =
 [
-    "#8 GRK cabinet screw",
+    ["description", "#8 GRK cabinet screw"],
     ["diameter", GRK_cabinet_screw_shank_dia + 1],
     ["length", convert_in2mm(4)]
 ];
 
 ziptie =
 [
-    "6 inch generic zip tie",
+    ["description", "6 inch generic zip tie"],
     ["thickness", ziptie_thickness + 2],    
     ["width",  ziptie_width + 2],
     ["length", convert_in2mm(1)],
@@ -78,7 +79,7 @@ ziptie =
 
 ziptie2 =
 [
-    "6 inch generic zip tie",
+    ["description", "6 inch generic zip tie"],
     ["thickness", ziptie_thickness + 2],    
     ["width",  ziptie_width + 2],
     ["length", convert_in2mm(1)],
@@ -97,7 +98,7 @@ module build(args)
 module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties, ziptie_properties)
 {
     echo("------------------------------");
-    echo("filename", gdv( spacer_properties, "filename" ));
+    echo("filename", kv_get( spacer_properties, "filename" ));
     echo("------------------------------");
     echo("------------------------------");
     echo("Drawing spacer_properties with args: ", spacer_properties);
@@ -109,13 +110,13 @@ module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties
     echo("Drawing ziptie with args: ", ziptie_properties);
     echo("------------------------------");
 
-    color(gdv(spacer_properties, "color"), 0.9)
+    color(kv_get(spacer_properties, "color"), 0.9)
     difference()
     {
         union()
         {
-            linear_extrude( gdv( spacer_properties, "height" ) + gdv( spacer_properties, "additional_height" ) )
-            square( size=[gdv( spacer_properties, "width" ), gdv( spacer_properties, "depth" ) ], center=true );        
+            linear_extrude( kv_get( spacer_properties, "height" ) + kv_get( spacer_properties, "additional_height" ) )
+            square( size=[kv_get( spacer_properties, "width" ), kv_get( spacer_properties, "depth" ) ], center=true );        
         }      
 
         move_pipe(spacer_properties) make_pipe(pipe_properties);
@@ -134,19 +135,19 @@ module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties
 
 module make_pipe(properties)
 {
-    translate([0, gdv(properties, "length")/2, gdv(properties, "diameter")/2]) 
+    translate([0, kv_get(properties, "length")/2, kv_get(properties, "diameter")/2]) 
     rotate([90, 0, 0]) 
     {
-        linear_extrude(gdv(properties, "length"))
-            circle(d=gdv(properties, "diameter"));
+        linear_extrude(kv_get(properties, "length"))
+            circle(d=kv_get(properties, "diameter"));
     }
 }
 
 module make_screw_hole(properties)
 {
-    translate([0, 0, - gdv(properties, "length") / 2]) 
-        linear_extrude(gdv(properties, "length"))
-            circle(d=gdv(properties, "diameter"));
+    translate([0, 0, - kv_get(properties, "length") / 2]) 
+        linear_extrude(kv_get(properties, "length"))
+            circle(d=kv_get(properties, "diameter"));
 }
 
 module make_ziptie_hole(properties, left)
@@ -154,17 +155,17 @@ module make_ziptie_hole(properties, left)
     // echo("Drawing ziptie with args: ", properties);
     if(left == true)
         {
-            rotate([0, gdv(properties, "angle"), 0])
+            rotate([0, kv_get(properties, "angle"), 0])
             move_ziptie_to_center(properties) 
-                linear_extrude(gdv(properties, "length"))
-                    square([gdv(properties, "thickness"), gdv(properties, "width")], center=true) ;             
+                linear_extrude(kv_get(properties, "length"))
+                    square([kv_get(properties, "thickness"), kv_get(properties, "width")], center=true) ;             
         } 
         else 
         {
-            rotate([0, - gdv(properties, "angle"), 0])
+            rotate([0, - kv_get(properties, "angle"), 0])
             move_ziptie_to_center(properties) 
-                linear_extrude(gdv(properties, "length"))
-                    square([gdv(properties, "thickness"), gdv(properties, "width")], center=true) ;            
+                linear_extrude(kv_get(properties, "length"))
+                    square([kv_get(properties, "thickness"), kv_get(properties, "width")], center=true) ;            
         }
 }
 
@@ -173,8 +174,8 @@ module move_screw_to_left_side(properties)
 {
     translate(
         [
-            - gdv(properties, "width")/2 + gdv(properties, "wall_thickness"), 
-            gdv(properties, "depth")/2 - gdv(properties, "wall_thickness"),
+            - kv_get(properties, "width")/2 + kv_get(properties, "wall_thickness"), 
+            kv_get(properties, "depth")/2 - kv_get(properties, "wall_thickness"),
             0
         ]) 
     children();
@@ -184,8 +185,8 @@ module move_screw_to_right_side(properties)
 {
     translate(
         [
-            gdv(properties, "width")/2 - gdv(properties, "wall_thickness"), 
-            gdv(properties, "depth")/2 - gdv(properties, "wall_thickness"),
+            kv_get(properties, "width")/2 - kv_get(properties, "wall_thickness"), 
+            kv_get(properties, "depth")/2 - kv_get(properties, "wall_thickness"),
             0
         ]) 
     children();
@@ -197,7 +198,7 @@ module move_pipe(properties)
         [
             0, 
             0,
-            gdv(properties, "pipe_height") + gdv(properties, "additional_height")
+            kv_get(properties, "pipe_height") + kv_get(properties, "additional_height")
         ]) 
     children();
 }
@@ -206,9 +207,9 @@ module move_ziptie_to_right(properties)
 {
     translate(
         [ 
-            (gdv(properties, "width")/2 - gdv(properties, "wall_thickness")) , 
-            - (gdv(properties, "depth")/2 - gdv(properties, "wall_thickness") ), 
-            ziptie_offset + gdv(properties, "additional_height")
+            (kv_get(properties, "width")/2 - kv_get(properties, "wall_thickness")) , 
+            - (kv_get(properties, "depth")/2 - kv_get(properties, "wall_thickness") ), 
+            ziptie_offset + kv_get(properties, "additional_height")
         ]
         )
     children();
@@ -218,9 +219,9 @@ module move_ziptie_to_left(properties)
 {
     translate(
         [ 
-            - (gdv(properties, "width")/2 - gdv(properties, "wall_thickness")) , 
-            - (gdv(properties, "depth")/2 - gdv(properties, "wall_thickness")), 
-            ziptie_offset + gdv(properties, "additional_height")
+            - (kv_get(properties, "width")/2 - kv_get(properties, "wall_thickness")) , 
+            - (kv_get(properties, "depth")/2 - kv_get(properties, "wall_thickness")), 
+            ziptie_offset + kv_get(properties, "additional_height")
         ]
         )
     children();
@@ -231,7 +232,7 @@ module move_ziptie_to_center(properties) {
         [ 
             0, 
             2, 
-            -gdv(properties, "length") / 2
+            -kv_get(properties, "length") / 2
         ]
         )
     children();
