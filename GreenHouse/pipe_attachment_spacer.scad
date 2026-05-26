@@ -9,7 +9,6 @@ include <constants.scad>;
 use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
-// use <dictionary.scad>;
 use <kvpairs.scad>;
 $fn = 100;
 
@@ -71,10 +70,12 @@ screw_hole =
 ziptie =
 [
     ["description", "6 inch generic zip tie"],
-    ["thickness", ziptie_thickness + 2],    
+    ["thickness", ziptie_thickness + 1],    
     ["width",  ziptie_width + 2],
     ["length", convert_in2mm(1)],
-    ["angle", 30]
+    ["move left", [1, 0, 0]],
+    ["move right", [-1, 0, 0]],
+    ["angle", 50]
 ];
 
 ziptie2 =
@@ -83,6 +84,8 @@ ziptie2 =
     ["thickness", ziptie_thickness + 2],    
     ["width",  ziptie_width + 2],
     ["length", convert_in2mm(1)],
+    ["move left", [1, 0, 0]],
+    ["move right", [-1, 0, 0]],    
     ["angle", 50]
 ];
 
@@ -92,7 +95,7 @@ build();
 
 module build(args) 
 {
-    make_pipe_achor(small_hole_anchor, pipe_half_inch, screw_hole, ziptie2);
+    make_pipe_achor(small_hole_anchor, pipe_half_inch, screw_hole, ziptie);
 }
 
 module make_pipe_achor(spacer_properties, pipe_properties, screw_hole_properties, ziptie_properties)
@@ -156,14 +159,14 @@ module make_ziptie_hole(properties, left)
     if(left == true)
         {
             rotate([0, kv_get(properties, "angle"), 0])
-            move_ziptie_to_center(properties) 
+            move_ziptie_to_center(properties, left = true) 
                 linear_extrude(kv_get(properties, "length"))
                     square([kv_get(properties, "thickness"), kv_get(properties, "width")], center=true) ;             
         } 
         else 
         {
             rotate([0, - kv_get(properties, "angle"), 0])
-            move_ziptie_to_center(properties) 
+            move_ziptie_to_center(properties, left = false) 
                 linear_extrude(kv_get(properties, "length"))
                     square([kv_get(properties, "thickness"), kv_get(properties, "width")], center=true) ;            
         }
@@ -227,13 +230,28 @@ module move_ziptie_to_left(properties)
     children();
 }
 
-module move_ziptie_to_center(properties) {
+module move_ziptie_to_center(properties, left = true) 
+{
+    if(left == true)
+    {
         translate(
         [ 
-            0, 
+            kv_get(properties, "move left")[0] , 
             2, 
             -kv_get(properties, "length") / 2
         ]
         )
-    children();
+        children();
+    }
+    else
+    {
+        translate(
+        [ 
+            kv_get(properties, "move right")[0], 
+            2, 
+            -kv_get(properties, "length") / 2
+        ]
+        )
+        children();
+    }
 }
