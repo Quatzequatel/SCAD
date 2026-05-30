@@ -19,7 +19,10 @@ CaddyPegInfoStore =
         ["radius", convert_in2mm(0.25)],
         ["scale", [2, 4]],
         ["filename", "Planter caddy peg.stl"],
-        ["height", convert_in2mm(2)],  
+        ["height", convert_in2mm(0.75)],
+        ["move", [0, 0, 0] ],  
+        ["rotate", [180, 0, 0]],
+        ["color", "Aqua"],
         ["location", [0, 0, 0] ],  
         ["rotate", [180, 0, 0]],
         ["color", "Aqua"], 
@@ -29,23 +32,25 @@ screw_hole =
 [
     ["description", "#8 GRK cabinet screw"],
     ["diameter", 2.94],
-    ["length", kv_get(CaddyPegInfoStore, "height") - LayersToHeight(8)],
-    ["move", [0, 0, LayersToHeight(8)]],
+    ["length", kv_get(CaddyPegInfoStore, "height") ],
+    ["move", [0, 0, 0]],
     ["rotate", [0, 0, 0]],
     ["color", "Red"]
 ];
 
-    Draw();
-// linear_extrude(height=10, scale=[0.1,1], slices=60, twist=0)
-//  polygon(points=[[0,0],[20,10],[20,-10]]);    
+    Draw(CaddyPegInfoStore);
 
 
-module Draw()
+module Draw(properties)
 {
-    rotate(kv_get(CaddyPegInfoStore, "rotate"))
+    echo();
+    echo(Filename = str(convert_mm2in(kv_get(properties, "height")), " inch ", kv_get(properties, ("filename"))));
+    echo();
+
+    rotate(kv_get(properties, "rotate"))
     difference()
     {
-        Draw_CaddyPeg(CaddyPegInfoStore);
+        Draw_CaddyPeg(properties);
         
         make_screw_hole(screw_hole);
     }
