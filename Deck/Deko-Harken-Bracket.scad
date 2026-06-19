@@ -34,16 +34,12 @@ function s_curve_points(radius, num_points) =
     concat(
         [for(i = [0:num_points-1])
             let(angle = (i / (num_points - 1)) * 180)
-            [-radius * (1 - cos(angle)), radius * sin(angle)]
+            [radius * (1 - cos(angle)), radius * sin(angle)]
         ],
-        [for(i = [0:num_points-1])
+        [for(i = [num_points-1:-1:0])
             let(angle = (i / (num_points - 1)) * 180)
-            [radius * (1 - cos(angle)), -radius * sin(angle)]
+            [2 * radius + radius * (1 - cos(angle)), -radius * sin(angle)]
         ]
-        // [for(i = [num_points-1:-1:0])
-        //     let(angle = (i / (num_points - 1)) * 180)
-        //     [2 * radius + radius * (1 - cos(angle)), -radius * sin(angle)]
-        // ]
     );
 
 
