@@ -21,11 +21,12 @@ use <kvpairs.scad>;
 Wire = 
 [   
     ["description", "dimension properties the wire"],
-    ["radius", convert_in2mm(0.25)],
-    ["diameter", convert_in2mm(0.5)],
+    ["radius", convert_in2mm(0.25)/2],
+    ["diameter", convert_in2mm(0.25)],
     ["length",  convert_in2mm(0.5)],
     ["wall thickness", 4],
-    ["screw hole", woodScrewShankDiaN_8],
+    ["screw hole", woodScrewShankDiaN_6],
+    ["scale", [1,5]],
     ["angle", 270],
     ["start", 45],
     ["end", 315],
@@ -121,7 +122,7 @@ module drawWedge()
     translate([0, 0, -0.5])
     union()
     {
-    linear_extrude(height = (kv_get(Wire, "radius")+ kv_get(Wire, "wall thickness")) * 2, scale= [1,3.5], center = false, convexity = 10)
+    linear_extrude(height = (kv_get(Wire, "radius")+ kv_get(Wire, "wall thickness")) * 2, scale= kv_get(Wire, "scale"), center = false, convexity = 10)
     hull()
     {
         translate([-10,0,0])
@@ -137,7 +138,7 @@ module drawWedge()
 
 module drawScrewHole()
 {
-    cylinder(r = kv_get(Wire, "screw hole"), h = kv_get(Clip, "full length"), center = true, $fn = 100);
+    cylinder(d = kv_get(Wire, "screw hole"), h = kv_get(Clip, "full length"), center = true, $fn = 100);
 }
 
 // Returns an array of [x,y] points on a circle
