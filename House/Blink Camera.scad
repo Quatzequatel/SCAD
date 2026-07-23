@@ -12,7 +12,7 @@ polygon_points3 =
     ["lip", 8],
     ["x1", 60],
     ["x2", 0],
-    ["y1", 46.5],
+    ["y1", 47],
     ["y2", 0],
     ["y3", 120]
 ];
@@ -69,7 +69,12 @@ module build(args)
     ];
 
     linear_extrude(height=100)
-    polygon(points=points);
+    union()
+    {
+        translate([lip, y1-thickness, 0])
+        square([thickness, 2*thickness], center=false);
+        polygon(points=points);
+    }
 }
 
 module drawScrewHoles()
