@@ -25,7 +25,7 @@ Wire =
     ["diameter", convert_in2mm(0.25)],
     ["length",  convert_in2mm(0.5)],
     ["wall thickness", 4],
-    ["screw hole", woodScrewShankDiaN_6],
+    ["screw hole", woodScrewShankDiaN_8],
     ["scale", [1,5]],
     ["angle", 270],
     ["start", 45],
