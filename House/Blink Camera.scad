@@ -34,7 +34,7 @@ Screwholes =
     ["screw hole countersink depth", 1.89],
     ["move", [40, 17, 17]],
     ["move countersink", [kv_get(polygon_points, "x1") + 0.9, 17, 17]],
-    ["move screw driver", [0, 17, 17a]],
+    ["move screw driver", [0, 17, 17]],
     ["rotate", [0, 90, 0]],
     ["color", "LightGrey"]
 ];
