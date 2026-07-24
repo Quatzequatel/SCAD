@@ -8,7 +8,7 @@ use <kvpairs.scad>;
 polygon_points3 = 
 [
     ["description", "dimension properties drawn object"],
-    ["thickness", 3],
+    ["thickness", 4],
     ["lip", 8],
     ["x1", 60],
     ["x2", 0],
