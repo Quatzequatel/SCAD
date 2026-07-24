@@ -27,9 +27,9 @@ Wire =
     ["wall thickness", 4],
     ["screw hole", woodScrewShankDiaN_8],
     ["scale", [1,5]],
-    ["angle", 270],
-    ["start", 45],
-    ["end", 315],
+    // ["angle", 270],
+    ["start", 60],
+    ["end", 300],
     ["move", [0, 0, 0]],
     ["rotate", [90, 0, 0]],
     ["color", "LightGrey"]
@@ -54,6 +54,8 @@ HullInfo =
 build();
 module build()
 {
+    rotate(kv_get(Wire, "rotate"))
+    translate([0, 0, -kv_get(Wire, "length")*2])
     drawClip();
 }
 
