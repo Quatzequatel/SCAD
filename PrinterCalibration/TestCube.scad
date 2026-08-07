@@ -11,7 +11,7 @@ function smallMoveZ(i) = sizeZ + (i * sizeZ) + (i * smallZ);
 build();
 module build()
 {
-    for (i=[0:5]) 
+    for (i=[0:6]) 
     {
         difference()
         {
@@ -23,7 +23,7 @@ module build()
                 Cube(smallXY,smallXY, smallZ);                
             }
             translate([0, 0, largeMoveZ(i)+0.5]) 
-            Temp(210 + i * 5);
+            Temp(270 - i * 5);
         }
 
     }
