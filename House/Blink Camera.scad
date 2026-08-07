@@ -25,13 +25,13 @@ Screwholes =
     ["description", "dimension properties for tool tray"],
     ["x", 65],
     ["y", 0],
-    ["z", 95],
+    ["z", 96],
     ["screw hole diameter", 3.86],
     ["screw hole fn", 100],
     ["screw hole depth", 10],
     ["screw hole countersink diameter", 7.01],
     ["screw hole countersink fn", 100],
-    ["screw hole countersink depth", 1.89],
+    ["screw hole countersink depth", 2],
     ["move", [40, 17, 17]],
     ["move countersink", [kv_get(polygon_points, "x1") + 0.9, 17, 17]],
     ["move screw driver", [0, 17, 17]],
@@ -152,13 +152,13 @@ module drawScrewHoles()
         color("Red")
         translate(kv_get(Screwholes, "move screw driver"))
         rotate(kv_get(Screwholes, "rotate"))
-        cylinder(h=25, d=2 * kv_get(Screwholes, "screw hole diameter"), center=true, $fn=kv_get(Screwholes, "screw hole fn"));
+        cylinder(h=25, d=4 * kv_get(Screwholes, "screw hole diameter"), center=true, $fn=kv_get(Screwholes, "screw hole fn"));
         
         color("Blue")
         translate([0, 0, kv_get(Screwholes, "x")])
         translate(kv_get(Screwholes, "move screw driver"))
         rotate(kv_get(Screwholes, "rotate"))
-        cylinder(h=25, d=2 *kv_get(Screwholes, "screw hole diameter"), center=true, $fn=kv_get(Screwholes, "screw hole fn"));
+        cylinder(h=25, d=4 *kv_get(Screwholes, "screw hole diameter"), center=true, $fn=kv_get(Screwholes, "screw hole fn"));
 
     }
 }
