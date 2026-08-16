@@ -3,6 +3,10 @@ smallOffset = 0.5;
 smallXY= sizeXY-smallOffset;
 sizeZ = 5;
 smallZ = 0.32;
+minTemp = 200;
+maxTemp = 230;
+steps = (maxTemp - minTemp) / 5;
+// steps = 4;
 $fn=100;
 
 function largeMoveZ(i) = (i * sizeZ) + (i * smallZ);
@@ -11,7 +15,7 @@ function smallMoveZ(i) = sizeZ + (i * sizeZ) + (i * smallZ);
 build();
 module build()
 {
-    for (i=[0:6]) 
+    for (i=[0:steps]) 
     {
         difference()
         {
@@ -23,7 +27,7 @@ module build()
                 Cube(smallXY,smallXY, smallZ);                
             }
             translate([0, 0, largeMoveZ(i)+0.5]) 
-            Temp(270 - i * 5);
+            Temp(maxTemp - i * (maxTemp - minTemp) / steps);
         }
 
     }
