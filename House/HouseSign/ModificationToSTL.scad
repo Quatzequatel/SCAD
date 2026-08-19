@@ -3,11 +3,28 @@ include <constants.scad>;
 use <convert.scad>;
 use <trigHelpers.scad>;
 use <ObjectHelpers.scad>;
-use <dictionary.scad>;
+use <kvpairs.scad>;
 
 //// This file is for modifying the STL files of the bases to add holes for screws and to remove material to make them lighter.
 // The modified STL files will be saved with the name "modified_base_[number].stl" where [number] is the number of the base being modified.
+StorePoints =
+[
+    ["description", "dimension properties for tool tray"],
+    ["9", [105.8, 45.63]],
+    ["2", [106.8, 45.63]],
+    ["6", [105.8, 45.63]],
+    ["1", [76.5, 45.63]],
+    ["start", [19.6, 45.63]],
+    ["end", [14.6, 45.63]]
+];
 
+    points9 = 
+    [
+        [54, 22.5],
+        [-52, 22.5],
+        [-52, -22.5],
+        [54, -22.5],        
+    ];
 
 build();
 
@@ -15,7 +32,29 @@ module build(args)
 {
     // modify_base_start();
     // modify_base_end();
-        modify_base(9);
+    color("yellow", 1)
+        modify_base(1);
+
+    translate([1, 0, 30.25+3])
+    linear_extrude(height=3, center=true, convexity=10)
+    square([kv_get(StorePoints, "1").x + 5, kv_get(StorePoints, "1").y + 5], center=true);
+
+    translate([1, 0, 30.25])
+    linear_extrude(height=3, center=true, convexity=10)
+    square(kv_get(StorePoints, "1"), center=true);
+
+    translate([54, 22.5, 30.25])
+    #cylinder(d=0.2, h=45, center=true, $fn=100);
+    
+    translate([-52, 22.5, 30.25])
+    #cylinder(d=0.2, h=45, center=true, $fn=100);
+    
+    translate([54, -22.5, 30.25])
+    #cylinder(d=0.2, h=45, center=true, $fn=100);
+    
+    translate([-52, -22.5, 30.25])
+    #cylinder(d=0.2, h=45, center=true, $fn=100);
+
 }
 
 module modify_base(args) 
